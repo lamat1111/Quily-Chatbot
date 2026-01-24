@@ -11,7 +11,7 @@ This roadmap delivers a self-hosted RAG chatbot for Quilibrium documentation in 
 - Decimal phases (e.g., 2.1): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Data Pipeline** - Ingest documentation into searchable vector store
-- [ ] **Phase 2: RAG Pipeline** - Query, retrieve, and generate streaming responses
+- [x] **Phase 2: RAG Pipeline** - Query, retrieve, and generate streaming responses
 - [ ] **Phase 3: Chat Interface** - User-facing chat with API key management
 - [ ] **Phase 4: Polish** - Code copying and dark mode
 
@@ -47,8 +47,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — RAG types, Supabase client, and two-stage retriever with reranking
-- [ ] 02-02-PLAN.md — Prompt builder and streaming chat API route
+- [x] 02-01-PLAN.md — RAG types, Supabase client, and two-stage retriever with reranking
+- [x] 02-02-PLAN.md — Prompt builder and streaming chat API route
 
 ### Phase 3: Chat Interface
 **Goal**: Users can chat with the assistant using their own API keys
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 4/4 | Complete | 2026-01-24 |
-| 2. RAG Pipeline | 0/2 | Planned | - |
+| 2. RAG Pipeline | 2/2 | Complete | 2026-01-24 |
 | 3. Chat Interface | 0/TBD | Not started | - |
 | 4. Polish | 0/TBD | Not started | - |
 

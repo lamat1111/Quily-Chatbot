@@ -84,14 +84,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INGEST-01 | Phase 1 | Pending |
-| INGEST-02 | Phase 1 | Pending |
-| INGEST-03 | Phase 1 | Pending |
-| INGEST-04 | Phase 1 | Pending |
-| RAG-01 | Phase 2 | Pending |
-| RAG-02 | Phase 2 | Pending |
-| RAG-03 | Phase 2 | Pending |
-| RAG-04 | Phase 2 | Pending |
+| INGEST-01 | Phase 1 | Complete |
+| INGEST-02 | Phase 1 | Complete |
+| INGEST-03 | Phase 1 | Complete |
+| INGEST-04 | Phase 1 | Complete |
+| RAG-01 | Phase 2 | Complete |
+| RAG-02 | Phase 2 | Complete |
+| RAG-03 | Phase 2 | Complete |
+| RAG-04 | Phase 2 | Complete |
 | KEY-01 | Phase 3 | Pending |
 | KEY-02 | Phase 3 | Pending |
 | KEY-03 | Phase 3 | Pending |
