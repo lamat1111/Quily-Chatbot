@@ -26,10 +26,13 @@ This roadmap delivers a self-hosted RAG chatbot for Quilibrium documentation in 
   2. CLI script generates embeddings for all chunks using specified model
   3. Embeddings are stored in Supabase with source file, heading path, and version metadata
   4. Vector similarity search returns relevant chunks for test queries
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 01-01: TBD (defined during plan-phase)
+- [ ] 01-01-PLAN.md — Project setup, database schema, and shared types
+- [ ] 01-02-PLAN.md — Markdown loader and semantic chunker
+- [ ] 01-03-PLAN.md — Embedding generator and Supabase uploader
+- [ ] 01-04-PLAN.md — CLI entry point and end-to-end verification
 
 ### Phase 2: RAG Pipeline
 **Goal**: API endpoint accepts queries, retrieves relevant context, and streams LLM responses
@@ -84,12 +87,13 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Pipeline | 0/TBD | Not started | - |
+| 1. Data Pipeline | 0/4 | Ready to execute | - |
 | 2. RAG Pipeline | 0/TBD | Not started | - |
 | 3. Chat Interface | 0/TBD | Not started | - |
 | 4. Polish | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-24*
+*Phase 1 planned: 2026-01-24*
 *Depth: standard*
 *Coverage: 23/23 v1 requirements mapped*
