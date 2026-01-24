@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@ai-sdk/cohere": "^3.0.11",
     "@langchain/core": "^1.1.17",
     "@langchain/textsplitters": "^1.0.1",
     "@openrouter/ai-sdk-provider": "^2.0.1",
@@ -21,7 +22,8 @@
     "dotenv": "^17.2.3",
     "glob": "^13.0.0",
     "gpt-tokenizer": "^3.4.0",
-    "ora": "^9.1.0"
+    "ora": "^9.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
