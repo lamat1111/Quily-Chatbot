@@ -64,10 +64,13 @@ Plans:
   7. Error messages display clearly for API failures and rate limits
   8. Responses render with markdown formatting and syntax-highlighted code
   9. Interface works on mobile devices (responsive design)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: TBD (defined during plan-phase)
+- [ ] 03-01-PLAN.md — Foundation setup (Tailwind, hooks, stores, utilities)
+- [ ] 03-02-PLAN.md — Sidebar components (API key, model selector, conversations)
+- [ ] 03-03-PLAN.md — Chat components (messages, input, markdown rendering)
+- [ ] 03-04-PLAN.md — Main page integration and visual verification
 
 ### Phase 4: Polish
 **Goal**: Quality-of-life features that improve daily usage
@@ -90,12 +93,13 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 4/4 | Complete | 2026-01-24 |
 | 2. RAG Pipeline | 2/2 | Complete | 2026-01-24 |
-| 3. Chat Interface | 0/TBD | Not started | - |
+| 3. Chat Interface | 0/4 | Planned | - |
 | 4. Polish | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-24*
 *Phase 1 planned: 2026-01-24*
 *Phase 2 planned: 2026-01-24*
+*Phase 3 planned: 2026-01-24*
 *Depth: standard*
 *Coverage: 23/23 v1 requirements mapped*
