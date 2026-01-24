@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 4 (RAG Pipeline)
-Plan: 1 of 3 (RAG Retrieval Layer)
+Plan: 2 of 3 (Prompt Assembly & Chat API)
 Status: In progress
-Last activity: 2026-01-24 - Completed 02-01-PLAN.md
+Last activity: 2026-01-24 - Completed 02-02-PLAN.md
 
-Progress: [#####.....] ~38%
+Progress: [######....] ~50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 2.4 min
-- Total execution time: 12.2 min
+- Total plans completed: 6
+- Average duration: 3.2 min
+- Total execution time: 19.2 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
-| 02-rag-pipeline | 1 | 2.2 min | 2.2 min |
+| 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (1min), 01-03 (2min), 01-04 (4min), 02-01 (2.2min)
+- Last 5 plans: 01-03 (2min), 01-04 (4min), 02-01 (2.2min), 02-02 (7min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 - Cohere reranking optional via API key presence (graceful degradation)
 - Same embedding model for queries as ingestion (text-embedding-3-small)
 - Service role key for Supabase server-side operations
+- createUIMessageStream for combined data+LLM streams (ai SDK v6)
+- source-url stream parts for citation metadata before LLM response
+- Path alias @/* for clean imports
 
 ### Pending Todos
 
@@ -67,7 +70,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -99,9 +102,17 @@ Resume file: None
 - Supabase client singleton with service role key
 - RAG types (RetrievedChunk, RetrievalOptions, SourceReference)
 
+**Plan 02-02 Complete:**
+- Prompt builder with citation formatting ([N] citations, system prompt)
+- Streaming chat API endpoint (POST /api/chat)
+- Next.js App Router configuration with path aliases
+
 **Files created:**
 - src/lib/rag/types.ts
 - src/lib/rag/retriever.ts
 - src/lib/supabase.ts
+- src/lib/rag/prompt.ts
+- app/api/chat/route.ts
+- next.config.js
 
-**Next:** 02-02 (Context assembly) or 02-03 (API route)
+**Next:** 02-03 (Final RAG integration or verification)
