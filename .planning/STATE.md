@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 4 (RAG Pipeline)
-Plan: Not yet planned
-Status: Ready to plan
-Last activity: 2026-01-24 - Completed Phase 1 (Data Pipeline)
+Plan: 1 of 3 (RAG Retrieval Layer)
+Status: In progress
+Last activity: 2026-01-24 - Completed 02-01-PLAN.md
 
-Progress: [####......] ~25%
+Progress: [#####.....] ~38%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 2.5 min
-- Total execution time: 10 min
+- Total plans completed: 5
+- Average duration: 2.4 min
+- Total execution time: 12.2 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
+| 02-rag-pipeline | 1 | 2.2 min | 2.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (1min), 01-03 (2min), 01-04 (4min)
+- Last 5 plans: 01-02 (1min), 01-03 (2min), 01-04 (4min), 02-01 (2.2min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -51,10 +52,13 @@ Recent decisions affecting current work:
 - 100-item batches for Supabase inserts for performance
 - Heading context prepended to chunks for better semantic embedding
 - Windows path fix: convert backslashes for glob compatibility
+- Cohere reranking optional via API key presence (graceful degradation)
+- Same embedding model for queries as ingestion (text-embedding-3-small)
+- Service role key for Supabase server-side operations
 
 ### Pending Todos
 
-- None for Phase 1 (complete)
+- None
 
 ### Blockers/Concerns
 
@@ -63,7 +67,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 1 complete, ready for Phase 2 planning
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -87,3 +91,17 @@ Resume file: None
 - package.json, tsconfig.json, .env.example
 
 **Verified:** User confirmed end-to-end pipeline works
+
+## Phase 2 Progress
+
+**Plan 02-01 Complete:**
+- Two-stage retriever with optional Cohere reranking
+- Supabase client singleton with service role key
+- RAG types (RetrievedChunk, RetrievalOptions, SourceReference)
+
+**Files created:**
+- src/lib/rag/types.ts
+- src/lib/rag/retriever.ts
+- src/lib/supabase.ts
+
+**Next:** 02-02 (Context assembly) or 02-03 (API route)
