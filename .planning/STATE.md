@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 3 of 4 (Chat Interface)
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-01-24 - Completed 03-01-PLAN.md (Foundation)
+Last activity: 2026-01-24 - Completed 03-02-PLAN.md (Sidebar components)
 
-Progress: [######....] ~60%
+Progress: [######....] ~65%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 3.3 min
-- Total execution time: 23.2 min
+- Total execution time: 27.2 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [######....] ~60%
 |-------|-------|-------|----------|
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
 | 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
-| 03-chat-interface | 1 | 4 min | 4 min |
+| 03-chat-interface | 2 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-04 (4min), 02-01 (2.2min), 02-02 (7min), 03-01 (4min)
+- Last 5 plans: 02-01 (2.2min), 02-02 (7min), 03-01 (4min), 03-02 (4min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -64,6 +64,10 @@ Recent decisions affecting current work:
 - 50 conversation limit with oldest-first pruning
 - Auto-title from first user message (50 char truncate)
 - _hasHydrated flag pattern for SSR hydration safety
+- Password input always masked with no reveal option (security)
+- API key shows last 6 chars as hint when present
+- Mobile sidebar as overlay with fixed toggle button at bottom-left
+- Model selection persisted to localStorage separately
 
 ### Pending Todos
 
@@ -76,7 +80,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 03-01-PLAN.md (Foundation)
+Stopped at: Completed 03-02-PLAN.md (Sidebar components)
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -136,4 +140,16 @@ Resume file: None
 - src/hooks/useLocalStorage.ts, src/hooks/useScrollAnchor.ts
 - src/stores/conversationStore.ts, src/lib/openrouter.ts
 
-**Next:** Plan 02 (Chat components)
+**Plan 02 (Sidebar) - Complete:**
+- ApiKeyConfig with localStorage persistence and OpenRouter validation
+- ModelSelector dropdown with RECOMMENDED_MODELS
+- ConversationList with history and CRUD operations
+- Responsive Sidebar container (w-72 desktop, overlay mobile)
+
+**Files created:**
+- src/components/sidebar/ApiKeyConfig.tsx
+- src/components/sidebar/ModelSelector.tsx
+- src/components/sidebar/ConversationList.tsx
+- src/components/sidebar/Sidebar.tsx
+
+**Next:** Plan 03 (Chat area components)
