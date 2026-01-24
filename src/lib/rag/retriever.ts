@@ -1,5 +1,5 @@
 import { embed, rerank } from 'ai';
-import { cohere } from '@ai-sdk/cohere';
+import { createCohere } from '@ai-sdk/cohere';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { supabase } from '../supabase';
 import type { RetrievedChunk, RetrievalOptions } from './types';
@@ -55,17 +55,20 @@ export async function retrieveWithReranking(
 
   // Stage 2: Optional reranking
   if (resolvedCohereKey && candidates.length > finalCount) {
+    // Create Cohere provider with API key
+    const cohereProvider = createCohere({ apiKey: resolvedCohereKey });
+
     // Rerank with Cohere
-    const { results: rerankedDocuments } = await rerank({
-      model: cohere.reranking('rerank-v3.5', { apiKey: resolvedCohereKey }),
+    const { ranking } = await rerank({
+      model: cohereProvider.reranking('rerank-v3.5'),
       query,
       documents: candidates.map((c: { content: string }) => c.content),
       topN: finalCount,
     });
 
     // Map reranked results back to chunks with metadata
-    return rerankedDocuments.map((reranked, idx) => {
-      const original = candidates[reranked.index];
+    return ranking.map((ranked: { originalIndex: number; score: number }, idx: number) => {
+      const original = candidates[ranked.originalIndex];
       return {
         id: original.id,
         content: original.content,
