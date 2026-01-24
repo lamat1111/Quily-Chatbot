@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 1 of 4 (Data Pipeline)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-24 - Completed 01-02-PLAN.md (Document Loading and Chunking)
+Last activity: 2026-01-24 - Completed 01-03-PLAN.md (Embedder and Uploader)
 
-Progress: [###.......] ~20%
+Progress: [####......] ~30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 2 min
-- Total execution time: 4 min
+- Total execution time: 6 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-pipeline | 2 | 4 min | 2 min |
+| 01-data-pipeline | 3 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (1min)
-- Trend: Improving
+- Last 5 plans: 01-01 (3min), 01-02 (1min), 01-03 (2min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - vector(1536) for text-embedding-3-small compatibility
 - 800 token target with 100 overlap for chunk sizing
 - RecursiveCharacterTextSplitter.fromLanguage('markdown') for semantic splitting
+- 50-item batches for embeddings to stay under token limits
+- 100-item batches for Supabase inserts for performance
+- Heading context prepended to chunks for better semantic embedding
 
 ### Pending Todos
 
@@ -60,6 +63,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-24T15:08:08Z
-Stopped at: Completed 01-02-PLAN.md (Document Loading and Chunking)
+Last session: 2026-01-24T15:08:35Z
+Stopped at: Completed 01-03-PLAN.md (Embedder and Uploader)
 Resume file: None
