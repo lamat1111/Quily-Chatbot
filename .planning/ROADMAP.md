@@ -44,10 +44,11 @@ Plans:
   3. LLM response streams token-by-token via API endpoint
   4. Response includes source citations that map to actual retrieved chunks
   5. Two-stage retrieval with reranking improves result precision
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD (defined during plan-phase)
+- [ ] 02-01-PLAN.md — RAG types, Supabase client, and two-stage retriever with reranking
+- [ ] 02-02-PLAN.md — Prompt builder and streaming chat API route
 
 ### Phase 3: Chat Interface
 **Goal**: Users can chat with the assistant using their own API keys
@@ -88,12 +89,13 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 4/4 | Complete | 2026-01-24 |
-| 2. RAG Pipeline | 0/TBD | Ready | - |
+| 2. RAG Pipeline | 0/2 | Planned | - |
 | 3. Chat Interface | 0/TBD | Not started | - |
 | 4. Polish | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-24*
 *Phase 1 planned: 2026-01-24*
+*Phase 2 planned: 2026-01-24*
 *Depth: standard*
 *Coverage: 23/23 v1 requirements mapped*
