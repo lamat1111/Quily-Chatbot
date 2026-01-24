@@ -44,7 +44,8 @@ function parseFrontmatter(content: string): {
  */
 export async function loadDocuments(docsPath: string): Promise<LoadedDocument[]> {
   // Find all markdown files recursively
-  const pattern = join(docsPath, '**/*.md');
+  // Use forward slashes for glob (works on all platforms)
+  const pattern = docsPath.replace(/\\/g, '/') + '/**/*.md';
   const files = await glob(pattern, { nodir: true });
 
   if (files.length === 0) {
