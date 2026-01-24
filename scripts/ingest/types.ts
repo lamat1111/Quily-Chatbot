@@ -1,0 +1,70 @@
+/**
+ * Metadata attached to each document chunk
+ */
+export interface ChunkMetadata {
+  /** Original source file path, e.g., "docs/getting-started.md" */
+  source_file: string;
+  /** Heading hierarchy, e.g., "Installation > Prerequisites" */
+  heading_path: string;
+  /** Position of this chunk in the source document */
+  chunk_index: number;
+  /** Number of tokens in this chunk (for cost tracking) */
+  token_count: number;
+  /** Version tag for freshness tracking, e.g., "2026-01-24" */
+  version: string;
+  /** MD5 hash of content for deduplication */
+  content_hash: string;
+}
+
+/**
+ * A chunk of text with its metadata (before embedding)
+ */
+export interface ChunkWithContext {
+  /** The actual text content of the chunk */
+  content: string;
+  /** Associated metadata */
+  metadata: ChunkMetadata;
+}
+
+/**
+ * A document chunk with its embedding vector (ready for upload)
+ */
+export interface DocumentChunk extends ChunkWithContext {
+  /** 1536-dimensional embedding vector from text-embedding-3-small */
+  embedding: number[];
+}
+
+/**
+ * Raw loaded document before chunking
+ */
+export interface LoadedDocument {
+  /** File path relative to docs root */
+  path: string;
+  /** Full markdown content */
+  content: string;
+  /** Frontmatter if present */
+  frontmatter?: Record<string, unknown>;
+}
+
+/**
+ * Result from similarity search RPC
+ */
+export interface SearchResult {
+  id: number;
+  content: string;
+  source_file: string;
+  heading_path: string | null;
+  similarity: number;
+}
+
+/**
+ * CLI options for the ingest command
+ */
+export interface IngestOptions {
+  /** Path to documentation directory */
+  docs: string;
+  /** Version tag for this ingestion run */
+  version: string;
+  /** Preview mode - don't upload to database */
+  dryRun: boolean;
+}
