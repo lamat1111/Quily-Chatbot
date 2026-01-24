@@ -10,7 +10,7 @@ This roadmap delivers a self-hosted RAG chatbot for Quilibrium documentation in 
 - Integer phases (1, 2, 3, 4): Planned milestone work
 - Decimal phases (e.g., 2.1): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Data Pipeline** - Ingest documentation into searchable vector store
+- [x] **Phase 1: Data Pipeline** - Ingest documentation into searchable vector store
 - [ ] **Phase 2: RAG Pipeline** - Query, retrieve, and generate streaming responses
 - [ ] **Phase 3: Chat Interface** - User-facing chat with API key management
 - [ ] **Phase 4: Polish** - Code copying and dark mode
@@ -29,10 +29,10 @@ This roadmap delivers a self-hosted RAG chatbot for Quilibrium documentation in 
 **Plans**: 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project setup, database schema, and shared types
-- [ ] 01-02-PLAN.md — Markdown loader and semantic chunker
-- [ ] 01-03-PLAN.md — Embedding generator and Supabase uploader
-- [ ] 01-04-PLAN.md — CLI entry point and end-to-end verification
+- [x] 01-01-PLAN.md — Project setup, database schema, and shared types
+- [x] 01-02-PLAN.md — Markdown loader and semantic chunker
+- [x] 01-03-PLAN.md — Embedding generator and Supabase uploader
+- [x] 01-04-PLAN.md — CLI entry point and end-to-end verification
 
 ### Phase 2: RAG Pipeline
 **Goal**: API endpoint accepts queries, retrieves relevant context, and streams LLM responses
@@ -87,8 +87,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Pipeline | 0/4 | Ready to execute | - |
-| 2. RAG Pipeline | 0/TBD | Not started | - |
+| 1. Data Pipeline | 4/4 | Complete | 2026-01-24 |
+| 2. RAG Pipeline | 0/TBD | Ready | - |
 | 3. Chat Interface | 0/TBD | Not started | - |
 | 4. Polish | 0/TBD | Not started | - |
 

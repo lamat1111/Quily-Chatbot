@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users get instant, accurate answers about Quilibrium from official sources with clear citations
-**Current focus:** Phase 1 - Data Pipeline
+**Current focus:** Phase 2 - RAG Pipeline
 
 ## Current Position
 
-Phase: 1 of 4 (Data Pipeline)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-01-24 - Completed 01-03-PLAN.md (Embedder and Uploader)
+Phase: 2 of 4 (RAG Pipeline)
+Plan: Not yet planned
+Status: Ready to plan
+Last activity: 2026-01-24 - Completed Phase 1 (Data Pipeline)
 
-Progress: [####......] ~30%
+Progress: [####......] ~25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 2 min
-- Total execution time: 6 min
+- Total plans completed: 4
+- Average duration: 2.5 min
+- Total execution time: 10 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-pipeline | 3 | 6 min | 2 min |
+| 01-data-pipeline | 4 | 10 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (1min), 01-03 (2min)
+- Last 5 plans: 01-01 (3min), 01-02 (1min), 01-03 (2min), 01-04 (4min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -50,19 +50,40 @@ Recent decisions affecting current work:
 - 50-item batches for embeddings to stay under token limits
 - 100-item batches for Supabase inserts for performance
 - Heading context prepended to chunks for better semantic embedding
+- Windows path fix: convert backslashes for glob compatibility
 
 ### Pending Todos
 
-- User must enable pgvector extension in Supabase
-- User must run schema.sql in Supabase SQL Editor
-- User must configure .env with API keys
+- None for Phase 1 (complete)
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T15:08:35Z
-Stopped at: Completed 01-03-PLAN.md (Embedder and Uploader)
+Last session: 2026-01-24
+Stopped at: Phase 1 complete, ready for Phase 2 planning
 Resume file: None
+
+## Phase 1 Completion Summary
+
+**Delivered:**
+- CLI ingestion pipeline (`npm run ingest`)
+- Markdown loader with frontmatter parsing
+- Semantic chunker with heading context
+- Embedding generator via OpenRouter
+- Supabase uploader with upsert support
+- pgvector schema with similarity search RPC
+
+**Files created:**
+- scripts/ingest/index.ts (CLI entry)
+- scripts/ingest/loader.ts
+- scripts/ingest/chunker.ts
+- scripts/ingest/embedder.ts
+- scripts/ingest/uploader.ts
+- scripts/ingest/types.ts
+- scripts/db/schema.sql
+- package.json, tsconfig.json, .env.example
+
+**Verified:** User confirmed end-to-end pipeline works
