@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 3 of 4 (Chat Interface)
-Plan: 2 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-01-24 - Completed 03-02-PLAN.md (Sidebar components)
+Last activity: 2026-01-24 - Completed 03-03-PLAN.md (Chat components)
 
-Progress: [######....] ~65%
+Progress: [#######...] ~70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 3.3 min
-- Total execution time: 27.2 min
+- Total plans completed: 9
+- Average duration: 3.5 min
+- Total execution time: 32.2 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [######....] ~65%
 |-------|-------|-------|----------|
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
 | 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
-| 03-chat-interface | 2 | 8 min | 4 min |
+| 03-chat-interface | 3 | 13 min | 4.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2.2min), 02-02 (7min), 03-01 (4min), 03-02 (4min)
+- Last 5 plans: 02-02 (7min), 03-01 (4min), 03-02 (4min), 03-03 (5min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -68,6 +68,9 @@ Recent decisions affecting current work:
 - API key shows last 6 chars as hint when present
 - Mobile sidebar as overlay with fixed toggle button at bottom-left
 - Model selection persisted to localStorage separately
+- AI SDK v6 DefaultChatTransport for useChat configuration
+- UIMessage parts array extraction (no content property in v6)
+- sendMessage { text } format instead of { role, content }
 
 ### Pending Todos
 
@@ -80,7 +83,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 03-02-PLAN.md (Sidebar components)
+Stopped at: Completed 03-03-PLAN.md (Chat components)
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -152,4 +155,22 @@ Resume file: None
 - src/components/sidebar/ConversationList.tsx
 - src/components/sidebar/Sidebar.tsx
 
-**Next:** Plan 03 (Chat area components)
+**Plan 03 (Chat Components) - Complete:**
+- MarkdownRenderer with react-markdown and syntax highlighting
+- SourcesCitation expandable source list
+- TypingIndicator animated loading state
+- MessageBubble role-based styling with markdown
+- MessageList auto-scroll with useScrollAnchor
+- ChatInput form with submit/stop functionality
+- ChatContainer orchestrating useChat with DefaultChatTransport
+
+**Files created:**
+- src/components/chat/MarkdownRenderer.tsx
+- src/components/chat/SourcesCitation.tsx
+- src/components/chat/TypingIndicator.tsx
+- src/components/chat/MessageBubble.tsx
+- src/components/chat/MessageList.tsx
+- src/components/chat/ChatInput.tsx
+- src/components/chat/ChatContainer.tsx
+
+**Next:** Plan 04 (Page integration and final wiring)
