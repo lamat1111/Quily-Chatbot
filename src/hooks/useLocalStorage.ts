@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Hook for persisting state to localStorage with SSR hydration safety.
+ * Syncs across components via custom events.
  *
  * @param key - localStorage key
  * @param initialValue - default value used during SSR and before hydration
@@ -35,13 +36,33 @@ export function useLocalStorage<T>(
     setIsHydrated(true);
   }, [key]);
 
-  // Memoized setter that syncs to localStorage
+  // Listen for changes from other components using the same key
+  useEffect(() => {
+    const handleStorageChange = (e: CustomEvent<{ key: string; value: T }>) => {
+      if (e.detail.key === key) {
+        setStoredValue(e.detail.value);
+      }
+    };
+
+    window.addEventListener('local-storage-change', handleStorageChange as EventListener);
+    return () => {
+      window.removeEventListener('local-storage-change', handleStorageChange as EventListener);
+    };
+  }, [key]);
+
+  // Memoized setter that syncs to localStorage and notifies other components
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
       setStoredValue((prev) => {
         const valueToStore = value instanceof Function ? value(prev) : value;
         try {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          // Dispatch custom event to sync other hook instances
+          window.dispatchEvent(
+            new CustomEvent('local-storage-change', {
+              detail: { key, value: valueToStore },
+            })
+          );
         } catch (error) {
           console.warn(`Error setting localStorage key "${key}":`, error);
         }

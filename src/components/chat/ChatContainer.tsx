@@ -7,6 +7,7 @@ import type { UIMessage } from '@ai-sdk/react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
+import { useSettingsStore } from '@/src/stores/settingsStore';
 
 interface ChatContainerProps {
   apiKey: string;
@@ -35,6 +36,7 @@ export function ChatContainer({
 }: ChatContainerProps) {
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
+  const openSettings = useSettingsStore((state) => state.openSettings);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
 
   // Debounce ref for store updates
@@ -183,6 +185,7 @@ export function ChatContainer({
       <ChatInput
         onSubmit={handleSubmit}
         onStop={handleStop}
+        onOpenSettings={openSettings}
         isStreaming={isStreaming}
         disabled={!hasApiKey}
       />

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
+import { useSettingsStore } from '@/src/stores/settingsStore';
 import {
   validateApiKey,
   RECOMMENDED_MODELS,
@@ -24,6 +25,7 @@ interface SettingsModalProps {
  */
 export function SettingsModal({ children }: SettingsModalProps) {
   const [open, setOpen] = useState(false);
+  const { isOpen: storeIsOpen, closeSettings } = useSettingsStore();
   const [apiKey, setApiKey, apiKeyHydrated] = useLocalStorage<string>(
     'openrouter-api-key',
     ''
@@ -37,9 +39,23 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
 
+  // Sync with store - allow opening from anywhere
+  useEffect(() => {
+    if (storeIsOpen && !open) {
+      setOpen(true);
+      if (apiKeyHydrated) {
+        setInputValue(apiKey);
+        setValidationResult(null);
+      }
+    }
+  }, [storeIsOpen, open, apiKey, apiKeyHydrated]);
+
   // Sync input with stored key when modal opens
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
+    if (!isOpen) {
+      closeSettings(); // Sync store when closing
+    }
     if (isOpen && apiKeyHydrated) {
       setInputValue(apiKey);
       setValidationResult(null);

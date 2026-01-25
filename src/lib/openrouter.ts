@@ -60,7 +60,10 @@ export const RECOMMENDED_MODELS = [
 export type RecommendedModel = (typeof RECOMMENDED_MODELS)[number];
 
 /**
- * Validates an OpenRouter API key by calling the /models endpoint.
+ * Validates an OpenRouter API key by checking account credits.
+ *
+ * Uses /api/v1/credits which requires authentication - returns 401 for invalid keys.
+ * The /models endpoint is public and doesn't validate keys.
  *
  * @param apiKey - OpenRouter API key to validate
  * @returns true if the API key is valid, false otherwise
@@ -71,7 +74,7 @@ export async function validateApiKey(apiKey: string): Promise<boolean> {
   }
 
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/models', {
+    const response = await fetch('https://openrouter.ai/api/v1/credits', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${apiKey}`,
