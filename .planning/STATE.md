@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 4 of 4 (Polish) - IN PROGRESS
-Plan: 2 of 5 complete (04-01 + 04-02)
-Status: Wave 1 complete
-Last activity: 2026-01-25 - Completed 04-01-PLAN.md (Theme Toggle)
+Plan: 4 of 5 complete (04-01, 04-02, 04-03, 04-04)
+Status: Wave 2 in progress
+Last activity: 2026-01-25 - Completed 04-04-PLAN.md (API Key Modal)
 
-Progress: [#########.] ~90%
+Progress: [##########] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 4.0 min
-- Total execution time: 44.2 min
+- Total plans completed: 14
+- Average duration: 3.8 min
+- Total execution time: 53.2 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [#########.] ~90%
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
 | 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
 | 03-chat-interface | 3 | 13 min | 4.3 min |
-| 04-polish | 2 | 12 min | 6 min |
+| 04-polish | 4 | 21 min | 5.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (4min), 03-03 (5min), 03-04 (5min), 04-01 (10min), 04-02 (2min)
+- Last 5 plans: 03-04 (5min), 04-01 (10min), 04-02 (2min), 04-03 (4min), 04-04 (3min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -79,6 +79,8 @@ Recent decisions affecting current work:
 - next-themes with attribute=class and defaultTheme=dark
 - mounted state pattern for hydration-safe theme toggle
 - Theme colors: gray-50/100/200 light, gray-700/800/900 dark
+- Radix Dialog for accessible modals with focus trap
+- Modal trigger pattern: wrap trigger as children with asChild
 
 ### Pending Todos
 
@@ -91,7 +93,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 04-01-PLAN.md (Theme Toggle)
+Stopped at: Completed 04-04-PLAN.md (API Key Modal)
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -191,3 +193,22 @@ Resume file: None
 - src/hooks/useCopyToClipboard.ts
 - src/components/ui/CopyButton.tsx
 - src/components/ui/Skeleton.tsx
+
+**Plan 03 (Copy Button for Code Blocks) - Complete:**
+- Integrated CopyButton into MarkdownRenderer code blocks
+- Hover-reveal ghost variant for non-intrusive UX
+
+**Files modified:**
+- src/components/chat/MarkdownRenderer.tsx
+
+**Plan 04 (API Key Modal) - Complete:**
+- ApiKeyModal component with Radix Dialog for accessibility
+- OpenRouter explanation and signup link for new users
+- Status indicator in sidebar (green/red dot)
+- Replaced inline ApiKeyConfig with modal trigger
+
+**Files created:**
+- src/components/ui/ApiKeyModal.tsx
+
+**Files modified:**
+- src/components/sidebar/Sidebar.tsx
