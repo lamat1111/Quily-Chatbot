@@ -70,6 +70,19 @@ export function ChatContainer({
     stop();
   }, [stop]);
 
+  // Global Escape to stop streaming
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && (status === 'streaming' || status === 'submitted')) {
+        e.preventDefault();
+        stop();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [status, stop]);
+
   // Sync messages to conversation store when they change
   useEffect(() => {
     if (conversationId && messages.length > 0) {
