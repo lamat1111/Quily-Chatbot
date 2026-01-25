@@ -79,7 +79,7 @@ export function ConversationList() {
         <button
           onClick={handleNewChat}
           className="
-            w-full px-4 py-2
+            w-full px-4 py-2 cursor-pointer
             text-sm font-medium text-white
             bg-blue-600 hover:bg-blue-700
             rounded-lg
@@ -144,7 +144,7 @@ export function ConversationList() {
                 }}
                 className="
                   absolute right-2 top-1/2 -translate-y-1/2
-                  p-1
+                  p-1 cursor-pointer
                   text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400
                   opacity-0 group-hover:opacity-100
                   transition-opacity

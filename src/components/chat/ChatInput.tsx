@@ -78,7 +78,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={onStop}
-              className="flex-shrink-0 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700
+              className="flex-shrink-0 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 cursor-pointer
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
             >
@@ -97,7 +97,7 @@ export function ChatInput({
             <button
               type="submit"
               disabled={disabled || !input.trim()}
-              className="flex-shrink-0 px-4 py-3 rounded-xl
+              className="flex-shrink-0 px-4 py-3 rounded-xl cursor-pointer
                          bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900

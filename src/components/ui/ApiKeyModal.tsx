@@ -140,7 +140,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
               <button
                 onClick={handleSave}
                 disabled={isValidating || !inputValue.trim()}
-                className="flex-1 px-4 py-2 text-sm font-medium rounded-lg
+                className="flex-1 px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
                   bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400
                   text-white transition-colors
                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
@@ -152,7 +152,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
               {apiKey && (
                 <button
                   onClick={handleClear}
-                  className="px-4 py-2 text-sm font-medium rounded-lg
+                  className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
                     bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600
                     text-gray-700 dark:text-gray-300 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
@@ -182,7 +182,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
           {/* Close button */}
           <Dialog.Close asChild>
             <button
-              className="absolute top-4 right-4 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="absolute top-4 right-4 p-1 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label="Close"
             >
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

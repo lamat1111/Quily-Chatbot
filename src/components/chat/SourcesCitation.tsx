@@ -30,7 +30,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1"
+        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1 cursor-pointer"
       >
         <span>{sources.length} source{sources.length !== 1 ? 's' : ''}</span>
         <svg

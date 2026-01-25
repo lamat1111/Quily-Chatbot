@@ -37,7 +37,7 @@ export function Sidebar() {
         className={`
           lg:hidden
           fixed top-4 z-50
-          p-2
+          p-2 cursor-pointer
           bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200
           rounded-lg shadow-md border border-gray-200 dark:border-gray-700
           hover:bg-gray-100 dark:hover:bg-gray-700
@@ -82,7 +82,7 @@ export function Sidebar() {
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-30 bg-black/70"
+          className="lg:hidden fixed inset-0 z-30 bg-black/70 cursor-pointer"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -112,7 +112,7 @@ export function Sidebar() {
         <div className="p-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
           {/* API Key Configuration */}
           <ApiKeyModal>
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg cursor-pointer
               text-gray-700 dark:text-gray-300
               hover:bg-gray-100 dark:hover:bg-gray-700
               transition-colors text-left">
