@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { Components } from 'react-markdown';
+import { CopyButton } from '@/src/components/ui/CopyButton';
 
 interface MarkdownRendererProps {
   content: string;
@@ -15,7 +16,7 @@ interface MarkdownRendererProps {
  *
  * Features:
  * - GitHub Flavored Markdown support (tables, strikethrough, etc.)
- * - Syntax highlighting for code blocks
+ * - Syntax highlighting for code blocks with hover-reveal copy button
  * - Inline code with gray background
  * - Styled headings, lists, links, paragraphs
  */
@@ -30,22 +31,33 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       const isBlock = language !== null;
 
       if (isBlock) {
+        // Pre-compute code string for both SyntaxHighlighter and CopyButton
+        const codeString = String(children).replace(/\n$/, '');
+
         return (
-          <SyntaxHighlighter
-            style={oneDark}
-            language={language}
-            PreTag="div"
-            className="rounded-md my-4"
-          >
-            {String(children).replace(/\n$/, '')}
-          </SyntaxHighlighter>
+          <div className="relative group my-4">
+            <CopyButton
+              text={codeString}
+              size="sm"
+              variant="ghost"
+              className="absolute right-2 top-2 z-10"
+            />
+            <SyntaxHighlighter
+              style={oneDark}
+              language={language}
+              PreTag="div"
+              className="rounded-md !bg-gray-800 dark:!bg-gray-800"
+            >
+              {codeString}
+            </SyntaxHighlighter>
+          </div>
         );
       }
 
-      // Inline code
+      // Inline code - theme-aware background
       return (
         <code
-          className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono"
+          className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono"
           {...props}
         >
           {children}
