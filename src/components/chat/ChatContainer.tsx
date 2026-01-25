@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useMemo, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from '@ai-sdk/react';
@@ -21,6 +21,9 @@ interface ChatContainerProps {
  * - Syncs messages to conversation store
  * - Handles message submission and streaming
  * - Loads stored messages when switching conversations
+ *
+ * Note: This component should be rendered with key={conversationId} to force
+ * remount when switching conversations, ensuring a clean useChat state.
  */
 export function ChatContainer({
   apiKey,
@@ -29,7 +32,7 @@ export function ChatContainer({
 }: ChatContainerProps) {
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
-  const prevConversationIdRef = useRef<string | null>(null);
+  const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
 
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
@@ -51,22 +54,15 @@ export function ChatContainer({
     transport,
   });
 
-  // Load stored messages when conversation changes
+  // Load stored messages on mount (component remounts when conversationId changes via key prop)
   useEffect(() => {
-    // Only load when conversationId actually changes
-    if (conversationId === prevConversationIdRef.current) return;
-    prevConversationIdRef.current = conversationId;
+    if (hasLoadedInitial) return;
+    setHasLoadedInitial(true);
 
-    if (!conversationId) {
-      setMessages([]);
-      return;
-    }
+    if (!conversationId) return;
 
     const conversation = conversations.find((c) => c.id === conversationId);
-    if (!conversation || conversation.messages.length === 0) {
-      setMessages([]);
-      return;
-    }
+    if (!conversation || conversation.messages.length === 0) return;
 
     // Convert stored Message format to UIMessage format
     const uiMessages: UIMessage[] = conversation.messages.map((msg) => ({
@@ -75,8 +71,11 @@ export function ChatContainer({
       parts: [{ type: 'text', text: msg.content }],
     }));
 
-    setMessages(uiMessages);
-  }, [conversationId, conversations, setMessages]);
+    // Use setTimeout to ensure useChat has fully initialized
+    setTimeout(() => {
+      setMessages(uiMessages);
+    }, 0);
+  }, [conversationId, conversations, setMessages, hasLoadedInitial]);
 
   // Determine if currently streaming
   const isStreaming = status === 'streaming' || status === 'submitted';

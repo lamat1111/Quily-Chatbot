@@ -59,7 +59,7 @@ export function MessageBubble({ message, isStreaming = false }: MessageBubblePro
   if (isUser) {
     return (
       <div className="flex justify-start mb-4">
-        <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+        <div className="max-w-[95%] sm:max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-bl-sm px-4 py-3">
           <p className="whitespace-pre-wrap">{textContent}</p>
         </div>
       </div>
@@ -69,10 +69,10 @@ export function MessageBubble({ message, isStreaming = false }: MessageBubblePro
   // Assistant message
   return (
     <div className="flex justify-start mb-4">
-      <div className="max-w-[80%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
+      <div className="max-w-[95%] sm:max-w-[80%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
         {/* Header with copy button */}
         <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Assistant</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Quily</span>
           {textContent && (
             <CopyButton
               text={textContent}

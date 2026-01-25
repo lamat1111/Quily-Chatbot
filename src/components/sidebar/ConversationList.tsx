@@ -38,13 +38,17 @@ function truncateTitle(title: string, maxLength: number = 30): string {
   return title.slice(0, maxLength) + '...';
 }
 
+interface ConversationListProps {
+  onNavigate?: () => void;
+}
+
 /**
  * Conversation history list with new/switch/delete functionality.
  *
  * Uses Zustand store for conversation state.
  * Waits for hydration before rendering to prevent SSR mismatch.
  */
-export function ConversationList() {
+export function ConversationList({ onNavigate }: ConversationListProps = {}) {
   const conversations = useConversationStore((s) => s.conversations);
   const activeId = useConversationStore((s) => s.activeId);
   const hasHydrated = useConversationStore((s) => s._hasHydrated);
@@ -70,6 +74,7 @@ export function ConversationList() {
 
   const handleNewChat = () => {
     addConversation();
+    onNavigate?.();
   };
 
   return (
@@ -126,7 +131,10 @@ export function ConversationList() {
                     : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
                 }
               `}
-              onClick={() => setActive(conversation.id)}
+              onClick={() => {
+                setActive(conversation.id);
+                onNavigate?.();
+              }}
             >
               <div className="pr-6">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -143,13 +151,17 @@ export function ConversationList() {
                   e.stopPropagation();
                   deleteConversation(conversation.id);
                 }}
+                style={{ cursor: 'pointer' }}
                 className="
                   absolute right-2 top-1/2 -translate-y-1/2
-                  p-1 cursor-pointer
-                  text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400
+                  p-1.5 rounded
+                  text-gray-400 dark:text-gray-500
+                  hover:text-red-500 dark:hover:text-red-400
+                  hover:bg-gray-200 dark:hover:bg-gray-600
                   opacity-0 group-hover:opacity-100
-                  transition-opacity
+                  transition-all
                 "
+                title="Delete conversation"
                 aria-label="Delete conversation"
               >
                 <svg

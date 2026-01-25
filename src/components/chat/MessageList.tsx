@@ -60,7 +60,7 @@ export function MessageList({ messages, status, error }: MessageListProps) {
       >
         <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
           <div className="text-4xl mb-4">Q</div>
-          <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-200">Quilibrium Chat</p>
+          <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-200">Quily Chat</p>
           <p>Ask a question about Quilibrium to get started</p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function MessageList({ messages, status, error }: MessageListProps) {
           messages.length === 0 || messages[messages.length - 1].role === 'user'
         ) && (
           <div className="flex justify-start mb-4">
-            <div className="max-w-[80%] bg-gray-200 dark:bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-2">
+            <div className="max-w-[95%] sm:max-w-[80%] bg-gray-200 dark:bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-2">
               <TypingIndicator />
             </div>
           </div>

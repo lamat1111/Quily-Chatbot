@@ -9,19 +9,19 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Chat Interface
 
-- [ ] **CHAT-01**: User can type a question in natural language and submit
-- [ ] **CHAT-02**: Response streams character-by-character as it generates
-- [ ] **CHAT-03**: Loading/typing indicator displays while waiting for response
-- [ ] **CHAT-04**: Error messages display for API failures and rate limits
-- [ ] **CHAT-05**: User can stop generation mid-stream
+- [x] **CHAT-01**: User can type a question in natural language and submit
+- [x] **CHAT-02**: Response streams character-by-character as it generates
+- [x] **CHAT-03**: Loading/typing indicator displays while waiting for response
+- [x] **CHAT-04**: Error messages display for API failures and rate limits
+- [x] **CHAT-05**: User can stop generation mid-stream
 
 ### API Key Management
 
-- [ ] **KEY-01**: User can enter OpenRouter API key
-- [ ] **KEY-02**: API key persists in browser localStorage across sessions
-- [ ] **KEY-03**: Clear feedback shows if API key is valid or invalid
-- [ ] **KEY-04**: User can select LLM model from dropdown (Llama 3.1 70B, Mixtral 8x7B, Qwen 2.5, etc.)
-- [ ] **KEY-05**: User can toggle API key visibility (show/hide)
+- [x] **KEY-01**: User can enter OpenRouter API key
+- [x] **KEY-02**: API key persists in browser localStorage across sessions
+- [x] **KEY-03**: Clear feedback shows if API key is valid or invalid
+- [x] **KEY-04**: User can select LLM model from dropdown (Llama 3.1 70B, Mixtral 8x7B, Qwen 2.5, etc.)
+- [x] **KEY-05**: API key always masked (security decision - no reveal option)
 
 ### RAG Pipeline
 
@@ -32,11 +32,18 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content Rendering
 
-- [ ] **RENDER-01**: Responses render with markdown formatting (headers, lists, links, bold, italic)
-- [ ] **RENDER-02**: Code blocks display with syntax highlighting
-- [ ] **RENDER-03**: UI is mobile-responsive (works on phones and tablets)
+- [x] **RENDER-01**: Responses render with markdown formatting (headers, lists, links, bold, italic)
+- [x] **RENDER-02**: Code blocks display with syntax highlighting
+- [x] **RENDER-03**: UI is mobile-responsive (works on phones and tablets)
 - [ ] **RENDER-04**: User can copy code snippets with one click
 - [ ] **RENDER-05**: User can toggle between light and dark mode
+
+### Polish Features
+
+- [ ] **POLISH-01**: User can copy entire assistant response with one click
+- [ ] **POLISH-02**: Keyboard shortcuts (Ctrl/Cmd+Enter to send, Escape to stop)
+- [ ] **POLISH-03**: Loading skeleton animations during page load and API calls
+- [ ] **POLISH-04**: API key config in modal with OpenRouter explanation and signup link
 
 ### Data Ingestion
 
@@ -92,27 +99,31 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RAG-02 | Phase 2 | Complete |
 | RAG-03 | Phase 2 | Complete |
 | RAG-04 | Phase 2 | Complete |
-| KEY-01 | Phase 3 | Pending |
-| KEY-02 | Phase 3 | Pending |
-| KEY-03 | Phase 3 | Pending |
-| KEY-04 | Phase 3 | Pending |
-| KEY-05 | Phase 3 | Pending |
-| CHAT-01 | Phase 3 | Pending |
-| CHAT-02 | Phase 3 | Pending |
-| CHAT-03 | Phase 3 | Pending |
-| CHAT-04 | Phase 3 | Pending |
-| CHAT-05 | Phase 3 | Pending |
-| RENDER-01 | Phase 3 | Pending |
-| RENDER-02 | Phase 3 | Pending |
-| RENDER-03 | Phase 3 | Pending |
+| KEY-01 | Phase 3 | Complete |
+| KEY-02 | Phase 3 | Complete |
+| KEY-03 | Phase 3 | Complete |
+| KEY-04 | Phase 3 | Complete |
+| KEY-05 | Phase 3 | Complete (always masked) |
+| CHAT-01 | Phase 3 | Complete |
+| CHAT-02 | Phase 3 | Complete |
+| CHAT-03 | Phase 3 | Complete |
+| CHAT-04 | Phase 3 | Complete |
+| CHAT-05 | Phase 3 | Complete |
+| RENDER-01 | Phase 3 | Complete |
+| RENDER-02 | Phase 3 | Complete |
+| RENDER-03 | Phase 3 | Complete |
 | RENDER-04 | Phase 4 | Pending |
 | RENDER-05 | Phase 4 | Pending |
+| POLISH-01 | Phase 4 | Pending |
+| POLISH-02 | Phase 4 | Pending |
+| POLISH-03 | Phase 4 | Pending |
+| POLISH-04 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 23 total
-- Mapped to phases: 23
+- v1 requirements: 27 total
+- Mapped to phases: 27
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after roadmap creation*
+*Last updated: 2026-01-24 after Phase 3 completion, Phase 4 expanded*

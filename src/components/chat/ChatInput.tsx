@@ -52,9 +52,9 @@ export function ChatInput({
       : 'Ask a question about Quilibrium...';
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-        <div className="flex gap-3 items-end">
+        <div className="flex gap-2 sm:gap-3 items-end">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -62,12 +62,12 @@ export function ChatInput({
             placeholder={placeholderText}
             disabled={disabled || isStreaming}
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600
-                       bg-gray-100 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-gray-100
+            className="flex-1 min-w-0 resize-none rounded-xl border border-gray-300 dark:border-gray-600
+                       bg-gray-100 dark:bg-gray-800 px-3 sm:px-4 py-3 text-gray-900 dark:text-gray-100
                        placeholder-gray-400
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                        disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50
-                       min-h-[48px] max-h-[200px]"
+                       min-h-12 max-h-50"
             style={{
               height: 'auto',
               overflow: 'auto',
@@ -78,7 +78,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={onStop}
-              className="flex-shrink-0 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 cursor-pointer
+              className="flex-shrink-0 px-3 sm:px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 cursor-pointer
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
             >
@@ -90,20 +90,21 @@ export function ChatInput({
                 >
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
-                Stop
+                <span className="hidden sm:inline">Stop</span>
               </span>
             </button>
           ) : (
             <button
               type="submit"
               disabled={disabled || !input.trim()}
-              className="flex-shrink-0 px-4 py-3 rounded-xl cursor-pointer
+              className="flex-shrink-0 px-3 sm:px-4 py-3 rounded-xl cursor-pointer
                          bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900
                          disabled:cursor-not-allowed"
             >
               <span className="flex items-center gap-2">
+                {/* Arrow pointing right for send */}
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -114,10 +115,10 @@ export function ChatInput({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
-                Send
+                <span className="hidden sm:inline">Send</span>
               </span>
             </button>
           )}

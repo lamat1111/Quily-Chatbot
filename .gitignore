@@ -65,6 +65,7 @@ tmp/
 temp/
 *.tmp
 *.temp
+.screenshots/
 
 # Package manager locks (uncomment if needed)
 # package-lock.json
