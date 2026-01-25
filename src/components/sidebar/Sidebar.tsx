@@ -36,7 +36,7 @@ export function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 cursor-pointer text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="p-2 cursor-pointer text-text-primary rounded-lg hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
           aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {sidebarOpen ? (
@@ -71,7 +71,7 @@ export function Sidebar() {
             </svg>
           )}
         </button>
-        <h1 className="ml-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h1 className="ml-2 text-lg font-semibold text-text-primary">
           Quily Chat
           <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
         </h1>
@@ -100,7 +100,7 @@ export function Sidebar() {
       >
         {/* Header with title and theme toggle */}
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h1 className="text-lg font-semibold text-text-primary">
             Quily Chat
             <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
           </h1>
@@ -148,8 +148,8 @@ export function Sidebar() {
             <button
               style={{ cursor: 'pointer' }}
               className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
-              text-gray-700 dark:text-gray-300
-              hover:bg-gray-100 dark:hover:bg-gray-700
+              text-text-secondary
+              hover:bg-surface/10 dark:hover:bg-surface/15
               transition-colors text-left">
               {/* Status indicator */}
               <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />

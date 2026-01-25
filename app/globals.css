@@ -8,6 +8,17 @@
   --brand-accent-hover: #E55500;
   --brand-secondary: #40001B;
   --brand-secondary-light: #5A0026;
+  /* Lighter gradient for light theme buttons */
+  --brand-gradient-from: #8B2942;
+  --brand-gradient-to: #FF6000;
+  --brand-gradient-from-hover: #A03350;
+  --brand-gradient-to-hover: #E55500;
+  /* Primary text color - burgundy for light theme */
+  --brand-text-primary: #40001B;
+  --brand-text-secondary: #5A0026;
+  --brand-text-muted: #6B3344;
+  /* Surface color for backgrounds with opacity - burgundy for light theme */
+  --brand-surface: #40001B;
 }
 
 /* Dark theme values - same classes, different colors */
@@ -16,6 +27,17 @@
   --brand-accent-hover: #C05515;
   --brand-secondary: #5A0026;
   --brand-secondary-light: #70002F;
+  /* Richer gradient for dark theme */
+  --brand-gradient-from: #5A0026;
+  --brand-gradient-to: #D4601A;
+  --brand-gradient-from-hover: #70002F;
+  --brand-gradient-to-hover: #C05515;
+  /* Primary text color - light gray for dark theme */
+  --brand-text-primary: #f3f4f6;
+  --brand-text-secondary: #e5e7eb;
+  --brand-text-muted: #9ca3af;
+  /* Surface color for backgrounds with opacity - light gray for dark theme */
+  --brand-surface: #9ca3af;
 }
 
 /* Register colors with Tailwind */
@@ -24,6 +46,26 @@
   --color-accent-hover: var(--brand-accent-hover);
   --color-secondary: var(--brand-secondary);
   --color-secondary-light: var(--brand-secondary-light);
+  --color-gradient-from: var(--brand-gradient-from);
+  --color-gradient-to: var(--brand-gradient-to);
+  --color-gradient-from-hover: var(--brand-gradient-from-hover);
+  --color-gradient-to-hover: var(--brand-gradient-to-hover);
+  --color-text-primary: var(--brand-text-primary);
+  --color-text-secondary: var(--brand-text-secondary);
+  --color-text-muted: var(--brand-text-muted);
+  /* Burgundy base for opacity usage - light theme uses burgundy tint, dark uses gray */
+  --color-surface: var(--brand-surface);
+}
+
+/* Custom text selection colors */
+::selection {
+  background-color: rgba(64, 0, 27, 0.2);
+  color: #40001B;
+}
+
+.dark ::selection {
+  background-color: rgba(212, 96, 26, 0.3);
+  color: #f3f4f6;
 }
 
 /* Ensure all interactive elements have pointer cursor */

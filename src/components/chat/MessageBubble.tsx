@@ -63,7 +63,7 @@ export const MessageBubble = memo(function MessageBubble({
   if (isUser) {
     return (
       <div className="flex justify-end mb-6">
-        <div className="max-w-[85%] sm:max-w-[70%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl px-4 py-3">
+        <div className="max-w-[85%] sm:max-w-[70%] bg-surface/10 dark:bg-surface/15 text-text-primary rounded-2xl px-4 py-3">
           <p className="whitespace-pre-wrap">{textContent}</p>
         </div>
       </div>
@@ -76,7 +76,7 @@ export const MessageBubble = memo(function MessageBubble({
   }
 
   return (
-    <div className="mb-6 text-gray-900 dark:text-gray-100">
+    <div className="mb-6 text-text-primary">
       <MarkdownRenderer content={textContent} isStreaming={isStreaming} />
 
       {/* Sources - show above footer */}

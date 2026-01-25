@@ -60,9 +60,9 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
   if (!hasHydrated) {
     return (
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
-        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
-        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+        <div className="h-14 bg-surface/10 dark:bg-surface/15 rounded-lg animate-pulse" />
+        <div className="h-14 bg-surface/10 dark:bg-surface/15 rounded-lg animate-pulse" />
+        <div className="h-14 bg-surface/10 dark:bg-surface/15 rounded-lg animate-pulse" />
       </div>
     );
   }
@@ -90,8 +90,8 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
                 transition-colors
                 ${
                   activeId === conversation.id
-                    ? 'bg-gray-200 dark:bg-gray-700'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                    ? 'bg-surface/15 dark:bg-surface/20'
+                    : 'hover:bg-surface/8 dark:hover:bg-surface/10'
                 }
               `}
               onClick={() => {
@@ -100,7 +100,7 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
               }}
             >
               <div className="pr-6">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                <p className="text-sm font-medium text-text-primary truncate">
                   {truncateTitle(conversation.title)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -120,7 +120,7 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
                   p-1.5 rounded
                   text-gray-400 dark:text-gray-500
                   hover:text-red-500 dark:hover:text-red-400
-                  hover:bg-gray-200 dark:hover:bg-gray-600
+                  hover:bg-surface/15 dark:hover:bg-surface/20
                   opacity-0 group-hover:opacity-100
                   transition-all
                 "
