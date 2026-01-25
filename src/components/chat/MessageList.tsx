@@ -12,7 +12,17 @@ interface MessageListProps {
   messages: UIMessage[];
   status: ChatStatus;
   error: Error | null;
+  onQuickAction?: (command: string) => void;
 }
+
+/**
+ * Quick action buttons for the empty chat state
+ */
+const QUICK_ACTIONS = [
+  { command: '/help', label: 'Help', description: 'See available commands' },
+  { command: '/examples', label: 'Examples', description: 'Example questions' },
+  { command: '/sources', label: 'Sources', description: 'View knowledge sources' },
+];
 
 /**
  * Scrollable message list with auto-scroll behavior.
@@ -23,7 +33,7 @@ interface MessageListProps {
  * - Displays error messages
  * - Empty state for new conversations
  */
-export function MessageList({ messages, status, error }: MessageListProps) {
+export function MessageList({ messages, status, error, onQuickAction }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
@@ -61,7 +71,23 @@ export function MessageList({ messages, status, error }: MessageListProps) {
         <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
           <div className="text-4xl mb-4">Q</div>
           <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-200">Quily Chat</p>
-          <p>Ask a question about Quilibrium to get started</p>
+          <p className="mb-6">Ask a question about Quilibrium to get started</p>
+
+          {/* Quick action buttons */}
+          {onQuickAction && (
+            <div className="flex flex-wrap justify-center gap-2">
+              {QUICK_ACTIONS.map((action) => (
+                <button
+                  key={action.command}
+                  onClick={() => onQuickAction(action.command)}
+                  className="px-4 py-2 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors text-gray-700 dark:text-gray-300 cursor-pointer"
+                  title={action.description}
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );

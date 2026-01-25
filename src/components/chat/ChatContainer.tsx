@@ -145,6 +145,7 @@ export function ChatContainer({
         messages={messages}
         status={status}
         error={error || null}
+        onQuickAction={handleSubmit}
       />
 
       <ChatInput

@@ -12,6 +12,87 @@ import {
 } from '@/src/lib/rag/prompt';
 
 /**
+ * Command responses for Quily assistant
+ */
+const COMMAND_RESPONSES: Record<string, string> = {
+  '/help': `# Quily Commands
+
+Here are the available commands:
+
+- \`/help\` — Display this help message with all available commands
+- \`/examples\` — See example questions you can ask me
+- \`/sources\` — View information about my knowledge sources
+
+---
+
+**What can I help you with?**
+
+I'm Quily, your Quilibrium protocol assistant. I can help you with:
+- Understanding Quilibrium's architecture and core concepts
+- Node setup and operation questions
+- Technical details from the whitepaper
+- Writing content related to Quilibrium
+
+Just ask me anything about Quilibrium!`,
+
+  '/examples': `# Example Questions
+
+Here are some questions you can ask me:
+
+**Getting Started:**
+- "What is Quilibrium?"
+- "How do I set up a Quilibrium node?"
+- "What are the system requirements for running a node?"
+
+**Technical Concepts:**
+- "How does Quilibrium's consensus mechanism work?"
+- "What is the role of the MPC (Multi-Party Computation) in Quilibrium?"
+- "Explain Quilibrium's approach to privacy"
+
+**Node Operations:**
+- "How do I check if my node is running correctly?"
+- "What ports need to be open for a Quilibrium node?"
+- "How do I update my node to the latest version?"
+
+**Ecosystem:**
+- "What is QConsole?"
+- "How does S3 storage work on Quilibrium?"
+
+---
+
+Feel free to ask me any of these or your own questions about Quilibrium!`,
+
+  '/sources': `# Knowledge Sources
+
+My knowledge comes from the following official sources:
+
+**Primary Documentation:**
+- [Official Quilibrium Whitepaper](https://quilibrium.com/quilibrium.pdf) — Core concepts, architecture, and technical details
+- [Quilibrium Documentation](https://docs.quilibrium.com) — Node operation guides and tutorials
+
+**Key Topics Covered:**
+- Quilibrium protocol architecture
+- Consensus mechanisms
+- Node setup and operation
+- MPC (Multi-Party Computation)
+- Privacy and security features
+- QConsole services (S3, KMS)
+
+---
+
+**Important Note:**
+> Use critical thinking — I do my best, but I can still make mistakes! Quilibrium is a complex and evolving technology. For the most accurate and up-to-date answers, I recommend consulting the official documentation at [docs.quilibrium.com](https://docs.quilibrium.com) and engaging with the community channels.`,
+};
+
+/**
+ * Check if message is a command and return the response if so
+ */
+function getCommandResponse(message: string): string | null {
+  const trimmed = message.trim().toLowerCase();
+  return COMMAND_RESPONSES[trimmed] || null;
+}
+
+/**
  * Extract text content from message (handles various formats)
  */
 function getMessageContent(msg: Record<string, unknown>): string {
@@ -87,6 +168,23 @@ export async function POST(request: Request) {
         JSON.stringify({ error: 'Empty user message' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Check if this is a command
+    const commandResponse = getCommandResponse(userQuery);
+    if (commandResponse) {
+      // Return command response as a streamed message (for consistency with normal responses)
+      const stream = createUIMessageStream({
+        execute: async ({ writer }) => {
+          // Write the command response as text chunks
+          writer.write({
+            type: 'text-delta',
+            delta: commandResponse,
+            id: 'command-response',
+          });
+        },
+      });
+      return createUIMessageStreamResponse({ stream });
     }
 
     // Retrieve relevant context
