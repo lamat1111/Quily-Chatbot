@@ -45,7 +45,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       // Inline code
       return (
         <code
-          className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono"
+          className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono"
           {...props}
         >
           {children}
@@ -93,7 +93,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
           {children}
         </a>
@@ -102,7 +102,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     blockquote({ children }) {
       return (
-        <blockquote className="border-l-4 border-gray-300 pl-4 my-4 italic text-gray-600 dark:text-gray-400">
+        <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 my-4 italic text-gray-500 dark:text-gray-400">
           {children}
         </blockquote>
       );
@@ -120,7 +120,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     th({ children }) {
       return (
-        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 bg-gray-100 dark:bg-gray-800 font-semibold text-left">
+        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 bg-gray-100 dark:bg-gray-700 font-semibold text-left">
           {children}
         </th>
       );

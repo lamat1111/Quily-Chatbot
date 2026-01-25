@@ -60,10 +60,10 @@ export function ChatInput({
             disabled={disabled || isStreaming}
             rows={1}
             className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600
-                       bg-white dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-gray-100
-                       placeholder-gray-500 dark:placeholder-gray-400
+                       bg-gray-100 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-gray-100
+                       placeholder-gray-400
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                       disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed
+                       disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50
                        min-h-[48px] max-h-[200px]"
             style={{
               height: 'auto',
@@ -77,7 +77,7 @@ export function ChatInput({
               onClick={onStop}
               className="flex-shrink-0 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700
                          text-white font-medium transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
             >
               <span className="flex items-center gap-2">
                 <svg
@@ -95,9 +95,9 @@ export function ChatInput({
               type="submit"
               disabled={disabled || !input.trim()}
               className="flex-shrink-0 px-4 py-3 rounded-xl
-                         bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600
+                         bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
                          text-white font-medium transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900
                          disabled:cursor-not-allowed"
             >
               <span className="flex items-center gap-2">

@@ -53,7 +53,7 @@ export function ApiKeyConfig() {
     <div className="space-y-2">
       <label
         htmlFor="api-key"
-        className="block text-sm font-medium text-gray-700"
+        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
       >
         OpenRouter API Key
       </label>
@@ -68,11 +68,13 @@ export function ApiKeyConfig() {
           placeholder="sk-or-..."
           className={`
             w-full px-3 py-2 text-sm
+            bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100
             border rounded-lg
             focus:outline-none focus:ring-2 focus:ring-blue-500
+            placeholder-gray-400 dark:placeholder-gray-500
             ${isValid === true ? 'border-green-500' : ''}
             ${isValid === false ? 'border-red-500' : ''}
-            ${isValid === null ? 'border-gray-300' : ''}
+            ${isValid === null ? 'border-gray-300 dark:border-gray-600' : ''}
           `}
         />
 
@@ -101,44 +103,48 @@ export function ApiKeyConfig() {
             </svg>
           )}
           {!isValidating && isValid === true && (
-            <svg
-              className="h-5 w-5 text-green-500"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+              <svg
+                className="h-3 w-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
           )}
           {!isValidating && isValid === false && (
-            <svg
-              className="h-5 w-5 text-red-500"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+              <svg
+                className="h-3 w-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
           )}
         </div>
       </div>
 
       {/* Key hint */}
       {keyHint && (
-        <p className="text-xs text-gray-500">{keyHint}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
       )}
 
       {/* Error message */}
       {isValid === false && (
-        <p className="text-xs text-red-600">
+        <p className="text-xs text-red-500 dark:text-red-400">
           Invalid API key. Please check your key and try again.
         </p>
       )}

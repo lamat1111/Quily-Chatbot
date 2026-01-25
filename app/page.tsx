@@ -42,21 +42,21 @@ export default function HomePage() {
     return (
       <div className="flex h-screen">
         {/* Sidebar skeleton */}
-        <div className="hidden lg:block w-72 bg-gray-50 border-r border-gray-200">
+        <div className="hidden lg:block w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
           <div className="p-4 space-y-4">
-            <div className="h-20 bg-gray-200 rounded animate-pulse" />
-            <div className="h-10 bg-gray-200 rounded animate-pulse" />
+            <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
           </div>
           <div className="p-4 space-y-2">
-            <div className="h-6 bg-gray-200 rounded animate-pulse" />
-            <div className="h-6 bg-gray-200 rounded animate-pulse" />
-            <div className="h-6 bg-gray-200 rounded animate-pulse" />
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
           </div>
         </div>
         {/* Chat area skeleton */}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 bg-gray-50 dark:bg-gray-900">
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-gray-400">Loading...</div>
+            <div className="text-gray-500 dark:text-gray-400">Loading...</div>
           </div>
         </main>
       </div>
@@ -64,7 +64,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <main className="flex-1 flex flex-col min-w-0">
         <ChatContainer

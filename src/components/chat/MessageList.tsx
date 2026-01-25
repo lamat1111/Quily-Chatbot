@@ -56,11 +56,11 @@ export function MessageList({ messages, status, error }: MessageListProps) {
     return (
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 flex items-center justify-center"
+        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900"
       >
         <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
           <div className="text-4xl mb-4">Q</div>
-          <p className="text-lg font-medium mb-2">Quilibrium Chat</p>
+          <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-200">Quilibrium Chat</p>
           <p>Ask a question about Quilibrium to get started</p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function MessageList({ messages, status, error }: MessageListProps) {
   return (
     <div
       ref={scrollRef}
-      className="flex-1 overflow-y-auto p-4"
+      className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900"
     >
       <div className="max-w-3xl mx-auto">
         {messages.map((message, index) => (
@@ -86,7 +86,7 @@ export function MessageList({ messages, status, error }: MessageListProps) {
           messages.length === 0 || messages[messages.length - 1].role === 'user'
         ) && (
           <div className="flex justify-start mb-4">
-            <div className="max-w-[80%] bg-gray-100 dark:bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-2">
+            <div className="max-w-[80%] bg-gray-200 dark:bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-2">
               <TypingIndicator />
             </div>
           </div>
@@ -95,7 +95,7 @@ export function MessageList({ messages, status, error }: MessageListProps) {
         {/* Error message */}
         {error && (
           <div className="flex justify-center mb-4">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg px-4 py-3 max-w-md">
+            <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg px-4 py-3 max-w-md">
               <p className="font-medium">Error</p>
               <p className="text-sm mt-1">{error.message || 'An error occurred'}</p>
             </div>

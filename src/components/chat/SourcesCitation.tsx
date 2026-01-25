@@ -26,11 +26,11 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
   }
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3 text-sm">
+    <div className="border-t border-gray-300 dark:border-gray-700 pt-3 mt-3 text-sm">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-1"
+        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1"
       >
         <span>{sources.length} source{sources.length !== 1 ? 's' : ''}</span>
         <svg
@@ -56,9 +56,9 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline dark:text-blue-400 flex items-center gap-1"
+                className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
               >
-                <span className="text-gray-500 dark:text-gray-500">
+                <span className="text-gray-400 dark:text-gray-500">
                   [{index + 1}]
                 </span>
                 <span className="truncate max-w-md">

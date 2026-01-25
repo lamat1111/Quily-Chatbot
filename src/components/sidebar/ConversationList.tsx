@@ -56,9 +56,9 @@ export function ConversationList() {
   if (!hasHydrated) {
     return (
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-14 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-14 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
       </div>
     );
   }
@@ -106,7 +106,7 @@ export function ConversationList() {
       {/* Conversation list */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {sortedConversations.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
             No conversations yet
           </p>
         ) : (
@@ -121,17 +121,17 @@ export function ConversationList() {
                 transition-colors
                 ${
                   activeId === conversation.id
-                    ? 'bg-blue-50'
-                    : 'hover:bg-gray-100'
+                    ? 'bg-gray-200 dark:bg-gray-700'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
                 }
               `}
               onClick={() => setActive(conversation.id)}
             >
               <div className="pr-6">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                   {truncateTitle(conversation.title)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {formatRelativeTime(conversation.updatedAt)}
                 </p>
               </div>
@@ -145,7 +145,7 @@ export function ConversationList() {
                 className="
                   absolute right-2 top-1/2 -translate-y-1/2
                   p-1
-                  text-gray-400 hover:text-red-500
+                  text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400
                   opacity-0 group-hover:opacity-100
                   transition-opacity
                 "
