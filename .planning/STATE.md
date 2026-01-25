@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 4 of 4 (Polish) - IN PROGRESS
-Plan: 2 of 5 complete
-Status: Executing Wave 1
-Last activity: 2026-01-25 - Completed 04-02-PLAN.md (Clipboard & Skeleton Components)
+Plan: 2 of 5 complete (04-01 + 04-02)
+Status: Wave 1 complete
+Last activity: 2026-01-25 - Completed 04-01-PLAN.md (Theme Toggle)
 
 Progress: [#########.] ~90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 3.2 min
-- Total execution time: 34.2 min
+- Total plans completed: 11
+- Average duration: 4.0 min
+- Total execution time: 44.2 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [#########.] ~90%
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
 | 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
 | 03-chat-interface | 3 | 13 min | 4.3 min |
-| 04-polish | 1 | 2 min | 2 min |
+| 04-polish | 2 | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4min), 03-02 (4min), 03-03 (5min), 03-04 (5min), 04-02 (2min)
+- Last 5 plans: 03-02 (4min), 03-03 (5min), 03-04 (5min), 04-01 (10min), 04-02 (2min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -75,6 +75,10 @@ Recent decisions affecting current work:
 - CopyButton self-contained rather than requiring hook import
 - 2-second feedback duration for checkmark visibility
 - Ghost variant for hover-reveal copy buttons
+- Tailwind CSS 4.x @custom-variant for class-based dark mode
+- next-themes with attribute=class and defaultTheme=dark
+- mounted state pattern for hydration-safe theme toggle
+- Theme colors: gray-50/100/200 light, gray-700/800/900 dark
 
 ### Pending Todos
 
@@ -87,7 +91,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 04-02-PLAN.md
+Stopped at: Completed 04-01-PLAN.md (Theme Toggle)
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -166,6 +170,16 @@ Resume file: None
 **Phase 3 Complete**
 
 ## Phase 4 Progress
+
+**Plan 01 (Theme Toggle) - Complete:**
+- next-themes with dark as default theme
+- ThemeToggle button with sun/moon icons
+- Theme-aware styling across all sidebar and chat components
+- Tailwind CSS 4.x @custom-variant for dark mode
+
+**Files created:**
+- src/components/providers/ThemeProvider.tsx
+- src/components/ui/ThemeToggle.tsx
 
 **Plan 02 (Clipboard & Skeleton Components) - Complete:**
 - useCopyToClipboard hook with native Clipboard API
