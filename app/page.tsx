@@ -5,6 +5,7 @@ import { ChatContainer } from '@/src/components/chat/ChatContainer';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { RECOMMENDED_MODELS } from '@/src/lib/openrouter';
+import { ChatSkeleton, ConversationListSkeleton } from '@/src/components/ui/Skeleton';
 
 /**
  * Main chat page integrating sidebar and chat components.
@@ -40,24 +41,24 @@ export default function HomePage() {
 
   if (!isHydrated) {
     return (
-      <div className="flex h-screen">
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         {/* Sidebar skeleton */}
-        <div className="hidden lg:block w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          <div className="p-4 space-y-4">
-            <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        <div className="hidden lg:flex lg:flex-col w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          </div>
+          {/* Config section */}
+          <div className="p-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
           </div>
-          <div className="p-4 space-y-2">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          </div>
+          {/* Conversation list skeleton */}
+          <ConversationListSkeleton />
         </div>
         {/* Chat area skeleton */}
-        <main className="flex-1 flex flex-col min-w-0 bg-gray-50 dark:bg-gray-900">
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-          </div>
+        <main className="flex-1 flex flex-col min-w-0">
+          <ChatSkeleton />
         </main>
       </div>
     );
