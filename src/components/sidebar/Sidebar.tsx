@@ -112,7 +112,9 @@ export function Sidebar() {
         <div className="p-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
           {/* API Key Configuration */}
           <ApiKeyModal>
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg cursor-pointer
+            <button
+              style={{ cursor: 'pointer' }}
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
               text-gray-700 dark:text-gray-300
               hover:bg-gray-100 dark:hover:bg-gray-700
               transition-colors text-left">

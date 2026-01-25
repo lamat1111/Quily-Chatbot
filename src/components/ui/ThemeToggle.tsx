@@ -36,8 +36,9 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      style={{ cursor: 'pointer' }}
       className="
-        p-2 rounded-lg cursor-pointer
+        p-2 rounded-lg
         text-gray-600 dark:text-gray-400
         hover:bg-gray-200 dark:hover:bg-gray-700
         hover:text-gray-900 dark:hover:text-gray-100
