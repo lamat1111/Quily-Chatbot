@@ -217,31 +217,36 @@ export async function POST(request: Request) {
     // Create OpenRouter provider with user's API key
     const openrouter = createOpenRouter({ apiKey });
 
-    // Create UI message stream with sources first, then LLM response
+    // Create UI message stream with LLM response, then sources after completion
     const stream = createUIMessageStream({
       execute: async ({ writer }) => {
-        // Send sources as source-url parts before LLM stream
-        const sources = formatSourcesForClient(chunks);
-        for (const source of sources) {
-          writer.write({
-            type: 'source-url',
-            sourceId: `source-${source.index}`,
-            url: source.url || source.file,
-            title: source.heading || source.file,
-          });
-        }
-
         // Convert messages to standard format for LLM
         const llmMessages = messages.map((m: Record<string, unknown>) => ({
           role: getMessageRole(m),
           content: getMessageContent(m),
         }));
 
-        // Stream LLM response
+        // Prepare sources for sending after stream completes
+        const sources = formatSourcesForClient(chunks);
+
+        // Stream LLM response with onFinish callback to send sources
         const result = streamText({
           model: openrouter(model),
           system: systemPrompt,
           messages: llmMessages,
+          onFinish: () => {
+            // Send sources AFTER LLM stream completes
+            // This ensures sources are part of the same message as the text
+            // Use empty string for non-linkable sources (custom/transcriptions)
+            for (const source of sources) {
+              writer.write({
+                type: 'source-url',
+                sourceId: `source-${source.index}`,
+                url: source.url ?? '',
+                title: source.heading || source.file,
+              });
+            }
+          },
         });
 
         // Merge LLM stream into our stream

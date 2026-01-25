@@ -85,6 +85,38 @@ ${context}`;
 }
 
 /**
+ * Convert a local file path to the official docs website URL
+ *
+ * Transformation rules:
+ * 1. Only works for docs/quilibrium-official/ files
+ * 2. Strip "docs/quilibrium-official/" prefix
+ * 3. Strip numeric prefixes from each path segment (e.g., "03-q-storage" -> "q-storage")
+ * 4. Strip ".md" extension
+ * 5. Prepend "https://docs.quilibrium.com/docs/"
+ *
+ * @param sourcePath - Local file path (e.g., "docs/quilibrium-official/api/03-q-storage/01-overview.md")
+ * @returns Website URL or null if not an official doc
+ */
+function getOfficialDocsUrl(sourcePath: string): string | null {
+  const prefix = 'docs/quilibrium-official/';
+
+  if (!sourcePath.startsWith(prefix)) {
+    return null;
+  }
+
+  // Remove prefix and .md extension
+  const relativePath = sourcePath.slice(prefix.length).replace(/\.md$/, '');
+
+  // Strip numeric prefixes from each path segment (e.g., "03-q-storage" -> "q-storage")
+  const cleanedPath = relativePath
+    .split('/')
+    .map((segment) => segment.replace(/^\d+-/, ''))
+    .join('/');
+
+  return `https://docs.quilibrium.com/docs/${cleanedPath}`;
+}
+
+/**
  * Format retrieved chunks as source references for client display
  *
  * @param chunks - Retrieved chunks with citation indices
@@ -92,16 +124,8 @@ ${context}`;
  */
 export function formatSourcesForClient(chunks: RetrievedChunk[]): SourceReference[] {
   return chunks.map((chunk) => {
-    let url: string | null = null;
-
-    // Generate URL for docs/ files
-    if (chunk.source_file.startsWith('docs/')) {
-      // Remove 'docs/' prefix and '.md' extension
-      const path = chunk.source_file
-        .replace(/^docs\//, '')
-        .replace(/\.md$/, '');
-      url = `https://docs.quilibrium.com/${path}`;
-    }
+    // Only official docs get clickable URLs
+    const url = getOfficialDocsUrl(chunk.source_file);
 
     return {
       index: chunk.citationIndex,
