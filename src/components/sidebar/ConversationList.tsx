@@ -78,8 +78,9 @@ export function ConversationList() {
       <div className="p-2">
         <button
           onClick={handleNewChat}
+          style={{ cursor: 'pointer' }}
           className="
-            w-full px-4 py-2 cursor-pointer
+            w-full px-4 py-2
             text-sm font-medium text-white
             bg-blue-600 hover:bg-blue-700
             rounded-lg
