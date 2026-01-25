@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useMemo, useState } from 'react';
+import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from '@ai-sdk/react';
@@ -13,6 +13,9 @@ interface ChatContainerProps {
   model: string;
   conversationId: string | null;
 }
+
+/** Debounce delay for store updates during streaming (ms) */
+const STORE_UPDATE_DEBOUNCE_MS = 300;
 
 /**
  * Main chat container orchestrating useChat hook with UI components.
@@ -33,6 +36,9 @@ export function ChatContainer({
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
+
+  // Debounce ref for store updates
+  const storeUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
@@ -113,9 +119,20 @@ export function ChatContainer({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [status, stop]);
 
-  // Sync messages to conversation store when they change
+  // Cleanup debounce timeout on unmount
   useEffect(() => {
-    if (conversationId && messages.length > 0) {
+    return () => {
+      if (storeUpdateTimeoutRef.current) {
+        clearTimeout(storeUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Sync messages to conversation store when they change (debounced during streaming)
+  useEffect(() => {
+    if (!conversationId || messages.length === 0) return;
+
+    const doUpdate = () => {
       // Convert UIMessage to store Message format
       const storeMessages: Message[] = messages.map((msg) => {
         // Extract text from parts
@@ -136,8 +153,23 @@ export function ChatContainer({
       });
 
       updateMessages(conversationId, storeMessages);
+    };
+
+    if (isStreaming) {
+      // During streaming, debounce updates to reduce cascade re-renders
+      if (storeUpdateTimeoutRef.current) {
+        clearTimeout(storeUpdateTimeoutRef.current);
+      }
+      storeUpdateTimeoutRef.current = setTimeout(doUpdate, STORE_UPDATE_DEBOUNCE_MS);
+    } else {
+      // Not streaming - update immediately to ensure final state is saved
+      if (storeUpdateTimeoutRef.current) {
+        clearTimeout(storeUpdateTimeoutRef.current);
+        storeUpdateTimeoutRef.current = null;
+      }
+      doUpdate();
     }
-  }, [conversationId, messages, updateMessages]);
+  }, [conversationId, messages, updateMessages, isStreaming]);
 
   return (
     <div className="flex flex-col h-full">

@@ -5,8 +5,8 @@ import { useState, useCallback } from 'react';
 interface CopyButtonProps {
   text: string;
   className?: string;
-  size?: 'sm' | 'md';
-  variant?: 'default' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'ghost' | 'minimal';
 }
 
 /**
@@ -42,17 +42,20 @@ export function CopyButton({
     }
   }, [text]);
 
-  const iconSize = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
+  const iconSize = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-5 h-5' : 'w-5 h-5';
 
-  const baseStyles = 'p-1.5 rounded transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer';
+  const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer';
+  const paddingStyles = variant === 'minimal' ? 'p-0' : 'p-1.5';
   const variantStyles = variant === 'ghost'
     ? 'opacity-0 group-hover:opacity-100 hover:bg-gray-700 dark:hover:bg-gray-600'
-    : 'bg-gray-700 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500';
+    : variant === 'minimal'
+      ? 'hover:text-gray-600 dark:hover:text-gray-300'
+      : 'bg-gray-700 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500';
 
   return (
     <button
       onClick={handleCopy}
-      className={`${baseStyles} ${variantStyles} ${className}`}
+      className={`${baseStyles} ${paddingStyles} ${variantStyles} ${className}`}
       aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
       title={copied ? 'Copied!' : 'Copy to clipboard'}
     >
@@ -74,7 +77,7 @@ export function CopyButton({
       ) : (
         // Clipboard icon
         <svg
-          className={`${iconSize} text-gray-300 dark:text-gray-400`}
+          className={`${iconSize} ${variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

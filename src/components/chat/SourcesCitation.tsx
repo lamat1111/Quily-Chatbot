@@ -26,7 +26,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
   }
 
   return (
-    <div className="border-t border-gray-300 dark:border-gray-700 pt-3 mt-3 text-sm">
+    <div className="text-sm">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
@@ -49,7 +49,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
       </button>
 
       {expanded && (
-        <ul className="mt-2 space-y-1">
+        <ul className="mt-2 space-y-1 pl-1">
           {sources.map((source, index) => (
             <li key={source.sourceId || index}>
               {source.url && source.url.length > 0 ? (
@@ -66,7 +66,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                     {source.title || source.url}
                   </span>
                   <svg
-                    className="w-3 h-3 flex-shrink-0"
+                    className="w-3 h-3 shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

@@ -10,3 +10,45 @@ input[type="submit"],
 input[type="button"] {
   cursor: pointer !important;
 }
+
+/* Custom scrollbar for code blocks - Light theme */
+/* Uses Tailwind gray scale: gray-200 (#e5e7eb), gray-400 (#9ca3af), gray-500 (#6b7280) */
+.code-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.code-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.code-scrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* gray-400 */
+  border-radius: 4px;
+}
+
+.code-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
+}
+
+/* Firefox scrollbar - Light theme */
+.code-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af transparent; /* gray-400 */
+}
+
+/* Custom scrollbar for code blocks - Dark theme */
+/* Uses Tailwind gray scale: gray-950 (#030712), gray-700 (#374151), gray-600 (#4b5563) */
+.dark .code-scrollbar::-webkit-scrollbar-thumb {
+  background: #374151; /* gray-700 */
+}
+
+.dark .code-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4b5563; /* gray-600 */
+}
+
+/* Firefox scrollbar - Dark theme */
+.dark .code-scrollbar {
+  scrollbar-color: #374151 transparent; /* gray-700 */
+}

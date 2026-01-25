@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo } from 'react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { SourcesCitation } from './SourcesCitation';
 import { CopyButton } from '@/src/components/ui/CopyButton';
@@ -42,24 +43,27 @@ function getSources(message: UIMessage): Array<{ sourceId: string; url: string; 
 }
 
 /**
- * Chat message bubble with role-based styling.
+ * Chat message bubble with role-based styling (Claude-style layout).
  *
- * - User messages: blue background, white text
- * - Assistant messages: gray background, dark text, with markdown rendering
+ * - User messages: right-aligned, in a subtle box
+ * - Assistant messages: full width, no box, copy button in footer
  *
- * Both are left-aligned per design requirements.
+ * Memoized to prevent re-renders when other messages in the list update.
  */
-export function MessageBubble({ message, isStreaming = false }: MessageBubbleProps) {
+export const MessageBubble = memo(function MessageBubble({
+  message,
+  isStreaming = false,
+}: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
-  // Extract text and sources from message parts
-  const textContent = getTextContent(message);
-  const sources = getSources(message);
+  // Memoize text extraction to avoid recalculating on every render
+  const textContent = useMemo(() => getTextContent(message), [message.parts]);
+  const sources = useMemo(() => getSources(message), [message.parts]);
 
   if (isUser) {
     return (
-      <div className="flex justify-start mb-4">
-        <div className="max-w-[95%] sm:max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+      <div className="flex justify-end mb-6">
+        <div className="max-w-[85%] sm:max-w-[70%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl px-4 py-3">
           <p className="whitespace-pre-wrap">{textContent}</p>
         </div>
       </div>
@@ -72,28 +76,54 @@ export function MessageBubble({ message, isStreaming = false }: MessageBubblePro
   }
 
   return (
-    <div className="flex justify-start mb-4">
-      <div className="max-w-[95%] sm:max-w-[80%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
-        {/* Header with copy button */}
-        <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Quily</span>
+    <div className="mb-6 text-gray-900 dark:text-gray-100">
+      <MarkdownRenderer content={textContent} isStreaming={isStreaming} />
+
+      {/* Sources - show above footer */}
+      {!isStreaming && sources.length > 0 && (
+        <div className="mt-4">
+          <SourcesCitation sources={sources} />
+        </div>
+      )}
+
+      {/* Footer with copy button and disclaimer - only show after streaming completes */}
+      {!isStreaming && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
           {textContent && (
             <CopyButton
               text={textContent}
-              size="sm"
-              variant="default"
-              className="opacity-70 hover:opacity-100"
+              size="lg"
+              variant="minimal"
             />
           )}
+          <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <svg
+              className="w-4 h-4 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>
+              Always verify with{' '}
+              <a
+                href="https://docs.quilibrium.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                official docs
+              </a>
+            </span>
+          </p>
         </div>
-
-        <MarkdownRenderer content={textContent} />
-
-        {/* Show sources after streaming completes */}
-        {!isStreaming && sources.length > 0 && (
-          <SourcesCitation sources={sources} />
-        )}
-      </div>
+      )}
     </div>
   );
-}
+});

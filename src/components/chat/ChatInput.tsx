@@ -52,9 +52,9 @@ export function ChatInput({
       : 'Ask a question about Quilibrium...';
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 sm:p-4">
+    <div className="bg-white dark:bg-gray-900 p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-        <div className="flex gap-2 sm:gap-3 items-end">
+        <div className="flex gap-2 sm:gap-3 items-end mb-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -97,32 +97,41 @@ export function ChatInput({
             <button
               type="submit"
               disabled={disabled || !input.trim()}
-              className="flex-shrink-0 px-3 sm:px-4 py-3 rounded-xl cursor-pointer
+              className="flex-shrink-0 p-3 h-12 w-12 rounded-xl cursor-pointer
                          bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900
-                         disabled:cursor-not-allowed"
+                         disabled:cursor-not-allowed flex items-center justify-center"
+              aria-label="Send message"
             >
-              <span className="flex items-center gap-2">
-                {/* Arrow pointing right for send */}
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-                <span className="hidden sm:inline">Send</span>
-              </span>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                />
+              </svg>
             </button>
           )}
         </div>
+        <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-2">
+          Quily can make mistakes. Verify important info with{' '}
+          <a
+            href="https://docs.quilibrium.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-600 dark:hover:text-gray-400"
+          >
+            official docs
+          </a>
+          .
+        </p>
       </form>
     </div>
   );

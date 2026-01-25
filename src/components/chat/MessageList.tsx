@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { useScrollAnchor } from '@/src/hooks/useScrollAnchor';
@@ -14,6 +14,9 @@ interface MessageListProps {
   error: Error | null;
   onQuickAction?: (command: string) => void;
 }
+
+/** Throttle interval for scroll updates during streaming (ms) */
+const SCROLL_THROTTLE_MS = 100;
 
 /**
  * Quick action buttons for the empty chat state
@@ -32,24 +35,53 @@ const QUICK_ACTIONS = [
  * - Shows typing indicator during streaming
  * - Displays error messages
  * - Empty state for new conversations
+ * - Throttled scroll updates during streaming to reduce layout thrashing
  */
 export function MessageList({ messages, status, error, onQuickAction }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
     isAtBottom,
-    scrollToBottom,
     scrollToBottomImmediate,
   } = useScrollAnchor();
 
   const isStreaming = status === 'streaming' || status === 'submitted';
 
-  // Auto-scroll when streaming and user is at bottom
+  // Throttle refs for scroll during streaming
+  const lastScrollTime = useRef<number>(0);
+  const scrollThrottleRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Throttled scroll function for streaming
+  const throttledScroll = useCallback(() => {
+    const now = Date.now();
+    if (now - lastScrollTime.current >= SCROLL_THROTTLE_MS) {
+      scrollToBottomImmediate();
+      lastScrollTime.current = now;
+    } else if (!scrollThrottleRef.current) {
+      // Schedule a scroll at the end of the throttle window
+      scrollThrottleRef.current = setTimeout(() => {
+        scrollToBottomImmediate();
+        lastScrollTime.current = Date.now();
+        scrollThrottleRef.current = null;
+      }, SCROLL_THROTTLE_MS - (now - lastScrollTime.current));
+    }
+  }, [scrollToBottomImmediate]);
+
+  // Cleanup throttle timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollThrottleRef.current) {
+        clearTimeout(scrollThrottleRef.current);
+      }
+    };
+  }, []);
+
+  // Auto-scroll when streaming and user is at bottom (throttled)
   useEffect(() => {
     if (isStreaming && isAtBottom) {
-      scrollToBottomImmediate();
+      throttledScroll();
     }
-  }, [messages, isStreaming, isAtBottom, scrollToBottomImmediate]);
+  }, [messages, isStreaming, isAtBottom, throttledScroll]);
 
   // Scroll to bottom when new message is added (user sends message)
   useEffect(() => {
