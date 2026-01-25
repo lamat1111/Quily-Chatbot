@@ -70,7 +70,7 @@ export function ApiKeyConfig() {
             w-full px-3 py-2 text-sm
             bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100
             border rounded-lg
-            focus:outline-none focus:ring-2 focus:ring-blue-500
+            focus:outline-none focus:ring-2 focus:ring-accent
             placeholder-gray-400 dark:placeholder-gray-500
             ${isValid === true ? 'border-green-500' : ''}
             ${isValid === false ? 'border-red-500' : ''}

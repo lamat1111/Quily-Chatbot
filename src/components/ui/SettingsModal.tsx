@@ -108,7 +108,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                   href="https://openrouter.ai"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-accent hover:underline"
                 >
                   OpenRouter
                 </a>
@@ -129,7 +129,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                     bg-gray-50 dark:bg-gray-700
                     text-gray-900 dark:text-gray-100
                     placeholder-gray-400 dark:placeholder-gray-500
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    focus:outline-none focus:ring-2 focus:ring-accent
                     ${validationResult === 'valid' ? 'border-green-500' : ''}
                     ${validationResult === 'invalid' ? 'border-red-500' : ''}
                     ${validationResult === null ? 'border-gray-300 dark:border-gray-600' : ''}
@@ -156,9 +156,13 @@ export function SettingsModal({ children }: SettingsModalProps) {
                   onClick={handleSaveApiKey}
                   disabled={isValidating || !inputValue.trim()}
                   className="flex-1 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
-                    bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400
-                    text-white transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                    text-accent
+                    bg-transparent
+                    border border-accent
+                    hover:bg-accent/10 dark:hover:bg-accent/20
+                    disabled:text-gray-400 disabled:border-gray-400 disabled:hover:bg-transparent
+                    transition-colors
+                    focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
                     dark:focus:ring-offset-gray-800
                     disabled:cursor-not-allowed"
                 >
@@ -184,7 +188,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                   href="https://openrouter.ai/settings/keys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-accent hover:underline"
                 >
                   Get one at OpenRouter
                 </a>
@@ -222,7 +226,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                       </span>
                     )}
                     {RECOMMENDED_MODELS.find((m) => m.id === selectedModel)?.isRecommended && (
-                      <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                      <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-accent/10 dark:bg-accent/20 text-accent">
                         Recommended
                       </span>
                     )}
@@ -249,7 +253,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                         key={model.id}
                         className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0
                           ${selectedModel === model.id
-                            ? 'bg-blue-50 dark:bg-blue-900/20'
+                            ? 'bg-accent/10 dark:bg-accent/20'
                             : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
                           }`}
                       >
@@ -262,7 +266,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                             setSelectedModel(e.target.value);
                             setModelListOpen(false);
                           }}
-                          className="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          className="mt-0.5 h-4 w-4 text-accent accent-accent focus:ring-accent"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -270,7 +274,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                               {model.name}
                             </span>
                             {model.isRecommended && (
-                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-accent/10 dark:bg-accent/20 text-accent">
                                 Recommended
                               </span>
                             )}

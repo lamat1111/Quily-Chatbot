@@ -1,6 +1,31 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Brand colors - Quilibrium palette */
+/* Light theme values (default) */
+:root {
+  --brand-accent: #FF6000;
+  --brand-accent-hover: #E55500;
+  --brand-secondary: #40001B;
+  --brand-secondary-light: #5A0026;
+}
+
+/* Dark theme values - same classes, different colors */
+.dark {
+  --brand-accent: #D4601A;
+  --brand-accent-hover: #C05515;
+  --brand-secondary: #5A0026;
+  --brand-secondary-light: #70002F;
+}
+
+/* Register colors with Tailwind */
+@theme {
+  --color-accent: var(--brand-accent);
+  --color-accent-hover: var(--brand-accent-hover);
+  --color-secondary: var(--brand-secondary);
+  --color-secondary-light: var(--brand-secondary-light);
+}
+
 /* Ensure all interactive elements have pointer cursor */
 button,
 [role="button"],
@@ -51,4 +76,43 @@ input[type="button"] {
 /* Firefox scrollbar - Dark theme */
 .dark .code-scrollbar {
   scrollbar-color: #374151 transparent; /* gray-700 */
+}
+
+/* Sidebar scrollbar - subtle, only visible when needed */
+/* Light theme */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db; /* gray-300 */
+  border-radius: 3px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af; /* gray-400 */
+}
+
+/* Firefox scrollbar - Light theme */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent; /* gray-300 */
+}
+
+/* Sidebar scrollbar - Dark theme */
+.dark .sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563; /* gray-600 */
+}
+
+.dark .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
+}
+
+/* Firefox scrollbar - Dark theme */
+.dark .sidebar-scrollbar {
+  scrollbar-color: #4b5563 transparent; /* gray-600 */
 }

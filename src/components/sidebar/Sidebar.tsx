@@ -5,14 +5,16 @@ import { ConversationList } from './ConversationList';
 import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { SettingsModal } from '@/src/components/ui/SettingsModal';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
+import { useConversationStore } from '@/src/stores/conversationStore';
 
 /**
  * Main sidebar component containing settings and conversation history.
  *
  * Layout:
  * - Header with title and theme toggle
- * - Settings button
- * - Conversation list (flex-1, scrollable)
+ * - New Chat button (fixed)
+ * - Conversation list (scrollable, fills remaining space)
+ * - Settings button (fixed at bottom)
  *
  * Responsive:
  * - Desktop (lg+): w-72, always visible
@@ -21,6 +23,12 @@ import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 export function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
+  const addConversation = useConversationStore((s) => s.addConversation);
+
+  const handleNewChat = () => {
+    addConversation();
+    setSidebarOpen(false);
+  };
 
   return (
     <>
@@ -65,6 +73,7 @@ export function Sidebar() {
         </button>
         <h1 className="ml-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
           Quily Chat
+          <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
         </h1>
       </div>
 
@@ -93,15 +102,48 @@ export function Sidebar() {
         <div className="flex items-center justify-between p-4">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Quily Chat
+            <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
           </h1>
           <ThemeToggle />
         </div>
 
-        {/* Conversation list - fills remaining space */}
+        {/* New Chat button - fixed at top */}
+        <div className="px-2 pb-2">
+          <button
+            onClick={handleNewChat}
+            className="
+              w-full px-4 py-2
+              text-sm font-medium
+              text-accent
+              bg-transparent
+              border border-accent
+              hover:bg-accent/10 dark:hover:bg-accent/20
+              rounded-lg
+              transition-colors
+              flex items-center justify-center gap-2
+            "
+          >
+            <svg
+              className="h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            New Chat
+          </button>
+        </div>
+
+        {/* Conversation list - scrollable, fills remaining space */}
         <ConversationList onNavigate={() => setSidebarOpen(false)} />
 
-        {/* Settings at bottom */}
-        <div className="p-4">
+        {/* Settings at bottom - fixed */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <SettingsModal>
             <button
               style={{ cursor: 'pointer' }}

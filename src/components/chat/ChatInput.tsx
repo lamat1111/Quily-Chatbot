@@ -65,7 +65,7 @@ export function ChatInput({
             className="flex-1 min-w-0 resize-none rounded-xl border border-gray-300 dark:border-gray-600
                        bg-gray-100 dark:bg-gray-800 px-3 sm:px-4 py-3 text-gray-900 dark:text-gray-100
                        placeholder-gray-400
-                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                       focus:outline-none focus:border-gray-400 dark:focus:border-gray-500
                        disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50
                        min-h-12 max-h-50"
             style={{
@@ -98,9 +98,9 @@ export function ChatInput({
               type="submit"
               disabled={disabled || !input.trim()}
               className="flex-shrink-0 p-3 h-12 w-12 rounded-xl cursor-pointer
-                         bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
+                         bg-gradient-to-br from-secondary to-accent hover:from-secondary-light hover:to-accent-hover disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-600
                          text-white font-medium transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900
+                         focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900
                          disabled:cursor-not-allowed flex items-center justify-center"
               aria-label="Send message"
             >

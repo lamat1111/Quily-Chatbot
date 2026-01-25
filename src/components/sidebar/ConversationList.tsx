@@ -43,16 +43,16 @@ interface ConversationListProps {
 }
 
 /**
- * Conversation history list with new/switch/delete functionality.
+ * Scrollable conversation history list.
  *
  * Uses Zustand store for conversation state.
  * Waits for hydration before rendering to prevent SSR mismatch.
+ * New Chat button and Settings are handled by parent Sidebar component.
  */
 export function ConversationList({ onNavigate }: ConversationListProps = {}) {
   const conversations = useConversationStore((s) => s.conversations);
   const activeId = useConversationStore((s) => s.activeId);
   const hasHydrated = useConversationStore((s) => s._hasHydrated);
-  const addConversation = useConversationStore((s) => s.addConversation);
   const setActive = useConversationStore((s) => s.setActive);
   const deleteConversation = useConversationStore((s) => s.deleteConversation);
 
@@ -60,7 +60,7 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
   if (!hasHydrated) {
     return (
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+        <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
         <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
         <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
       </div>
@@ -72,45 +72,8 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
     (a, b) => b.updatedAt - a.updatedAt
   );
 
-  const handleNewChat = () => {
-    addConversation();
-    onNavigate?.();
-  };
-
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      {/* New Chat button */}
-      <div className="p-2">
-        <button
-          onClick={handleNewChat}
-          style={{ cursor: 'pointer' }}
-          className="
-            w-full px-4 py-2
-            text-sm font-medium text-white
-            bg-blue-600 hover:bg-blue-700
-            rounded-lg
-            transition-colors
-            flex items-center justify-center gap-2
-          "
-        >
-          <svg
-            className="h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          New Chat
-        </button>
-      </div>
-
-      {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
+    <div className="flex-1 overflow-y-auto p-2 space-y-1 sidebar-scrollbar">
         {sortedConversations.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
             No conversations yet
@@ -180,7 +143,6 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
             </div>
           ))
         )}
-      </div>
     </div>
   );
 }

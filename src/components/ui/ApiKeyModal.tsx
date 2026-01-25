@@ -88,7 +88,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
               href="https://openrouter.ai"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-accent hover:underline"
             >
               OpenRouter
             </a>
@@ -114,7 +114,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
                   bg-gray-50 dark:bg-gray-700
                   text-gray-900 dark:text-gray-100
                   placeholder-gray-400 dark:placeholder-gray-500
-                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  focus:outline-none focus:ring-2 focus:ring-accent
                   ${validationResult === 'valid' ? 'border-green-500' : ''}
                   ${validationResult === 'invalid' ? 'border-red-500' : ''}
                   ${validationResult === null ? 'border-gray-300 dark:border-gray-600' : ''}
@@ -141,9 +141,13 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
                 onClick={handleSave}
                 disabled={isValidating || !inputValue.trim()}
                 className="flex-1 px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
-                  bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400
-                  text-white transition-colors
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                  text-accent
+                  bg-transparent
+                  border border-accent
+                  hover:bg-accent/10 dark:hover:bg-accent/20
+                  disabled:text-gray-400 disabled:border-gray-400 disabled:hover:bg-transparent
+                  transition-colors
+                  focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
                   dark:focus:ring-offset-gray-800
                   disabled:cursor-not-allowed"
               >
@@ -172,7 +176,7 @@ export function ApiKeyModal({ children }: ApiKeyModalProps) {
                 href="https://openrouter.ai/settings/keys"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-accent hover:underline font-medium"
               >
                 Create one at OpenRouter
               </a>

@@ -44,7 +44,7 @@ export function CopyButton({
 
   const iconSize = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-5 h-5' : 'w-5 h-5';
 
-  const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer';
+  const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer';
   const paddingStyles = variant === 'minimal' ? 'p-0' : 'p-1.5';
   const variantStyles = variant === 'ghost'
     ? 'opacity-0 group-hover:opacity-100 hover:bg-gray-700 dark:hover:bg-gray-600'

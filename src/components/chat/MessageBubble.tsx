@@ -116,7 +116,7 @@ export const MessageBubble = memo(function MessageBubble({
                 href="https://docs.quilibrium.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="underline hover:text-gray-600 dark:hover:text-gray-300"
               >
                 official docs
               </a>
