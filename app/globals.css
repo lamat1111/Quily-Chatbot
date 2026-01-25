@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Ensure all interactive elements have pointer cursor */
+button,
+[role="button"],
+a,
+select,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
