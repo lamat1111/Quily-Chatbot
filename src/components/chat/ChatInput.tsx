@@ -35,8 +35,11 @@ export function ChatInput({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // Submit on Enter without Shift
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Submit on Enter (without Shift) OR Ctrl/Cmd+Enter
+    const isModifierEnter = (e.ctrlKey || e.metaKey) && e.key === 'Enter';
+    const isPlainEnter = e.key === 'Enter' && !e.shiftKey;
+
+    if (isModifierEnter || isPlainEnter) {
       e.preventDefault();
       handleSubmit(e as unknown as FormEvent);
     }
