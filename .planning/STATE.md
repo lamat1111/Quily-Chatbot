@@ -194,12 +194,14 @@ Resume file: None
 - src/components/ui/CopyButton.tsx
 - src/components/ui/Skeleton.tsx
 
-**Plan 03 (Copy Button for Code Blocks) - Complete:**
-- Integrated CopyButton into MarkdownRenderer code blocks
-- Hover-reveal ghost variant for non-intrusive UX
+**Plan 03 (Copy Functionality) - Complete:**
+- Integrated CopyButton into MarkdownRenderer code blocks (hover-reveal ghost variant)
+- Added copy button to assistant messages in header row
+- Theme-aware inline code and message bubble styling
 
 **Files modified:**
 - src/components/chat/MarkdownRenderer.tsx
+- src/components/chat/MessageBubble.tsx
 
 **Plan 04 (API Key Modal) - Complete:**
 - ApiKeyModal component with Radix Dialog for accessibility
