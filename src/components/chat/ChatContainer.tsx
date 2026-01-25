@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import type { UIMessage } from '@ai-sdk/react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
@@ -19,6 +20,7 @@ interface ChatContainerProps {
  * - Manages chat state via useChat from AI SDK
  * - Syncs messages to conversation store
  * - Handles message submission and streaming
+ * - Loads stored messages when switching conversations
  */
 export function ChatContainer({
   apiKey,
@@ -26,6 +28,8 @@ export function ChatContainer({
   conversationId,
 }: ChatContainerProps) {
   const updateMessages = useConversationStore((state) => state.updateMessages);
+  const conversations = useConversationStore((state) => state.conversations);
+  const prevConversationIdRef = useRef<string | null>(null);
 
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
@@ -42,10 +46,37 @@ export function ChatContainer({
   );
 
   // Configure useChat with the transport
-  const { messages, status, error, stop, sendMessage } = useChat({
+  const { messages, status, error, stop, sendMessage, setMessages } = useChat({
     id: conversationId || 'new-chat',
     transport,
   });
+
+  // Load stored messages when conversation changes
+  useEffect(() => {
+    // Only load when conversationId actually changes
+    if (conversationId === prevConversationIdRef.current) return;
+    prevConversationIdRef.current = conversationId;
+
+    if (!conversationId) {
+      setMessages([]);
+      return;
+    }
+
+    const conversation = conversations.find((c) => c.id === conversationId);
+    if (!conversation || conversation.messages.length === 0) {
+      setMessages([]);
+      return;
+    }
+
+    // Convert stored Message format to UIMessage format
+    const uiMessages: UIMessage[] = conversation.messages.map((msg) => ({
+      id: msg.id,
+      role: msg.role,
+      parts: [{ type: 'text', text: msg.content }],
+    }));
+
+    setMessages(uiMessages);
+  }, [conversationId, conversations, setMessages]);
 
   // Determine if currently streaming
   const isStreaming = status === 'streaming' || status === 'submitted';
