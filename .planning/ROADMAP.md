@@ -12,8 +12,8 @@ This roadmap delivers a self-hosted RAG chatbot for Quilibrium documentation in 
 
 - [x] **Phase 1: Data Pipeline** - Ingest documentation into searchable vector store
 - [x] **Phase 2: RAG Pipeline** - Query, retrieve, and generate streaming responses
-- [ ] **Phase 3: Chat Interface** - User-facing chat with API key management
-- [ ] **Phase 4: Polish** - Code copying and dark mode
+- [x] **Phase 3: Chat Interface** - User-facing chat with API key management
+- [ ] **Phase 4: Polish** - UX improvements and visual refinements
 
 ## Phase Details
 
@@ -67,22 +67,31 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Foundation setup (Tailwind, hooks, stores, utilities)
-- [ ] 03-02-PLAN.md — Sidebar components (API key, model selector, conversations)
-- [ ] 03-03-PLAN.md — Chat components (messages, input, markdown rendering)
-- [ ] 03-04-PLAN.md — Main page integration and visual verification
+- [x] 03-01-PLAN.md — Foundation setup (Tailwind, hooks, stores, utilities)
+- [x] 03-02-PLAN.md — Sidebar components (API key, model selector, conversations)
+- [x] 03-03-PLAN.md — Chat components (messages, input, markdown rendering)
+- [x] 03-04-PLAN.md — Main page integration, dark theme, and visual verification
 
 ### Phase 4: Polish
 **Goal**: Quality-of-life features that improve daily usage
 **Depends on**: Phase 3 (needs working chat)
-**Requirements**: RENDER-04, RENDER-05
+**Requirements**: RENDER-04, RENDER-05, POLISH-01, POLISH-02, POLISH-03, POLISH-04
 **Success Criteria** (what must be TRUE):
-  1. User can copy code snippets with one click
-  2. User can toggle between light and dark mode
-**Plans**: TBD
+  1. User can copy code snippets with one click (copy button on code blocks)
+  2. User can copy entire assistant response with one click
+  3. Keyboard shortcuts work (Ctrl/Cmd+Enter to send, Escape to stop)
+  4. Loading skeletons show during initial page load and API calls
+  5. API key configuration opens in modal dialog (not sidebar)
+  6. Modal includes OpenRouter explanation and signup link
+  7. Light/dark mode toggle available (dark is default)
+**Plans**: 5 plans
 
 Plans:
-- [ ] 04-01: TBD (defined during plan-phase)
+- [ ] 04-01-PLAN.md — Theme infrastructure with next-themes and light/dark toggle
+- [ ] 04-02-PLAN.md — Clipboard hook and reusable UI components (CopyButton, Skeleton)
+- [ ] 04-03-PLAN.md — Copy buttons for code blocks and message responses
+- [ ] 04-04-PLAN.md — API key modal with OpenRouter explanation
+- [ ] 04-05-PLAN.md — Keyboard shortcuts, loading skeletons, and final verification
 
 ## Progress
 
@@ -93,13 +102,14 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 4/4 | Complete | 2026-01-24 |
 | 2. RAG Pipeline | 2/2 | Complete | 2026-01-24 |
-| 3. Chat Interface | 0/4 | Planned | - |
-| 4. Polish | 0/TBD | Not started | - |
+| 3. Chat Interface | 4/4 | Complete | 2026-01-24 |
+| 4. Polish | 0/5 | Ready to execute | - |
 
 ---
 *Roadmap created: 2026-01-24*
 *Phase 1 planned: 2026-01-24*
 *Phase 2 planned: 2026-01-24*
 *Phase 3 planned: 2026-01-24*
+*Phase 4 planned: 2026-01-25*
 *Depth: standard*
 *Coverage: 23/23 v1 requirements mapped*
