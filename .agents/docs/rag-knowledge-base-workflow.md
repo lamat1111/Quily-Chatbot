@@ -40,12 +40,12 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 ┌─────────────────────────────────────────────────────────┐
 │                    Documentation Sources                 │
 ├─────────────────────────────────────────────────────────┤
-│  GitHub Repo ──sync-docs──▶ ./docs/api/                 │
-│  (QuilibriumNetwork/docs)   ./docs/discover/            │
-│                             ./docs/learn/               │
+│  GitHub Repo ──sync-docs──▶ ./docs/quilibrium-official/ │
+│  (QuilibriumNetwork/docs)   (gitignored, not committed) │
 │                                                         │
-│  Manual Uploads ──────────▶ ./docs/video-transcriptions/│
+│  Manual Uploads ──────────▶ ./docs/transcriptions/      │
 │  (transcriptions, etc.)     ./docs/custom/              │
+│                             (version controlled)        │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼
@@ -94,22 +94,33 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 
 ### File Location
 
-Place all documentation files in the `./docs` directory:
+Documentation is organized in the `./docs` directory into two categories:
 
 ```
 docs/
-├── api/                          ← Synced from GitHub
-│   ├── 01-overview.md
-│   └── 03-q-storage/
-├── discover/                     ← Synced from GitHub
-│   ├── 01-what-is-quilibrium.md
-│   └── 02-FAQ.md
-├── video-transcriptions/         ← Manual uploads
+├── quilibrium-official/          ← Synced from GitHub (gitignored)
+│   ├── api/
+│   │   ├── 01-overview.md
+│   │   └── 03-q-storage/
+│   ├── discover/
+│   │   ├── 01-what-is-quilibrium.md
+│   │   └── 02-FAQ.md
+│   ├── learn/
+│   └── .sync-manifest.json       ← Tracks GitHub-synced files
+├── transcriptions/               ← Manual uploads (committed)
 │   ├── x-space-april-2025.txt
 │   └── live-stream-notes.txt
-├── Quilibrium Architecture.md    ← Manual uploads
-└── .sync-manifest.json           ← Tracks GitHub-synced files
+└── custom/                       ← Manual uploads (committed)
+    └── Quilibrium Architecture.md
 ```
+
+### Documentation Categories
+
+| Folder | Source | Git Status | Purpose |
+|--------|--------|------------|---------|
+| `quilibrium-official/` | GitHub sync | Gitignored | Official docs from QuilibriumNetwork/docs repo |
+| `transcriptions/` | Manual upload | Committed | Video/audio transcriptions, AMAs |
+| `custom/` | Manual upload | Committed | Custom docs, architecture notes, etc. |
 
 ### Supported File Types
 
@@ -285,17 +296,17 @@ npm run sync-docs verify
 
 ### How Sync Works
 
-1. **Fetches file list** from GitHub API
-2. **Compares** against local `.sync-manifest.json`
-3. **Downloads** only new/modified files
-4. **Preserves** manually added files (not tracked in manifest)
+1. **Fetches file list** from GitHub API (`QuilibriumNetwork/docs` repo)
+2. **Compares** against local `.sync-manifest.json` in `docs/quilibrium-official/`
+3. **Downloads** only new/modified files to `docs/quilibrium-official/`
+4. **Synced files are gitignored** - each deployment pulls fresh from GitHub
 
 ### Manual Files
 
-Files you add manually (like transcriptions) are **not touched** by the sync:
-- They're not in the manifest, so sync ignores them
-- They're still included in ingestion
-- Delete them manually when no longer needed
+Files in `docs/transcriptions/` and `docs/custom/` are:
+- **Version controlled** - committed to your repo
+- **Not touched by sync** - sync only manages `quilibrium-official/`
+- **Included in ingestion** - all `./docs` subfolders are processed
 
 ---
 
@@ -562,4 +573,4 @@ interface RetrievalOptions {
 
 ---
 
-_Updated: 2026-01-25 16:30_
+_Updated: 2026-01-25 18:45_

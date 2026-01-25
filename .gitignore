@@ -88,3 +88,9 @@ env/
 *.key
 credentials.json
 secrets.json
+
+# Synced documentation (pulled from GitHub, not committed)
+docs/quilibrium-official/
+
+# Next.js
+.next/

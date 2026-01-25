@@ -144,11 +144,11 @@ Open [http://localhost:3000](http://localhost:3000) and enter your OpenRouter AP
 
 ## Documentation Management
 
-The chatbot's knowledge comes from the `./docs` folder. Documentation can come from two sources:
+The chatbot's knowledge comes from the `./docs` folder. Documentation is organized into two categories:
 
-### 1. Synced from GitHub (automatic)
+### 1. Official docs (synced from GitHub, NOT committed)
 
-Official Quilibrium docs are synced from [QuilibriumNetwork/docs](https://github.com/QuilibriumNetwork/docs).
+Official Quilibrium docs are synced from [QuilibriumNetwork/docs](https://github.com/QuilibriumNetwork/docs) into `docs/quilibrium-official/`. This folder is gitignored.
 
 ```bash
 # Check what would change
@@ -161,22 +161,23 @@ npm run sync-docs sync
 npm run sync-docs sync -- --force
 ```
 
-### 2. Manual uploads (transcriptions, etc.)
+### 2. Custom docs (your uploads, COMMITTED)
 
-Add custom files directly to `./docs`:
+Add your own content to `docs/transcriptions/` or `docs/custom/`. These are version-controlled.
 
 ```
 docs/
-├── api/                          ← Synced from GitHub
-├── discover/                     ← Synced from GitHub
-├── video-transcriptions/         ← Your manual uploads
+├── quilibrium-official/          ← Synced from GitHub (gitignored)
+│   ├── api/
+│   ├── discover/
+│   ├── learn/
+│   └── .sync-manifest.json
+├── transcriptions/               ← Your uploads (committed)
 │   ├── livestream-notes.txt
 │   └── ama-transcript.txt
-└── custom-guides/                ← Your manual uploads
-    └── my-guide.md
+└── custom/                       ← Your uploads (committed)
+    └── Quilibrium Architecture.md
 ```
-
-Manual files are **not touched** by sync — only files tracked in `.sync-manifest.json` are managed.
 
 ### Supported File Types
 
@@ -266,11 +267,10 @@ npm run ingest status
 │   ├── api/chat/route.ts       # Streaming chat endpoint with RAG
 │   ├── layout.tsx              # Root layout with theme provider
 │   └── page.tsx                # Main chat page
-├── docs/                       # Documentation source (synced + manual)
-│   ├── api/                    # ← Synced from GitHub
-│   ├── discover/               # ← Synced from GitHub
-│   ├── video-transcriptions/   # ← Manual uploads
-│   └── .sync-manifest.json     # Tracks synced files
+├── docs/                       # Documentation source
+│   ├── quilibrium-official/    # ← Synced from GitHub (gitignored)
+│   ├── transcriptions/         # ← Your uploads (committed)
+│   └── custom/                 # ← Your uploads (committed)
 ├── scripts/
 │   ├── ingest/                 # Ingestion pipeline
 │   │   ├── index.ts            # CLI orchestrator

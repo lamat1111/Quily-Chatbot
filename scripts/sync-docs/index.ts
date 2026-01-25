@@ -16,7 +16,7 @@ const DEFAULT_CONFIG: SyncConfig = {
   repo: 'docs',
   sourcePath: 'docs',
   branch: 'main',
-  destPath: './docs',
+  destPath: './docs/quilibrium-official',
 };
 
 const program = new Command();
