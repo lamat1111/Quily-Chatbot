@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users get instant, accurate answers about Quilibrium from official sources with clear citations
-**Current focus:** Phase 3 - Chat Interface
+**Current focus:** Phase 4 - Polish
 
 ## Current Position
 
-Phase: 3 of 4 (Chat Interface)
-Plan: 3 of 4 complete
-Status: In progress
-Last activity: 2026-01-24 - Completed 03-03-PLAN.md (Chat components)
+Phase: 4 of 4 (Polish) - IN PROGRESS
+Plan: 2 of 5 complete
+Status: Executing Wave 1
+Last activity: 2026-01-25 - Completed 04-02-PLAN.md (Clipboard & Skeleton Components)
 
-Progress: [#######...] ~70%
+Progress: [#########.] ~90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 3.5 min
-- Total execution time: 32.2 min
+- Total plans completed: 10
+- Average duration: 3.2 min
+- Total execution time: 34.2 min
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: [#######...] ~70%
 | 01-data-pipeline | 4 | 10 min | 2.5 min |
 | 02-rag-pipeline | 2 | 9.2 min | 4.6 min |
 | 03-chat-interface | 3 | 13 min | 4.3 min |
+| 04-polish | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (7min), 03-01 (4min), 03-02 (4min), 03-03 (5min)
+- Last 5 plans: 03-01 (4min), 03-02 (4min), 03-03 (5min), 03-04 (5min), 04-02 (2min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - AI SDK v6 DefaultChatTransport for useChat configuration
 - UIMessage parts array extraction (no content property in v6)
 - sendMessage { text } format instead of { role, content }
+- CopyButton self-contained rather than requiring hook import
+- 2-second feedback duration for checkmark visibility
+- Ghost variant for hover-reveal copy buttons
 
 ### Pending Todos
 
@@ -82,8 +86,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Completed 03-03-PLAN.md (Chat components)
+Last session: 2026-01-25
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
 
 ## Phase 1 Completion Summary
@@ -129,7 +133,7 @@ Resume file: None
 
 **Verified:** 9/9 must-haves verified by gsd-verifier
 
-## Phase 3 Progress
+## Phase 3 Completion Summary
 
 **Plan 01 (Foundation) - Complete:**
 - Tailwind CSS 4.x with @tailwindcss/postcss plugin
@@ -138,22 +142,11 @@ Resume file: None
 - Zustand conversation store with localStorage persistence
 - OpenRouter validateApiKey and RECOMMENDED_MODELS utilities
 
-**Files created:**
-- app/globals.css, app/layout.tsx, postcss.config.mjs
-- src/hooks/useLocalStorage.ts, src/hooks/useScrollAnchor.ts
-- src/stores/conversationStore.ts, src/lib/openrouter.ts
-
 **Plan 02 (Sidebar) - Complete:**
 - ApiKeyConfig with localStorage persistence and OpenRouter validation
 - ModelSelector dropdown with RECOMMENDED_MODELS
 - ConversationList with history and CRUD operations
 - Responsive Sidebar container (w-72 desktop, overlay mobile)
-
-**Files created:**
-- src/components/sidebar/ApiKeyConfig.tsx
-- src/components/sidebar/ModelSelector.tsx
-- src/components/sidebar/ConversationList.tsx
-- src/components/sidebar/Sidebar.tsx
 
 **Plan 03 (Chat Components) - Complete:**
 - MarkdownRenderer with react-markdown and syntax highlighting
@@ -164,13 +157,23 @@ Resume file: None
 - ChatInput form with submit/stop functionality
 - ChatContainer orchestrating useChat with DefaultChatTransport
 
-**Files created:**
-- src/components/chat/MarkdownRenderer.tsx
-- src/components/chat/SourcesCitation.tsx
-- src/components/chat/TypingIndicator.tsx
-- src/components/chat/MessageBubble.tsx
-- src/components/chat/MessageList.tsx
-- src/components/chat/ChatInput.tsx
-- src/components/chat/ChatContainer.tsx
+**Plan 04 (Page Integration + Dark Theme) - Complete:**
+- Main page integrating Sidebar + ChatContainer
+- Consistent dark theme across all components
+- Fixed AI SDK v6 message format compatibility
+- User verified all functionality working
 
-**Next:** Plan 04 (Page integration and final wiring)
+**Phase 3 Complete**
+
+## Phase 4 Progress
+
+**Plan 02 (Clipboard & Skeleton Components) - Complete:**
+- useCopyToClipboard hook with native Clipboard API
+- CopyButton component with 2-second checkmark feedback
+- Skeleton loading primitives (Skeleton, MessageListSkeleton, ConversationListSkeleton, ChatSkeleton)
+- All components theme-aware with dark: variants
+
+**Files created:**
+- src/hooks/useCopyToClipboard.ts
+- src/components/ui/CopyButton.tsx
+- src/components/ui/Skeleton.tsx
