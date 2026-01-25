@@ -176,11 +176,22 @@ export async function POST(request: Request) {
       // Return command response as a streamed message (for consistency with normal responses)
       const stream = createUIMessageStream({
         execute: async ({ writer }) => {
-          // Write the command response as text chunks
+          const textId = 'command-response';
+          // Must send text-start before text-delta
+          writer.write({
+            type: 'text-start',
+            id: textId,
+          });
+          // Write the command response as text chunk
           writer.write({
             type: 'text-delta',
+            id: textId,
             delta: commandResponse,
-            id: 'command-response',
+          });
+          // End the text block
+          writer.write({
+            type: 'text-end',
+            id: textId,
           });
         },
       });
