@@ -66,7 +66,11 @@ export function MessageBubble({ message, isStreaming = false }: MessageBubblePro
     );
   }
 
-  // Assistant message
+  // Assistant message - don't render if no text content yet (sources may have arrived first)
+  if (!textContent && isStreaming) {
+    return null;
+  }
+
   return (
     <div className="flex justify-start mb-4">
       <div className="max-w-[95%] sm:max-w-[80%] bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
