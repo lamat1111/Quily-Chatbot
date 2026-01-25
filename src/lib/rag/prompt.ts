@@ -2,7 +2,7 @@ import type { RetrievedChunk, SourceReference } from './types';
 
 /**
  * Build a formatted context block from retrieved chunks
- * Each chunk is numbered for citation reference
+ * Each chunk is numbered for citation reference and includes URL when available
  *
  * @param chunks - Retrieved chunks with citation indices
  * @returns Formatted context string for LLM
@@ -14,15 +14,34 @@ export function buildContextBlock(chunks: RetrievedChunk[]): string {
 
   return chunks
     .map((chunk) => {
-      const source = chunk.heading_path
-        ? `${chunk.source_file} > ${chunk.heading_path}`
-        : chunk.source_file;
+      const url = getOfficialDocsUrl(chunk.source_file);
+      const title = chunk.heading_path || getTitleFromPath(chunk.source_file);
 
-      return `[${chunk.citationIndex}] Source: ${source}
+      // Include URL in context so LLM can create proper links
+      const sourceInfo = url
+        ? `Source: [${title}](${url})`
+        : `Source: ${title} (internal document)`;
+
+      return `[${chunk.citationIndex}] ${sourceInfo}
 ---
 ${chunk.content}`;
     })
     .join('\n\n');
+}
+
+/**
+ * Extract a human-readable title from a file path
+ */
+function getTitleFromPath(filePath: string): string {
+  // Normalize path separators and get filename without extension
+  const normalizedPath = filePath.replace(/\\/g, '/');
+  const filename = normalizedPath.split('/').pop()?.replace(/\.md$/, '').replace(/\.txt$/, '') || filePath;
+  // Convert kebab-case to Title Case and remove numeric prefixes
+  return filename
+    .replace(/^\d+-/, '')
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 /**
@@ -66,11 +85,12 @@ All S3 and KMS services are offered by **QConsole**, a product by Quilibrium Inc
 ## Response Instructions
 
 1. Answer questions using ONLY the information from the documentation context below.
-2. Use citations [1] through [${maxCitation}] to reference your sources. Place citations inline where the information is used.
-3. If the context doesn't contain relevant information to answer the question, say "I don't have specific information about that in the documentation. You might find more details at https://docs.quilibrium.com"
-4. Use markdown formatting for code blocks, lists, and emphasis where appropriate.
-5. NEVER invent or use citation numbers beyond [${maxCitation}].
-6. Be concise but thorough in your explanations.
+2. Use citation numbers [1] through [${maxCitation}] to reference your sources. Place citations inline where the information is used, like this: "The qclient is a CLI tool [1]."
+3. Do NOT create clickable links for sources in your response - just use the citation numbers like [1], [2], etc. The source links will be displayed separately below your response.
+4. If the context doesn't contain relevant information to answer the question, say "I don't have specific information about that in the documentation. You might find more details at https://docs.quilibrium.com"
+5. Use markdown formatting for code blocks, lists, and emphasis where appropriate.
+6. NEVER invent or use citation numbers beyond [${maxCitation}].
+7. Be concise but thorough in your explanations.
 
 ---
 
@@ -83,24 +103,27 @@ ${context}`;
  * Convert a local file path to the official docs website URL
  *
  * Transformation rules:
- * 1. Only works for docs/quilibrium-official/ files
- * 2. Strip "docs/quilibrium-official/" prefix
- * 3. Strip numeric prefixes from each path segment (e.g., "03-q-storage" -> "q-storage")
- * 4. Strip ".md" extension
- * 5. Prepend "https://docs.quilibrium.com/docs/"
+ * 1. Normalize path separators (Windows uses backslashes)
+ * 2. Only works for quilibrium-official/ files (path is relative to docs/)
+ * 3. Strip "quilibrium-official/" prefix
+ * 4. Strip numeric prefixes from each path segment (e.g., "03-q-storage" -> "q-storage")
+ * 5. Strip ".md" extension
+ * 6. Prepend "https://docs.quilibrium.com/docs/"
  *
- * @param sourcePath - Local file path (e.g., "docs/quilibrium-official/api/03-q-storage/01-overview.md")
+ * @param sourcePath - Relative file path from docs/ (e.g., "quilibrium-official/run-node/qclient/qclient-101.md")
  * @returns Website URL or null if not an official doc
  */
-function getOfficialDocsUrl(sourcePath: string): string | null {
-  const prefix = 'docs/quilibrium-official/';
+export function getOfficialDocsUrl(sourcePath: string): string | null {
+  // Normalize path separators (Windows uses backslashes)
+  const normalizedPath = sourcePath.replace(/\\/g, '/');
+  const prefix = 'quilibrium-official/';
 
-  if (!sourcePath.startsWith(prefix)) {
+  if (!normalizedPath.startsWith(prefix)) {
     return null;
   }
 
   // Remove prefix and .md extension
-  const relativePath = sourcePath.slice(prefix.length).replace(/\.md$/, '');
+  const relativePath = normalizedPath.slice(prefix.length).replace(/\.md$/, '');
 
   // Strip numeric prefixes from each path segment (e.g., "03-q-storage" -> "q-storage")
   const cleanedPath = relativePath

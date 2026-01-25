@@ -61,7 +61,8 @@ export async function loadDocuments(docsPath: string): Promise<LoadedDocument[]>
 
   for (const filePath of files) {
     const rawContent = await readFile(filePath, 'utf-8');
-    const relativePath = relative(docsPath, filePath);
+    // Normalize to forward slashes for cross-platform consistency
+    const relativePath = relative(docsPath, filePath).replace(/\\/g, '/');
     const isMarkdown = filePath.endsWith('.md');
 
     // Only parse frontmatter for markdown files
