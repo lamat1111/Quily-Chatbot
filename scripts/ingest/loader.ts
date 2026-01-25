@@ -37,33 +37,49 @@ function parseFrontmatter(content: string): {
   };
 }
 
+// Supported file extensions for ingestion
+const SUPPORTED_EXTENSIONS = ['md', 'txt'];
+
 /**
- * Load all markdown files from a directory
+ * Load all document files from a directory
+ * Supports: .md (markdown) and .txt (plain text/transcriptions)
  * @param docsPath - Path to documentation directory
  * @returns Array of loaded documents with path and content
  */
 export async function loadDocuments(docsPath: string): Promise<LoadedDocument[]> {
-  // Find all markdown files recursively
+  // Find all supported files recursively
   // Use forward slashes for glob (works on all platforms)
-  const pattern = docsPath.replace(/\\/g, '/') + '/**/*.md';
+  const basePath = docsPath.replace(/\\/g, '/');
+  const pattern = `${basePath}/**/*.{${SUPPORTED_EXTENSIONS.join(',')}}`;
   const files = await glob(pattern, { nodir: true });
 
   if (files.length === 0) {
-    throw new Error(`No markdown files found in ${docsPath}`);
+    throw new Error(`No document files found in ${docsPath} (supported: ${SUPPORTED_EXTENSIONS.join(', ')})`);
   }
 
   const documents: LoadedDocument[] = [];
 
   for (const filePath of files) {
     const rawContent = await readFile(filePath, 'utf-8');
-    const { content, frontmatter } = parseFrontmatter(rawContent);
     const relativePath = relative(docsPath, filePath);
+    const isMarkdown = filePath.endsWith('.md');
 
-    documents.push({
-      path: relativePath,
-      content,
-      frontmatter,
-    });
+    // Only parse frontmatter for markdown files
+    if (isMarkdown) {
+      const { content, frontmatter } = parseFrontmatter(rawContent);
+      documents.push({
+        path: relativePath,
+        content,
+        frontmatter,
+      });
+    } else {
+      // Plain text files (e.g., transcriptions) - use as-is
+      documents.push({
+        path: relativePath,
+        content: rawContent,
+        frontmatter: undefined,
+      });
+    }
   }
 
   return documents;

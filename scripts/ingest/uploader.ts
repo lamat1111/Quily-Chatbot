@@ -124,3 +124,74 @@ export async function getChunkCount(
 
   return count ?? 0;
 }
+
+/**
+ * Get all unique source files currently in the database
+ */
+export async function getSourceFilesInDatabase(
+  supabaseUrl: string,
+  supabaseKey: string
+): Promise<string[]> {
+  const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
+
+  const { data, error } = await supabase
+    .from('document_chunks')
+    .select('source_file')
+    .order('source_file');
+
+  if (error) {
+    throw new Error(`Failed to get source files: ${error.message}`);
+  }
+
+  // Get unique source files
+  const uniqueFiles = [...new Set(data?.map((row) => row.source_file) ?? [])];
+  return uniqueFiles;
+}
+
+/**
+ * Delete chunks for files that no longer exist in the docs folder
+ * Returns list of deleted source files and total chunks removed
+ */
+export async function cleanOrphanedChunks(
+  localFiles: string[],
+  supabaseUrl: string,
+  supabaseKey: string,
+  onProgress?: (message: string) => void
+): Promise<{ deletedFiles: string[]; deletedChunks: number }> {
+  const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
+
+  // Get all source files in database
+  const dbFiles = await getSourceFilesInDatabase(supabaseUrl, supabaseKey);
+
+  // Normalize local file paths (use forward slashes)
+  const localFileSet = new Set(localFiles.map((f) => f.replace(/\\/g, '/')));
+
+  // Find orphaned files (in DB but not in local docs)
+  const orphanedFiles = dbFiles.filter((dbFile) => !localFileSet.has(dbFile));
+
+  if (orphanedFiles.length === 0) {
+    return { deletedFiles: [], deletedChunks: 0 };
+  }
+
+  let totalDeleted = 0;
+
+  for (const sourceFile of orphanedFiles) {
+    if (onProgress) {
+      onProgress(`Removing: ${sourceFile}`);
+    }
+
+    const { data, error } = await supabase
+      .from('document_chunks')
+      .delete()
+      .eq('source_file', sourceFile)
+      .select('id');
+
+    if (error) {
+      throw new Error(`Failed to delete chunks for ${sourceFile}: ${error.message}`);
+    }
+
+    totalDeleted += data?.length ?? 0;
+  }
+
+  return { deletedFiles: orphanedFiles, deletedChunks: totalDeleted };
+}

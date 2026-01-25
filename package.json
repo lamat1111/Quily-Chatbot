@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "ingest": "tsx scripts/ingest/index.ts",
+    "sync-docs": "tsx scripts/sync-docs/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

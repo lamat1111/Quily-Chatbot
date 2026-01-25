@@ -16,7 +16,7 @@ related_tasks: []
 
 ## Overview
 
-The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to provide accurate, context-aware responses based on your documentation. This system ingests Markdown files, converts them into vector embeddings, stores them in Supabase with pgvector, and retrieves relevant context when users ask questions.
+The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to provide accurate, context-aware responses based on your documentation. This system ingests documents, converts them into vector embeddings, stores them in Supabase with pgvector, and retrieves relevant context when users ask questions.
 
 ## Architecture
 
@@ -24,11 +24,12 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| Document Loader | `scripts/ingest/loader.ts` | Reads markdown files from `./docs` |
+| Document Loader | `scripts/ingest/loader.ts` | Reads `.md` and `.txt` files from `./docs` |
 | Semantic Chunker | `scripts/ingest/chunker.ts` | Splits documents into 800-token chunks |
 | Embedder | `scripts/ingest/embedder.ts` | Generates 1536-dim vectors via OpenRouter |
 | Uploader | `scripts/ingest/uploader.ts` | Batch inserts to Supabase pgvector |
 | CLI Orchestrator | `scripts/ingest/index.ts` | Coordinates the ingestion pipeline |
+| Docs Sync | `scripts/sync-docs/` | Syncs docs from GitHub repository |
 | Retriever | `src/lib/rag/retriever.ts` | Two-stage retrieval with optional reranking |
 | Prompt Builder | `src/lib/rag/prompt.ts` | Formats context and builds system prompts |
 | Chat API | `app/api/chat/route.ts` | Handles user queries with RAG pipeline |
@@ -36,43 +37,55 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 ### Data Flow Diagram
 
 ```
-┌─────────────────┐
-│   Markdown      │
-│   Files (./docs)│
-└────────┬────────┘
-         │
-         ├─→ Loader (reads files, parses frontmatter)
+┌─────────────────────────────────────────────────────────┐
+│                    Documentation Sources                 │
+├─────────────────────────────────────────────────────────┤
+│  GitHub Repo ──sync-docs──▶ ./docs/api/                 │
+│  (QuilibriumNetwork/docs)   ./docs/discover/            │
+│                             ./docs/learn/               │
+│                                                         │
+│  Manual Uploads ──────────▶ ./docs/video-transcriptions/│
+│  (transcriptions, etc.)     ./docs/custom/              │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ▼
+         ┌───────────────────────┐
+         │   Ingestion Pipeline   │
+         │   (npm run ingest)     │
+         └───────────┬───────────┘
+                     │
+         ├─→ Loader (reads .md and .txt files)
          │
          ├─→ Chunker (500-1000 tokens, heading context)
          │
          ├─→ Embedder (OpenRouter text-embedding-3-small)
          │
          └─→ Supabase pgvector Database
-                    │
-                    ├─ document_chunks table
-                    ├─ 1536-dim vectors
-                    ├─ HNSW index
-                    └─ match_document_chunks() RPC
-                         │
-                         ▼
-              ┌───────────────────┐
-              │   User Query      │
-              │   (Browser)       │
-              └─────────┬─────────┘
-                        │
-                  ┌─────┴─────┐
-                  │            │
-                  ▼            ▼
-            Embed Query  → Vector Search (top 15)
-                  │            │
-                  └─────┬──────┘
-                        │
-                   Rerank (optional, top 5)
-                        │
-                  Format Context
-                        │
-                 Stream LLM Response
-                  (OpenRouter + Citations)
+                      │
+                      ├─ document_chunks table
+                      ├─ 1536-dim vectors
+                      ├─ HNSW index
+                      └─ match_document_chunks() RPC
+                           │
+                           ▼
+                ┌───────────────────┐
+                │   User Query      │
+                │   (Browser)       │
+                └─────────┬─────────┘
+                          │
+                    ┌─────┴─────┐
+                    │            │
+                    ▼            ▼
+              Embed Query  → Vector Search (top 15)
+                    │            │
+                    └─────┬──────┘
+                          │
+                     Rerank (optional, top 5)
+                          │
+                    Format Context
+                          │
+                   Stream LLM Response
+                    (OpenRouter + Citations)
 ```
 
 ---
@@ -81,23 +94,33 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 
 ### File Location
 
-Place all Markdown files in the `./docs` directory:
+Place all documentation files in the `./docs` directory:
 
 ```
 docs/
-├── getting-started.md
-├── guides/
-│   ├── installation.md
-│   └── configuration.md
-├── concepts/
-│   ├── consensus.md
-│   └── tokenomics.md
-└── faq.md
+├── api/                          ← Synced from GitHub
+│   ├── 01-overview.md
+│   └── 03-q-storage/
+├── discover/                     ← Synced from GitHub
+│   ├── 01-what-is-quilibrium.md
+│   └── 02-FAQ.md
+├── video-transcriptions/         ← Manual uploads
+│   ├── x-space-april-2025.txt
+│   └── live-stream-notes.txt
+├── Quilibrium Architecture.md    ← Manual uploads
+└── .sync-manifest.json           ← Tracks GitHub-synced files
 ```
+
+### Supported File Types
+
+| Extension | Type | Frontmatter |
+|-----------|------|-------------|
+| `.md` | Markdown documentation | Supported (optional) |
+| `.txt` | Plain text (transcriptions) | Not parsed |
 
 ### Document Format
 
-Documents support optional YAML frontmatter:
+Markdown documents support optional YAML frontmatter:
 
 ```markdown
 ---
@@ -114,6 +137,8 @@ Your content here...
 - Requirement 1
 - Requirement 2
 ```
+
+Plain text files (`.txt`) are ingested as-is without frontmatter parsing.
 
 ### Best Practices
 
@@ -199,18 +224,25 @@ $$;
 
 ## Step 3: Configure Environment Variables
 
-Create or update `.env.local` with the following variables:
+Create or update `.env` with the following variables:
 
 ```env
 # Supabase Configuration (required)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
+# Legacy alias (used by ingestion scripts)
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_KEY=your_supabase_service_role_key
+
 # OpenRouter API Key (required for ingestion and runtime)
 OPENROUTER_API_KEY=your_openrouter_key
 
 # Cohere API Key (optional but recommended for better search)
 COHERE_API_KEY=your_cohere_key
+
+# GitHub Token (required for docs sync - no scopes needed for public repos)
+GITHUB_TOKEN=ghp_your_token_here
 ```
 
 ### Where to Get Keys
@@ -221,71 +253,166 @@ COHERE_API_KEY=your_cohere_key
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → Service Role Key |
 | `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) |
 | `COHERE_API_KEY` | [Cohere Dashboard](https://dashboard.cohere.com/api-keys) |
+| `GITHUB_TOKEN` | [GitHub Settings](https://github.com/settings/tokens) (no scopes needed) |
 
 ---
 
-## Step 4: Run the Ingestion Pipeline
+## Step 4: Sync Documentation from GitHub
 
-### Basic Usage
+The sync system pulls documentation from the Quilibrium Network GitHub repository.
+
+### Sync Commands
 
 ```bash
-npm run ingest run
+# Check sync status (shows what would change)
+npm run sync-docs status
+
+# Sync docs from GitHub (incremental - only downloads changes)
+npm run sync-docs sync
+
+# Preview changes without downloading
+npm run sync-docs sync -- --dry-run
+
+# Force re-download all files (ignores manifest)
+npm run sync-docs sync -- --force
+
+# Sync and automatically run RAG ingestion
+npm run sync-docs sync -- --ingest
+
+# Verify local files match manifest
+npm run sync-docs verify
 ```
 
-### With Options
+### How Sync Works
+
+1. **Fetches file list** from GitHub API
+2. **Compares** against local `.sync-manifest.json`
+3. **Downloads** only new/modified files
+4. **Preserves** manually added files (not tracked in manifest)
+
+### Manual Files
+
+Files you add manually (like transcriptions) are **not touched** by the sync:
+- They're not in the manifest, so sync ignores them
+- They're still included in ingestion
+- Delete them manually when no longer needed
+
+---
+
+## Step 5: Run the Ingestion Pipeline
+
+### Ingestion Commands
 
 ```bash
+# Full ingestion (add/update chunks)
+npm run ingest run
+
+# Full ingestion with cleanup of deleted files
+npm run ingest run -- --clean
+
+# Preview without uploading (dry run)
+npm run ingest run -- --dry-run
+
 # Specify docs directory and version tag
-npm run ingest run -d ./docs -v "v1.0"
+npm run ingest run -- -d ./docs -v "v1.0"
+```
 
-# Dry run (test without uploading)
-npm run ingest run --dry-run
+### Maintenance Commands
 
-# Full example
-npm run ingest run -d ./docs -v "2026-01-25" --dry-run
+```bash
+# Check sync status between local docs and database
+npm run ingest status
+
+# Count total chunks in database
+npm run ingest count
+
+# Remove chunks for deleted files (standalone cleanup)
+npm run ingest clean
+
+# Preview cleanup without making changes
+npm run ingest clean -- --dry-run
 ```
 
 ### What Happens During Ingestion
 
-1. **Loading**: Reads all `.md` files from `./docs` recursively
-2. **Chunking**: Splits into ~800-token chunks with 100-token overlap
-3. **Embedding**: Generates 1536-dimensional vectors using `text-embedding-3-small`
-4. **Uploading**: Upserts chunks to Supabase (updates on re-ingestion)
+1. **Loading**: Reads all `.md` and `.txt` files from `./docs` recursively
+2. **Cleaning** (if `--clean`): Removes chunks for files that no longer exist
+3. **Chunking**: Splits into ~800-token chunks with 100-token overlap
+4. **Embedding**: Generates 1536-dimensional vectors using `text-embedding-3-small`
+5. **Uploading**: Upserts chunks to Supabase (updates on re-ingestion)
 
 ### Expected Output
 
 ```
-✓ Loaded 12 documents
-✓ Created 47 chunks (38,400 tokens total)
-✓ Generated 47 embeddings
-✓ Uploaded 47 chunks to database
+📚 Quilibrium Docs Ingestion Pipeline
+
+  Docs path: ./docs
+  Version: 2026-01-25
+  Clean orphans: true
+  Dry run: false
+
+✔ Loaded 262 documents
+✔ No orphaned chunks found
+✔ Created 586 chunks (283,460 tokens total)
+✔ Generated 586 embeddings
+✔ Uploaded 586 chunks
+✔ Total chunks in database: 586
+
+✅ Ingestion complete!
 ```
 
 ---
 
-## Step 5: Verify Ingestion
+## Step 6: Common Workflows
 
-### Check Chunk Count
+### Adding New Documentation
 
 ```bash
-npm run ingest count
+# 1. Add files to ./docs (manually or via sync)
+npm run sync-docs sync
+
+# 2. Run ingestion
+npm run ingest run
 ```
 
-This queries the database and reports how many chunks are stored.
+### Updating Existing Documentation
 
-### Manual Verification in Supabase
+```bash
+# 1. Sync latest from GitHub
+npm run sync-docs sync
 
-1. Go to Supabase Dashboard → Table Editor
-2. Select `document_chunks` table
-3. Verify entries exist with:
-   - `content`: Chunk text
-   - `source_file`: Original file path (e.g., "docs/getting-started.md")
-   - `heading_path`: Heading hierarchy (e.g., "Getting Started > Prerequisites")
-   - `embedding`: Vector data (shown as array)
+# 2. Re-ingest (upserts handle updates)
+npm run ingest run
+```
+
+### Deleting Documentation
+
+```bash
+# 1. Delete files from ./docs
+
+# 2. Run ingestion with cleanup
+npm run ingest run -- --clean
+```
+
+### Full Refresh
+
+```bash
+# 1. Force sync all docs from GitHub
+npm run sync-docs sync -- --force
+
+# 2. Clean and re-ingest everything
+npm run ingest run -- --clean
+```
+
+### One-Command Update (Sync + Ingest)
+
+```bash
+npm run sync-docs sync -- --ingest
+```
 
 ---
 
-## Step 6: How RAG Works at Runtime
+## Step 7: How RAG Works at Runtime
 
 ### Query Flow
 
@@ -338,16 +465,34 @@ interface RetrievalOptions {
 
 ---
 
-## Quick Reference Checklist
+## Quick Reference
 
-| Step | Action | Command/Location |
-|------|--------|------------------|
-| 1 | Add markdown files | `./docs/` folder |
+### All Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run sync-docs status` | Check for remote changes |
+| `npm run sync-docs sync` | Sync docs from GitHub |
+| `npm run sync-docs sync -- --force` | Force re-download all |
+| `npm run sync-docs sync -- --ingest` | Sync + auto-ingest |
+| `npm run ingest run` | Run ingestion pipeline |
+| `npm run ingest run -- --clean` | Ingest + remove orphans |
+| `npm run ingest run -- --dry-run` | Preview without uploading |
+| `npm run ingest status` | Show local vs DB sync status |
+| `npm run ingest count` | Count chunks in database |
+| `npm run ingest clean` | Remove orphaned chunks |
+
+### Checklist
+
+| Step | Action | Command |
+|------|--------|---------|
+| 1 | Set environment variables | Edit `.env` |
 | 2 | Run database schema | Supabase SQL Editor |
-| 3 | Set environment variables | `.env.local` |
-| 4 | Run ingestion | `npm run ingest run` |
-| 5 | Verify chunk count | `npm run ingest count` |
-| 6 | Test the chatbot | Ask questions in the UI |
+| 3 | Sync docs from GitHub | `npm run sync-docs sync` |
+| 4 | Add manual docs (optional) | Copy to `./docs/` |
+| 5 | Run ingestion | `npm run ingest run` |
+| 6 | Verify | `npm run ingest status` |
+| 7 | Test the chatbot | Ask questions in the UI |
 
 ---
 
@@ -355,8 +500,8 @@ interface RetrievalOptions {
 
 ### "No chunks found" after ingestion
 
-- Verify `.env.local` has correct Supabase credentials
-- Check that `./docs` folder contains `.md` files
+- Verify `.env` has correct Supabase credentials
+- Check that `./docs` folder contains `.md` or `.txt` files
 - Run with `--dry-run` to see what would be processed
 
 ### Poor search results
@@ -371,10 +516,21 @@ interface RetrievalOptions {
 - Check OpenRouter account has credits
 - Review rate limiting (100ms delay between batches)
 
-### Chunks not updating on re-ingestion
+### Deleted files still appearing in results
 
-- The uploader uses upsert on `(source_file, chunk_index)`
-- If document structure changes significantly, consider clearing old chunks first
+- Run `npm run ingest run -- --clean` to remove orphaned chunks
+- Or run `npm run ingest clean` followed by `npm run ingest run`
+
+### GitHub sync rate limited
+
+- Add `GITHUB_TOKEN` to `.env` (5,000 requests/hour vs 60 unauthenticated)
+- Create token at https://github.com/settings/tokens (no scopes needed)
+
+### Sync not detecting changes
+
+- Check `.sync-manifest.json` exists in `./docs/`
+- Run with `--force` to re-download all files
+- Verify `GITHUB_TOKEN` is set correctly
 
 ---
 
@@ -398,6 +554,12 @@ interface RetrievalOptions {
 - **Precision**: Reranking focuses on the most relevant (5 results)
 - **Quality**: Cohere reranking provides semantic understanding beyond vector similarity
 
+### Why support .txt files?
+
+- **Transcriptions**: Video/audio transcriptions naturally come as plain text
+- **Flexibility**: Not all content needs markdown formatting
+- **Simplicity**: No conversion needed for raw text content
+
 ---
 
-_Updated: 2026-01-25_
+_Updated: 2026-01-25 16:30_
