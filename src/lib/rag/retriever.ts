@@ -10,6 +10,8 @@ import type { RetrievedChunk, RetrievalOptions } from './types';
  * Stage 1: Vector search via Supabase RPC
  * Stage 2: Rerank with Cohere if API key available
  *
+ * Graceful degradation: If reranking fails, falls back to similarity-based selection
+ *
  * @param query - User's search query
  * @param options - Retrieval configuration
  * @returns Array of retrieved chunks with citation indices
@@ -23,7 +25,7 @@ export async function retrieveWithReranking(
     cohereApiKey,
     initialCount = 15,
     finalCount = 5,
-    similarityThreshold = 0.5,
+    similarityThreshold = 0.35, // Lower threshold - text-embedding-3-small typically produces 0.3-0.6 similarity scores
   } = options;
 
   // Stage 1: Vector search
@@ -50,24 +52,11 @@ export async function retrieveWithReranking(
     return [];
   }
 
-  // Resolve Cohere API key: options > environment
-  const resolvedCohereKey = cohereApiKey || process.env.COHERE_API_KEY;
-
-  // Stage 2: Optional reranking
-  if (resolvedCohereKey && candidates.length > finalCount) {
-    // Create Cohere provider with API key
-    const cohereProvider = createCohere({ apiKey: resolvedCohereKey });
-
-    // Rerank with Cohere
-    const { ranking } = await rerank({
-      model: cohereProvider.reranking('rerank-v3.5'),
-      query,
-      documents: candidates.map((c: { content: string }) => c.content),
-      topN: finalCount,
-    });
-
-    // Map reranked results back to chunks with metadata
-    return ranking.map((ranked: { originalIndex: number; score: number }, idx: number) => {
+  // Helper to map reranked results to chunks
+  const mapRankedToChunks = (
+    ranking: { originalIndex: number; score: number }[]
+  ): RetrievedChunk[] => {
+    return ranking.map((ranked, idx) => {
       const original = candidates[ranked.originalIndex];
       return {
         id: original.id,
@@ -78,17 +67,55 @@ export async function retrieveWithReranking(
         citationIndex: idx + 1,
       };
     });
+  };
+
+  // Helper for similarity-based fallback
+  const fallbackToSimilarity = (): RetrievedChunk[] => {
+    return candidates
+      .slice(0, finalCount)
+      .map(
+        (
+          chunk: {
+            id: number;
+            content: string;
+            source_file: string;
+            heading_path: string | null;
+            similarity: number;
+          },
+          idx: number
+        ) => ({
+          ...chunk,
+          citationIndex: idx + 1,
+        })
+      );
+  };
+
+  // Stage 2: Reranking (with graceful fallback)
+  // Only attempt reranking if we have more candidates than finalCount
+  if (candidates.length <= finalCount) {
+    return fallbackToSimilarity();
   }
 
-  // Fallback: No reranking, take top N by similarity
-  return candidates.slice(0, finalCount).map((chunk: {
-    id: number;
-    content: string;
-    source_file: string;
-    heading_path: string | null;
-    similarity: number;
-  }, idx: number) => ({
-    ...chunk,
-    citationIndex: idx + 1,
-  }));
+  // Resolve Cohere API key: options > environment
+  const resolvedCohereKey = cohereApiKey || process.env.COHERE_API_KEY;
+
+  // Try Cohere reranking (paid, highest quality)
+  if (resolvedCohereKey) {
+    try {
+      const cohereProvider = createCohere({ apiKey: resolvedCohereKey });
+      const { ranking } = await rerank({
+        model: cohereProvider.reranking('rerank-v3.5'),
+        query,
+        documents: candidates.map((c: { content: string }) => c.content),
+        topN: finalCount,
+      });
+      return mapRankedToChunks(ranking);
+    } catch (cohereError) {
+      console.warn('Cohere reranking failed, falling back to similarity:', cohereError);
+      // Fall through to similarity
+    }
+  }
+
+  // Fallback to similarity-based selection
+  return fallbackToSimilarity();
 }

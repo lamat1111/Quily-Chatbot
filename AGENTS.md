@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Quilibrium AI Assistant is a self-hosted RAG chatbot that answers questions about the Quilibrium protocol. Users provide their own OpenRouter API keys, and the system retrieves relevant documentation chunks from Supabase (pgvector) before streaming responses via OpenRouter.
+Quily Chat is a self-hosted RAG chatbot that answers questions about the Quilibrium protocol. Users provide their own OpenRouter API keys, and the system retrieves relevant documentation chunks from Supabase (pgvector) before streaming responses via OpenRouter.
 
 ## Commands
 

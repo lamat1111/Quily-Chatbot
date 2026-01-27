@@ -265,9 +265,11 @@ program
       // Get database files
       spinner.start('Checking database...');
       const { getSourceFilesInDatabase } = await import('./uploader.js');
-      const dbFiles = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      const dbFilesRaw = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      // Normalize DB paths to forward slashes for comparison (handles Windows backslashes in DB)
+      const dbFiles = dbFilesRaw.map((f) => f.replace(/\\/g, '/'));
       const dbFileSet = new Set(dbFiles);
-      spinner.succeed(`Found ${dbFiles.length} source files in database`);
+      spinner.succeed(`Found ${dbFilesRaw.length} source files in database`);
 
       // Calculate differences
       const orphaned = dbFiles.filter((f) => !localFiles.has(f));

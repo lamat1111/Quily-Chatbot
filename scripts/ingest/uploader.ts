@@ -167,7 +167,8 @@ export async function cleanOrphanedChunks(
   const localFileSet = new Set(localFiles.map((f) => f.replace(/\\/g, '/')));
 
   // Find orphaned files (in DB but not in local docs)
-  const orphanedFiles = dbFiles.filter((dbFile) => !localFileSet.has(dbFile));
+  // Also normalize DB paths in case they have backslashes
+  const orphanedFiles = dbFiles.filter((dbFile) => !localFileSet.has(dbFile.replace(/\\/g, '/')));
 
   if (orphanedFiles.length === 0) {
     return { deletedFiles: [], deletedChunks: 0 };

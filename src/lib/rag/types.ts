@@ -28,13 +28,13 @@ export interface RetrievedChunk {
 export interface RetrievalOptions {
   /** OpenRouter API key for embedding */
   embeddingApiKey: string;
-  /** Cohere API key for reranking (optional) */
+  /** Cohere API key for reranking (optional, paid) */
   cohereApiKey?: string;
   /** Number of candidates from vector search (default 15) */
   initialCount?: number;
   /** Number of results after reranking (default 5) */
   finalCount?: number;
-  /** Minimum similarity threshold (default 0.5) */
+  /** Minimum similarity threshold (default 0.35) */
   similarityThreshold?: number;
 }
 

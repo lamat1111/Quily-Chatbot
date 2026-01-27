@@ -94,3 +94,6 @@ docs/quilibrium-official/
 
 # Next.js
 .next/
+
+.vercel
+.env*.local

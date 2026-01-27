@@ -13,7 +13,10 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Tasks
 
-*No tasks yet.*
+*No active tasks.*
+
+### Archived Tasks
+- [Implement Jina Reranker](tasks/.archived/implement-jina-reranker.md) - Reverted due to CC-BY-NC licensing restrictions
 
 ## 📊 Reports
 
@@ -21,4 +24,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-25
+**Last Updated**: 2026-01-27
