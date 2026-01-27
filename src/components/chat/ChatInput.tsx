@@ -5,7 +5,6 @@ import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from 'react';
 interface ChatInputProps {
   onSubmit: (text: string) => void;
   onStop: () => void;
-  onOpenSettings?: () => void;
   isStreaming: boolean;
   disabled: boolean;
 }
@@ -21,7 +20,6 @@ interface ChatInputProps {
 export function ChatInput({
   onSubmit,
   onStop,
-  onOpenSettings,
   isStreaming,
   disabled,
 }: ChatInputProps) {
@@ -71,23 +69,6 @@ export function ChatInput({
   return (
     <div className="bg-gray-50 dark:bg-gray-900 p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-        {/* API key missing banner */}
-        {disabled && onOpenSettings && (
-          <div className="mb-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              <span className="font-medium">API key required.</span>{' '}
-              To start chatting, please{' '}
-              <button
-                type="button"
-                onClick={onOpenSettings}
-                className="underline font-medium hover:text-amber-900 dark:hover:text-amber-100 cursor-pointer"
-              >
-                open Settings
-              </button>{' '}
-              and enter your OpenRouter API key.
-            </p>
-          </div>
-        )}
         <div className="flex gap-2 sm:gap-3 items-end mb-2">
           <textarea
             ref={textareaRef}

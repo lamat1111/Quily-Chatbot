@@ -6,11 +6,12 @@ import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from '@ai-sdk/react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+import { ProviderSetup } from './ProviderSetup';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
-import { useSettingsStore } from '@/src/stores/settingsStore';
 
 interface ChatContainerProps {
   apiKey: string;
+  onApiKeyChange: (key: string) => void;
   model: string;
   conversationId: string | null;
 }
@@ -31,12 +32,12 @@ const STORE_UPDATE_DEBOUNCE_MS = 300;
  */
 export function ChatContainer({
   apiKey,
+  onApiKeyChange,
   model,
   conversationId,
 }: ChatContainerProps) {
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
-  const openSettings = useSettingsStore((state) => state.openSettings);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
 
   // Debounce ref for store updates
@@ -90,6 +91,14 @@ export function ChatContainer({
 
   // Check if API key is provided
   const hasApiKey = apiKey.length > 0;
+
+  // Handle provider connection from setup flow
+  const handleProviderConnect = useCallback(
+    (_providerId: string, key: string) => {
+      onApiKeyChange(key);
+    },
+    [onApiKeyChange]
+  );
 
   // Handle message submission
   const handleSubmit = useCallback(
@@ -173,6 +182,17 @@ export function ChatContainer({
     }
   }, [conversationId, messages, updateMessages, isStreaming]);
 
+  // Show provider setup when no API key
+  if (!hasApiKey) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex-1 flex items-center justify-center overflow-auto">
+          <ProviderSetup onConnect={handleProviderConnect} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full">
       <MessageList
@@ -185,7 +205,6 @@ export function ChatContainer({
       <ChatInput
         onSubmit={handleSubmit}
         onStop={handleStop}
-        onOpenSettings={openSettings}
         isStreaming={isStreaming}
         disabled={!hasApiKey}
       />

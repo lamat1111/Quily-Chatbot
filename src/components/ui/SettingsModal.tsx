@@ -4,11 +4,8 @@ import { useState, useCallback, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSettingsStore } from '@/src/stores/settingsStore';
-import {
-  validateApiKey,
-  RECOMMENDED_MODELS,
-  DEFAULT_MODEL_ID,
-} from '@/src/lib/openrouter';
+import { RECOMMENDED_MODELS, DEFAULT_MODEL_ID } from '@/src/lib/openrouter';
+import { getProvider } from '@/src/lib/providers';
 
 interface SettingsModalProps {
   children: React.ReactNode;
@@ -39,6 +36,9 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
 
+  // Get provider config for OpenRouter (current default)
+  const provider = getProvider('openrouter');
+
   // Sync with store - allow opening from anywhere
   useEffect(() => {
     if (storeIsOpen && !open) {
@@ -63,13 +63,13 @@ export function SettingsModal({ children }: SettingsModalProps) {
   };
 
   const handleSaveApiKey = useCallback(async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || !provider) return;
 
     setIsValidating(true);
     setValidationResult(null);
 
     try {
-      const isValid = await validateApiKey(inputValue);
+      const isValid = await provider.validateKey(inputValue);
       if (isValid) {
         setApiKey(inputValue);
         setValidationResult('valid');
@@ -81,7 +81,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
     } finally {
       setIsValidating(false);
     }
-  }, [inputValue, setApiKey]);
+  }, [inputValue, setApiKey, provider]);
 
   const handleClearApiKey = useCallback(() => {
     setApiKey('');
@@ -115,21 +115,8 @@ export function SettingsModal({ children }: SettingsModalProps) {
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
-                API Key
+                {provider?.name || 'Provider'} API Key
               </h3>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                This app uses{' '}
-                <a
-                  href="https://openrouter.ai"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent hover:underline"
-                >
-                  OpenRouter
-                </a>
-                {' '}to access AI models. Your key is stored locally.
-              </p>
 
               <div>
                 <input
@@ -140,7 +127,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                     setInputValue(e.target.value);
                     setValidationResult(null);
                   }}
-                  placeholder="sk-or-..."
+                  placeholder={provider?.keyPlaceholder || 'API key...'}
                   className={`w-full px-3 py-2 text-sm rounded-lg border
                     bg-surface/5 dark:bg-surface/10
                     text-text-primary
@@ -157,7 +144,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                 )}
                 {validationResult === 'invalid' && (
                   <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                    Invalid API key. Please check and try again.
+                    Invalid API key. Make sure you have credits in your account.
                   </p>
                 )}
                 {validationResult === 'valid' && (
@@ -197,17 +184,21 @@ export function SettingsModal({ children }: SettingsModalProps) {
                 )}
               </div>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Don&apos;t have a key?{' '}
-                <a
-                  href="https://openrouter.ai/settings/keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent hover:underline"
-                >
-                  Get one at OpenRouter
-                </a>
-              </p>
+              {/* Help text with single link */}
+              {provider && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Need a key? Go to{' '}
+                  <a
+                    href="https://openrouter.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent hover:underline"
+                  >
+                    openrouter.ai
+                  </a>
+                  , create an account, add credits, and grab an API key.
+                </p>
+              )}
             </div>
 
             {/* Divider */}

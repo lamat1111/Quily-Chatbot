@@ -23,7 +23,7 @@ import { ChatSkeleton, ConversationListSkeleton } from '@/src/components/ui/Skel
  */
 export default function HomePage() {
   // API key and model from localStorage
-  const [apiKey, , apiKeyHydrated] = useLocalStorage<string>(
+  const [apiKey, setApiKey, apiKeyHydrated] = useLocalStorage<string>(
     'openrouter-api-key',
     ''
   );
@@ -72,6 +72,7 @@ export default function HomePage() {
         <ChatContainer
           key={activeId || 'new-chat'}
           apiKey={apiKey}
+          onApiKeyChange={setApiKey}
           model={model}
           conversationId={activeId}
         />

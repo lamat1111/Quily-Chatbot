@@ -310,10 +310,31 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Chat API error:', error);
 
+    // Check for OpenRouter insufficient credits error (402)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isInsufficientCredits =
+      errorMessage.includes('402') ||
+      errorMessage.toLowerCase().includes('insufficient') ||
+      errorMessage.toLowerCase().includes('credit');
+
+    if (isInsufficientCredits) {
+      return new Response(
+        JSON.stringify({
+          error: 'Insufficient credits',
+          message:
+            'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
+        }),
+        {
+          status: 402,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: errorMessage,
       }),
       {
         status: 500,
