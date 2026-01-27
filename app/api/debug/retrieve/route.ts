@@ -127,7 +127,7 @@ export async function POST(request: Request) {
       })
     );
 
-    const contextBlock = buildContextBlock(top5Chunks);
+    const { context: contextBlock, quality, avgSimilarity } = buildContextBlock(top5Chunks);
     const systemPrompt = buildSystemPrompt(contextBlock, top5Chunks.length);
 
     const totalTime = Date.now() - startTime;

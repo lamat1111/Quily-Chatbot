@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * Hook for persisting state to localStorage with SSR hydration safety.
@@ -23,8 +23,12 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Track if component is mounted to avoid state updates during render
+  const isMounted = useRef(false);
+
   // Hydrate from localStorage after mount (client-side only)
   useEffect(() => {
+    isMounted.current = true;
     try {
       const item = window.localStorage.getItem(key);
       if (item !== null) {
@@ -34,13 +38,23 @@ export function useLocalStorage<T>(
       console.warn(`Error reading localStorage key "${key}":`, error);
     }
     setIsHydrated(true);
+
+    return () => {
+      isMounted.current = false;
+    };
   }, [key]);
 
   // Listen for changes from other components using the same key
   useEffect(() => {
     const handleStorageChange = (e: CustomEvent<{ key: string; value: T }>) => {
-      if (e.detail.key === key) {
-        setStoredValue(e.detail.value);
+      // Only update if mounted and key matches - prevents updates during render
+      if (e.detail.key === key && isMounted.current) {
+        // Use setTimeout to defer state update outside of any render cycle
+        setTimeout(() => {
+          if (isMounted.current) {
+            setStoredValue(e.detail.value);
+          }
+        }, 0);
       }
     };
 

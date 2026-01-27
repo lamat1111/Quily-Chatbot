@@ -10,6 +10,37 @@ import {
   buildSystemPrompt,
   formatSourcesForClient,
 } from '@/src/lib/rag/prompt';
+import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
+
+/**
+ * Models known to follow system prompt instructions reliably
+ * These models can be trusted to say "I don't know" when RAG quality is low
+ */
+const INSTRUCTION_FOLLOWING_MODELS = [
+  'anthropic/', // All Claude models
+  'google/',    // All Gemini models
+  'openai/',    // All GPT models
+];
+
+/**
+ * Check if a model is known to follow instructions reliably
+ */
+function isInstructionFollowingModel(model: string): boolean {
+  return INSTRUCTION_FOLLOWING_MODELS.some(prefix => model.startsWith(prefix));
+}
+
+/**
+ * Canned response for low-relevance queries on models that don't follow instructions well
+ */
+const LOW_RELEVANCE_FALLBACK_RESPONSE = `I don't have specific documentation about that topic in my knowledge base.
+
+While Quilibrium supports various capabilities including token operations, compute deployment via QCL, and hypergraph storage, I don't have the detailed instructions for what you're asking about.
+
+For the most accurate and up-to-date information, please check:
+- **Official Documentation**: https://docs.quilibrium.com
+- **Community Channels**: The Quilibrium Discord community can help with specific questions
+
+Is there something else about Quilibrium I can help you with?`;
 
 /**
  * Command responses for Quily assistant
@@ -162,16 +193,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const userQuery = getMessageContent(lastUserMessage);
-    if (!userQuery) {
+    const rawUserQuery = getMessageContent(lastUserMessage);
+    if (!rawUserQuery) {
       return new Response(
         JSON.stringify({ error: 'Empty user message' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Check if this is a command
-    const commandResponse = getCommandResponse(userQuery);
+    // Check if this is a command (use raw query for exact command matching)
+    const commandResponse = getCommandResponse(rawUserQuery);
+
+    // Normalize query for RAG retrieval (handles "Q" → "Quilibrium", misspellings, etc.)
+    const userQuery = normalizeQuery(rawUserQuery);
     if (commandResponse) {
       // Return command response as a streamed message (for consistency with normal responses)
       const stream = createUIMessageStream({
@@ -201,17 +235,35 @@ export async function POST(request: Request) {
     // Retrieve relevant context
     let chunks: Awaited<ReturnType<typeof retrieveWithReranking>> = [];
     let systemPrompt = 'You are a helpful assistant that answers questions about Quilibrium.';
+    let ragQuality: 'high' | 'low' | 'none' = 'none';
 
     try {
       chunks = await retrieveWithReranking(userQuery, {
         embeddingApiKey: apiKey,
         cohereApiKey: process.env.COHERE_API_KEY,
       });
-      const context = buildContextBlock(chunks);
+      const { context, quality, avgSimilarity } = buildContextBlock(chunks);
+      ragQuality = quality;
+      console.log(`RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}`);
       systemPrompt = buildSystemPrompt(context, chunks.length);
     } catch (ragError) {
       console.error('RAG retrieval error:', ragError);
       // Continue without RAG context
+    }
+
+    // For open-source models with low-relevance RAG results, return a canned response
+    // to prevent hallucination. Claude/Gemini/GPT follow instructions well enough to handle this.
+    if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
+      console.log(`Returning fallback response for low-relevance query on model: ${model}`);
+      const stream = createUIMessageStream({
+        execute: async ({ writer }) => {
+          const textId = 'fallback-response';
+          writer.write({ type: 'text-start', id: textId });
+          writer.write({ type: 'text-delta', id: textId, delta: LOW_RELEVANCE_FALLBACK_RESPONSE });
+          writer.write({ type: 'text-end', id: textId });
+        },
+      });
+      return createUIMessageStreamResponse({ stream });
     }
 
     // Create OpenRouter provider with user's API key

@@ -4,55 +4,42 @@
 
 /**
  * Recommended models for the chat interface dropdown.
- * Curated for quality and availability on OpenRouter.
- * Open-source models are listed first to align with Quilibrium's values.
+ * Claude Sonnet is recommended for best accuracy with RAG.
+ * Open-source models are available but may be less accurate for technical questions.
  */
-/** Default model ID - best balance of quality, speed, and cost */
-export const DEFAULT_MODEL_ID = 'meta-llama/llama-3.1-70b-instruct';
+
+/** Default model ID - Claude Sonnet for best accuracy */
+export const DEFAULT_MODEL_ID = 'anthropic/claude-sonnet-4';
 
 export const RECOMMENDED_MODELS = [
-  // Open Source Models - Recommended first
+  // Best Quality - Recommended
+  {
+    id: 'anthropic/claude-sonnet-4',
+    name: 'Claude Sonnet 4',
+    description: 'Most accurate. Premium pricing.',
+    isOpenSource: false,
+    isRecommended: true,
+  },
+  // Open Source Models - May be less accurate
   {
     id: 'meta-llama/llama-3.1-70b-instruct',
     name: 'Llama 3.1 70B',
-    description: 'Best balance of quality, speed, and cost.',
-    isOpenSource: true,
-    isRecommended: true,
-  },
-  {
-    id: 'deepseek/deepseek-r1',
-    name: 'DeepSeek R1',
-    description: 'Advanced reasoning for complex questions. Slower responses.',
+    description: 'Good quality. May be less accurate on technical details.',
     isOpenSource: true,
     isRecommended: false,
   },
   {
     id: 'qwen/qwen-2.5-72b-instruct',
     name: 'Qwen 2.5 72B',
-    description: 'Strong multilingual support. Low cost.',
+    description: 'Good multilingual support. May be less accurate on technical details.',
     isOpenSource: true,
     isRecommended: false,
   },
   {
-    id: 'mistralai/mixtral-8x7b-instruct',
-    name: 'Mixtral 8x7B',
-    description: 'Fast responses. Cheapest option.',
+    id: 'deepseek/deepseek-r1',
+    name: 'DeepSeek R1',
+    description: 'Advanced reasoning. May hallucinate technical details.',
     isOpenSource: true,
-    isRecommended: false,
-  },
-  // Proprietary Models
-  {
-    id: 'anthropic/claude-3.5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    description: 'Excellent reasoning and writing. Premium pricing.',
-    isOpenSource: false,
-    isRecommended: false,
-  },
-  {
-    id: 'google/gemini-pro-1.5',
-    name: 'Gemini Pro 1.5',
-    description: 'Large context window for long docs. Mid-range pricing.',
-    isOpenSource: false,
     isRecommended: false,
   },
 ] as const;
