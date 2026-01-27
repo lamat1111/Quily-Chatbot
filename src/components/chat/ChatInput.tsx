@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from 'react';
 
 interface ChatInputProps {
   onSubmit: (text: string) => void;
@@ -26,6 +26,21 @@ export function ChatInput({
   disabled,
 }: ChatInputProps) {
   const [input, setInput] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to scrollHeight (content height)
+      const newHeight = textarea.scrollHeight;
+      textarea.style.height = `${newHeight}px`;
+      // Only enable scrolling when content exceeds max-height (192px = 12rem = max-h-48)
+      textarea.style.overflowY = newHeight > 192 ? 'auto' : 'hidden';
+    }
+  }, [input]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -75,6 +90,7 @@ export function ChatInput({
         )}
         <div className="flex gap-2 sm:gap-3 items-end mb-2">
           <textarea
+            ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -86,11 +102,7 @@ export function ChatInput({
                        placeholder-gray-400
                        focus:outline-none focus:border-gray-400 dark:focus:border-gray-500
                        disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50
-                       min-h-12 max-h-50"
-            style={{
-              height: 'auto',
-              overflow: 'auto',
-            }}
+                       min-h-12 max-h-48 overflow-hidden input-scrollbar"
           />
 
           {isStreaming ? (

@@ -98,7 +98,7 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
     return (
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900 chat-scrollbar"
       >
         <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
           <p className="text-2xl font-semibold mb-2 text-text-primary">
@@ -130,7 +130,7 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
   return (
     <div
       ref={scrollRef}
-      className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900"
+      className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900 chat-scrollbar"
     >
       <div className="max-w-3xl mx-auto">
         {messages.map((message, index) => (
