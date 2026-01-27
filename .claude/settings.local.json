@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.github.com)",
+      "Bash(yarn lint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "WebFetch(domain:docs.quilibrium.com)",
+      "Bash(git commit:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(npx tsx:*)"
+    ]
+  }
+}
