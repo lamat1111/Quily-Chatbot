@@ -28,6 +28,7 @@
     "@ai-sdk/cohere": "^3.0.11",
     "@ai-sdk/react": "^3.0.51",
     "@chutes-ai/ai-sdk-provider": "^0.1.2",
+    "@iconify/react": "^6.0.2",
     "@langchain/core": "^1.1.17",
     "@langchain/textsplitters": "^1.0.1",
     "@openrouter/ai-sdk-provider": "^2.0.1",
