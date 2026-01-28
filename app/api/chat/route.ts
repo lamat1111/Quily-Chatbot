@@ -166,6 +166,7 @@ function getMessageRole(msg: Record<string, unknown>): 'user' | 'assistant' | 's
 
 /**
  * Refresh Chutes access token if missing and refresh token is available.
+ * In development, CHUTES_DEV_API_KEY can bypass OAuth for testing.
  */
 async function ensureChutesAccessToken(): Promise<{
   accessToken: string | null;
@@ -173,6 +174,13 @@ async function ensureChutesAccessToken(): Promise<{
   refreshToken?: string;
   expiresIn?: number;
 }> {
+  // Dev bypass: use CHUTES_DEV_API_KEY if set (for testing without OAuth)
+  const devApiKey = process.env.CHUTES_DEV_API_KEY;
+  if (devApiKey) {
+    console.log('[Chutes] Using dev API key bypass');
+    return { accessToken: devApiKey, refreshed: false };
+  }
+
   const accessToken = await getServerAccessToken();
   if (accessToken) {
     return { accessToken, refreshed: false };

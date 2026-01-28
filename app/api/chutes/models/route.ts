@@ -16,8 +16,14 @@ import {
 
 export async function GET(request: Request) {
   try {
-    let accessToken = await getServerAccessToken();
+    // Dev bypass: use CHUTES_DEV_API_KEY if set
+    const devApiKey = process.env.CHUTES_DEV_API_KEY;
+    let accessToken: string | null = devApiKey || null;
     let refreshedTokenInfo: { refreshToken?: string; expiresIn?: number } | null = null;
+
+    if (!accessToken) {
+      accessToken = await getServerAccessToken();
+    }
 
     if (!accessToken) {
       const refreshToken = await getServerRefreshToken();
