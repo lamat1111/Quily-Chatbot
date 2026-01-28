@@ -4,12 +4,12 @@
 
 /**
  * Recommended models for the chat interface dropdown.
- * Claude Sonnet is recommended for best accuracy with RAG.
- * Open-source models are available but may be less accurate for technical questions.
+ * DeepSeek V3 is recommended for best reasoning at low cost.
+ * Open-source models are listed first, followed by proprietary options.
  */
 
-/** Default model ID - Claude Sonnet for best accuracy */
-export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'anthropic/claude-sonnet-4';
+/** Default model ID - DeepSeek V3 for best open-source quality */
+export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'deepseek/deepseek-chat';
 
 export interface ModelMetadata {
   id: string;
@@ -20,21 +20,13 @@ export interface ModelMetadata {
 }
 
 const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
-  // Best Quality - Recommended
-  {
-    id: 'anthropic/claude-sonnet-4',
-    name: 'Claude Sonnet 4',
-    description: 'Most accurate. Premium pricing.',
-    isOpenSource: false,
-    isRecommended: true,
-  },
-  // Open Source Models - Aligned with Chutes offerings
+  // Open Source Models - Recommended
   {
     id: 'deepseek/deepseek-chat',
     name: 'DeepSeek V3',
     description: 'Best open-source. Excellent reasoning and accuracy.',
     isOpenSource: true,
-    isRecommended: false,
+    isRecommended: true,
   },
   {
     id: 'deepseek/deepseek-r1',
@@ -50,7 +42,14 @@ const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
     isOpenSource: true,
     isRecommended: false,
   },
-  // Other Proprietary Models
+  // Proprietary Models
+  {
+    id: 'anthropic/claude-sonnet-4',
+    name: 'Claude Sonnet 4',
+    description: 'Most accurate. Premium pricing.',
+    isOpenSource: false,
+    isRecommended: false,
+  },
   {
     id: 'google/gemini-2.0-flash-001',
     name: 'Gemini 2.0 Flash',

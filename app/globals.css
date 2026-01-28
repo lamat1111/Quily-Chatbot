@@ -79,19 +79,19 @@ input[type="button"] {
 }
 
 /* Global link styles - uses brand accent color */
-/* Excludes nav links, sidebar links, and .link-unstyled which have their own styling */
-a:not(nav a):not(aside a):not(.link-unstyled) {
+/* Excludes nav links, sidebar links, .link-unstyled, and .link-muted which have their own styling */
+a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted) {
   color: var(--brand-accent);
   text-decoration: none;
   transition: color 0.15s ease, text-decoration 0.15s ease;
 }
 
-a:not(nav a):not(aside a):not(.link-unstyled):hover {
+a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted):hover {
   color: #FF8533; /* Brighter orange on hover */
   text-decoration: underline;
 }
 
-.dark a:not(nav a):not(aside a):not(.link-unstyled):hover {
+.dark a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted):hover {
   color: #FF6000; /* Brighter orange on hover in dark mode */
   text-decoration: none;
 }
