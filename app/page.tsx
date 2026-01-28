@@ -5,6 +5,7 @@ import { ChatContainer } from '@/src/components/chat/ChatContainer';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { RECOMMENDED_MODELS } from '@/src/lib/openrouter';
+import { getDefaultProvider } from '@/src/lib/providers';
 import { ChatSkeleton, ConversationListSkeleton } from '@/src/components/ui/Skeleton';
 
 /**
@@ -23,13 +24,21 @@ import { ChatSkeleton, ConversationListSkeleton } from '@/src/components/ui/Skel
  */
 export default function HomePage() {
   // API key and model from localStorage
+  const [providerId, setProviderId, providerHydrated] = useLocalStorage<string>(
+    'selected-provider',
+    getDefaultProvider().id
+  );
   const [apiKey, setApiKey, apiKeyHydrated] = useLocalStorage<string>(
     'openrouter-api-key',
     ''
   );
-  const [model, , modelHydrated] = useLocalStorage<string>(
-    'selected-model',
+  const [openrouterModel, , openrouterModelHydrated] = useLocalStorage<string>(
+    'openrouter-model',
     RECOMMENDED_MODELS[0].id
+  );
+  const [chutesModel, , chutesModelHydrated] = useLocalStorage<string>(
+    'chutes-model',
+    process.env.NEXT_PUBLIC_CHUTES_DEFAULT_MODEL || ''
   );
 
   // Active conversation from Zustand store
@@ -37,7 +46,14 @@ export default function HomePage() {
   const hasHydrated = useConversationStore((state) => state._hasHydrated);
 
   // Wait for all stores to hydrate before rendering
-  const isHydrated = apiKeyHydrated && modelHydrated && hasHydrated;
+  const isHydrated =
+    providerHydrated &&
+    apiKeyHydrated &&
+    openrouterModelHydrated &&
+    chutesModelHydrated &&
+    hasHydrated;
+
+  const activeModel = providerId === 'chutes' ? chutesModel : openrouterModel;
 
   if (!isHydrated) {
     return (
@@ -71,9 +87,11 @@ export default function HomePage() {
       <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
         <ChatContainer
           key={activeId || 'new-chat'}
+          providerId={providerId}
+          onProviderChange={setProviderId}
           apiKey={apiKey}
           onApiKeyChange={setApiKey}
-          model={model}
+          model={activeModel}
           conversationId={activeId}
         />
       </main>

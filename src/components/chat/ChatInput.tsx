@@ -7,6 +7,7 @@ interface ChatInputProps {
   onStop: () => void;
   isStreaming: boolean;
   disabled: boolean;
+  disabledMessage?: string;
 }
 
 /**
@@ -22,6 +23,7 @@ export function ChatInput({
   onStop,
   isStreaming,
   disabled,
+  disabledMessage,
 }: ChatInputProps) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -61,7 +63,7 @@ export function ChatInput({
   };
 
   const placeholderText = disabled
-    ? 'Enter your API key to start chatting...'
+    ? disabledMessage || 'Enter your API key to start chatting...'
     : isStreaming
       ? 'Waiting for response...'
       : 'Ask a question about Quilibrium...';

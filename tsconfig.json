@@ -37,6 +37,9 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "Sign-in-with-Chutes",
+    ".tmp-chutes",
+    ".tmp-chutes2"
   ]
 }

@@ -8,8 +8,12 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ProviderSetup } from './ProviderSetup';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
+import { useChutesSession } from '@/src/hooks/useChutesSession';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 
 interface ChatContainerProps {
+  providerId: string;
+  onProviderChange: (providerId: string) => void;
   apiKey: string;
   onApiKeyChange: (key: string) => void;
   model: string;
@@ -31,6 +35,8 @@ const STORE_UPDATE_DEBOUNCE_MS = 300;
  * remount when switching conversations, ensuring a clean useChat state.
  */
 export function ChatContainer({
+  providerId,
+  onProviderChange,
   apiKey,
   onApiKeyChange,
   model,
@@ -39,6 +45,8 @@ export function ChatContainer({
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
+  const { isSignedIn: isChutesSignedIn, loading: chutesLoading } = useChutesSession();
+  const [chutesEmbeddingModel] = useLocalStorage<string>('chutes-embedding-model', '');
 
   // Debounce ref for store updates
   const storeUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,11 +58,13 @@ export function ChatContainer({
       new DefaultChatTransport({
         api: '/api/chat',
         body: {
+          provider: providerId,
           apiKey,
           model,
+          embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
         },
       }),
-    [apiKey, model]
+    [apiKey, model, providerId, chutesEmbeddingModel]
   );
 
   // Configure useChat with the transport
@@ -89,27 +99,32 @@ export function ChatContainer({
   // Determine if currently streaming
   const isStreaming = status === 'streaming' || status === 'submitted';
 
-  // Check if API key is provided
-  const hasApiKey = apiKey.length > 0;
+  const hasAccess =
+    providerId === 'openrouter'
+      ? apiKey.length > 0
+      : isChutesSignedIn && Boolean(model);
 
   // Handle provider connection from setup flow
   const handleProviderConnect = useCallback(
-    (_providerId: string, key: string) => {
-      onApiKeyChange(key);
+    (nextProviderId: string, key: string) => {
+      onProviderChange(nextProviderId);
+      if (nextProviderId === 'openrouter') {
+        onApiKeyChange(key);
+      }
     },
-    [onApiKeyChange]
+    [onApiKeyChange, onProviderChange]
   );
 
   // Handle message submission
   const handleSubmit = useCallback(
     (text: string) => {
-      if (!hasApiKey) return;
+      if (!hasAccess) return;
 
       sendMessage({
         text,
       });
     },
-    [hasApiKey, sendMessage]
+    [hasAccess, sendMessage]
   );
 
   // Handle stop generation
@@ -183,7 +198,7 @@ export function ChatContainer({
   }, [conversationId, messages, updateMessages, isStreaming]);
 
   // Show provider setup when no API key
-  if (!hasApiKey) {
+  if (!hasAccess) {
     return (
       <div className="flex flex-col h-full">
         <div className="flex-1 flex items-center justify-center overflow-auto">
@@ -206,7 +221,14 @@ export function ChatContainer({
         onSubmit={handleSubmit}
         onStop={handleStop}
         isStreaming={isStreaming}
-        disabled={!hasApiKey}
+        disabled={!hasAccess || chutesLoading}
+        disabledMessage={
+          providerId === 'chutes'
+            ? isChutesSignedIn
+              ? 'Select a Chutes model to start chatting...'
+              : 'Sign in with Chutes to start chatting...'
+            : 'Enter your API key to start chatting...'
+        }
       />
     </div>
   );

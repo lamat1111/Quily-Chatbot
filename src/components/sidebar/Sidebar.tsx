@@ -6,6 +6,7 @@ import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { SettingsModal } from '@/src/components/ui/SettingsModal';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
+import { useChutesSession } from '@/src/hooks/useChutesSession';
 
 /**
  * Main sidebar component containing settings and conversation history.
@@ -22,8 +23,13 @@ import { useConversationStore } from '@/src/stores/conversationStore';
  */
 export function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [providerId] = useLocalStorage<string>('selected-provider', 'openrouter');
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
+  const { isSignedIn: isChutesSignedIn } = useChutesSession();
   const addConversation = useConversationStore((s) => s.addConversation);
+
+  const isConnected =
+    providerId === 'chutes' ? isChutesSignedIn : Boolean(apiKey);
 
   const handleNewChat = () => {
     addConversation();
@@ -152,7 +158,7 @@ export function Sidebar() {
               hover:bg-surface/10 dark:hover:bg-surface/15
               transition-colors text-left">
               {/* Status indicator */}
-              <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className="flex-1">Settings</span>
               {/* Settings icon */}
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
