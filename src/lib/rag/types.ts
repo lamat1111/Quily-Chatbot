@@ -26,8 +26,14 @@ export interface RetrievedChunk {
  * Options for retrieval with optional reranking
  */
 export interface RetrievalOptions {
+  /** Provider for embeddings (default: openrouter) */
+  embeddingProvider?: 'openrouter' | 'chutes';
   /** OpenRouter API key for embedding */
-  embeddingApiKey: string;
+  embeddingApiKey?: string;
+  /** Chutes access token for embedding */
+  chutesAccessToken?: string;
+  /** Optional embedding model ID or chute URL for Chutes */
+  embeddingModel?: string;
   /** Cohere API key for reranking (optional, paid) */
   cohereApiKey?: string;
   /** Number of candidates from vector search (default 15) */
