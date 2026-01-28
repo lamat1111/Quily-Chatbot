@@ -40,8 +40,9 @@ export async function retrieveWithReranking(
       throw new Error('Chutes access token is required for embeddings');
     }
     const chutes = createChutes({ apiKey: chutesAccessToken });
+    // Default to BGE-M3 which produces 1024-dim embeddings matching document_chunks_chutes table
     const modelId =
-      embeddingModel || process.env.CHUTES_EMBEDDING_MODEL || 'https://embeddings.chutes.ai';
+      embeddingModel || process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3';
 
     embeddingResult = await embed({
       model: chutes.textEmbeddingModel(modelId),

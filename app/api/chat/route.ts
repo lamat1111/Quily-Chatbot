@@ -348,10 +348,11 @@ export async function POST(request: Request) {
       }
 
       const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
+      // Default to BGE-M3 for Chutes embeddings (1024-dim, matches document_chunks_chutes table)
       const embeddingModel =
         body.embeddingModel ||
         (useChutesEmbeddings
-          ? process.env.CHUTES_EMBEDDING_MODEL || 'https://embeddings.chutes.ai'
+          ? process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3'
           : undefined);
 
       if (embeddingProvider === 'openrouter' && !openrouterKey) {

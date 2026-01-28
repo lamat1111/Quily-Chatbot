@@ -37,10 +37,6 @@ export default function SettingsPage() {
     'chutes-model',
     process.env.NEXT_PUBLIC_CHUTES_DEFAULT_MODEL || ''
   );
-  const [chutesEmbeddingModel, setChutesEmbeddingModel] = useLocalStorage<string>(
-    'chutes-embedding-model',
-    process.env.NEXT_PUBLIC_CHUTES_EMBEDDING_MODEL || ''
-  );
 
   // UI state
   const [inputValue, setInputValue] = useState('');
@@ -66,8 +62,6 @@ export default function SettingsPage() {
   } = useChutesSession();
   const { models: chutesModels, loading: chutesModelsLoading, error: chutesModelsError } =
     useChutesModels('llm', isChutes && isChutesSignedIn);
-  const { models: chutesEmbeddingModels } =
-    useChutesModels('embedding', isChutes && isChutesSignedIn);
 
   // Set default Chutes model when signed in and models are loaded
   useEffect(() => {
@@ -537,78 +531,26 @@ export default function SettingsPage() {
                       No Chutes models available for this account.
                     </p>
                   )}
+
+                  {/* Custom model URL input */}
+                  {isChutesSignedIn && (
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        Or enter a custom Chute URL to use any model:
+                      </p>
+                      <input
+                        type="text"
+                        value={chutesModel}
+                        onChange={(e) => setChutesModel(e.target.value)}
+                        placeholder="https://your-chute.chutes.ai"
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           </section>
-
-          {/* Advanced Settings Card (Chutes only) */}
-          {isChutes && isChutesSignedIn && (
-            <section className="mb-8">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
-                <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-                  <Icon name="sliders" size={20} className="text-accent" />
-                  Advanced Settings
-                </h2>
-
-                <div className="space-y-4">
-                  {/* Custom Chute URL/slug for power users */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                      Custom Model URL
-                    </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                      Enter any Chute URL or slug to use a custom model.
-                    </p>
-                    <input
-                      type="text"
-                      value={chutesModel}
-                      onChange={(e) => setChutesModel(e.target.value)}
-                      placeholder="https://your-chute.chutes.ai"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-
-                  {/* Embedding Model */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                      Embedding Model
-                    </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                      Must match the model used for documentation indexing.
-                    </p>
-                    {chutesEmbeddingModels.length > 0 ? (
-                      <div className="relative">
-                        <select
-                          value={chutesEmbeddingModel}
-                          onChange={(e) => setChutesEmbeddingModel(e.target.value)}
-                          className="w-full px-3 py-2 pr-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer appearance-none"
-                        >
-                          <option value="">Default (OpenRouter or Env)</option>
-                          {chutesEmbeddingModels.map((model) => (
-                            <option key={model.id} value={model.id}>
-                              {model.name}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                          <Icon name="chevron-down" size={16} className="text-gray-500" />
-                        </div>
-                      </div>
-                    ) : (
-                      <input
-                        type="text"
-                        value={chutesEmbeddingModel}
-                        onChange={(e) => setChutesEmbeddingModel(e.target.value)}
-                        placeholder="https://embeddings.chutes.ai"
-                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
         </div>
       </main>
     </div>
