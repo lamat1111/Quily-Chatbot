@@ -50,6 +50,21 @@ const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
     isOpenSource: true,
     isRecommended: false,
   },
+  // Other Proprietary Models
+  {
+    id: 'google/gemini-2.0-flash-001',
+    name: 'Gemini 2.0 Flash',
+    description: 'Fast and capable. Good for general questions.',
+    isOpenSource: false,
+    isRecommended: false,
+  },
+  {
+    id: 'openai/gpt-4o',
+    name: 'GPT-4o',
+    description: 'Well-rounded performance. Premium pricing.',
+    isOpenSource: false,
+    isRecommended: false,
+  },
 ];
 
 /**
