@@ -2,7 +2,9 @@
 
 A self-hosted RAG chatbot that answers questions about the Quilibrium protocol using official documentation and livestream transcriptions.
 
-**Zero operational cost** — users bring their own API keys via OpenRouter or sign in with Chutes.
+> **Beta**: This project is under active development. Expect rough edges and contributions are welcome!
+
+**[Try the live demo](https://quily.quilibrium.one/)** | **Zero operational cost** — users bring their own API keys via OpenRouter or sign in with Chutes.
 
 ## Features
 
@@ -359,13 +361,6 @@ npm run ingest:status
 
 The free tier is sufficient for most use cases.
 
-### Docker
-
-```bash
-docker build -t quily-chatbot .
-docker run -p 3000:3000 --env-file .env quily-chatbot
-```
-
 ---
 
 ## Maintenance Guide
@@ -406,6 +401,16 @@ npm run ingest:clean
 | Poor search results | Add `COHERE_API_KEY` for reranking |
 
 For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.agents/docs/rag-knowledge-base-workflow.md).
+
+---
+
+## Related
+
+- [QuilibriumNetwork](https://github.com/QuilibriumNetwork) - Official Quilibrium GitHub organization
+- [Quilibrium Docs Repo](https://github.com/QuilibriumNetwork/docs) - Source for the RAG knowledge base
+- [docs.quilibrium.com](https://docs.quilibrium.com) - Official documentation
+- [quilibrium.com](https://quilibrium.com) - Official website
+- [Community Treasury](https://quilibrium.one/#treasury) - Support the project
 
 ---
 
