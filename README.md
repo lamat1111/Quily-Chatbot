@@ -8,6 +8,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 
 - **RAG-powered answers** with source citations from official Quilibrium docs
 - **Streaming responses** via OpenRouter (supports Llama, Mixtral, Claude, GPT-4, etc.)
+- **Optional Chutes OAuth** for using Chutes models without API keys
 - **Two-stage retrieval** with optional Cohere reranking for improved accuracy
 - **Auto-sync** documentation from GitHub with incremental updates
 - **Conversation history** persisted in browser localStorage
@@ -46,6 +47,15 @@ SUPABASE_SERVICE_KEY=your_service_role_key
 
 # OpenRouter (required for ingestion and embeddings)
 OPENROUTER_API_KEY=your_openrouter_key
+
+# Chutes OAuth (optional - enables Sign in with Chutes)
+CHUTES_OAUTH_CLIENT_ID=cid_xxx
+CHUTES_OAUTH_CLIENT_SECRET=csc_xxx
+CHUTES_OAUTH_SCOPES="openid profile chutes:invoke"
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+# Optional overrides
+# CHUTES_OAUTH_REDIRECT_URI=https://your-domain.com/api/auth/chutes/callback
+# CHUTES_IDP_BASE_URL=https://api.chutes.ai
 
 # Cohere reranking (optional, improves retrieval quality)
 COHERE_API_KEY=your_cohere_key
@@ -314,6 +324,15 @@ npm run ingest:status
 | `OPENROUTER_API_KEY` | Yes | For embeddings during ingestion |
 | `COHERE_API_KEY` | No | Enables reranking for better retrieval |
 | `GITHUB_TOKEN` | Yes | For docs sync (no scopes needed) |
+| `CHUTES_OAUTH_CLIENT_ID` | No | Chutes OAuth client ID (for Sign in with Chutes) |
+| `CHUTES_OAUTH_CLIENT_SECRET` | No | Chutes OAuth client secret |
+| `CHUTES_OAUTH_SCOPES` | No | OAuth scopes (default: `openid profile chutes:invoke`) |
+| `NEXT_PUBLIC_APP_URL` | No | Used to build OAuth redirect URL |
+| `CHUTES_OAUTH_REDIRECT_URI` | No | Override redirect URL |
+| `CHUTES_IDP_BASE_URL` | No | Override Chutes IDP base URL |
+| `CHUTES_DEFAULT_MODEL` | No | Default Chutes LLM chute URL |
+| `NEXT_PUBLIC_CHUTES_DEFAULT_MODEL` | No | Client default Chutes model |
+| `CHUTES_EMBEDDING_MODEL` | No | Chutes embedding chute URL |
 
 ---
 

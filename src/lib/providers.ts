@@ -23,11 +23,15 @@ export interface AIProvider {
   /** Longer explanation shown during setup for inexperienced users */
   setupDescription?: string;
   status: 'active' | 'coming';
+  /** Authentication type for provider setup */
+  authType: 'apiKey' | 'oauth';
   keyPrefix?: string;
-  keyPlaceholder: string;
+  keyPlaceholder?: string;
   storageKey: string;
   setupSteps: SetupStep[];
   validateKey: (key: string) => Promise<boolean>;
+  /** Factory to create the AI SDK provider */
+  createProvider: (options: { apiKey?: string; accessToken?: string }) => any;
 }
 
 /**
@@ -41,6 +45,7 @@ export const PROVIDERS: AIProvider[] = [
     setupDescription:
       'OpenRouter is a service that gives you access to many AI models with a single API key. You only pay for what you use.',
     status: 'active',
+    authType: 'apiKey',
     keyPrefix: 'sk-or-',
     keyPlaceholder: 'sk-or-...',
     storageKey: 'openrouter-api-key',
@@ -50,16 +55,27 @@ export const PROVIDERS: AIProvider[] = [
       { label: 'Get API key', url: 'https://openrouter.ai/settings/keys' },
     ],
     validateKey: validateOpenRouterKey,
+    createProvider: ({ apiKey }) => {
+      const { createOpenRouter } = require('@openrouter/ai-sdk-provider');
+      return createOpenRouter({ apiKey });
+    },
   },
   {
     id: 'chutes',
     name: 'Chutes',
-    description: 'Bittensor-powered AI network',
-    status: 'coming',
+    description: 'Sign in with Chutes to use their AI models',
+    setupDescription:
+      'Chutes lets you authenticate with OAuth so your app can use AI models without managing API keys.',
+    status: 'active',
+    authType: 'oauth',
     keyPlaceholder: '',
-    storageKey: 'chutes-api-key',
-    setupSteps: [],
-    validateKey: async () => false,
+    storageKey: 'chutes-session',
+    setupSteps: [{ label: 'Sign in with Chutes', url: 'https://chutes.ai' }],
+    validateKey: async () => true,
+    createProvider: ({ accessToken }) => {
+      const { createChutes } = require('@chutes-ai/ai-sdk-provider');
+      return createChutes({ apiKey: accessToken });
+    },
   },
 ];
 

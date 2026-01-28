@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { Icon } from '@/src/components/ui/Icon';
 
 interface CopyButtonProps {
   text: string;
@@ -42,7 +43,7 @@ export function CopyButton({
     }
   }, [text]);
 
-  const iconSize = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-5 h-5' : 'w-5 h-5';
+  const iconSize = size === 'sm' ? 16 : size === 'lg' ? 20 : 20;
 
   const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer';
   const paddingStyles = variant === 'minimal' ? 'p-0' : 'p-1.5';
@@ -60,35 +61,17 @@ export function CopyButton({
       title={copied ? 'Copied!' : 'Copy to clipboard'}
     >
       {copied ? (
-        // Checkmark icon
-        <svg
-          className={`${iconSize} text-green-400`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
+        <Icon
+          name="check"
+          size={iconSize}
+          className="text-green-400"
+        />
       ) : (
-        // Clipboard icon
-        <svg
-          className={`${iconSize} ${variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-          />
-        </svg>
+        <Icon
+          name="copy"
+          size={iconSize}
+          className={variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}
+        />
       )}
     </button>
   );

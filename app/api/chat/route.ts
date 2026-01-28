@@ -4,6 +4,7 @@ import {
   streamText,
 } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createChutes } from '@chutes-ai/ai-sdk-provider';
 import { retrieveWithReranking } from '@/src/lib/rag/retriever';
 import {
   buildContextBlock,
@@ -11,6 +12,15 @@ import {
   formatSourcesForClient,
 } from '@/src/lib/rag/prompt';
 import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
+import { getOAuthConfig, refreshTokens } from '@/src/lib/chutesAuth';
+import { getProvider } from '@/src/lib/providers';
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  cookieOptions,
+  getServerAccessToken,
+  getServerRefreshToken,
+} from '@/src/lib/serverAuth';
 
 /**
  * Models known to follow system prompt instructions reliably
@@ -155,6 +165,55 @@ function getMessageRole(msg: Record<string, unknown>): 'user' | 'assistant' | 's
 }
 
 /**
+ * Refresh Chutes access token if missing and refresh token is available.
+ */
+async function ensureChutesAccessToken(): Promise<{
+  accessToken: string | null;
+  refreshed: boolean;
+  refreshToken?: string;
+  expiresIn?: number;
+}> {
+  const accessToken = await getServerAccessToken();
+  if (accessToken) {
+    return { accessToken, refreshed: false };
+  }
+
+  const refreshToken = await getServerRefreshToken();
+  if (!refreshToken) {
+    return { accessToken: null, refreshed: false };
+  }
+
+  try {
+    const config = getOAuthConfig();
+    const refreshedTokens = await refreshTokens({ refreshToken, config });
+    return {
+      accessToken: refreshedTokens.access_token,
+      refreshed: Boolean(refreshedTokens.access_token),
+      refreshToken: refreshedTokens.refresh_token || refreshToken,
+      expiresIn: refreshedTokens.expires_in ?? 3600,
+    };
+  } catch {
+    return { accessToken: null, refreshed: false };
+  }
+}
+
+function buildSetCookieHeader(name: string, value: string, maxAge?: number): string {
+  const parts = [
+    `${name}=${encodeURIComponent(value)}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+  ];
+  if (cookieOptions.secure) {
+    parts.push('Secure');
+  }
+  if (typeof maxAge === 'number') {
+    parts.push(`Max-Age=${maxAge}`);
+  }
+  return parts.join('; ');
+}
+
+/**
  * POST /api/chat
  *
  * Streaming chat endpoint with RAG context injection.
@@ -163,7 +222,6 @@ function getMessageRole(msg: Record<string, unknown>): 'user' | 'assistant' | 's
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     // Basic validation without zod
     if (!body.messages || !Array.isArray(body.messages)) {
@@ -173,16 +231,41 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!body.apiKey || typeof body.apiKey !== 'string') {
+    const provider = body.provider || 'openrouter';
+    console.log('Chat request:', {
+      provider,
+      model: body.model || null,
+      messageCount: Array.isArray(body.messages) ? body.messages.length : 0,
+    });
+    if (provider !== 'openrouter' && provider !== 'chutes') {
       return new Response(
-        JSON.stringify({ error: 'apiKey string required' }),
+        JSON.stringify({ error: 'Unsupported provider' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    const apiKey = body.apiKey;
 
     const messages = body.messages;
-    const apiKey = body.apiKey;
-    const model = body.model || 'anthropic/claude-3.5-sonnet';
+    const model =
+      body.model ||
+      (provider === 'chutes'
+        ? process.env.CHUTES_DEFAULT_MODEL || ''
+        : 'anthropic/claude-3.5-sonnet');
+
+    if (provider === 'openrouter') {
+      if (!apiKey || typeof apiKey !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'apiKey string required' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+    if (provider === 'chutes' && (!model || typeof model !== 'string')) {
+      return new Response(
+        JSON.stringify({ error: 'Chutes model required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Find last user message for retrieval
     const lastUserMessage = [...messages].reverse().find((m: Record<string, unknown>) => getMessageRole(m) === 'user');
@@ -236,77 +319,133 @@ export async function POST(request: Request) {
     let chunks: Awaited<ReturnType<typeof retrieveWithReranking>> = [];
     let systemPrompt = 'You are a helpful assistant that answers questions about Quilibrium.';
     let ragQuality: 'high' | 'low' | 'none' = 'none';
+    let chutesAccessToken: string | null = null;
+    let refreshedTokenInfo:
+      | { refreshToken?: string; expiresIn?: number }
+      | null = null;
 
     try {
-      chunks = await retrieveWithReranking(userQuery, {
-        embeddingApiKey: apiKey,
-        cohereApiKey: process.env.COHERE_API_KEY,
-      });
+      const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
+      // Use Chutes embeddings if explicitly configured OR if on Chutes provider with no OR key
+      const useChutesEmbeddings =
+        provider === 'chutes' && (Boolean(process.env.CHUTES_EMBEDDING_MODEL) || !openrouterKey);
+
+      if (provider === 'chutes' || useChutesEmbeddings) {
+        const ensured = await ensureChutesAccessToken();
+        chutesAccessToken = ensured.accessToken;
+        if (ensured.refreshed) {
+          refreshedTokenInfo = {
+            refreshToken: ensured.refreshToken,
+            expiresIn: ensured.expiresIn,
+          };
+        }
+        if (provider === 'chutes' && !chutesAccessToken) {
+          return new Response(
+            JSON.stringify({ error: 'Not authenticated with Chutes' }),
+            { status: 401, headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+
+      const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
+      const embeddingModel =
+        body.embeddingModel ||
+        (useChutesEmbeddings
+          ? process.env.CHUTES_EMBEDDING_MODEL || 'https://embeddings.chutes.ai'
+          : undefined);
+
+      if (embeddingProvider === 'openrouter' && !openrouterKey) {
+        console.warn('Skipping RAG retrieval: OpenRouter API key missing for embeddings.');
+      } else {
+        chunks = await retrieveWithReranking(userQuery, {
+          embeddingProvider,
+          embeddingApiKey: embeddingProvider === 'openrouter' ? openrouterKey || undefined : undefined,
+          chutesAccessToken: embeddingProvider === 'chutes' ? chutesAccessToken || undefined : undefined,
+          embeddingModel,
+          cohereApiKey: process.env.COHERE_API_KEY,
+        });
+      }
       const { context, quality, avgSimilarity } = buildContextBlock(chunks);
       ragQuality = quality;
-      console.log(`RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}`);
-      systemPrompt = buildSystemPrompt(context, chunks.length);
-    } catch (ragError) {
-      console.error('RAG retrieval error:', ragError);
-      // Continue without RAG context
-    }
+      console.log(
+        `RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
+      );
+      const systemPrompt = buildSystemPrompt(context, chunks.length);
+  } catch (ragError) {
+    console.error('RAG retrieval error:', ragError);
+  }
 
-    // For open-source models with low-relevance RAG results, return a canned response
-    // to prevent hallucination. Claude/Gemini/GPT follow instructions well enough to handle this.
-    if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
-      console.log(`Returning fallback response for low-relevance query on model: ${model}`);
-      const stream = createUIMessageStream({
+  // Fallback response for low-relevance queries on non-instruction-following models
+  if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
+    return createUIMessageStreamResponse({
+      stream: createUIMessageStream({
         execute: async ({ writer }) => {
           const textId = 'fallback-response';
           writer.write({ type: 'text-start', id: textId });
           writer.write({ type: 'text-delta', id: textId, delta: LOW_RELEVANCE_FALLBACK_RESPONSE });
           writer.write({ type: 'text-end', id: textId });
         },
+      }),
+    });
+  }
+
+  // Create provider using registry factory
+  const providerConfig = getProvider(provider);
+  if (!providerConfig) {
+    return new Response(JSON.stringify({ error: 'Provider not found' }), { status: 404 });
+  }
+
+  const modelProvider = providerConfig.createProvider({
+    apiKey: provider === 'openrouter' ? apiKey : undefined,
+    accessToken: provider === 'chutes' ? chutesAccessToken || undefined : undefined,
+  });
+
+  // Create UI message stream with LLM response
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
+      const llmMessages = messages.map((m: Record<string, unknown>) => ({
+        role: getMessageRole(m),
+        content: getMessageContent(m),
+      }));
+
+      const sources = formatSourcesForClient(chunks);
+      const result = streamText({
+        model: modelProvider(model) as any,
+        system: systemPrompt,
+        messages: llmMessages,
+        onFinish: () => {
+          for (const source of sources) {
+            writer.write({
+              type: 'source-url',
+              sourceId: `source-${source.index}`,
+              url: source.url ?? '',
+              title: source.heading || source.file,
+            });
+          }
+        },
       });
-      return createUIMessageStreamResponse({ stream });
+
+      writer.merge(result.toUIMessageStream());
+    },
+  });
+
+    const response = createUIMessageStreamResponse({ stream });
+
+    // If we refreshed Chutes token, update cookies on response
+    if (provider === 'chutes' && refreshedTokenInfo?.expiresIn && chutesAccessToken) {
+      response.headers.append(
+        'Set-Cookie',
+        buildSetCookieHeader(COOKIE_ACCESS_TOKEN, chutesAccessToken, refreshedTokenInfo.expiresIn)
+      );
+      if (refreshedTokenInfo.refreshToken) {
+        response.headers.append(
+          'Set-Cookie',
+          buildSetCookieHeader(COOKIE_REFRESH_TOKEN, refreshedTokenInfo.refreshToken, 60 * 60 * 24 * 30)
+        );
+      }
     }
 
-    // Create OpenRouter provider with user's API key
-    const openrouter = createOpenRouter({ apiKey });
-
-    // Create UI message stream with LLM response, then sources after completion
-    const stream = createUIMessageStream({
-      execute: async ({ writer }) => {
-        // Convert messages to standard format for LLM
-        const llmMessages = messages.map((m: Record<string, unknown>) => ({
-          role: getMessageRole(m),
-          content: getMessageContent(m),
-        }));
-
-        // Prepare sources for sending after stream completes
-        const sources = formatSourcesForClient(chunks);
-
-        // Stream LLM response with onFinish callback to send sources
-        const result = streamText({
-          model: openrouter(model),
-          system: systemPrompt,
-          messages: llmMessages,
-          onFinish: () => {
-            // Send sources AFTER LLM stream completes
-            // This ensures sources are part of the same message as the text
-            // Use empty string for non-linkable sources (custom/transcriptions)
-            for (const source of sources) {
-              writer.write({
-                type: 'source-url',
-                sourceId: `source-${source.index}`,
-                url: source.url ?? '',
-                title: source.heading || source.file,
-              });
-            }
-          },
-        });
-
-        // Merge LLM stream into our stream
-        writer.merge(result.toUIMessageStream());
-      },
-    });
-
-    return createUIMessageStreamResponse({ stream });
+    return response;
   } catch (error) {
     console.error('Chat API error:', error);
 
@@ -317,6 +456,11 @@ export async function POST(request: Request) {
       errorMessage.toLowerCase().includes('insufficient') ||
       errorMessage.toLowerCase().includes('credit');
 
+    const isChutesUnauthorized =
+      errorMessage.toLowerCase().includes('unauthorized') ||
+      errorMessage.toLowerCase().includes('invalid token') ||
+      errorMessage.includes('401');
+
     if (isInsufficientCredits) {
       return new Response(
         JSON.stringify({
@@ -326,6 +470,19 @@ export async function POST(request: Request) {
         }),
         {
           status: 402,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    if (isChutesUnauthorized) {
+      return new Response(
+        JSON.stringify({
+          error: 'Not authenticated with Chutes',
+          message: 'Your Chutes session expired. Please sign in again.',
+        }),
+        {
+          status: 401,
           headers: { 'Content-Type': 'application/json' },
         }
       );

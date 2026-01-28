@@ -1,6 +1,8 @@
 'use client';
 
+import { useRouter, usePathname } from 'next/navigation';
 import { useConversationStore } from '@/src/stores/conversationStore';
+import { Icon } from '@/src/components/ui/Icon';
 
 /**
  * Format timestamp as relative time string.
@@ -40,6 +42,7 @@ function truncateTitle(title: string, maxLength: number = 30): string {
 
 interface ConversationListProps {
   onNavigate?: () => void;
+  onScroll?: (scrollTop: number) => void;
 }
 
 /**
@@ -49,7 +52,9 @@ interface ConversationListProps {
  * Waits for hydration before rendering to prevent SSR mismatch.
  * New Chat button and Settings are handled by parent Sidebar component.
  */
-export function ConversationList({ onNavigate }: ConversationListProps = {}) {
+export function ConversationList({ onNavigate, onScroll }: ConversationListProps = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
   const conversations = useConversationStore((s) => s.conversations);
   const activeId = useConversationStore((s) => s.activeId);
   const hasHydrated = useConversationStore((s) => s._hasHydrated);
@@ -73,7 +78,10 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
   );
 
   return (
-    <div className="flex-1 overflow-y-auto p-2 space-y-1 sidebar-scrollbar">
+    <div
+      className="flex-1 overflow-y-auto p-2 space-y-1 sidebar-scrollbar"
+      onScroll={(e) => onScroll?.(e.currentTarget.scrollTop)}
+    >
         {sortedConversations.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
             No conversations yet
@@ -96,15 +104,16 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
               `}
               onClick={() => {
                 setActive(conversation.id);
+                // Navigate to home if not already there
+                if (pathname !== '/') {
+                  router.push('/');
+                }
                 onNavigate?.();
               }}
             >
               <div className="pr-6">
                 <p className="text-sm font-medium text-text-primary truncate">
                   {truncateTitle(conversation.title)}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {formatRelativeTime(conversation.updatedAt)}
                 </p>
               </div>
 
@@ -127,18 +136,7 @@ export function ConversationList({ onNavigate }: ConversationListProps = {}) {
                 title="Delete conversation"
                 aria-label="Delete conversation"
               >
-                <svg
-                  className="h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <Icon name="x" size={16} />
               </button>
             </div>
           ))

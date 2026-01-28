@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { PROVIDERS, AIProvider } from '@/src/lib/providers';
 import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
+import { useChutesSession } from '@/src/hooks/useChutesSession';
+import { useChutesModels } from '@/src/hooks/useChutesModels';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 
 interface ProviderSetupProps {
   onConnect: (providerId: string, apiKey: string) => void;
@@ -17,9 +20,28 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
   const [apiKey, setApiKey] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {
+    isSignedIn,
+    user,
+    loading: chutesLoading,
+    loginUrl,
+    logout,
+    isAvailable: chutesAvailable,
+  } = useChutesSession();
+  const [chutesModel, setChutesModel] = useLocalStorage<string>('chutes-model', '');
+  const { models: chutesModels } = useChutesModels(
+    'llm',
+    selectedProvider?.id === 'chutes' && isSignedIn
+  );
+
+  useEffect(() => {
+    if (selectedProvider?.id === 'chutes' && isSignedIn && !chutesModel && chutesModels.length > 0) {
+      setChutesModel(chutesModels[0].id);
+    }
+  }, [selectedProvider, isSignedIn, chutesModel, chutesModels, setChutesModel]);
 
   const handleConnect = useCallback(async () => {
-    if (!selectedProvider || !apiKey.trim()) return;
+    if (!selectedProvider || selectedProvider.authType !== 'apiKey' || !apiKey.trim()) return;
 
     setIsValidating(true);
     setError(null);
@@ -62,6 +84,12 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     }
   }, [selectedProvider, apiKey, onConnect]);
 
+  const handleOAuthConnect = useCallback(() => {
+    if (!selectedProvider || selectedProvider.authType !== 'oauth') return;
+    if (!isSignedIn) return;
+    onConnect(selectedProvider.id, '');
+  }, [selectedProvider, onConnect, isSignedIn]);
+
   const handleBack = useCallback(() => {
     setSelectedProvider(null);
     setApiKey('');
@@ -93,35 +121,48 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {PROVIDERS.map((provider) => (
-              <button
-                key={provider.id}
-                onClick={() => provider.status === 'active' && setSelectedProvider(provider)}
-                disabled={provider.status !== 'active'}
-                className={`text-left p-4 rounded-xl border transition-all ${
-                  provider.status === 'active'
-                    ? 'border-gray-200 dark:border-gray-600 hover:border-accent dark:hover:border-accent hover:bg-surface/5 dark:hover:bg-surface/10 cursor-pointer'
-                    : 'border-gray-100 dark:border-gray-700 opacity-60 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-text-primary">{provider.name}</h3>
-                  {provider.status === 'coming' && (
-                    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                      Coming soon
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {provider.description}
-                </p>
-                {provider.status === 'active' && (
-                  <div className="mt-3 text-sm font-medium text-accent">
-                    Set up &rarr;
+            {PROVIDERS.map((provider) => {
+              // Check if this provider is available
+              const isChutesUnavailable = provider.id === 'chutes' && !chutesAvailable;
+              const isDisabled = provider.status !== 'active' || isChutesUnavailable;
+
+              return (
+                <button
+                  key={provider.id}
+                  onClick={() => !isDisabled && setSelectedProvider(provider)}
+                  disabled={isDisabled}
+                  className={`text-left p-4 rounded-xl border transition-all ${
+                    !isDisabled
+                      ? 'border-gray-200 dark:border-gray-600 hover:border-accent dark:hover:border-accent hover:bg-surface/5 dark:hover:bg-surface/10 cursor-pointer'
+                      : 'border-gray-100 dark:border-gray-700 opacity-60 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-medium text-text-primary">{provider.name}</h3>
+                    {provider.status === 'coming' && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                        Coming soon
+                      </span>
+                    )}
+                    {isChutesUnavailable && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                        Unavailable
+                      </span>
+                    )}
                   </div>
-                )}
-              </button>
-            ))}
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {isChutesUnavailable
+                      ? 'Chutes integration is currently being set up. Check back soon!'
+                      : provider.description}
+                  </p>
+                  {!isDisabled && (
+                    <div className="mt-3 text-sm font-medium text-accent">
+                      Set up &rarr;
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -174,41 +215,82 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
           </div>
         )}
 
-        {/* API Key input */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-text-primary">
-            {selectedProvider.setupSteps.length + 1}. Paste your API key here
-          </label>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="password"
-              value={apiKey}
-              onChange={(e) => {
-                setApiKey(e.target.value);
-                setError(null);
-              }}
-              placeholder={selectedProvider.keyPlaceholder}
-              className={`flex-1 px-4 py-3 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent dark:focus:border-accent transition-colors ${
-                error ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              }`}
-            />
-            <button
-              onClick={handleConnect}
-              disabled={isValidating || !apiKey.trim()}
-              className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg cursor-pointer bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all"
-            >
-              {isValidating ? 'Validating...' : 'Connect'}
-            </button>
+        {selectedProvider.authType === 'apiKey' ? (
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-text-primary">
+              {selectedProvider.setupSteps.length + 1}. Paste your API key here
+            </label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => {
+                  setApiKey(e.target.value);
+                  setError(null);
+                }}
+                placeholder={selectedProvider.keyPlaceholder}
+                className={`flex-1 px-4 py-3 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent dark:focus:border-accent transition-colors ${
+                  error ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+              <button
+                onClick={handleConnect}
+                disabled={isValidating || !apiKey.trim()}
+                className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg cursor-pointer bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all"
+              >
+                {isValidating ? 'Validating...' : 'Connect'}
+              </button>
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            )}
+
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Stored locally in your browser. We never see your key.
+            </p>
           </div>
-
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
-
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Stored locally in your browser. We never see your key.
-          </p>
-        </div>
+        ) : (
+          <div className="space-y-4">
+            {isSignedIn ? (
+              <div className="space-y-3">
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  Signed in as{' '}
+                  <span className="font-medium text-text-primary">
+                    {user?.username || user?.name || user?.email || 'Chutes user'}
+                  </span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    onClick={handleOAuthConnect}
+                    className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg cursor-pointer bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white transition-all"
+                  >
+                    Use Chutes
+                  </button>
+                  <button
+                    onClick={logout}
+                    disabled={chutesLoading}
+                    className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-text-primary hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <a
+                  href={loginUrl}
+                  className="inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                >
+                  Sign in with Chutes
+                </a>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  You&apos;ll be redirected to Chutes to sign in securely.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

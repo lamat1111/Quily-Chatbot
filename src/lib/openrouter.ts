@@ -9,9 +9,17 @@
  */
 
 /** Default model ID - Claude Sonnet for best accuracy */
-export const DEFAULT_MODEL_ID = 'anthropic/claude-sonnet-4';
+export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'anthropic/claude-sonnet-4';
 
-export const RECOMMENDED_MODELS = [
+export interface ModelMetadata {
+  id: string;
+  name: string;
+  description: string;
+  isOpenSource: boolean;
+  isRecommended: boolean;
+}
+
+const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
   // Best Quality - Recommended
   {
     id: 'anthropic/claude-sonnet-4',
@@ -42,9 +50,50 @@ export const RECOMMENDED_MODELS = [
     isOpenSource: true,
     isRecommended: false,
   },
-] as const;
+  // Other Proprietary Models
+  {
+    id: 'google/gemini-2.0-flash-001',
+    name: 'Gemini 2.0 Flash',
+    description: 'Fast and capable. Good for general questions.',
+    isOpenSource: false,
+    isRecommended: false,
+  },
+  {
+    id: 'openai/gpt-4o',
+    name: 'GPT-4o',
+    description: 'Well-rounded performance. Premium pricing.',
+    isOpenSource: false,
+    isRecommended: false,
+  },
+];
 
-export type RecommendedModel = (typeof RECOMMENDED_MODELS)[number];
+/**
+ * Get recommended models, potentially merging with environment overrides
+ */
+export function getRecommendedModels(): ModelMetadata[] {
+  const overridesStr = process.env.NEXT_PUBLIC_ADDITIONAL_MODELS;
+  if (!overridesStr) return [...BASE_RECOMMENDED_MODELS];
+
+  try {
+    const overrides = JSON.parse(overridesStr) as ModelMetadata[];
+    // Merge overrides by ID, ensuring no duplicates
+    const models = [...BASE_RECOMMENDED_MODELS];
+    for (const override of overrides) {
+      const index = models.findIndex((m) => m.id === override.id);
+      if (index >= 0) {
+        models[index] = override;
+      } else {
+        models.push(override);
+      }
+    }
+    return models;
+  } catch (e) {
+    console.warn('Failed to parse NEXT_PUBLIC_ADDITIONAL_MODELS:', e);
+    return [...BASE_RECOMMENDED_MODELS];
+  }
+}
+
+export const RECOMMENDED_MODELS = BASE_RECOMMENDED_MODELS;
 
 /**
  * Result from validating an OpenRouter API key

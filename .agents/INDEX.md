@@ -13,7 +13,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Tasks
 
-*No active tasks.*
+- [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md) - Add AI-generated smart titles for conversations via SettingsModal
 
 ### Archived Tasks
 - [Implement Jina Reranker](tasks/.archived/implement-jina-reranker.md) - Reverted due to CC-BY-NC licensing restrictions
@@ -24,4 +24,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-27
+**Last Updated**: 2026-01-28

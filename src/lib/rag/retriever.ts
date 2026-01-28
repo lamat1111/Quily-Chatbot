@@ -1,6 +1,7 @@
 import { embed, rerank } from 'ai';
 import { createCohere } from '@ai-sdk/cohere';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createChutes } from '@chutes-ai/ai-sdk-provider';
 import { supabase } from '../supabase';
 import type { RetrievedChunk, RetrievalOptions } from './types';
 
@@ -21,7 +22,10 @@ export async function retrieveWithReranking(
   options: RetrievalOptions
 ): Promise<RetrievedChunk[]> {
   const {
+    embeddingProvider = 'openrouter',
     embeddingApiKey,
+    chutesAccessToken,
+    embeddingModel,
     cohereApiKey,
     initialCount = 15,
     finalCount = 5,
@@ -29,13 +33,35 @@ export async function retrieveWithReranking(
   } = options;
 
   // Stage 1: Vector search
-  const openrouter = createOpenRouter({ apiKey: embeddingApiKey });
+  let embeddingResult;
 
-  // Embed query using same model as ingestion (text-embedding-3-small)
-  const { embedding } = await embed({
-    model: openrouter.textEmbeddingModel('openai/text-embedding-3-small'),
-    value: query,
-  });
+  if (embeddingProvider === 'chutes') {
+    if (!chutesAccessToken) {
+      throw new Error('Chutes access token is required for embeddings');
+    }
+    const chutes = createChutes({ apiKey: chutesAccessToken });
+    const modelId =
+      embeddingModel || process.env.CHUTES_EMBEDDING_MODEL || 'https://embeddings.chutes.ai';
+
+    embeddingResult = await embed({
+      model: chutes.textEmbeddingModel(modelId),
+      value: query,
+    });
+  } else {
+    if (!embeddingApiKey) {
+      throw new Error('OpenRouter API key is required for embeddings');
+    }
+    const openrouter = createOpenRouter({ apiKey: embeddingApiKey });
+
+    embeddingResult = await embed({
+      model: openrouter.textEmbeddingModel(
+        process.env.OPENROUTER_EMBEDDING_MODEL || 'openai/text-embedding-3-small'
+      ),
+      value: query,
+    });
+  }
+
+  const { embedding } = embeddingResult;
 
   // Call Supabase RPC for similarity search
   const { data: candidates, error } = await supabase.rpc('match_document_chunks', {

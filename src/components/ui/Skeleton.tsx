@@ -73,20 +73,31 @@ export function ConversationListSkeleton() {
 
 /**
  * Skeleton for the main chat area during initial load.
+ * Mimics the centered welcome state with title and quick action buttons.
  */
 export function ChatSkeleton() {
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-gray-900">
-      {/* Message area skeleton */}
-      <div className="flex-1 overflow-hidden">
-        <MessageListSkeleton />
+    <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+      {/* Welcome area skeleton - centered like the actual empty state */}
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          {/* Title skeleton */}
+          <Skeleton className="h-8 w-40 mx-auto mb-2 rounded" />
+          {/* Subtitle skeleton */}
+          <Skeleton className="h-5 w-72 mx-auto mb-6 rounded" />
+          {/* Quick action buttons skeleton */}
+          <div className="flex flex-wrap justify-center gap-2">
+            <Skeleton className="h-9 w-16 rounded-full" />
+            <Skeleton className="h-9 w-24 rounded-full" />
+            <Skeleton className="h-9 w-20 rounded-full" />
+          </div>
+        </div>
       </div>
 
       {/* Input area skeleton */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-        <div className="max-w-3xl mx-auto flex gap-3">
-          <Skeleton className="flex-1 h-12 rounded-xl" />
-          <Skeleton className="w-20 h-12 rounded-xl" />
+        <div className="max-w-3xl mx-auto">
+          <Skeleton className="h-12 w-full rounded-xl" />
         </div>
       </div>
     </div>
