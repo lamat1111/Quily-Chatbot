@@ -112,9 +112,31 @@ export interface ChutesAPIResponse {
 }
 
 /**
+ * Check if dynamic model discovery is available (requires CHUTES_API_KEY).
+ */
+export function isDiscoveryAvailable(): boolean {
+  return !!process.env.CHUTES_API_KEY;
+}
+
+/**
+ * Convert curated model metadata to ChuteInfo format for fallback.
+ */
+function curatedToChuteInfo(curated: CuratedModelMetadata[]): ChuteInfo[] {
+  return curated.map((m) => ({
+    chute_id: m.slug,
+    slug: m.slug,
+    name: m.displayName,
+    description: m.description,
+    public: true,
+  }));
+}
+
+/**
  * Fetch available chutes from the Chutes.ai Management API.
  * Uses the server-side API key (CHUTES_API_KEY) since OAuth tokens
  * cannot access the /chutes/ management endpoint.
+ *
+ * Falls back to curated model list if CHUTES_API_KEY is not configured.
  */
 export async function discoverChutes(
   _accessToken?: string,
@@ -122,31 +144,40 @@ export async function discoverChutes(
   limit: number = 500
 ): Promise<ChuteInfo[]> {
   const apiKey = process.env.CHUTES_API_KEY;
+
+  // Gracefully fall back to curated list if no API key
   if (!apiKey) {
-    throw new Error('CHUTES_API_KEY is required for model discovery');
+    console.warn('CHUTES_API_KEY not configured, using curated model list');
+    return curatedToChuteInfo([...getCuratedModels('llm'), ...getCuratedModels('embedding')]);
   }
 
-  const queryParams = new URLSearchParams({
-    include_public: String(includePublic),
-    limit: String(limit),
-  });
+  try {
+    const queryParams = new URLSearchParams({
+      include_public: String(includePublic),
+      limit: String(limit),
+    });
 
-  const url = `https://api.chutes.ai/chutes/?${queryParams}`;
+    const url = `https://api.chutes.ai/chutes/?${queryParams}`;
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-  });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch chutes: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      console.error(`Failed to fetch chutes: ${response.status} ${response.statusText}`);
+      return curatedToChuteInfo([...getCuratedModels('llm'), ...getCuratedModels('embedding')]);
+    }
+
+    const data = (await response.json()) as ChutesAPIResponse;
+    return data.items || [];
+  } catch (error) {
+    console.error('Error fetching chutes, falling back to curated list:', error);
+    return curatedToChuteInfo([...getCuratedModels('llm'), ...getCuratedModels('embedding')]);
   }
-
-  const data = (await response.json()) as ChutesAPIResponse;
-  return data.items || [];
 }
 
 /**
