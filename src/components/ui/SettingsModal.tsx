@@ -8,6 +8,7 @@ import { getRecommendedModels, DEFAULT_MODEL_ID, ModelMetadata } from '@/src/lib
 import { getProvider, getActiveProviders, getDefaultProvider } from '@/src/lib/providers';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
+import { Icon } from '@/src/components/ui/Icon';
 
 interface SettingsModalProps {
   children: React.ReactNode;
@@ -50,14 +51,21 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const [modelListOpen, setModelListOpen] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const provider = getProvider('openrouter');
   const isOpenRouter = providerId === 'openrouter';
   const isChutes = providerId === 'chutes';
   const recommendedModels = useMemo(() => getRecommendedModels(), []);
 
-  const { isSignedIn: isChutesSignedIn, user: chutesUser, loading: chutesLoading, loginUrl, logout } =
-    useChutesSession();
+  const {
+    isSignedIn: isChutesSignedIn,
+    user: chutesUser,
+    loading: chutesLoading,
+    loginUrl,
+    logout,
+    isAvailable: chutesAvailable,
+  } = useChutesSession();
   const { models: chutesModels, loading: chutesModelsLoading, error: chutesModelsError } =
     useChutesModels('llm', isChutes && isChutesSignedIn);
   const { models: chutesEmbeddingModels } =
@@ -127,9 +135,14 @@ export function SettingsModal({ children }: SettingsModalProps) {
   }, [inputValue, setApiKey, provider, isOpenRouter]);
 
   const handleClearApiKey = useCallback(() => {
+    setShowClearConfirm(true);
+  }, []);
+
+  const confirmClearApiKey = useCallback(() => {
     setApiKey('');
     setInputValue('');
     setValidationResult(null);
+    setShowClearConfirm(false);
   }, [setApiKey]);
 
   // Display hint for existing key
@@ -143,7 +156,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/70 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 z-50 shadow-xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 max-h-[90vh] overflow-y-auto">
+        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 z-50 shadow-xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 max-h-[90vh] overflow-y-auto modal-scrollbar">
 
           <Dialog.Title className="text-lg font-semibold text-text-primary pr-8">
             Settings
@@ -161,23 +174,40 @@ export function SettingsModal({ children }: SettingsModalProps) {
                 Provider
               </h3>
               <div className="grid grid-cols-2 gap-2">
-                {getActiveProviders().map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setProviderId(p.id)}
-                    className={`px-3 py-2 text-sm rounded-lg border transition-colors text-left
-                      ${providerId === p.id
-                        ? 'border-accent bg-accent/10 text-text-primary'
-                        : 'border-gray-200 dark:border-gray-700 text-text-secondary hover:bg-surface/5 dark:hover:bg-surface/10'
-                      }`}
-                  >
-                    <div className="font-medium">{p.name}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {p.description}
-                    </div>
-                  </button>
-                ))}
+                {getActiveProviders().map((p) => {
+                  const isChutesUnavailable = p.id === 'chutes' && !chutesAvailable;
+                  const isDisabled = isChutesUnavailable;
+
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => !isDisabled && setProviderId(p.id)}
+                      disabled={isDisabled}
+                      className={`px-3 py-2 text-sm rounded-lg border transition-colors text-left
+                        ${isDisabled
+                          ? 'border-gray-200 dark:border-gray-700 opacity-60 cursor-not-allowed'
+                          : providerId === p.id
+                            ? 'border-accent bg-accent/10 text-text-primary'
+                            : 'border-gray-200 dark:border-gray-700 text-text-secondary hover:bg-surface/5 dark:hover:bg-surface/10'
+                        }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{p.name}</span>
+                        {isChutesUnavailable && (
+                          <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                            Unavailable
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {isChutesUnavailable
+                          ? 'Coming soon'
+                          : p.description}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -210,7 +240,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                       ${validationResult === null ? 'border-gray-300 dark:border-gray-600' : ''}
                     `}
                   />
-                  {keyHint && !inputValue && (
+                  {keyHint && (
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
                   )}
                   {validationResult === 'invalid' && (
@@ -345,22 +375,15 @@ export function SettingsModal({ children }: SettingsModalProps) {
                         </span>
                       )}
                     </div>
-                    <svg
-                      className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform ${modelListOpen ? 'rotate-180' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <Icon
+                      name="chevron-down"
+                      size={16}
+                      className={`text-gray-500 dark:text-gray-400 transition-transform ${modelListOpen ? 'rotate-180' : ''}`}
+                    />
                   </button>
 
                   {modelListOpen && (
-                    <div className="border-t border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto">
+                    <div className="border-t border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto modal-scrollbar">
                       {recommendedModels.map((model: ModelMetadata) => (
                         <label
                           key={model.id}
@@ -435,18 +458,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                         ))}
                       </select>
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg
-                          className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <Icon name="chevron-down" size={16} className="text-gray-500 dark:text-gray-400" />
                       </div>
                     </div>
                   )}
@@ -478,14 +490,11 @@ export function SettingsModal({ children }: SettingsModalProps) {
                         onClick={() => setShowAdvanced(!showAdvanced)}
                         className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-accent transition-colors"
                       >
-                        <svg
-                          className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <Icon
+                          name="chevron-right"
+                          size={12}
+                          className={`transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
+                        />
                         Advanced Settings (Embeddings)
                       </button>
 
@@ -513,9 +522,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                                   ))}
                                 </select>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                  <svg className="h-4 w-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                  </svg>
+                                  <Icon name="chevron-down" size={16} className="text-gray-500" />
                                 </div>
                               </div>
                             ) : (
@@ -537,15 +544,44 @@ export function SettingsModal({ children }: SettingsModalProps) {
             </div>
           </div>
 
+          {/* Clear API Key Confirmation Dialog */}
+          {showClearConfirm && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 max-w-sm mx-4 shadow-xl">
+                <h3 className="text-lg font-semibold text-text-primary mb-2">
+                  Clear API Key?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Are you sure you want to remove your API key? You&apos;ll need to enter it again to use the chat.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
+                      bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                      text-text-secondary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmClearApiKey}
+                    className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
+                      bg-red-500 hover:bg-red-600 text-white transition-colors"
+                  >
+                    Clear Key
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Close button */}
           <Dialog.Close asChild>
             <button
               className="absolute top-4 right-4 p-1 rounded cursor-pointer hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
               aria-label="Close"
             >
-              <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <Icon name="x" size={20} className="text-gray-500 dark:text-gray-400" />
             </button>
           </Dialog.Close>
         </Dialog.Content>

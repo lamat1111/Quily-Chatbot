@@ -1,19 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ConversationList } from './ConversationList';
 import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { SettingsModal } from '@/src/components/ui/SettingsModal';
+import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 
 /**
- * Main sidebar component containing settings and conversation history.
+ * Main sidebar component containing navigation and conversation history.
  *
  * Layout:
  * - Header with title and theme toggle
- * - New Chat button (fixed)
+ * - Navigation items (New Chat, About, Links) - collapses on scroll
  * - Conversation list (scrollable, fills remaining space)
  * - Settings button (fixed at bottom)
  *
@@ -23,6 +25,7 @@ import { useChutesSession } from '@/src/hooks/useChutesSession';
  */
 export function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [providerId] = useLocalStorage<string>('selected-provider', 'openrouter');
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
   const { isSignedIn: isChutesSignedIn } = useChutesSession();
@@ -36,6 +39,11 @@ export function Sidebar() {
     setSidebarOpen(false);
   };
 
+  const handleScroll = (scrollTop: number) => {
+    // Collapse secondary nav items as soon as scrolling starts
+    setIsScrolled(scrollTop > 0);
+  };
+
   return (
     <>
       {/* Mobile header bar - takes space in layout, doesn't overlap content */}
@@ -46,41 +54,16 @@ export function Sidebar() {
           aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {sidebarOpen ? (
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon name="x" size={24} />
           ) : (
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <Icon name="menu" size={24} />
           )}
         </button>
-        <h1 className="ml-2 text-lg font-semibold text-text-primary">
+        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1">
           Quily Chat
           <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
         </h1>
+        <ThemeToggle />
       </div>
 
       {/* Mobile backdrop */}
@@ -113,40 +96,76 @@ export function Sidebar() {
           <ThemeToggle />
         </div>
 
-        {/* New Chat button - fixed at top */}
-        <div className="px-2 pb-2">
+        {/* Navigation items */}
+        <nav className="px-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+          {/* New Chat - always visible, accent colored */}
           <button
             onClick={handleNewChat}
             className="
-              w-full px-4 py-2
+              w-full px-3 py-2
               text-sm font-medium
               text-accent
-              bg-transparent
-              border border-accent
-              hover:bg-accent/10 dark:hover:bg-accent/20
+              hover:bg-accent/10 dark:hover:bg-accent/15
               rounded-lg
               transition-colors
-              flex items-center justify-center gap-2
+              flex items-center gap-3
+              cursor-pointer
             "
           >
-            <svg
-              className="h-4 w-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <Icon name="plus" size={18} className="text-accent" />
             New Chat
           </button>
-        </div>
+
+          {/* Collapsible items */}
+          <div
+            className={`
+              transition-all duration-150
+              ${isScrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}
+            `}
+          >
+            <Link
+              href="/about"
+              onClick={() => setSidebarOpen(false)}
+              className="
+                w-full px-3 py-2
+                text-sm
+                text-gray-500 dark:text-gray-400
+                hover:text-text-primary
+                hover:bg-surface/10 dark:hover:bg-surface/15
+                rounded-lg
+                transition-colors
+                flex items-center gap-3
+              "
+            >
+              <Icon name="info" size={18} />
+              About
+            </Link>
+
+            <Link
+              href="/links"
+              onClick={() => setSidebarOpen(false)}
+              className="
+                w-full px-3 py-2
+                text-sm
+                text-gray-500 dark:text-gray-400
+                hover:text-text-primary
+                hover:bg-surface/10 dark:hover:bg-surface/15
+                rounded-lg
+                transition-colors
+                flex items-center gap-3
+              "
+            >
+              <Icon name="link" size={18} />
+              Quilibrium Links
+            </Link>
+          </div>
+        </nav>
 
         {/* Conversation list - scrollable, fills remaining space */}
-        <ConversationList onNavigate={() => setSidebarOpen(false)} />
+        <ConversationList
+          onNavigate={() => setSidebarOpen(false)}
+          onScroll={handleScroll}
+        />
 
         {/* Settings at bottom - fixed */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
@@ -160,11 +179,7 @@ export function Sidebar() {
               {/* Status indicator */}
               <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className="flex-1">Settings</span>
-              {/* Settings icon */}
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <Icon name="settings" size={16} className="text-gray-400" />
             </button>
           </SettingsModal>
         </div>
