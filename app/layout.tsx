@@ -12,6 +12,32 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Quilibrium Chat',
   description: 'Get instant, accurate answers about Quilibrium from official sources',
+  metadataBase: new URL('https://quily.quilibrium.one'),
+  openGraph: {
+    title: 'Quilibrium Chat',
+    description: 'Get instant, accurate answers about Quilibrium from official sources',
+    url: 'https://quily.quilibrium.one',
+    siteName: 'Quilibrium Chat',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Quilibrium Chat',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Quilibrium Chat',
+    description: 'Get instant, accurate answers about Quilibrium from official sources',
+    images: ['/og-image.png'],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({

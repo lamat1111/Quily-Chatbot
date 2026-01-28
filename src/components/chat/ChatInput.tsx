@@ -146,6 +146,9 @@ export function ChatInput({
           </a>
           .
         </p>
+        <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-1">
+          This app is unofficial and not endorsed by Quilibrium Inc.
+        </p>
       </form>
     </div>
   );
