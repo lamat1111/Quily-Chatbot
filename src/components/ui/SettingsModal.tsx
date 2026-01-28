@@ -49,6 +49,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [modelListOpen, setModelListOpen] = useState(false);
+  const [chutesModelListOpen, setChutesModelListOpen] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -332,7 +333,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                 ) : (
                   <a
                     href={loginUrl}
-                    className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                    className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
                   >
                     Sign in with Chutes
                   </a>
@@ -445,41 +446,89 @@ export function SettingsModal({ children }: SettingsModalProps) {
                     <p className="text-xs text-red-600 dark:text-red-400">{chutesModelsError}</p>
                   )}
                   {isChutesSignedIn && !chutesModelsLoading && chutesModels.length > 0 && (
-                    <div className="relative">
-                      <select
-                        value={chutesModel}
-                        onChange={(e) => setChutesModel(e.target.value)}
-                        className="w-full px-3 py-2 pr-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer appearance-none"
+                    <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+                      {/* Selected model header */}
+                      <button
+                        type="button"
+                        onClick={() => setChutesModelListOpen(!chutesModelListOpen)}
+                        className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                       >
-                        {chutesModels.map((model) => (
-                          <option key={model.id} value={model.id}>
-                            {model.name}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <Icon name="chevron-down" size={16} className="text-gray-500 dark:text-gray-400" />
-                      </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-medium text-text-primary">
+                            {chutesModels.find((m) => m.id === chutesModel)?.name || 'Select a model'}
+                          </span>
+                          {chutesModels.find((m) => m.id === chutesModel)?.isOpenSource && (
+                            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                              Open Source
+                            </span>
+                          )}
+                          {chutesModels.find((m) => m.id === chutesModel)?.isRecommended && (
+                            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-accent/10 dark:bg-accent/20 text-accent">
+                              Recommended
+                            </span>
+                          )}
+                        </div>
+                        <Icon
+                          name="chevron-down"
+                          size={16}
+                          className={`text-gray-500 dark:text-gray-400 transition-transform ${chutesModelListOpen ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                      {/* Model list dropdown */}
+                      {chutesModelListOpen && (
+                        <div className="border-t border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto modal-scrollbar">
+                          {chutesModels.map((model) => (
+                            <label
+                              key={model.id}
+                              className={`flex items-start gap-3 px-3 py-2.5 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0
+                                ${chutesModel === model.id
+                                  ? 'bg-surface/10 dark:bg-surface/15'
+                                  : 'hover:bg-surface/5 dark:hover:bg-surface/10'
+                                }`}
+                            >
+                              <input
+                                type="radio"
+                                name="chutes-model-select"
+                                value={model.id}
+                                checked={chutesModel === model.id}
+                                onChange={(e) => {
+                                  setChutesModel(e.target.value);
+                                  setChutesModelListOpen(false);
+                                }}
+                                className="mt-0.5 h-4 w-4 text-accent accent-accent focus:ring-accent"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-sm font-medium text-text-primary">
+                                    {model.name}
+                                  </span>
+                                  {model.isRecommended && (
+                                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-accent/10 dark:bg-accent/20 text-accent">
+                                      Recommended
+                                    </span>
+                                  )}
+                                  {model.isOpenSource && (
+                                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                      Open Source
+                                    </span>
+                                  )}
+                                </div>
+                                {model.description && (
+                                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                                    {model.description}
+                                  </p>
+                                )}
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
-                  {isChutesSignedIn && !chutesModelsLoading && chutesModels.length === 0 && (
+                  {isChutesSignedIn && !chutesModelsLoading && chutesModels.length === 0 && !chutesModelsError && (
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       No Chutes models available for this account.
                     </p>
-                  )}
-                  {isChutesSignedIn && (chutesModelsError || chutesModels.length === 0) && (
-                    <div className="pt-2">
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Chute URL or slug
-                      </label>
-                      <input
-                        type="text"
-                        value={chutesModel}
-                        onChange={(e) => setChutesModel(e.target.value)}
-                        placeholder="https://your-chute.chutes.ai"
-                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                      />
-                    </div>
                   )}
 
                   {/* Advanced Settings for Chutes */}
@@ -495,17 +544,35 @@ export function SettingsModal({ children }: SettingsModalProps) {
                           size={12}
                           className={`transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
                         />
-                        Advanced Settings (Embeddings)
+                        Advanced Settings
                       </button>
 
                       {showAdvanced && (
                         <div className="mt-3 space-y-4">
+                          {/* Custom Chute URL/slug for power users */}
                           <div className="space-y-1">
-                            <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
+                              Custom Model URL
+                            </label>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                              Enter any Chute URL or slug to use a custom model.
+                            </p>
+                            <input
+                              type="text"
+                              value={chutesModel}
+                              onChange={(e) => setChutesModel(e.target.value)}
+                              placeholder="https://your-chute.chutes.ai"
+                              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
+                            />
+                          </div>
+
+                          {/* Embedding Model */}
+                          <div className="space-y-1">
+                            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
                               Embedding Model
                             </label>
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-2 leading-relaxed">
-                              Warning: This must match the model used for documentation indexing.
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                              Must match the model used for documentation indexing.
                             </p>
                             {chutesEmbeddingModels.length > 0 ? (
                               <div className="relative">

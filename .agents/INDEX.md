@@ -13,6 +13,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Tasks
 
+- [Convert Settings Modal to Standalone Settings Page](tasks/convert-settings-modal-to-page.md) - Convert SettingsModal dialog to a full `/settings` page with card-based layout
+- [Implement Dual Embedding Storage for OpenRouter and Chutes Providers](tasks/dual-embedding-storage-openrouter-chutes.md) - Enable both providers with separate embedding tables (1536 vs 1024 dims)
 - [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md) - Add AI-generated smart titles for conversations via SettingsModal
 
 ### Archived Tasks

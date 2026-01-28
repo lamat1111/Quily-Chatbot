@@ -96,6 +96,7 @@ export default function LinksPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
+                    link-unstyled
                     flex items-center gap-4 p-4
                     bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700
@@ -141,6 +142,7 @@ export default function LinksPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
+                    link-unstyled
                     flex items-center gap-4 p-4
                     bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700

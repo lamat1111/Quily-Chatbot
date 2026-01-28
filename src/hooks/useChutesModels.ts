@@ -13,6 +13,8 @@ export type ChutesModelOption = {
   template?: string | null;
   slug?: string;
   chuteId?: string;
+  isOpenSource?: boolean;
+  isRecommended?: boolean;
 };
 
 type UseChutesModelsResult = {

@@ -28,25 +28,25 @@ const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
     isOpenSource: false,
     isRecommended: true,
   },
-  // Open Source Models - May be less accurate
+  // Open Source Models - Aligned with Chutes offerings
   {
-    id: 'meta-llama/llama-3.1-70b-instruct',
-    name: 'Llama 3.1 70B',
-    description: 'Good quality. May be less accurate on technical details.',
-    isOpenSource: true,
-    isRecommended: false,
-  },
-  {
-    id: 'qwen/qwen-2.5-72b-instruct',
-    name: 'Qwen 2.5 72B',
-    description: 'Good multilingual support. May be less accurate on technical details.',
+    id: 'deepseek/deepseek-chat',
+    name: 'DeepSeek V3',
+    description: 'Best open-source. Excellent reasoning and accuracy.',
     isOpenSource: true,
     isRecommended: false,
   },
   {
     id: 'deepseek/deepseek-r1',
     name: 'DeepSeek R1',
-    description: 'Advanced reasoning. May hallucinate technical details.',
+    description: 'Advanced reasoning. Great for complex questions.',
+    isOpenSource: true,
+    isRecommended: false,
+  },
+  {
+    id: 'qwen/qwen-2.5-72b-instruct',
+    name: 'Qwen 2.5 72B',
+    description: 'High quality. Strong multilingual support.',
     isOpenSource: true,
     isRecommended: false,
   },

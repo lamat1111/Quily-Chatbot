@@ -11,6 +11,7 @@ import {
   discoverChutes,
   filterChutesByType,
   getChuteUrl,
+  getCuratedModels,
 } from '@/src/lib/chutes/chuteDiscovery';
 
 export async function GET(request: Request) {
@@ -44,15 +45,29 @@ export async function GET(request: Request) {
 
     const allChutes = await discoverChutes(accessToken);
     const filtered = filterChutesByType(allChutes, type);
+    const curatedMetadata = getCuratedModels(type as 'llm' | 'embedding');
 
-    const models = filtered.map((chute) => ({
-      id: getChuteUrl(chute.slug),
-      name: chute.name,
-      description: chute.tagline || chute.description || '',
-      template: chute.standard_template || null,
-      slug: chute.slug,
-      chuteId: chute.chute_id,
-    }));
+    // Build a map of slug -> curated metadata for quick lookup
+    const metadataMap = new Map(curatedMetadata.map((m) => [m.slug, m]));
+
+    // Map chutes to model options, enriching with curated metadata
+    const models = filtered
+      .map((chute) => {
+        const meta = metadataMap.get(chute.slug);
+        return {
+          id: getChuteUrl(chute.slug),
+          name: meta?.displayName || chute.name,
+          description: meta?.description || chute.tagline || chute.description || '',
+          template: chute.standard_template || null,
+          slug: chute.slug,
+          chuteId: chute.chute_id,
+          isOpenSource: meta?.isOpenSource ?? true,
+          isRecommended: meta?.isRecommended ?? false,
+          order: meta?.order ?? 999,
+        };
+      })
+      // Sort by order to ensure consistent display
+      .sort((a, b) => a.order - b.order);
 
     const res = NextResponse.json({ models });
     if (refreshedTokenInfo?.expiresIn) {
