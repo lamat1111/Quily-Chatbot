@@ -40,7 +40,7 @@
   --brand-surface: #9ca3af;
 }
 
-/* Register colors with Tailwind */
+/* Register colors and fonts with Tailwind */
 @theme {
   --color-accent: var(--brand-accent);
   --color-accent-hover: var(--brand-accent-hover);
@@ -55,6 +55,8 @@
   --color-text-muted: var(--brand-text-muted);
   /* Burgundy base for opacity usage - light theme uses burgundy tint, dark uses gray */
   --color-surface: var(--brand-surface);
+  /* Brand title font (Jost) */
+  --font-title: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Custom text selection colors */

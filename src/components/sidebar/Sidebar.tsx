@@ -65,9 +65,9 @@ export function Sidebar() {
             <Icon name="menu" size={24} />
           )}
         </button>
-        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1">
+        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1 font-title">
           Quily Chat
-          <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
+          <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
         </h1>
         <ThemeToggle />
       </div>
@@ -95,9 +95,9 @@ export function Sidebar() {
       >
         {/* Header with title and theme toggle */}
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-semibold text-text-primary">
+          <h1 className="text-lg font-semibold text-text-primary font-title">
             Quily Chat
-            <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
+            <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
           </h1>
           <ThemeToggle />
         </div>

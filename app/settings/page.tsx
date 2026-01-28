@@ -125,7 +125,7 @@ export default function SettingsPage() {
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 py-12 w-full">
           {/* Page Header */}
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Settings</h1>
+          <h1 className="text-3xl font-bold text-text-primary mb-2 font-title">Settings</h1>
           <p className="text-text-secondary mb-8">
             Configure your AI provider, API key, and preferred model.
           </p>

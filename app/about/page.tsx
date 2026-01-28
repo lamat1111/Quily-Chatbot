@@ -5,7 +5,7 @@ export default function AboutPage() {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 py-12 w-full">
-          <h1 className="text-3xl font-bold text-text-primary mb-6">
+          <h1 className="text-3xl font-bold text-text-primary mb-6 font-title">
             About Quily Chat
           </h1>
 
