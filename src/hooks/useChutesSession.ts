@@ -35,6 +35,10 @@ type UseChutesSessionReturn = {
   loading: boolean;
   /** URL to redirect users to for login */
   loginUrl: string;
+  /** Whether Chutes OAuth is configured on the server */
+  isAvailable: boolean;
+  /** Message explaining why Chutes is unavailable */
+  unavailableMessage: string | null;
   /** Function to refresh the session state */
   refresh: () => Promise<void>;
   /** Function to log out the current user */
@@ -48,6 +52,8 @@ type UseChutesSessionReturn = {
 export function useChutesSession(): UseChutesSessionReturn {
   const [session, setSession] = useState<ChutesSession>({ signedIn: false });
   const [loading, setLoading] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [unavailableMessage, setUnavailableMessage] = useState<string | null>(null);
 
   /**
    * Fetch the current session state from the server.
@@ -82,6 +88,24 @@ export function useChutesSession(): UseChutesSessionReturn {
     }
   }, [refresh]);
 
+  // Check if Chutes OAuth is configured
+  useEffect(() => {
+    async function checkAvailability() {
+      try {
+        const res = await fetch('/api/auth/chutes/status', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          setIsAvailable(data.available);
+          setUnavailableMessage(data.message || null);
+        }
+      } catch {
+        // If we can't check, assume available and let login fail naturally
+        setIsAvailable(true);
+      }
+    }
+    checkAvailability();
+  }, []);
+
   // Load session on mount
   useEffect(() => {
     refresh();
@@ -92,6 +116,8 @@ export function useChutesSession(): UseChutesSessionReturn {
     user: session.user,
     loading,
     loginUrl: '/api/auth/chutes/login',
+    isAvailable,
+    unavailableMessage,
     refresh,
     logout,
   };

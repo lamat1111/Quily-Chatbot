@@ -20,7 +20,14 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
   const [apiKey, setApiKey] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isSignedIn, user, loading: chutesLoading, loginUrl, logout } = useChutesSession();
+  const {
+    isSignedIn,
+    user,
+    loading: chutesLoading,
+    loginUrl,
+    logout,
+    isAvailable: chutesAvailable,
+  } = useChutesSession();
   const [chutesModel, setChutesModel] = useLocalStorage<string>('chutes-model', '');
   const { models: chutesModels } = useChutesModels(
     'llm',
@@ -114,35 +121,48 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {PROVIDERS.map((provider) => (
-              <button
-                key={provider.id}
-                onClick={() => provider.status === 'active' && setSelectedProvider(provider)}
-                disabled={provider.status !== 'active'}
-                className={`text-left p-4 rounded-xl border transition-all ${
-                  provider.status === 'active'
-                    ? 'border-gray-200 dark:border-gray-600 hover:border-accent dark:hover:border-accent hover:bg-surface/5 dark:hover:bg-surface/10 cursor-pointer'
-                    : 'border-gray-100 dark:border-gray-700 opacity-60 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-text-primary">{provider.name}</h3>
-                  {provider.status === 'coming' && (
-                    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                      Coming soon
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {provider.description}
-                </p>
-                {provider.status === 'active' && (
-                  <div className="mt-3 text-sm font-medium text-accent">
-                    Set up &rarr;
+            {PROVIDERS.map((provider) => {
+              // Check if this provider is available
+              const isChutesUnavailable = provider.id === 'chutes' && !chutesAvailable;
+              const isDisabled = provider.status !== 'active' || isChutesUnavailable;
+
+              return (
+                <button
+                  key={provider.id}
+                  onClick={() => !isDisabled && setSelectedProvider(provider)}
+                  disabled={isDisabled}
+                  className={`text-left p-4 rounded-xl border transition-all ${
+                    !isDisabled
+                      ? 'border-gray-200 dark:border-gray-600 hover:border-accent dark:hover:border-accent hover:bg-surface/5 dark:hover:bg-surface/10 cursor-pointer'
+                      : 'border-gray-100 dark:border-gray-700 opacity-60 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-medium text-text-primary">{provider.name}</h3>
+                    {provider.status === 'coming' && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                        Coming soon
+                      </span>
+                    )}
+                    {isChutesUnavailable && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                        Unavailable
+                      </span>
+                    )}
                   </div>
-                )}
-              </button>
-            ))}
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {isChutesUnavailable
+                      ? 'Chutes integration is currently being set up. Check back soon!'
+                      : provider.description}
+                  </p>
+                  {!isDisabled && (
+                    <div className="mt-3 text-sm font-medium text-accent">
+                      Set up &rarr;
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
