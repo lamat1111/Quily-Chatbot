@@ -1,31 +1,26 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
+import { Sidebar } from '@/src/components/sidebar/Sidebar';
+import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
-import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getRecommendedModels, DEFAULT_MODEL_ID, ModelMetadata } from '@/src/lib/openrouter';
 import { getProvider, getActiveProviders, getDefaultProvider } from '@/src/lib/providers';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
-import { Icon } from '@/src/components/ui/Icon';
-
-interface SettingsModalProps {
-  children: React.ReactNode;
-}
 
 /**
- * Unified settings modal for API key and model configuration.
+ * Settings page for API key and model configuration.
  *
  * Features:
+ * - Provider selection (OpenRouter, Chutes)
  * - API key configuration with validation
- * - Model selection dropdown
- * - Responsive design with proper mobile spacing
- * - Accessible with proper focus trap
+ * - OAuth sign in/out for Chutes
+ * - Model selection dropdowns
+ * - Advanced settings for Chutes
  */
-export function SettingsModal({ children }: SettingsModalProps) {
-  const [open, setOpen] = useState(false);
-  const { isOpen: storeIsOpen, closeSettings } = useSettingsStore();
+export default function SettingsPage() {
+  // Provider and API key state
   const [providerId, setProviderId] = useLocalStorage<string>(
     'selected-provider',
     getDefaultProvider().id
@@ -46,7 +41,8 @@ export function SettingsModal({ children }: SettingsModalProps) {
     'chutes-embedding-model',
     process.env.NEXT_PUBLIC_CHUTES_EMBEDDING_MODEL || ''
   );
-  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // UI state
   const [inputValue, setInputValue] = useState('');
   const [modelListOpen, setModelListOpen] = useState(false);
   const [chutesModelListOpen, setChutesModelListOpen] = useState(false);
@@ -59,6 +55,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const isChutes = providerId === 'chutes';
   const recommendedModels = useMemo(() => getRecommendedModels(), []);
 
+  // Chutes session and models
   const {
     isSignedIn: isChutesSignedIn,
     user: chutesUser,
@@ -72,35 +69,14 @@ export function SettingsModal({ children }: SettingsModalProps) {
   const { models: chutesEmbeddingModels } =
     useChutesModels('embedding', isChutes && isChutesSignedIn);
 
+  // Set default Chutes model when signed in and models are loaded
   useEffect(() => {
     if (isChutes && isChutesSignedIn && chutesModels.length > 0 && !chutesModel) {
       setChutesModel(chutesModels[0].id);
     }
   }, [isChutes, isChutesSignedIn, chutesModels, chutesModel, setChutesModel]);
 
-  // Sync with store - allow opening from anywhere
-  useEffect(() => {
-    if (storeIsOpen && !open) {
-      setOpen(true);
-      if (apiKeyHydrated && isOpenRouter) {
-        setInputValue(apiKey);
-        setValidationResult(null);
-      }
-    }
-  }, [storeIsOpen, open, apiKey, apiKeyHydrated, isOpenRouter]);
-
-  // Sync input with stored key when modal opens
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
-    if (!isOpen) {
-      closeSettings(); // Sync store when closing
-    }
-    if (isOpen && apiKeyHydrated && isOpenRouter) {
-      setInputValue(apiKey);
-      setValidationResult(null);
-    }
-  };
-
+  // Sync input with stored key on mount
   useEffect(() => {
     if (isOpenRouter && apiKeyHydrated) {
       setInputValue(apiKey);
@@ -108,12 +84,14 @@ export function SettingsModal({ children }: SettingsModalProps) {
     }
   }, [isOpenRouter, apiKeyHydrated, apiKey]);
 
+  // Close OpenRouter model list when switching providers
   useEffect(() => {
     if (!isOpenRouter) {
       setModelListOpen(false);
     }
   }, [isOpenRouter]);
 
+  // API key handlers
   const handleSaveApiKey = useCallback(async () => {
     if (!inputValue.trim() || !provider || !isOpenRouter) return;
 
@@ -151,29 +129,24 @@ export function SettingsModal({ children }: SettingsModalProps) {
     isOpenRouter && apiKey.length > 6 ? `Current: ••••••${apiKey.slice(-6)}` : null;
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      <Dialog.Trigger asChild>
-        {children}
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/70 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 z-50 shadow-xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 max-h-[90vh] overflow-y-auto modal-scrollbar">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar />
+      {/* Main content area - pt-14 on mobile for fixed header, pt-0 on desktop */}
+      <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 py-12 w-full">
+          {/* Page Header */}
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Settings</h1>
+          <p className="text-text-secondary mb-8">
+            Configure your AI provider, API key, and preferred model.
+          </p>
 
-          <Dialog.Title className="text-lg font-semibold text-text-primary pr-8">
-            Settings
-          </Dialog.Title>
-
-          <Dialog.Description className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Configure your API key and preferred model.
-          </Dialog.Description>
-
-          {/* Settings Form */}
-          <div className="mt-4 space-y-6">
-            {/* Provider Selection */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-text-primary">
+          {/* Provider Selection Card */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="zap" size={20} className="text-accent" />
                 Provider
-              </h3>
+              </h2>
               <div className="grid grid-cols-2 gap-2">
                 {getActiveProviders().map((p) => {
                   const isChutesUnavailable = p.id === 'chutes' && !chutesAvailable;
@@ -211,146 +184,180 @@ export function SettingsModal({ children }: SettingsModalProps) {
                 })}
               </div>
             </div>
+          </section>
 
-            {/* OpenRouter API Key Section */}
-            {isOpenRouter && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
-                  {provider?.name || 'Provider'} API Key
-                </h3>
+          {/* Authentication Card */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              {isOpenRouter && (
+                <>
+                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <Icon name="key" size={20} className="text-accent" />
+                    <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
+                    {provider?.name || 'Provider'} API Key
+                  </h2>
 
-                <div>
-                  <input
-                    id="settings-api-key"
-                    type="password"
-                    value={inputValue}
-                    onChange={(e) => {
-                      setInputValue(e.target.value);
-                      setValidationResult(null);
-                    }}
-                    placeholder={provider?.keyPlaceholder || 'API key...'}
-                    className={`w-full px-3 py-2 text-sm rounded-lg border
-                      bg-surface/5 dark:bg-surface/10
-                      text-text-primary
-                      placeholder-gray-400 dark:placeholder-gray-500
-                      focus:outline-none focus:border-secondary dark:focus:border-gray-400
-                      transition-colors
-                      ${validationResult === 'valid' ? 'border-green-500' : ''}
-                      ${validationResult === 'invalid' ? 'border-red-500' : ''}
-                      ${validationResult === null ? 'border-gray-300 dark:border-gray-600' : ''}
-                    `}
-                  />
-                  {keyHint && (
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
-                  )}
-                  {validationResult === 'invalid' && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                      Invalid API key. Make sure you have credits in your account.
-                    </p>
-                  )}
-                  {validationResult === 'valid' && (
-                    <p className="mt-1 text-xs text-green-600 dark:text-green-400">
-                      API key validated successfully!
-                    </p>
-                  )}
-                </div>
+                  <div className="space-y-3">
+                    <div>
+                      <input
+                        id="settings-api-key"
+                        type="password"
+                        value={inputValue}
+                        onChange={(e) => {
+                          setInputValue(e.target.value);
+                          setValidationResult(null);
+                        }}
+                        placeholder={provider?.keyPlaceholder || 'API key...'}
+                        className={`w-full px-3 py-2 text-sm rounded-lg border
+                          bg-surface/5 dark:bg-surface/10
+                          text-text-primary
+                          placeholder-gray-400 dark:placeholder-gray-500
+                          focus:outline-none focus:border-secondary dark:focus:border-gray-400
+                          transition-colors
+                          ${validationResult === 'valid' ? 'border-green-500' : ''}
+                          ${validationResult === 'invalid' ? 'border-red-500' : ''}
+                          ${validationResult === null ? 'border-gray-300 dark:border-gray-600' : ''}
+                        `}
+                      />
+                      {keyHint && (
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
+                      )}
+                      {validationResult === 'invalid' && (
+                        <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                          Invalid API key. Make sure you have credits in your account.
+                        </p>
+                      )}
+                      {validationResult === 'valid' && (
+                        <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                          API key validated successfully!
+                        </p>
+                      )}
+                    </div>
 
-                {/* API Key buttons */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSaveApiKey}
-                    disabled={isValidating || !inputValue.trim()}
-                    className="flex-1 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
-                      text-accent
-                      bg-transparent
-                      border border-accent
-                      hover:bg-accent/10 dark:hover:bg-accent/20
-                      disabled:text-gray-400 disabled:border-gray-400 disabled:hover:bg-transparent
-                      transition-colors
-                      focus:outline-none focus:bg-accent/10 dark:focus:bg-accent/20
-                      disabled:cursor-not-allowed"
-                  >
-                    {isValidating ? 'Validating...' : 'Save Key'}
-                  </button>
-                  {apiKey && (
-                    <button
-                      onClick={handleClearApiKey}
-                      className="px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
-                        bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
-                        text-text-secondary transition-colors
-                        focus:outline-none focus:bg-surface/15 dark:focus:bg-surface/20"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
+                    {/* API Key buttons */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSaveApiKey}
+                        disabled={isValidating || !inputValue.trim()}
+                        className="flex-1 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                          text-accent
+                          bg-transparent
+                          border border-accent
+                          hover:bg-accent/10 dark:hover:bg-accent/20
+                          disabled:text-gray-400 disabled:border-gray-400 disabled:hover:bg-transparent
+                          transition-colors
+                          focus:outline-none focus:bg-accent/10 dark:focus:bg-accent/20
+                          disabled:cursor-not-allowed"
+                      >
+                        {isValidating ? 'Validating...' : 'Save Key'}
+                      </button>
+                      {apiKey && (
+                        <button
+                          onClick={handleClearApiKey}
+                          className="px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                            bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                            text-text-secondary transition-colors
+                            focus:outline-none focus:bg-surface/15 dark:focus:bg-surface/20"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
 
-                {/* Help text with single link */}
-                {provider && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Need a key? Go to{' '}
-                    <a
-                      href="https://openrouter.ai"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:underline"
-                    >
-                      openrouter.ai
-                    </a>
-                    , create an account, add credits, and grab an API key.
-                  </p>
-                )}
-              </div>
-            )}
+                    {/* Clear Confirmation Inline Banner */}
+                    {showClearConfirm && (
+                      <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <h3 className="text-sm font-semibold text-text-primary mb-1">Clear API Key?</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          Are you sure you want to remove your API key? You&apos;ll need to enter it again to use the chat.
+                        </p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setShowClearConfirm(false)}
+                            className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
+                              bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                              text-text-secondary transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={confirmClearApiKey}
+                            className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
+                              bg-red-500 hover:bg-red-600 text-white transition-colors"
+                          >
+                            Clear Key
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
-            {/* Chutes Session Section */}
-            {isChutes && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${isChutesSignedIn ? 'bg-green-500' : 'bg-red-500'}`} />
-                  Chutes Account
-                </h3>
-                {chutesLoading ? (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
-                ) : isChutesSignedIn ? (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Signed in as{' '}
-                      <span className="font-medium text-text-primary">
-                        {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
-                      </span>
-                    </p>
-                    <button
-                      onClick={logout}
-                      className="w-full px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
-                        bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
-                        text-text-secondary transition-colors"
-                    >
-                      Sign out
-                    </button>
+                    {/* Help text with single link */}
+                    {provider && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Need a key? Go to{' '}
+                        <a
+                          href="https://openrouter.ai"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline"
+                        >
+                          openrouter.ai
+                        </a>
+                        , create an account, add credits, and grab an API key.
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <a
-                    href={loginUrl}
-                    className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
-                  >
-                    Sign in with Chutes
-                  </a>
-                )}
-              </div>
-            )}
+                </>
+              )}
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 dark:border-gray-700" />
+              {isChutes && (
+                <>
+                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <Icon name="user" size={20} className="text-accent" />
+                    <span className={`w-2 h-2 rounded-full ${isChutesSignedIn ? 'bg-green-500' : 'bg-red-500'}`} />
+                    Chutes Account
+                  </h2>
+                  {chutesLoading ? (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
+                  ) : isChutesSignedIn ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Signed in as{' '}
+                        <span className="font-medium text-text-primary">
+                          {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
+                        </span>
+                      </p>
+                      <button
+                        onClick={logout}
+                        className="w-full px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                          bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                          text-text-secondary transition-colors"
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  ) : (
+                    <a
+                      href={loginUrl}
+                      className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                    >
+                      Sign in with Chutes
+                    </a>
+                  )}
+                </>
+              )}
+            </div>
+          </section>
 
-            {/* Model Selection Section */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-text-primary">
+          {/* Model Selection Card */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="cpu" size={20} className="text-accent" />
                 Model
-              </h3>
+              </h2>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                 Select the AI model to use for conversations.
               </p>
 
@@ -384,7 +391,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                   </button>
 
                   {modelListOpen && (
-                    <div className="border-t border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto modal-scrollbar">
+                    <div className="border-t border-gray-200 dark:border-gray-600 max-h-96 overflow-y-auto modal-scrollbar">
                       {recommendedModels.map((model: ModelMetadata) => (
                         <label
                           key={model.id}
@@ -476,7 +483,7 @@ export function SettingsModal({ children }: SettingsModalProps) {
                       </button>
                       {/* Model list dropdown */}
                       {chutesModelListOpen && (
-                        <div className="border-t border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto modal-scrollbar">
+                        <div className="border-t border-gray-200 dark:border-gray-600 max-h-96 overflow-y-auto modal-scrollbar">
                           {chutesModels.map((model) => (
                             <label
                               key={model.id}
@@ -530,129 +537,80 @@ export function SettingsModal({ children }: SettingsModalProps) {
                       No Chutes models available for this account.
                     </p>
                   )}
-
-                  {/* Advanced Settings for Chutes */}
-                  {isChutesSignedIn && (
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-                      <button
-                        type="button"
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-accent transition-colors"
-                      >
-                        <Icon
-                          name="chevron-right"
-                          size={12}
-                          className={`transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
-                        />
-                        Advanced Settings
-                      </button>
-
-                      {showAdvanced && (
-                        <div className="mt-3 space-y-4">
-                          {/* Custom Chute URL/slug for power users */}
-                          <div className="space-y-1">
-                            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                              Custom Model URL
-                            </label>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                              Enter any Chute URL or slug to use a custom model.
-                            </p>
-                            <input
-                              type="text"
-                              value={chutesModel}
-                              onChange={(e) => setChutesModel(e.target.value)}
-                              placeholder="https://your-chute.chutes.ai"
-                              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                            />
-                          </div>
-
-                          {/* Embedding Model */}
-                          <div className="space-y-1">
-                            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
-                              Embedding Model
-                            </label>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                              Must match the model used for documentation indexing.
-                            </p>
-                            {chutesEmbeddingModels.length > 0 ? (
-                              <div className="relative">
-                                <select
-                                  value={chutesEmbeddingModel}
-                                  onChange={(e) => setChutesEmbeddingModel(e.target.value)}
-                                  className="w-full px-3 py-2 pr-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer appearance-none"
-                                >
-                                  <option value="">Default (OpenRouter or Env)</option>
-                                  {chutesEmbeddingModels.map((model) => (
-                                    <option key={model.id} value={model.id}>
-                                      {model.name}
-                                    </option>
-                                  ))}
-                                </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                  <Icon name="chevron-down" size={16} className="text-gray-500" />
-                                </div>
-                              </div>
-                            ) : (
-                              <input
-                                type="text"
-                                value={chutesEmbeddingModel}
-                                onChange={(e) => setChutesEmbeddingModel(e.target.value)}
-                                placeholder="https://embeddings.chutes.ai"
-                                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          {/* Clear API Key Confirmation Dialog */}
-          {showClearConfirm && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 max-w-sm mx-4 shadow-xl">
-                <h3 className="text-lg font-semibold text-text-primary mb-2">
-                  Clear API Key?
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  Are you sure you want to remove your API key? You&apos;ll need to enter it again to use the chat.
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setShowClearConfirm(false)}
-                    className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
-                      bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
-                      text-text-secondary transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={confirmClearApiKey}
-                    className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
-                      bg-red-500 hover:bg-red-600 text-white transition-colors"
-                  >
-                    Clear Key
-                  </button>
+          {/* Advanced Settings Card (Chutes only) */}
+          {isChutes && isChutesSignedIn && (
+            <section className="mb-8">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+                <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <Icon name="sliders" size={20} className="text-accent" />
+                  Advanced Settings
+                </h2>
+
+                <div className="space-y-4">
+                  {/* Custom Chute URL/slug for power users */}
+                  <div className="space-y-1">
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
+                      Custom Model URL
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                      Enter any Chute URL or slug to use a custom model.
+                    </p>
+                    <input
+                      type="text"
+                      value={chutesModel}
+                      onChange={(e) => setChutesModel(e.target.value)}
+                      placeholder="https://your-chute.chutes.ai"
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
+                    />
+                  </div>
+
+                  {/* Embedding Model */}
+                  <div className="space-y-1">
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">
+                      Embedding Model
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                      Must match the model used for documentation indexing.
+                    </p>
+                    {chutesEmbeddingModels.length > 0 ? (
+                      <div className="relative">
+                        <select
+                          value={chutesEmbeddingModel}
+                          onChange={(e) => setChutesEmbeddingModel(e.target.value)}
+                          className="w-full px-3 py-2 pr-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer appearance-none"
+                        >
+                          <option value="">Default (OpenRouter or Env)</option>
+                          {chutesEmbeddingModels.map((model) => (
+                            <option key={model.id} value={model.id}>
+                              {model.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <Icon name="chevron-down" size={16} className="text-gray-500" />
+                        </div>
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        value={chutesEmbeddingModel}
+                        onChange={(e) => setChutesEmbeddingModel(e.target.value)}
+                        placeholder="https://embeddings.chutes.ai"
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
           )}
-
-          {/* Close button */}
-          <Dialog.Close asChild>
-            <button
-              className="absolute top-4 right-4 p-1 rounded cursor-pointer hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
-              aria-label="Close"
-            >
-              <Icon name="x" size={20} className="text-gray-500 dark:text-gray-400" />
-            </button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+      </main>
+    </div>
   );
 }

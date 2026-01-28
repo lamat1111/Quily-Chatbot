@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
 import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
-import { SettingsModal } from '@/src/components/ui/SettingsModal';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
@@ -176,19 +175,18 @@ export function Sidebar() {
 
         {/* Settings at bottom - fixed */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <SettingsModal>
-            <button
-              style={{ cursor: 'pointer' }}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
+          <Link
+            href="/settings"
+            onClick={() => setSidebarOpen(false)}
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
               text-text-secondary
               hover:bg-surface/10 dark:hover:bg-surface/15
-              transition-colors text-left">
-              {/* Status indicator */}
-              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="flex-1">Settings</span>
-              <Icon name="settings" size={16} className="text-gray-400" />
-            </button>
-          </SettingsModal>
+              transition-colors text-left"
+          >
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="flex-1">Settings</span>
+            <Icon name="settings" size={16} className="text-gray-400" />
+          </Link>
         </div>
       </aside>
     </>

@@ -173,15 +173,17 @@ related_tasks: []
     });
   ```
 
-- [ ] **Add npm script** (`package.json`)
-  - Done when: `npm run ingest:chutes` is available
+- [ ] **Add npm scripts** (`package.json`)
+  - Done when: `npm run ingest:chutes` and `npm run ingest:all` are available
 
   ```json
   {
     "scripts": {
       "ingest:chutes": "npx tsx scripts/ingest/index.ts run-chutes",
       "ingest:chutes:dry": "npx tsx scripts/ingest/index.ts run-chutes --dry-run",
-      "ingest:chutes:clean": "npx tsx scripts/ingest/index.ts run-chutes --clean"
+      "ingest:chutes:clean": "npx tsx scripts/ingest/index.ts run-chutes --clean",
+      "ingest:all": "npm run ingest:run && npm run ingest:chutes",
+      "ingest:all:clean": "npm run ingest:clean && npm run ingest:chutes:clean"
     }
   }
   ```
@@ -239,6 +241,7 @@ related_tasks: []
 ✅ **Ingestion works for both providers**
    - `npm run ingest:run` → OpenRouter embeddings in `document_chunks`
    - `npm run ingest:chutes` → Chutes embeddings in `document_chunks_chutes`
+   - `npm run ingest:all` → Both providers in one command
 
 ✅ **Runtime retrieval works**
    - OpenRouter user → queries `document_chunks` with their API key
@@ -279,6 +282,21 @@ related_tasks: []
 - Similarity thresholds may need tuning for BGE-M3 (different score distribution)
 - Consider adding `CHUTES_EMBEDDING_MODEL` env var for flexibility
 
+## Maintenance Workflow
+
+When updating documentation, run a single command to update both embedding stores:
+
+```bash
+# Sync docs from GitHub + ingest to both providers
+npm run sync-docs:run && npm run ingest:all
+
+# Or with cleanup of deleted files
+npm run sync-docs:run && npm run ingest:all:clean
+```
+
+**Estimated cost per full update**: ~$0.01 (both providers combined)
+
 ---
 
 _Created: 2026-01-28_
+_Updated: 2026-01-28_
