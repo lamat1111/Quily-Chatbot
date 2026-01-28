@@ -4,6 +4,9 @@ import type { DocumentChunk } from './types.js';
 // Batch size for database inserts
 const UPLOAD_BATCH_SIZE = 100;
 
+// Table names for different embedding providers
+export type EmbeddingTable = 'document_chunks' | 'document_chunks_chutes';
+
 /**
  * Create Supabase client with service role key
  */
@@ -23,12 +26,14 @@ function getSupabaseClient(url: string, serviceKey: string): SupabaseClient {
  * @param chunks - Document chunks with embeddings
  * @param supabaseUrl - Supabase project URL
  * @param supabaseKey - Supabase service role key
+ * @param tableName - Target table (document_chunks for OpenRouter, document_chunks_chutes for Chutes)
  * @param onProgress - Optional callback for progress updates
  */
 export async function uploadChunks(
   chunks: DocumentChunk[],
   supabaseUrl: string,
   supabaseKey: string,
+  tableName: EmbeddingTable = 'document_chunks',
   onProgress?: (completed: number, total: number) => void
 ): Promise<{ inserted: number; errors: string[] }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
@@ -54,7 +59,7 @@ export async function uploadChunks(
 
     try {
       const { error } = await supabase
-        .from('document_chunks')
+        .from(tableName)
         .upsert(rows, {
           onConflict: 'source_file,chunk_index',
           ignoreDuplicates: false, // Update existing rows
@@ -87,12 +92,13 @@ export async function uploadChunks(
 export async function deleteChunksForFile(
   sourceFile: string,
   supabaseUrl: string,
-  supabaseKey: string
+  supabaseKey: string,
+  tableName: EmbeddingTable = 'document_chunks'
 ): Promise<{ deleted: number }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
   const { data, error } = await supabase
-    .from('document_chunks')
+    .from(tableName)
     .delete()
     .eq('source_file', sourceFile)
     .select('id');
@@ -110,12 +116,13 @@ export async function deleteChunksForFile(
  */
 export async function getChunkCount(
   supabaseUrl: string,
-  supabaseKey: string
+  supabaseKey: string,
+  tableName: EmbeddingTable = 'document_chunks'
 ): Promise<number> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
   const { count, error } = await supabase
-    .from('document_chunks')
+    .from(tableName)
     .select('*', { count: 'exact', head: true });
 
   if (error) {
@@ -130,12 +137,13 @@ export async function getChunkCount(
  */
 export async function getSourceFilesInDatabase(
   supabaseUrl: string,
-  supabaseKey: string
+  supabaseKey: string,
+  tableName: EmbeddingTable = 'document_chunks'
 ): Promise<string[]> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
   const { data, error } = await supabase
-    .from('document_chunks')
+    .from(tableName)
     .select('source_file')
     .order('source_file');
 
@@ -156,12 +164,13 @@ export async function cleanOrphanedChunks(
   localFiles: string[],
   supabaseUrl: string,
   supabaseKey: string,
+  tableName: EmbeddingTable = 'document_chunks',
   onProgress?: (message: string) => void
 ): Promise<{ deletedFiles: string[]; deletedChunks: number }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
   // Get all source files in database
-  const dbFiles = await getSourceFilesInDatabase(supabaseUrl, supabaseKey);
+  const dbFiles = await getSourceFilesInDatabase(supabaseUrl, supabaseKey, tableName);
 
   // Normalize local file paths (use forward slashes)
   const localFileSet = new Set(localFiles.map((f) => f.replace(/\\/g, '/')));
@@ -182,7 +191,7 @@ export async function cleanOrphanedChunks(
     }
 
     const { data, error } = await supabase
-      .from('document_chunks')
+      .from(tableName)
       .delete()
       .eq('source_file', sourceFile)
       .select('id');

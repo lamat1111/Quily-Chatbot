@@ -63,8 +63,14 @@ export async function retrieveWithReranking(
 
   const { embedding } = embeddingResult;
 
+  // Determine which RPC function to use based on provider
+  // OpenRouter uses 1536-dim embeddings (text-embedding-3-small) -> document_chunks table
+  // Chutes uses 1024-dim embeddings (BGE-M3) -> document_chunks_chutes table
+  const rpcFunction =
+    embeddingProvider === 'chutes' ? 'match_document_chunks_chutes' : 'match_document_chunks';
+
   // Call Supabase RPC for similarity search
-  const { data: candidates, error } = await supabase.rpc('match_document_chunks', {
+  const { data: candidates, error } = await supabase.rpc(rpcFunction, {
     query_embedding: embedding,
     match_threshold: similarityThreshold,
     match_count: initialCount,
