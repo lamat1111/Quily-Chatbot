@@ -5,6 +5,12 @@ import { createChutes } from '@chutes-ai/ai-sdk-provider';
 import { supabase } from '../supabase';
 import type { RetrievedChunk, RetrievalOptions } from './types';
 
+// Unified embedding model - BGE-M3 (1024 dims)
+// Both OpenRouter and Chutes produce identical vectors for this model,
+// allowing us to use a single table regardless of which provider generates the query embedding
+const UNIFIED_EMBEDDING_MODEL = 'baai/bge-m3';
+const CHUTES_EMBEDDING_MODEL = 'chutes-baai-bge-m3';
+
 /**
  * Two-stage retrieval with optional Cohere reranking
  *
@@ -32,7 +38,8 @@ export async function retrieveWithReranking(
     similarityThreshold = 0.35, // Lower threshold - text-embedding-3-small typically produces 0.3-0.6 similarity scores
   } = options;
 
-  // Stage 1: Vector search
+  // Stage 1: Vector search using unified BGE-M3 model
+  // Both providers produce identical vectors, so we use the same table for all queries
   let embeddingResult;
 
   if (embeddingProvider === 'chutes') {
@@ -40,9 +47,7 @@ export async function retrieveWithReranking(
       throw new Error('Chutes access token is required for embeddings');
     }
     const chutes = createChutes({ apiKey: chutesAccessToken });
-    // Default to BGE-M3 which produces 1024-dim embeddings matching document_chunks_chutes table
-    const modelId =
-      embeddingModel || process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3';
+    const modelId = embeddingModel || CHUTES_EMBEDDING_MODEL;
 
     embeddingResult = await embed({
       model: chutes.textEmbeddingModel(modelId),
@@ -56,7 +61,7 @@ export async function retrieveWithReranking(
 
     embeddingResult = await embed({
       model: openrouter.textEmbeddingModel(
-        process.env.OPENROUTER_EMBEDDING_MODEL || 'openai/text-embedding-3-small'
+        embeddingModel || process.env.OPENROUTER_EMBEDDING_MODEL || UNIFIED_EMBEDDING_MODEL
       ),
       value: query,
     });
@@ -64,11 +69,9 @@ export async function retrieveWithReranking(
 
   const { embedding } = embeddingResult;
 
-  // Determine which RPC function to use based on provider
-  // OpenRouter uses 1536-dim embeddings (text-embedding-3-small) -> document_chunks table
-  // Chutes uses 1024-dim embeddings (BGE-M3) -> document_chunks_chutes table
-  const rpcFunction =
-    embeddingProvider === 'chutes' ? 'match_document_chunks_chutes' : 'match_document_chunks';
+  // Use unified BGE-M3 table (1024-dim) for all providers
+  // OpenRouter and Chutes BGE-M3 produce identical vectors, verified by compatibility testing
+  const rpcFunction = 'match_document_chunks_chutes';
 
   // Call Supabase RPC for similarity search
   const { data: candidates, error } = await supabase.rpc(rpcFunction, {

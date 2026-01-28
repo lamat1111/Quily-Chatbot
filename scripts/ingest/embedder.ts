@@ -5,8 +5,10 @@ import type { ChunkWithContext, DocumentChunk } from './types.js';
 // Batch size for embedding requests (stay under token limits)
 const BATCH_SIZE = 50;
 
-// Embedding model - text-embedding-3-small produces 1536 dimensions
-const EMBEDDING_MODEL = 'openai/text-embedding-3-small';
+// Embedding model - BGE-M3 produces 1024 dimensions
+// Chosen for: better retrieval quality (MTEB 63.0 vs 55.8), open source (MIT),
+// and compatibility with both OpenRouter and Chutes providers
+const EMBEDDING_MODEL = 'baai/bge-m3';
 
 /**
  * Format chunk content with heading context for better embeddings

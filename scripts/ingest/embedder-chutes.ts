@@ -1,12 +1,19 @@
-import { embedMany } from 'ai';
-import { createChutes } from '@chutes-ai/ai-sdk-provider';
 import type { ChunkWithContext, DocumentChunk } from './types.js';
 
 // Batch size for embedding requests (stay under token limits)
 const BATCH_SIZE = 50;
 
-// Chutes embedding model - BGE-M3 produces 1024 dimensions
-const DEFAULT_EMBEDDING_MODEL = 'chutes-baai-bge-m3';
+// Chutes embedding model slug - BGE-M3 produces 1024 dimensions
+const DEFAULT_EMBEDDING_MODEL_SLUG = 'chutes-baai-bge-m3';
+
+// Chutes API response type
+interface ChutesEmbeddingResponse {
+  data: Array<{
+    embedding: number[];
+    index: number;
+  }>;
+  model: string;
+}
 
 /**
  * Format chunk content with heading context for better embeddings
@@ -16,6 +23,41 @@ function formatForEmbedding(chunk: ChunkWithContext): string {
     return `${chunk.metadata.heading_path}\n\n${chunk.content}`;
   }
   return chunk.content;
+}
+
+/**
+ * Call Chutes embedding API directly
+ * The AI SDK provider has a bug where it routes to api.chutes.ai instead of the chute URL
+ */
+async function callChutesEmbeddingAPI(
+  texts: string[],
+  apiKey: string,
+  modelSlug: string
+): Promise<number[][]> {
+  const url = `https://${modelSlug}.chutes.ai/v1/embeddings`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      input: texts,
+      model: 'BAAI/bge-m3', // The underlying model name
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new Error(`Chutes API error ${response.status}: ${errorText}`);
+  }
+
+  const data = (await response.json()) as ChutesEmbeddingResponse;
+
+  // Sort by index to ensure order matches input
+  const sorted = [...data.data].sort((a, b) => a.index - b.index);
+  return sorted.map((item) => item.embedding);
 }
 
 /**
@@ -30,11 +72,7 @@ export async function generateChutesEmbeddings(
   apiKey: string,
   onProgress?: (completed: number, total: number) => void
 ): Promise<DocumentChunk[]> {
-  const chutes = createChutes({
-    apiKey,
-  });
-
-  const embeddingModel = process.env.CHUTES_EMBEDDING_MODEL || DEFAULT_EMBEDDING_MODEL;
+  const modelSlug = process.env.CHUTES_EMBEDDING_MODEL || DEFAULT_EMBEDDING_MODEL_SLUG;
 
   const results: DocumentChunk[] = [];
   const total = chunks.length;
@@ -45,11 +83,7 @@ export async function generateChutesEmbeddings(
     const texts = batch.map(formatForEmbedding);
 
     try {
-      const { embeddings } = await embedMany({
-        model: chutes.textEmbeddingModel(embeddingModel),
-        values: texts,
-        maxRetries: 3,
-      });
+      const embeddings = await callChutesEmbeddingAPI(texts, apiKey, modelSlug);
 
       // Attach embeddings to chunks
       for (let j = 0; j < batch.length; j++) {

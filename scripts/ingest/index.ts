@@ -23,13 +23,15 @@ program
 
 program
   .command('run')
-  .description('Run full ingestion pipeline')
+  .description('Run full ingestion pipeline using BGE-M3 embeddings (1024 dims, via OpenRouter)')
   .option('-d, --docs <path>', 'Path to documentation directory', './docs')
   .option('-v, --version <tag>', 'Version tag for chunks', new Date().toISOString().split('T')[0])
   .option('--dry-run', 'Preview without uploading to database', false)
   .option('--clean', 'Remove chunks for deleted files before ingesting', false)
   .action(async (options: ExtendedIngestOptions) => {
     const spinner = ora();
+    // Use unified BGE-M3 table (1024 dims) - works with both OpenRouter and Chutes providers
+    const tableName: EmbeddingTable = 'document_chunks_chutes';
 
     // Validate environment
     const { SUPABASE_URL, SUPABASE_SERVICE_KEY, OPENROUTER_API_KEY } = process.env;
@@ -47,9 +49,11 @@ program
       }
     }
 
-    console.log(chalk.blue('\n📚 Quilibrium Docs Ingestion Pipeline\n'));
+    console.log(chalk.blue('\n📚 Quilibrium Docs Ingestion Pipeline (BGE-M3)\n'));
     console.log(chalk.gray(`  Docs path: ${options.docs}`));
     console.log(chalk.gray(`  Version: ${options.version}`));
+    console.log(chalk.gray(`  Target table: ${tableName}`));
+    console.log(chalk.gray(`  Embedding model: baai/bge-m3 (1024 dims)`));
     console.log(chalk.gray(`  Clean orphans: ${options.clean}`));
     console.log(chalk.gray(`  Dry run: ${options.dryRun}\n`));
 
@@ -67,7 +71,7 @@ program
           localFiles,
           SUPABASE_URL!,
           SUPABASE_SERVICE_KEY!,
-          'document_chunks',
+          tableName,
           (msg: string) => {
             spinner.text = msg;
           }
@@ -110,8 +114,8 @@ program
         return;
       }
 
-      // Step 3: Generate embeddings
-      spinner.start('Generating embeddings...');
+      // Step 3: Generate embeddings (BGE-M3 via OpenRouter)
+      spinner.start('Generating BGE-M3 embeddings via OpenRouter...');
       const embeddedChunks = await generateEmbeddings(
         chunks,
         OPENROUTER_API_KEY!,
@@ -121,13 +125,13 @@ program
       );
       spinner.succeed(`Generated ${embeddedChunks.length} embeddings`);
 
-      // Step 4: Upload to Supabase
-      spinner.start('Uploading to Supabase...');
+      // Step 4: Upload to Supabase (unified BGE-M3 table)
+      spinner.start(`Uploading to Supabase (${tableName})...`);
       const { inserted, errors } = await uploadChunks(
         embeddedChunks,
         SUPABASE_URL!,
         SUPABASE_SERVICE_KEY!,
-        'document_chunks',
+        tableName,
         (completed: number, total: number) => {
           spinner.text = `Uploading to Supabase... ${completed}/${total}`;
         }
@@ -139,13 +143,13 @@ program
           console.error(chalk.red(`  - ${err}`));
         }
       } else {
-        spinner.succeed(`Uploaded ${inserted} chunks`);
+        spinner.succeed(`Uploaded ${inserted} chunks to ${tableName}`);
       }
 
       // Step 5: Verify
       spinner.start('Verifying...');
-      const totalCount = await getChunkCount(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
-      spinner.succeed(`Total chunks in database: ${totalCount}`);
+      const totalCount = await getChunkCount(SUPABASE_URL!, SUPABASE_SERVICE_KEY!, tableName);
+      spinner.succeed(`Total chunks in ${tableName}: ${totalCount}`);
 
       console.log(chalk.green('\n✅ Ingestion complete!\n'));
     } catch (error) {
@@ -342,13 +346,13 @@ program
         return;
       }
 
-      // Actually delete
+      // Actually delete from unified BGE-M3 table
       spinner.start('Removing orphaned chunks...');
       const { deletedFiles, deletedChunks } = await cleanOrphanedChunks(
         localFiles,
         SUPABASE_URL,
         SUPABASE_SERVICE_KEY,
-        'document_chunks',
+        'document_chunks_chutes',
         (msg: string) => {
           spinner.text = msg;
         }
@@ -374,7 +378,8 @@ program
     }
 
     try {
-      const count = await getChunkCount(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      // Count from unified BGE-M3 table
+      const count = await getChunkCount(SUPABASE_URL, SUPABASE_SERVICE_KEY, 'document_chunks_chutes');
       console.log(chalk.blue(`\n📊 Total chunks in database: ${count}\n`));
     } catch (error) {
       console.error(chalk.red(`Error: ${error instanceof Error ? error.message : String(error)}`));
@@ -402,10 +407,10 @@ program
       const localFiles = new Set(documents.map((d) => d.path.replace(/\\/g, '/')));
       spinner.succeed(`Found ${localFiles.size} local documents`);
 
-      // Get database files
+      // Get database files from unified BGE-M3 table
       spinner.start('Checking database...');
       const { getSourceFilesInDatabase } = await import('./uploader.js');
-      const dbFilesRaw = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      const dbFilesRaw = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY, 'document_chunks_chutes');
       // Normalize DB paths to forward slashes for comparison (handles Windows backslashes in DB)
       const dbFiles = dbFilesRaw.map((f) => f.replace(/\\/g, '/'));
       const dbFileSet = new Set(dbFiles);
