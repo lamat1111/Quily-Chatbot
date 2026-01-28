@@ -101,3 +101,7 @@ docs/quilibrium-official/
 
 .vercel
 .env*.local
+
+# Claude Code GSD tooling (development scaffolding, not part of the app)
+.claude/
+.planning/

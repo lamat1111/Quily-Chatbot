@@ -85,7 +85,7 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
                     Format Context
                           │
                    Stream LLM Response
-                    (OpenRouter + Citations)
+                    (OpenRouter or Chutes + Citations)
 ```
 
 ---
@@ -246,7 +246,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
-# OpenRouter API Key (required for ingestion and runtime)
+# OpenRouter API Key (required for ingestion, optional for chat if using Chutes)
 OPENROUTER_API_KEY=your_openrouter_key
 
 # Cohere API Key (optional but recommended for better search)
@@ -262,7 +262,7 @@ GITHUB_TOKEN=ghp_your_token_here
 |-----|--------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase Dashboard → Settings → API → Project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → Service Role Key |
-| `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) |
+| `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) (required for ingestion; chat can also use Chutes) |
 | `COHERE_API_KEY` | [Cohere Dashboard](https://dashboard.cohere.com/api-keys) |
 | `GITHUB_TOKEN` | [GitHub Settings](https://github.com/settings/tokens) (no scopes needed) |
 
@@ -574,4 +574,4 @@ interface RetrievalOptions {
 
 ---
 
-_Updated: 2026-01-25 20:30_
+_Updated: 2026-01-28_
