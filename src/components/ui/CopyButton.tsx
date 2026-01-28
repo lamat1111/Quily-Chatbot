@@ -68,7 +68,7 @@ export function CopyButton({
         />
       ) : (
         <Icon
-          name="clipboard"
+          name="copy"
           size={iconSize}
           className={variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}
         />

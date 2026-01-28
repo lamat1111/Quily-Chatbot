@@ -140,7 +140,7 @@ export function ChatInput({
             href="https://docs.quilibrium.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-gray-600 dark:hover:text-gray-400"
+            className="link-muted"
           >
             official docs
           </a>

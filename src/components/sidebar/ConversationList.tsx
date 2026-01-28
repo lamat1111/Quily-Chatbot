@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, usePathname } from 'next/navigation';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { Icon } from '@/src/components/ui/Icon';
 
@@ -52,6 +53,8 @@ interface ConversationListProps {
  * New Chat button and Settings are handled by parent Sidebar component.
  */
 export function ConversationList({ onNavigate, onScroll }: ConversationListProps = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
   const conversations = useConversationStore((s) => s.conversations);
   const activeId = useConversationStore((s) => s.activeId);
   const hasHydrated = useConversationStore((s) => s._hasHydrated);
@@ -101,6 +104,10 @@ export function ConversationList({ onNavigate, onScroll }: ConversationListProps
               `}
               onClick={() => {
                 setActive(conversation.id);
+                // Navigate to home if not already there
+                if (pathname !== '/') {
+                  router.push('/');
+                }
                 onNavigate?.();
               }}
             >

@@ -4,6 +4,7 @@ import { memo, useMemo } from 'react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { SourcesCitation } from './SourcesCitation';
 import { CopyButton } from '@/src/components/ui/CopyButton';
+import { Icon } from '@/src/components/ui/Icon';
 import type { UIMessage } from '@ai-sdk/react';
 
 interface MessageBubbleProps {
@@ -97,26 +98,14 @@ export const MessageBubble = memo(function MessageBubble({
             />
           )}
           <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <svg
-              className="w-4 h-4 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <Icon name="alert-circle" size={16} className="shrink-0" />
             <span>
               Always verify with{' '}
               <a
                 href="https://docs.quilibrium.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:text-gray-600 dark:hover:text-gray-300"
+                className="link-muted"
               >
                 official docs
               </a>

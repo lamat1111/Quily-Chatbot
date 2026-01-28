@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
 import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { SettingsModal } from '@/src/components/ui/SettingsModal';
@@ -24,6 +25,8 @@ import { useChutesSession } from '@/src/hooks/useChutesSession';
  * - Mobile: full width overlay when open, hidden when closed
  */
 export function Sidebar() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [providerId] = useLocalStorage<string>('selected-provider', 'openrouter');
@@ -36,6 +39,10 @@ export function Sidebar() {
 
   const handleNewChat = () => {
     addConversation();
+    // Navigate to home if not already there
+    if (pathname !== '/') {
+      router.push('/');
+    }
     setSidebarOpen(false);
   };
 

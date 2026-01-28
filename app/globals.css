@@ -96,6 +96,25 @@ a:not(nav a):not(aside a):hover {
   text-decoration: none;
 }
 
+/* Muted links - inherit text color, always underlined */
+/* Use for disclaimers and secondary text where orange would be too prominent */
+a.link-muted {
+  color: inherit;
+  text-decoration: underline;
+}
+
+a.link-muted:hover {
+  color: inherit;
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.dark a.link-muted:hover {
+  color: inherit;
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 /* Callout/notice boxes */
 .callout-warning {
   background-color: #eff6ff; /* blue-50 */
