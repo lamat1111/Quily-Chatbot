@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
 import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
-import { SettingsModal } from '@/src/components/ui/SettingsModal';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
@@ -66,9 +65,9 @@ export function Sidebar() {
             <Icon name="menu" size={24} />
           )}
         </button>
-        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1">
+        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1 font-title">
           Quily Chat
-          <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
+          <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
         </h1>
         <ThemeToggle />
       </div>
@@ -96,9 +95,9 @@ export function Sidebar() {
       >
         {/* Header with title and theme toggle */}
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-semibold text-text-primary">
+          <h1 className="text-lg font-semibold text-text-primary font-title">
             Quily Chat
-            <sup className="ml-1 text-[10px] font-medium text-accent">beta</sup>
+            <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
           </h1>
           <ThemeToggle />
         </div>
@@ -176,19 +175,18 @@ export function Sidebar() {
 
         {/* Settings at bottom - fixed */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <SettingsModal>
-            <button
-              style={{ cursor: 'pointer' }}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
+          <Link
+            href="/settings"
+            onClick={() => setSidebarOpen(false)}
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
               text-text-secondary
               hover:bg-surface/10 dark:hover:bg-surface/15
-              transition-colors text-left">
-              {/* Status indicator */}
-              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="flex-1">Settings</span>
-              <Icon name="settings" size={16} className="text-gray-400" />
-            </button>
-          </SettingsModal>
+              transition-colors text-left"
+          >
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="flex-1">Settings</span>
+            <Icon name="settings" size={16} className="text-gray-400" />
+          </Link>
         </div>
       </aside>
     </>

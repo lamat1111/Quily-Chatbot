@@ -30,7 +30,11 @@ export interface ChunkWithContext {
  * A document chunk with its embedding vector (ready for upload)
  */
 export interface DocumentChunk extends ChunkWithContext {
-  /** 1536-dimensional embedding vector from text-embedding-3-small */
+  /**
+   * Embedding vector (dimensions vary by provider):
+   * - OpenRouter: 1536-dim (text-embedding-3-small)
+   * - Chutes: 1024-dim (BGE-M3)
+   */
   embedding: number[];
 }
 

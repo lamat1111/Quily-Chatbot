@@ -26,6 +26,9 @@ type ChutesSession = {
   user?: ChutesUser | null;
 };
 
+/** Reason why Chutes is unavailable */
+type ChutesUnavailableReason = 'disabled' | 'not_configured' | null;
+
 type UseChutesSessionReturn = {
   /** Whether the user is currently signed in */
   isSignedIn: boolean;
@@ -35,8 +38,10 @@ type UseChutesSessionReturn = {
   loading: boolean;
   /** URL to redirect users to for login */
   loginUrl: string;
-  /** Whether Chutes OAuth is configured on the server */
+  /** Whether Chutes OAuth is configured and enabled on the server */
   isAvailable: boolean;
+  /** Reason why Chutes is unavailable: 'disabled' | 'not_configured' | null */
+  unavailableReason: ChutesUnavailableReason;
   /** Message explaining why Chutes is unavailable */
   unavailableMessage: string | null;
   /** Function to refresh the session state */
@@ -53,6 +58,7 @@ export function useChutesSession(): UseChutesSessionReturn {
   const [session, setSession] = useState<ChutesSession>({ signedIn: false });
   const [loading, setLoading] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [unavailableReason, setUnavailableReason] = useState<ChutesUnavailableReason>(null);
   const [unavailableMessage, setUnavailableMessage] = useState<string | null>(null);
 
   /**
@@ -88,7 +94,7 @@ export function useChutesSession(): UseChutesSessionReturn {
     }
   }, [refresh]);
 
-  // Check if Chutes OAuth is configured
+  // Check if Chutes OAuth is enabled and configured
   useEffect(() => {
     async function checkAvailability() {
       try {
@@ -96,11 +102,13 @@ export function useChutesSession(): UseChutesSessionReturn {
         if (res.ok) {
           const data = await res.json();
           setIsAvailable(data.available);
+          setUnavailableReason(data.reason === 'ready' ? null : data.reason);
           setUnavailableMessage(data.message || null);
         }
       } catch {
         // If we can't check, assume available and let login fail naturally
         setIsAvailable(true);
+        setUnavailableReason(null);
       }
     }
     checkAvailability();
@@ -117,6 +125,7 @@ export function useChutesSession(): UseChutesSessionReturn {
     loading,
     loginUrl: '/api/auth/chutes/login',
     isAvailable,
+    unavailableReason,
     unavailableMessage,
     refresh,
     logout,

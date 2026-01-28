@@ -67,6 +67,10 @@ temp/
 *.temp
 .screenshots/
 
+# .temp folder - ignore contents but keep folder
+.temp/*
+!.temp/.gitkeep
+
 # Package manager locks (uncomment if needed)
 # package-lock.json
 # yarn.lock

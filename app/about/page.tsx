@@ -1,18 +1,11 @@
-'use client';
-
-import { Sidebar } from '@/src/components/sidebar/Sidebar';
-
 /**
  * About page describing Quily Chat.
  */
 export default function AboutPage() {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar />
-      {/* Main content area - pt-14 on mobile for fixed header, pt-0 on desktop */}
-      <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-12 w-full">
-          <h1 className="text-3xl font-bold text-text-primary mb-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="max-w-3xl mx-auto px-4 py-12 w-full">
+          <h1 className="text-3xl font-bold text-text-primary mb-6 font-title">
             About Quily Chat
           </h1>
 
@@ -99,7 +92,6 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

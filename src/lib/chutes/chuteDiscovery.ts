@@ -12,21 +12,118 @@ export interface ChuteInfo {
   public?: boolean;
 }
 
+/**
+ * Metadata for curated LLM models.
+ * Includes descriptions, badges, and display order.
+ */
+export interface CuratedModelMetadata {
+  slug: string;
+  displayName: string;
+  description: string;
+  isOpenSource: boolean;
+  isRecommended: boolean;
+  order: number;
+}
+
+/**
+ * Curated list of high-quality LLM models for the chat interface.
+ * Aligned with OpenRouter's open-source offerings for consistency.
+ * Power users can still use any model via the manual URL input.
+ */
+const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
+  // DeepSeek - Top recommendation (matches OpenRouter)
+  {
+    slug: 'chutes-deepseek-ai-deepseek-v3',
+    displayName: 'DeepSeek V3',
+    description: 'Best open-source. Excellent reasoning and accuracy.',
+    isOpenSource: true,
+    isRecommended: true,
+    order: 1,
+  },
+  {
+    slug: 'chutes-deepseek-ai-deepseek-r1-tee',
+    displayName: 'DeepSeek R1',
+    description: 'Advanced reasoning. Great for complex questions.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 2,
+  },
+  // Qwen - Strong multilingual (matches OpenRouter)
+  {
+    slug: 'chutes-qwen-qwen2-5-72b-instruct',
+    displayName: 'Qwen 2.5 72B',
+    description: 'High quality. Strong multilingual support.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 3,
+  },
+  // Additional Chutes-exclusive options
+  {
+    slug: 'chutes-qwen-qwen3-32b',
+    displayName: 'Qwen 3 32B',
+    description: 'Fast and capable. Good instruction following.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 4,
+  },
+  {
+    slug: 'chutes-chutesai-mistral-small-3-2-24b-instruct-2506',
+    displayName: 'Mistral Small 3.2',
+    description: 'Good balance of speed and quality.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 5,
+  },
+  {
+    slug: 'chutes-nousresearch-hermes-4-70b',
+    displayName: 'Hermes 4 70B',
+    description: 'Excellent for Q&A and reasoning tasks.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 6,
+  },
+];
+
+/**
+ * Curated list of embedding models for RAG.
+ */
+const CURATED_EMBEDDING_MODELS: CuratedModelMetadata[] = [
+  {
+    slug: 'chutes-baai-bge-m3',
+    displayName: 'BGE-M3',
+    description: 'Multilingual embedding model.',
+    isOpenSource: true,
+    isRecommended: true,
+    order: 1,
+  },
+  {
+    slug: 'chutes-baai-bge-large-en-v1-5',
+    displayName: 'BGE Large EN',
+    description: 'English-focused embedding model.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 2,
+  },
+];
+
 export interface ChutesAPIResponse {
   total: number;
   items: ChuteInfo[];
 }
 
 /**
- * Fetch available chutes from the Chutes.ai Management API
+ * Fetch available chutes from the Chutes.ai Management API.
+ * Uses the server-side API key (CHUTES_API_KEY) since OAuth tokens
+ * cannot access the /chutes/ management endpoint.
  */
 export async function discoverChutes(
-  accessToken: string,
+  _accessToken?: string,
   includePublic: boolean = true,
   limit: number = 500
 ): Promise<ChuteInfo[]> {
-  if (!accessToken) {
-    throw new Error('Access token is required for chute discovery');
+  const apiKey = process.env.CHUTES_API_KEY;
+  if (!apiKey) {
+    throw new Error('CHUTES_API_KEY is required for model discovery');
   }
 
   const queryParams = new URLSearchParams({
@@ -39,7 +136,7 @@ export async function discoverChutes(
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
   });
@@ -53,51 +150,68 @@ export async function discoverChutes(
 }
 
 /**
- * Filter chutes by type (embedding, llm, image, etc.)
- * Uses standard templates and keyword heuristics from Chutes.ai examples.
+ * Get the curated model metadata, with optional env var overrides.
+ * Set CHUTES_ALLOWED_LLM_MODELS or CHUTES_ALLOWED_EMBEDDING_MODELS to customize.
+ */
+export function getCuratedModels(type: 'llm' | 'embedding'): CuratedModelMetadata[] {
+  if (type === 'llm') {
+    const envOverride = process.env.CHUTES_ALLOWED_LLM_MODELS;
+    if (envOverride) {
+      // If env override, create basic metadata for custom slugs
+      return envOverride.split(',').map((slug, idx) => ({
+        slug: slug.trim(),
+        displayName: slug.trim(),
+        description: '',
+        isOpenSource: true,
+        isRecommended: idx === 0,
+        order: idx + 1,
+      }));
+    }
+    return [...CURATED_LLM_MODELS].sort((a, b) => a.order - b.order);
+  } else {
+    const envOverride = process.env.CHUTES_ALLOWED_EMBEDDING_MODELS;
+    if (envOverride) {
+      return envOverride.split(',').map((slug, idx) => ({
+        slug: slug.trim(),
+        displayName: slug.trim(),
+        description: '',
+        isOpenSource: true,
+        isRecommended: idx === 0,
+        order: idx + 1,
+      }));
+    }
+    return [...CURATED_EMBEDDING_MODELS].sort((a, b) => a.order - b.order);
+  }
+}
+
+/**
+ * Get just the slugs from curated models (for filtering).
+ */
+function getCuratedSlugs(type: 'llm' | 'embedding'): string[] {
+  return getCuratedModels(type).map((m) => m.slug);
+}
+
+/**
+ * Filter chutes by type using a curated whitelist.
+ * Only returns models from the curated list to keep the dropdown manageable.
+ * Power users can still use any model via the manual URL/slug input field.
  */
 export function filterChutesByType(chutes: ChuteInfo[], type: string): ChuteInfo[] {
   const lowerType = type.toLowerCase();
 
-  // Allow dynamic template matching via env vars for future-proofing
-  const embeddingTemplates = (process.env.CHUTES_EMBEDDING_TEMPLATES || 'tei,embedding').split(',');
-  const llmTemplates = (process.env.CHUTES_LLM_TEMPLATES || 'vllm,llm').split(',');
-
   switch (lowerType) {
     case 'embedding':
-    case 'embeddings':
-      return chutes.filter((chute) => {
-        const template = chute.standard_template?.toLowerCase() || '';
-        const name = chute.name?.toLowerCase() || '';
-        const description = chute.description?.toLowerCase() || '';
-        const tagline = chute.tagline?.toLowerCase() || '';
-
-        return (
-          embeddingTemplates.includes(template) ||
-          name.includes('embed') ||
-          description.includes('embed') ||
-          tagline.includes('embed')
-        );
-      });
+    case 'embeddings': {
+      const allowedSlugs = getCuratedSlugs('embedding');
+      return chutes.filter((chute) => allowedSlugs.includes(chute.slug));
+    }
 
     case 'llm':
     case 'text':
-    case 'chat':
-      return chutes.filter((chute) => {
-        const template = chute.standard_template?.toLowerCase() || '';
-        const name = chute.name?.toLowerCase() || '';
-
-        return (
-          llmTemplates.includes(template) ||
-          name.includes('llm') ||
-          name.includes('gpt') ||
-          name.includes('claude') ||
-          name.includes('llama') ||
-          name.includes('mistral') ||
-          name.includes('kimi') ||
-          name.includes('glm')
-        );
-      });
+    case 'chat': {
+      const allowedSlugs = getCuratedSlugs('llm');
+      return chutes.filter((chute) => allowedSlugs.includes(chute.slug));
+    }
 
     default:
       return chutes;

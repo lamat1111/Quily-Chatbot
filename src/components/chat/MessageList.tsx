@@ -101,9 +101,9 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
         className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900 chat-scrollbar"
       >
         <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
-          <p className="text-2xl font-semibold mb-2 text-text-primary">
+          <p className="text-2xl font-semibold mb-2 text-text-primary font-title">
             Quily Chat
-            <sup className="ml-1 text-xs font-medium text-accent">beta</sup>
+            <sup className="ml-1 text-xs font-medium text-accent font-sans">beta</sup>
           </p>
           <p className="mb-6">Ask a question about Quilibrium to get started</p>
 

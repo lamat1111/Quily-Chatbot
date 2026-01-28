@@ -10,7 +10,11 @@
       "Bash(npm run typecheck:*)",
       "Bash(git check-ignore:*)",
       "Bash(npx tsx:*)",
-      "WebFetch(domain:icon-sets.iconify.design)"
+      "WebFetch(domain:icon-sets.iconify.design)",
+      "Bash(curl:*)",
+      "Bash(git grep:*)",
+      "Bash(dir:*)",
+      "Bash(tree:*)"
     ]
   }
 }

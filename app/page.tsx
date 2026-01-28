@@ -1,12 +1,11 @@
 'use client';
 
-import { Sidebar } from '@/src/components/sidebar/Sidebar';
 import { ChatContainer } from '@/src/components/chat/ChatContainer';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { RECOMMENDED_MODELS } from '@/src/lib/openrouter';
 import { getDefaultProvider } from '@/src/lib/providers';
-import { ChatSkeleton, ConversationListSkeleton } from '@/src/components/ui/Skeleton';
+import { ChatSkeleton } from '@/src/components/ui/Skeleton';
 
 /**
  * Main chat page integrating sidebar and chat components.
@@ -56,45 +55,18 @@ export default function HomePage() {
   const activeModel = providerId === 'chutes' ? chutesModel : openrouterModel;
 
   if (!isHydrated) {
-    return (
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Sidebar skeleton */}
-        <div className="hidden lg:flex lg:flex-col w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          </div>
-          {/* Config section */}
-          <div className="p-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          </div>
-          {/* Conversation list skeleton */}
-          <ConversationListSkeleton />
-        </div>
-        {/* Chat area skeleton */}
-        <main className="flex-1 flex flex-col min-w-0">
-          <ChatSkeleton />
-        </main>
-      </div>
-    );
+    return <ChatSkeleton />;
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar />
-      {/* Main chat area - pt-14 on mobile for fixed header, pt-0 on desktop */}
-      <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
-        <ChatContainer
-          key={activeId || 'new-chat'}
-          providerId={providerId}
-          onProviderChange={setProviderId}
-          apiKey={apiKey}
-          onApiKeyChange={setApiKey}
-          model={activeModel}
-          conversationId={activeId}
-        />
-      </main>
-    </div>
+    <ChatContainer
+      key={activeId || 'new-chat'}
+      providerId={providerId}
+      onProviderChange={setProviderId}
+      apiKey={apiKey}
+      onApiKeyChange={setApiKey}
+      model={activeModel}
+      conversationId={activeId}
+    />
   );
 }

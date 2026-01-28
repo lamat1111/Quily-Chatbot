@@ -4,12 +4,12 @@
 
 /**
  * Recommended models for the chat interface dropdown.
- * Claude Sonnet is recommended for best accuracy with RAG.
- * Open-source models are available but may be less accurate for technical questions.
+ * DeepSeek V3 is recommended for best reasoning at low cost.
+ * Open-source models are listed first, followed by proprietary options.
  */
 
-/** Default model ID - Claude Sonnet for best accuracy */
-export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'anthropic/claude-sonnet-4';
+/** Default model ID - DeepSeek V3 for best open-source quality */
+export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'deepseek/deepseek-chat';
 
 export interface ModelMetadata {
   id: string;
@@ -20,37 +20,36 @@ export interface ModelMetadata {
 }
 
 const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
-  // Best Quality - Recommended
+  // Open Source Models - Recommended
   {
-    id: 'anthropic/claude-sonnet-4',
-    name: 'Claude Sonnet 4',
-    description: 'Most accurate. Premium pricing.',
-    isOpenSource: false,
+    id: 'deepseek/deepseek-chat',
+    name: 'DeepSeek V3',
+    description: 'Best open-source. Excellent reasoning and accuracy.',
+    isOpenSource: true,
     isRecommended: true,
   },
-  // Open Source Models - May be less accurate
   {
-    id: 'meta-llama/llama-3.1-70b-instruct',
-    name: 'Llama 3.1 70B',
-    description: 'Good quality. May be less accurate on technical details.',
+    id: 'deepseek/deepseek-r1',
+    name: 'DeepSeek R1',
+    description: 'Advanced reasoning. Great for complex questions.',
     isOpenSource: true,
     isRecommended: false,
   },
   {
     id: 'qwen/qwen-2.5-72b-instruct',
     name: 'Qwen 2.5 72B',
-    description: 'Good multilingual support. May be less accurate on technical details.',
+    description: 'High quality. Strong multilingual support.',
     isOpenSource: true,
     isRecommended: false,
   },
+  // Proprietary Models
   {
-    id: 'deepseek/deepseek-r1',
-    name: 'DeepSeek R1',
-    description: 'Advanced reasoning. May hallucinate technical details.',
-    isOpenSource: true,
+    id: 'anthropic/claude-sonnet-4',
+    name: 'Claude Sonnet 4',
+    description: 'Most accurate. Premium pricing.',
+    isOpenSource: false,
     isRecommended: false,
   },
-  // Other Proprietary Models
   {
     id: 'google/gemini-2.0-flash-001',
     name: 'Gemini 2.0 Flash',

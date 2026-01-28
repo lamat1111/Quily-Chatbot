@@ -70,7 +70,7 @@ export function getOAuthConfig(requestOrigin?: string): OAuthConfig {
   const clientSecret = process.env.CHUTES_OAUTH_CLIENT_SECRET || '';
   const redirectUri = buildRedirectUri(requestOrigin);
   const scopes =
-    process.env.CHUTES_OAUTH_SCOPES || 'openid profile chutes:invoke';
+    process.env.CHUTES_OAUTH_SCOPES || 'profile chutes:read chutes:invoke';
 
   if (!clientId || !clientSecret) {
     throw new Error(

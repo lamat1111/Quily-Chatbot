@@ -166,6 +166,7 @@ function getMessageRole(msg: Record<string, unknown>): 'user' | 'assistant' | 's
 
 /**
  * Refresh Chutes access token if missing and refresh token is available.
+ * In development, CHUTES_DEV_API_KEY can bypass OAuth for testing.
  */
 async function ensureChutesAccessToken(): Promise<{
   accessToken: string | null;
@@ -173,6 +174,13 @@ async function ensureChutesAccessToken(): Promise<{
   refreshToken?: string;
   expiresIn?: number;
 }> {
+  // Dev bypass: use CHUTES_DEV_API_KEY if set (for testing without OAuth)
+  const devApiKey = process.env.CHUTES_DEV_API_KEY;
+  if (devApiKey) {
+    console.log('[Chutes] Using dev API key bypass');
+    return { accessToken: devApiKey, refreshed: false };
+  }
+
   const accessToken = await getServerAccessToken();
   if (accessToken) {
     return { accessToken, refreshed: false };
@@ -348,11 +356,12 @@ export async function POST(request: Request) {
       }
 
       const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
+      // Both providers use BGE-M3 (1024-dim) - vectors are identical and query the same table
       const embeddingModel =
         body.embeddingModel ||
         (useChutesEmbeddings
-          ? process.env.CHUTES_EMBEDDING_MODEL || 'https://embeddings.chutes.ai'
-          : undefined);
+          ? process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3'
+          : 'baai/bge-m3');
 
       if (embeddingProvider === 'openrouter' && !openrouterKey) {
         console.warn('Skipping RAG retrieval: OpenRouter API key missing for embeddings.');
@@ -370,7 +379,7 @@ export async function POST(request: Request) {
       console.log(
         `RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
       );
-      const systemPrompt = buildSystemPrompt(context, chunks.length);
+      systemPrompt = buildSystemPrompt(context, chunks.length);
   } catch (ragError) {
     console.error('RAG retrieval error:', ragError);
   }
@@ -413,19 +422,58 @@ export async function POST(request: Request) {
         model: modelProvider(model) as any,
         system: systemPrompt,
         messages: llmMessages,
-        onFinish: () => {
-          for (const source of sources) {
-            writer.write({
-              type: 'source-url',
-              sourceId: `source-${source.index}`,
-              url: source.url ?? '',
-              title: source.heading || source.file,
-            });
-          }
+        onError: (error) => {
+          console.error('LLM streaming error:', error);
         },
       });
 
-      writer.merge(result.toUIMessageStream());
+      // Chutes provider uses older @ai-sdk/provider versions incompatible with AI SDK v6's
+      // toUIMessageStream(). Manually stream text to maintain proper text-start/delta/end protocol.
+      if (provider === 'chutes') {
+        const textId = `text-${Date.now()}`;
+        writer.write({ type: 'text-start', id: textId });
+        try {
+          for await (const chunk of result.textStream) {
+            writer.write({ type: 'text-delta', id: textId, delta: chunk });
+          }
+        } catch (streamError) {
+          console.error('Chutes streaming error:', streamError);
+          const errorMsg = streamError instanceof Error ? streamError.message : 'Streaming failed';
+          writer.write({ type: 'text-delta', id: textId, delta: `\n\nError: ${errorMsg}` });
+        }
+        writer.write({ type: 'text-end', id: textId });
+        // Write sources after streaming completes
+        for (const source of sources) {
+          writer.write({
+            type: 'source-url',
+            sourceId: `source-${source.index}`,
+            url: source.url ?? '',
+            title: source.heading || source.file,
+          });
+        }
+      } else {
+        // OpenRouter and other providers: use standard toUIMessageStream()
+        writer.merge(result.toUIMessageStream({
+          onError: (error) => {
+            console.error('UI message stream error:', error);
+            return error instanceof Error ? error.message : 'An error occurred while streaming the response.';
+          },
+          onFinish: () => {
+            for (const source of sources) {
+              writer.write({
+                type: 'source-url',
+                sourceId: `source-${source.index}`,
+                url: source.url ?? '',
+                title: source.heading || source.file,
+              });
+            }
+          },
+        }));
+      }
+    },
+    onError: (error) => {
+      console.error('createUIMessageStream error:', error);
+      return error instanceof Error ? error.message : 'An error occurred.';
     },
   });
 

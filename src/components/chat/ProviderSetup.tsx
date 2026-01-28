@@ -280,7 +280,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
               <div className="space-y-2">
                 <a
                   href={loginUrl}
-                  className="inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                  className="link-unstyled inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
                 >
                   Sign in with Chutes
                 </a>

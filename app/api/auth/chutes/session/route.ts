@@ -16,6 +16,15 @@ import {
 } from '@/src/lib/serverAuth';
 
 export async function GET() {
+  // Dev bypass: if CHUTES_DEV_API_KEY is set, report as signed in
+  const devApiKey = process.env.CHUTES_DEV_API_KEY;
+  if (devApiKey) {
+    return NextResponse.json({
+      signedIn: true,
+      user: { username: 'dev-user', email: 'dev@localhost' },
+    });
+  }
+
   const cookieStore = await cookies();
   let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value || null;
   let refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value || null;

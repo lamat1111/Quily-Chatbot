@@ -1,23 +1,13 @@
 -- =============================================================================
--- QUILY CHATBOT - Database Schema
+-- MIGRATION: Add Chutes Embedding Support
 -- =============================================================================
--- Run this in Supabase SQL Editor to set up the RAG database.
--- https://supabase.com/dashboard/project/YOUR_PROJECT/sql
+-- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/YOUR_PROJECT/sql
 --
--- EMBEDDING MODEL: BGE-M3 (1024 dimensions)
--- Both OpenRouter and Chutes providers produce identical vectors for this model,
--- allowing a unified table for all embedding queries.
+-- This creates a separate table for Chutes embeddings (1024 dimensions, BGE-M3 model)
+-- The existing document_chunks table remains for OpenRouter embeddings (1536 dimensions)
 -- =============================================================================
 
--- Enable pgvector extension (run in Supabase SQL editor)
-CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA extensions;
-
--- =============================================================================
--- DOCUMENT CHUNKS TABLE (Unified BGE-M3 Embeddings)
--- =============================================================================
--- Single table for all RAG embeddings using BGE-M3 model (1024 dimensions).
--- Works with both OpenRouter (baai/bge-m3) and Chutes (chutes-baai-bge-m3).
-
+-- 1. Create Chutes embedding table (1024 dimensions for BGE-M3)
 CREATE TABLE IF NOT EXISTS document_chunks_chutes (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   content TEXT NOT NULL,
@@ -34,19 +24,18 @@ CREATE TABLE IF NOT EXISTS document_chunks_chutes (
   UNIQUE(source_file, chunk_index)
 );
 
--- HNSW index for fast cosine similarity search
+-- 2. Create HNSW index for fast cosine similarity search
 -- Parameters: m=16, ef_construction=64 (good defaults for <10k vectors)
 CREATE INDEX IF NOT EXISTS document_chunks_chutes_embedding_idx
   ON document_chunks_chutes
   USING hnsw (embedding vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 
--- Index for filtering by source file
+-- 3. Create index for filtering by source file
 CREATE INDEX IF NOT EXISTS document_chunks_chutes_source_idx
   ON document_chunks_chutes(source_file);
 
--- RPC function for similarity search
--- Called by the retriever regardless of which provider generates the query embedding
+-- 4. Create RPC function for Chutes similarity search
 CREATE OR REPLACE FUNCTION match_document_chunks_chutes(
   query_embedding vector(1024),
   match_threshold FLOAT DEFAULT 0.7,
@@ -77,15 +66,21 @@ END;
 $$;
 
 -- =============================================================================
--- LEGACY TABLE (DEPRECATED)
+-- VERIFICATION QUERIES (run these after the migration to confirm success)
 -- =============================================================================
--- The document_chunks table (1536 dimensions, text-embedding-3-small) is deprecated.
--- After confirming the BGE-M3 table works correctly, run:
---   scripts/db/migration-consolidate-bge-m3.sql
--- to drop the legacy table and free up storage.
---
--- Legacy table schema (for reference only, DO NOT CREATE):
--- CREATE TABLE document_chunks (
---   embedding vector(1536) NOT NULL,  -- text-embedding-3-small
---   ...
--- );
+
+Check table was created:
+SELECT table_name FROM information_schema.tables WHERE table_name = 'document_chunks_chutes';
+
+Check indexes were created:
+SELECT indexname FROM pg_indexes WHERE tablename = 'document_chunks_chutes';
+
+Check RPC function exists:
+SELECT routine_name FROM information_schema.routines WHERE routine_name = 'match_document_chunks_chutes';
+
+Test RPC function (will return empty until you ingest data):
+SELECT * FROM match_document_chunks_chutes(
+  array_fill(0::float, ARRAY[1024])::vector(1024),
+  0.0,
+  5
+);

@@ -1,6 +1,3 @@
-'use client';
-
-import { Sidebar } from '@/src/components/sidebar/Sidebar';
 import { Icon } from '@/src/components/ui/Icon';
 
 /**
@@ -70,12 +67,9 @@ const COMMUNITY_LINKS: LinkItem[] = [
 
 export default function LinksPage() {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar />
-      {/* Main content area - pt-14 on mobile for fixed header, pt-0 on desktop */}
-      <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-12 w-full">
-          <h1 className="text-3xl font-bold text-text-primary mb-2">
+    <div className="flex-1 overflow-y-auto">
+      <div className="max-w-3xl mx-auto px-4 py-12 w-full">
+          <h1 className="text-3xl font-bold text-text-primary mb-2 font-title">
             Quilibrium Links
           </h1>
           <p className="text-text-secondary mb-8">
@@ -96,6 +90,7 @@ export default function LinksPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
+                    link-unstyled
                     flex items-center gap-4 p-4
                     bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700
@@ -141,6 +136,7 @@ export default function LinksPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
+                    link-unstyled
                     flex items-center gap-4 p-4
                     bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700
@@ -172,7 +168,6 @@ export default function LinksPage() {
             </div>
           </section>
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

@@ -12,6 +12,7 @@
     "ingest:clean": "tsx scripts/ingest/index.ts run --clean",
     "ingest:status": "tsx scripts/ingest/index.ts status",
     "ingest:count": "tsx scripts/ingest/index.ts count",
+    "ingest:verify": "tsx scripts/research/verify-consolidation.ts",
     "sync-docs": "tsx scripts/sync-docs/index.ts",
     "sync-docs:run": "tsx scripts/sync-docs/index.ts sync",
     "sync-docs:dry": "tsx scripts/sync-docs/index.ts sync --dry-run",
