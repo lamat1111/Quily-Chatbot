@@ -11,6 +11,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Add External Chutes API Key Option](tasks/external-chutes-api-key-option.md)
 - [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md)
 - [Research: Consolidate to Single BGE-M3 Embedding Model](tasks/research-unified-bge-m3-embedding.md)
 
@@ -31,4 +32,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-29 16:47:24
+**Last Updated**: 2026-01-29

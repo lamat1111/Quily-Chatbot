@@ -338,9 +338,8 @@ export async function POST(request: Request) {
 
     try {
       const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
-      // Use Chutes embeddings if explicitly configured OR if on Chutes provider with no OR key
-      const useChutesEmbeddings =
-        provider === 'chutes' && (Boolean(process.env.CHUTES_EMBEDDING_MODEL) || !openrouterKey);
+      // Use the same provider for embeddings as for LLM - user pays for their own usage
+      const useChutesEmbeddings = provider === 'chutes';
 
       if (provider === 'chutes' || useChutesEmbeddings) {
         const ensured = await ensureChutesAccessToken();

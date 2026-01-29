@@ -20,7 +20,7 @@ async function fixPaths() {
 
   // Get all unique source files
   const { data: files, error } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('source_file')
     .order('source_file');
 
@@ -64,7 +64,7 @@ async function fixPaths() {
     let totalDeleted = 0;
     for (const file of backslashFiles) {
       const { data, error } = await supabase
-        .from('document_chunks')
+        .from('document_chunks_chutes')
         .delete()
         .eq('source_file', file)
         .select('id');
@@ -82,7 +82,7 @@ async function fixPaths() {
 
   // Verify final count
   const { count } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('*', { count: 'exact', head: true });
 
   console.log(`\nFinal chunk count: ${count}`);

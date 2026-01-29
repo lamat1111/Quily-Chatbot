@@ -7,6 +7,49 @@ import {
   getOfficialDocsUrl,
 } from '@/src/lib/rag/prompt';
 
+// Unified embedding model - BGE-M3 (1024 dims)
+const OPENROUTER_EMBEDDING_MODEL = 'baai/bge-m3';
+const CHUTES_EMBEDDING_MODEL_SLUG = 'chutes-baai-bge-m3';
+
+type Provider = 'openrouter' | 'chutes';
+
+// Chutes API response type
+interface ChutesEmbeddingResponse {
+  data: Array<{
+    embedding: number[];
+    index: number;
+  }>;
+  model: string;
+}
+
+/**
+ * Call Chutes embedding API directly
+ * The AI SDK provider has a bug where it routes to api.chutes.ai instead of the chute URL
+ */
+async function getChutesEmbedding(text: string, apiKey: string): Promise<number[]> {
+  const url = `https://${CHUTES_EMBEDDING_MODEL_SLUG}.chutes.ai/v1/embeddings`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      input: [text],
+      model: 'BAAI/bge-m3',
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new Error(`Chutes API error ${response.status}: ${errorText}`);
+  }
+
+  const data = (await response.json()) as ChutesEmbeddingResponse;
+  return data.data[0].embedding;
+}
+
 /**
  * Debug endpoint to inspect RAG retrieval without LLM generation
  *
@@ -15,7 +58,7 @@ import {
  * Request body:
  * {
  *   "query": "your question here",
- *   "apiKey": "your-openrouter-key",
+ *   "provider": "openrouter" | "chutes", // uses env var for API key
  *   "initialCount": 15,        // optional, default 15
  *   "similarityThreshold": 0.5 // optional, default 0.5
  * }
@@ -34,24 +77,35 @@ export async function POST(request: Request) {
       return Response.json({ error: 'query string required' }, { status: 400 });
     }
 
-    if (!body.apiKey || typeof body.apiKey !== 'string') {
-      return Response.json({ error: 'apiKey string required' }, { status: 400 });
+    const provider: Provider = body.provider || 'openrouter';
+    if (provider !== 'openrouter' && provider !== 'chutes') {
+      return Response.json({ error: 'provider must be "openrouter" or "chutes"' }, { status: 400 });
+    }
+
+    // Get API key from environment based on provider
+    const apiKey = provider === 'openrouter'
+      ? process.env.OPENROUTER_API_KEY
+      : process.env.CHUTES_API_KEY;
+
+    if (!apiKey) {
+      return Response.json({
+        error: `${provider.toUpperCase()}_API_KEY not configured in environment`
+      }, { status: 500 });
     }
 
     const query = body.query;
-    const apiKey = body.apiKey;
     const initialCount = body.initialCount ?? 15;
     const similarityThreshold = body.similarityThreshold ?? 0.5;
 
     const startTime = Date.now();
 
     // Step 0: Get database stats
-    const { count: totalChunks, error: countError } = await supabase
-      .from('document_chunks')
+    const { count: totalChunks } = await supabase
+      .from('document_chunks_chutes')
       .select('*', { count: 'exact', head: true });
 
     const { data: sourceStats } = await supabase
-      .from('document_chunks')
+      .from('document_chunks_chutes')
       .select('source_file')
       .limit(1000);
 
@@ -61,17 +115,24 @@ export async function POST(request: Request) {
 
     // Step 1: Generate embedding
     const embeddingStart = Date.now();
-    const openrouter = createOpenRouter({ apiKey });
 
-    const { embedding } = await embed({
-      model: openrouter.textEmbeddingModel('openai/text-embedding-3-small'),
-      value: query,
-    });
+    let embedding: number[];
+    if (provider === 'chutes') {
+      // Use direct API call (AI SDK provider has routing bug)
+      embedding = await getChutesEmbedding(query, apiKey);
+    } else {
+      const openrouter = createOpenRouter({ apiKey });
+      const embeddingResult = await embed({
+        model: openrouter.textEmbeddingModel(OPENROUTER_EMBEDDING_MODEL),
+        value: query,
+      });
+      embedding = embeddingResult.embedding;
+    }
     const embeddingTime = Date.now() - embeddingStart;
 
-    // Step 2: Vector search
+    // Step 2: Vector search (use unified BGE-M3 table for both providers)
     const searchStart = Date.now();
-    const { data: rawChunks, error } = await supabase.rpc('match_document_chunks', {
+    const { data: rawChunks, error } = await supabase.rpc('match_document_chunks_chutes', {
       query_embedding: embedding,
       match_threshold: similarityThreshold,
       match_count: initialCount,
@@ -127,7 +188,7 @@ export async function POST(request: Request) {
       })
     );
 
-    const { context: contextBlock, quality, avgSimilarity } = buildContextBlock(top5Chunks);
+    const { context: contextBlock } = buildContextBlock(top5Chunks);
     const systemPrompt = buildSystemPrompt(contextBlock, top5Chunks.length);
 
     const totalTime = Date.now() - startTime;
@@ -141,6 +202,7 @@ export async function POST(request: Request) {
         warning: (totalChunks ?? 0) < 50 ? 'LOW CHUNK COUNT - Have you run the ingestion script?' : null,
       },
       query,
+      provider, // Include which provider was used
       timing: {
         embedding_ms: embeddingTime,
         search_ms: searchTime,
