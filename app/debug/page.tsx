@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+type Provider = 'openrouter' | 'chutes';
+
 interface ChunkDebug {
   rank: number;
   id: number;
@@ -53,7 +55,7 @@ interface DebugResponse {
 
 export default function DebugPage() {
   const [query, setQuery] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [provider, setProvider] = useState<Provider>('openrouter');
   const [threshold, setThreshold] = useState(0.5);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DebugResponse | null>(null);
@@ -61,17 +63,9 @@ export default function DebugPage() {
   const [expandedChunks, setExpandedChunks] = useState<Set<number>>(new Set());
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
 
-  // Load API key from localStorage on mount
-  useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('quily_api_key');
-      if (stored) setApiKey(stored);
-    }
-  });
-
   const runDebug = async () => {
-    if (!query.trim() || !apiKey.trim()) {
-      setError('Query and API key are required');
+    if (!query.trim()) {
+      setError('Query is required');
       return;
     }
 
@@ -85,7 +79,7 @@ export default function DebugPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: query.trim(),
-          apiKey: apiKey.trim(),
+          provider,
           similarityThreshold: threshold,
           initialCount: 15,
         }),
@@ -336,14 +330,34 @@ export default function DebugPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">OpenRouter API Key</label>
-                <input
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-or-..."
-                  className="w-full bg-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <label className="block text-sm font-medium mb-2">Embedding Provider</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="provider"
+                      value="openrouter"
+                      checked={provider === 'openrouter'}
+                      onChange={(e) => setProvider(e.target.value as Provider)}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600"
+                    />
+                    <span>OpenRouter</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="provider"
+                      value="chutes"
+                      checked={provider === 'chutes'}
+                      onChange={(e) => setProvider(e.target.value as Provider)}
+                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600"
+                    />
+                    <span>Chutes</span>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Uses API key from environment variables
+                </p>
               </div>
 
               <div>

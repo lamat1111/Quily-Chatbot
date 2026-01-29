@@ -10,12 +10,15 @@ const supabase = createClient(
 
 const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY! });
 
+// Use BGE-M3 model (1024 dims) to match document_chunks_chutes table
+const EMBEDDING_MODEL = 'baai/bge-m3';
+
 async function debugSearch() {
   console.log('=== Searching for chunks containing "quilibrium" ===\n');
 
   // Search for chunks containing 'quilibrium' in content
   const { data: textMatches, error: textError } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('id, source_file, content')
     .ilike('content', '%quilibrium%')
     .limit(20);
@@ -40,7 +43,7 @@ async function debugSearch() {
   console.log('\n\n=== Source files containing "quilibrium" in path ===\n');
 
   const { data: sourceFiles } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('source_file')
     .ilike('source_file', '%quilibrium%');
 
@@ -54,7 +57,7 @@ async function debugSearch() {
   console.log('\n\n=== Embedding statistics ===\n');
 
   const { data: sample } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('id, embedding')
     .limit(1);
 
@@ -80,10 +83,10 @@ async function testVectorSearch() {
   const query = 'what is Quilibrium?';
   console.log('Query:', query);
 
-  // Generate embedding
-  console.log('Generating embedding...');
+  // Generate embedding using BGE-M3 (1024 dims)
+  console.log('Generating embedding with BGE-M3...');
   const { embedding } = await embed({
-    model: openrouter.textEmbeddingModel('openai/text-embedding-3-small'),
+    model: openrouter.textEmbeddingModel(EMBEDDING_MODEL),
     value: query,
   });
 
@@ -91,8 +94,8 @@ async function testVectorSearch() {
   console.log('First 5 values:', embedding.slice(0, 5));
 
   // Test with very low threshold
-  console.log('\nCalling match_document_chunks with threshold 0.3...');
-  const { data: results, error } = await supabase.rpc('match_document_chunks', {
+  console.log('\nCalling match_document_chunks_chutes with threshold 0.3...');
+  const { data: results, error } = await supabase.rpc('match_document_chunks_chutes', {
     query_embedding: embedding,
     match_threshold: 0.3,
     match_count: 10,
@@ -114,7 +117,7 @@ async function testVectorSearch() {
   // Also test a specific chunk we know has "quilibrium"
   console.log('\n\n=== Testing with a known good chunk ===');
   const { data: knownChunk } = await supabase
-    .from('document_chunks')
+    .from('document_chunks_chutes')
     .select('id, content, embedding')
     .eq('source_file', 'quilibrium-official/discover/01-what-is-quilibrium.md')
     .limit(1)
