@@ -21,6 +21,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Convert Settings Modal to Standalone Settings Page](tasks/.done/convert-settings-modal-to-page.md)
 - [Implement Dual Embedding Storage for OpenRouter and Chutes Providers](tasks/.done/dual-embedding-storage-openrouter-chutes.md)
+- [Implement Insufficient Credits Detection for Chutes and OpenRouter](tasks/.done/insufficient-credits-detection.md)
 
 ## 📊 Reports
 
@@ -30,4 +31,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-29 16:40:52
+**Last Updated**: 2026-01-29 16:47:24

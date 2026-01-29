@@ -104,6 +104,7 @@ docs/quilibrium-official/
 
 # Claude Code - include .claude folder but exclude specific items
 !.claude/
+.claude/settings.local.json
 .claude/agents/gsd*
 .claude/commands/gsd/
 .claude/get-shit-done/

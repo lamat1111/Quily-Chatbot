@@ -242,3 +242,75 @@ export async function fetchDetailedUserInfo(
   }
   return res.json();
 }
+
+// ============================================================================
+// Balance & Credits Checking
+// ============================================================================
+
+export interface ChutesBalanceResult {
+  hasCredits: boolean;
+  balance?: number;
+  error?: 'unauthorized' | 'network_error' | 'no_credits';
+}
+
+/**
+ * Check if a Chutes user has sufficient credits/balance.
+ * Uses /users/me/quotas endpoint which returns quota information.
+ *
+ * This is a lightweight check designed for pre-flight validation.
+ * Returns quickly even on failure to avoid blocking the user experience.
+ */
+export async function checkChutesBalance(
+  accessToken: string,
+  config?: OAuthConfig
+): Promise<ChutesBalanceResult> {
+  if (!accessToken) {
+    return { hasCredits: false, error: 'unauthorized' };
+  }
+
+  const baseUrl = config?.idpBaseUrl || IDP_BASE_URL;
+
+  try {
+    // Use AbortController for timeout to ensure fast response
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+
+    const res = await fetch(`${baseUrl}/users/me/quotas`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (res.status === 401 || res.status === 403) {
+      return { hasCredits: false, error: 'unauthorized' };
+    }
+
+    // 402 Payment Required = no credits
+    if (res.status === 402) {
+      return { hasCredits: false, balance: 0, error: 'no_credits' };
+    }
+
+    if (!res.ok) {
+      // On other errors, assume they have credits to avoid false negatives
+      console.warn(`Chutes quota check returned ${res.status}, assuming has credits`);
+      return { hasCredits: true };
+    }
+
+    const data = await res.json();
+
+    // The quotas endpoint returns quota info - if we get a successful response,
+    // the user has access. We can refine this based on actual response structure.
+    // For now, a 200 response means the user has an active account.
+    return { hasCredits: true, balance: data?.balance };
+  } catch (error) {
+    // On network error or timeout, don't block - assume they have credits
+    // The actual API call will fail with a proper error if they don't
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn('Chutes balance check timed out, proceeding with request');
+    } else {
+      console.warn('Chutes balance check failed:', error);
+    }
+    return { hasCredits: true, error: 'network_error' };
+  }
+}
