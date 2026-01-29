@@ -11,7 +11,8 @@ function parseFrontmatter(content: string): {
   content: string;
   frontmatter: Record<string, unknown> | undefined;
 } {
-  const frontmatterRegex = /^---\n([\s\S]*?)\n---\n/;
+  // Handle both Unix (\n) and Windows (\r\n) line endings
+  const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
   const match = content.match(frontmatterRegex);
 
   if (!match) {
@@ -20,7 +21,8 @@ function parseFrontmatter(content: string): {
 
   // Simple YAML-like parsing (key: value pairs)
   const frontmatter: Record<string, unknown> = {};
-  const lines = match[1].split('\n');
+  // Handle both Unix (\n) and Windows (\r\n) line endings
+  const lines = match[1].split(/\r?\n/);
   for (const line of lines) {
     const colonIndex = line.indexOf(':');
     if (colonIndex > 0) {
