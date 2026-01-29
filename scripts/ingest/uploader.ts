@@ -55,6 +55,7 @@ export async function uploadChunks(
       token_count: chunk.metadata.token_count,
       version: chunk.metadata.version,
       content_hash: chunk.metadata.content_hash,
+      source_url: chunk.metadata.source_url || null,
     }));
 
     try {

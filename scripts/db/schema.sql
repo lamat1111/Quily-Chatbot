@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS document_chunks_chutes (
   token_count INTEGER NOT NULL,
   version TEXT,
   content_hash TEXT NOT NULL,
+  source_url TEXT,  -- External URL for source attribution (e.g., YouTube URL for transcripts)
   created_at TIMESTAMPTZ DEFAULT NOW(),
 
   -- Unique constraint for upsert (prevents duplicates on re-ingestion)
@@ -57,6 +58,7 @@ RETURNS TABLE (
   content TEXT,
   source_file TEXT,
   heading_path TEXT,
+  source_url TEXT,
   similarity FLOAT
 )
 LANGUAGE plpgsql
@@ -68,6 +70,7 @@ BEGIN
     dc.content,
     dc.source_file,
     dc.heading_path,
+    dc.source_url,
     1 - (dc.embedding <=> query_embedding) AS similarity
   FROM document_chunks_chutes dc
   WHERE 1 - (dc.embedding <=> query_embedding) > match_threshold

@@ -16,6 +16,8 @@ export interface RetrievedChunk {
   source_file: string;
   /** Heading hierarchy path or null */
   heading_path: string | null;
+  /** External source URL (e.g., YouTube URL for transcripts) or null */
+  source_url: string | null;
   /** Cosine similarity score (0-1) */
   similarity: number;
   /** Citation index for display (1-based) */

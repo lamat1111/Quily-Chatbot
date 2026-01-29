@@ -101,3 +101,10 @@ docs/quilibrium-official/
 
 .vercel
 .env*.local
+
+# Claude Code - include .claude folder but exclude specific items
+!.claude/
+.claude/agents/gsd*
+.claude/commands/gsd/
+.claude/get-shit-done/
+.claude/hooks/

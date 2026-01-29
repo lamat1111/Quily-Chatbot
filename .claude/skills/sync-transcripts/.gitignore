@@ -1,0 +1,8 @@
+# Sensitive files
+cookies.txt
+
+# Raw transcripts (not cleaned yet, shouldn't be in repo)
+transcripts/raw/
+
+# Tracking file (local state)
+transcripts/processed.json

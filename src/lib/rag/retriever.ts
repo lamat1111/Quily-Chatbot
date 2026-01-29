@@ -99,6 +99,7 @@ export async function retrieveWithReranking(
         content: original.content,
         source_file: original.source_file,
         heading_path: original.heading_path,
+        source_url: original.source_url,
         similarity: original.similarity,
         citationIndex: idx + 1,
       };
@@ -116,6 +117,7 @@ export async function retrieveWithReranking(
             content: string;
             source_file: string;
             heading_path: string | null;
+            source_url: string | null;
             similarity: number;
           },
           idx: number

@@ -109,6 +109,9 @@ export async function chunkDocuments(
       // Find the heading path for this chunk
       const headingPath = findHeadingPath(chunkStart, doc.content, headingMap);
 
+      // Extract source_url from frontmatter (youtube_url for transcripts)
+      const sourceUrl = doc.frontmatter?.youtube_url as string | undefined;
+
       const metadata: ChunkMetadata = {
         source_file: doc.path,
         heading_path: headingPath,
@@ -116,6 +119,7 @@ export async function chunkDocuments(
         token_count: countTokens(chunkContent),
         version,
         content_hash: hashContent(chunkContent),
+        source_url: sourceUrl,
       };
 
       allChunks.push({

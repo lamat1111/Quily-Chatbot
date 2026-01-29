@@ -49,7 +49,8 @@ export function buildContextBlock(chunks: RetrievedChunk[]): ContextBlockResult 
 
   const formattedChunks = chunks
     .map((chunk) => {
-      const url = getOfficialDocsUrl(chunk.source_file);
+      // Priority: 1) source_url from frontmatter (YouTube, etc.), 2) official docs URL
+      const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
       const title = chunk.heading_path || getTitleFromPath(chunk.source_file);
 
       // Include URL in context so LLM can create proper links
@@ -204,8 +205,8 @@ export function getOfficialDocsUrl(sourcePath: string): string | null {
  */
 export function formatSourcesForClient(chunks: RetrievedChunk[]): SourceReference[] {
   return chunks.map((chunk) => {
-    // Only official docs get clickable URLs
-    const url = getOfficialDocsUrl(chunk.source_file);
+    // Priority: 1) source_url from frontmatter (YouTube, etc.), 2) official docs URL
+    const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
 
     return {
       index: chunk.citationIndex,
