@@ -323,7 +323,7 @@ program
       // Get files in database
       spinner.start('Checking database...');
       const { getSourceFilesInDatabase } = await import('./uploader.js');
-      const dbFiles = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      const dbFiles = await getSourceFilesInDatabase(SUPABASE_URL, SUPABASE_SERVICE_KEY, 'document_chunks_chutes');
       spinner.succeed(`Found ${dbFiles.length} source files in database`);
 
       // Find orphans

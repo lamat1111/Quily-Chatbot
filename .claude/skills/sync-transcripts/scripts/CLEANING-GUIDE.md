@@ -1,6 +1,8 @@
-# Transcript Cleaning Guide
+# Transcript Cleaning Guide (Phase 2)
 
-This guide outlines the workflow for cleaning raw YouTube transcripts and preparing them for the Quilibrium chatbot knowledge base.
+This guide covers **Phase 2: Clean** of the transcript workflow. It outlines how to clean raw YouTube transcripts and prepare them for deduplication.
+
+> **Note:** This is Phase 2 only. After cleaning, run **Phase 3: Dedupe** using [DEDUPE-GUIDE.md](DEDUPE-GUIDE.md) to remove content that duplicates official documentation.
 
 ## Overview
 
@@ -197,7 +199,7 @@ This list is not exhaustive - always verify unfamiliar proper nouns.
 
 ### Step 5: Flag Outdated Information
 
-**Note:** Duplicate checking is now done in a separate DEDUPE phase after all transcripts are cleaned. During cleaning, preserve ALL technical content - do not remove anything due to potential duplicates.
+> **Important:** During Phase 2 (cleaning), preserve ALL technical content. Do NOT remove duplicates yet - that happens in **Phase 3: Dedupe** using [DEDUPE-GUIDE.md](DEDUPE-GUIDE.md). Better to include too much than lose valuable information.
 
 If the transcript discusses:
 - Specific version numbers (2.0, 2.1, etc.)
@@ -240,19 +242,21 @@ topics:
 
 ---
 
-## Quality Checklist
+## Quality Checklist (Phase 2)
 
-Before marking a transcript as processed:
+Before marking a transcript as cleaned (ready for Phase 3 dedupe):
 
 - [ ] All technical terms are correctly spelled (especially version numbers, proper nouns)
 - [ ] Content is organized with clear, descriptive section headings
 - [ ] Sections are self-contained and focused on single topics (RAG-friendly)
 - [ ] Filler words, tangents, and boilerplate intro removed
 - [ ] Paragraphs are logical groupings
-- [ ] All technical content preserved (duplicates handled in separate DEDUPE phase)
+- [ ] All technical content preserved (duplicates handled in Phase 3)
 - [ ] Outdated info is flagged with notes
 - [ ] YAML frontmatter is complete with correct video URL and date
 - [ ] File saved to `transcripts/cleaned/` (within skill folder)
+
+**Next step:** Run Phase 3 (Dedupe) using [DEDUPE-GUIDE.md](DEDUPE-GUIDE.md)
 
 ---
 
@@ -295,4 +299,16 @@ Sources:
 
 ---
 
-*Last updated: 2025-01-29*
+---
+
+## Next Steps
+
+After completing Phase 2 (cleaning):
+
+1. **Run Phase 3: Dedupe** - Follow [DEDUPE-GUIDE.md](DEDUPE-GUIDE.md) to remove content that duplicates official documentation
+2. **Copy to docs** - Move deduped files to `docs/transcriptions/`
+3. **Run ingestion** - `npm run ingest run`
+
+---
+
+*Last updated: 2026-01-29*

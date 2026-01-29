@@ -11,7 +11,10 @@
 ALTER TABLE document_chunks_chutes
 ADD COLUMN IF NOT EXISTS source_url TEXT;
 
--- Update the RPC function to return source_url
+-- Drop existing function first (required when changing return type)
+DROP FUNCTION IF EXISTS match_document_chunks_chutes(vector, double precision, integer);
+
+-- Recreate the RPC function with source_url in return type
 CREATE OR REPLACE FUNCTION match_document_chunks_chutes(
   query_embedding vector(1024),
   match_threshold FLOAT DEFAULT 0.7,

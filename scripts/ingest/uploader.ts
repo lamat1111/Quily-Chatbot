@@ -4,8 +4,9 @@ import type { DocumentChunk } from './types.js';
 // Batch size for database inserts
 const UPLOAD_BATCH_SIZE = 100;
 
-// Table names for different embedding providers
-export type EmbeddingTable = 'document_chunks' | 'document_chunks_chutes';
+// Table name for document chunks (unified BGE-M3 embeddings)
+// Note: 'document_chunks' table was removed - only 'document_chunks_chutes' exists now
+export type EmbeddingTable = 'document_chunks_chutes';
 
 /**
  * Create Supabase client with service role key
@@ -33,7 +34,7 @@ export async function uploadChunks(
   chunks: DocumentChunk[],
   supabaseUrl: string,
   supabaseKey: string,
-  tableName: EmbeddingTable = 'document_chunks',
+  tableName: EmbeddingTable = 'document_chunks_chutes',
   onProgress?: (completed: number, total: number) => void
 ): Promise<{ inserted: number; errors: string[] }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
@@ -94,7 +95,7 @@ export async function deleteChunksForFile(
   sourceFile: string,
   supabaseUrl: string,
   supabaseKey: string,
-  tableName: EmbeddingTable = 'document_chunks'
+  tableName: EmbeddingTable = 'document_chunks_chutes'
 ): Promise<{ deleted: number }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
@@ -118,7 +119,7 @@ export async function deleteChunksForFile(
 export async function getChunkCount(
   supabaseUrl: string,
   supabaseKey: string,
-  tableName: EmbeddingTable = 'document_chunks'
+  tableName: EmbeddingTable = 'document_chunks_chutes'
 ): Promise<number> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
@@ -139,7 +140,7 @@ export async function getChunkCount(
 export async function getSourceFilesInDatabase(
   supabaseUrl: string,
   supabaseKey: string,
-  tableName: EmbeddingTable = 'document_chunks'
+  tableName: EmbeddingTable = 'document_chunks_chutes'
 ): Promise<string[]> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);
 
@@ -165,7 +166,7 @@ export async function cleanOrphanedChunks(
   localFiles: string[],
   supabaseUrl: string,
   supabaseKey: string,
-  tableName: EmbeddingTable = 'document_chunks',
+  tableName: EmbeddingTable = 'document_chunks_chutes',
   onProgress?: (message: string) => void
 ): Promise<{ deletedFiles: string[]; deletedChunks: number }> {
   const supabase = getSupabaseClient(supabaseUrl, supabaseKey);

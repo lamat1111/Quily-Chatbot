@@ -28,7 +28,8 @@ All transcript data is stored within this skill folder:
 │   ├── fetch-transcripts.py    # Download from YouTube
 │   ├── status.py               # Show processing status
 │   ├── mark-processed.py       # Track cleaned transcripts
-│   └── CLEANING-GUIDE.md       # How to clean transcripts
+│   ├── CLEANING-GUIDE.md       # Phase 2: How to clean transcripts
+│   └── DEDUPE-GUIDE.md         # Phase 3: How to deduplicate against official docs
 └── transcripts/
     ├── raw/                    # Downloaded transcripts (gitignored)
     ├── cleaned/                # Cleaned .md files (ready for dedupe)
@@ -105,9 +106,9 @@ When the user asks to clean a transcript:
    - date: Extract from filename (YYYY-MM-DD)
    - author: Cassandra Heart
    - topics: Identify 2-5 relevant topics from the content
-7. **Show the cleaned result** for user review
-8. **On approval, save** to `transcripts/cleaned/YYYY-MM-DD_descriptive-title.md`
-9. **Mark as processed**: Run `mark-processed.py <video_id> <filename>`
+7. **Save directly** to `transcripts/cleaned/YYYY-MM-DD_descriptive-title.md` (do NOT show preview to user)
+8. **Mark as processed**: Run `mark-processed.py <video_id> <filename>`
+9. **Notify user** with just the filename - they will review it manually in the cleaned folder
 
 **Important:** During cleaning, preserve ALL technical content. Do NOT remove duplicates yet - that happens in Phase 3. Better to include too much than lose valuable information.
 
@@ -131,44 +132,42 @@ topics:
 
 ## Phase 3: Deduplicating Transcripts
 
-Run this AFTER all transcripts are cleaned. This phase compares content and removes duplicates.
+Run this AFTER all transcripts are cleaned. This phase compares content against official docs and removes duplicates.
+
+**Full instructions:** See [DEDUPE-GUIDE.md](scripts/DEDUPE-GUIDE.md)
 
 When the user asks to dedupe:
 
-1. **Read all cleaned transcripts** from `transcripts/cleaned/`
-2. **Build a topic index** - List all section headers and topics from each file
-3. **Identify duplicate topics** - Find sections covering the same subject across files
-4. **For each duplicate topic:**
-   - Compare the explanations
-   - Identify which is most complete/clear
-   - Keep the best version
-   - In other files, replace with a brief reference + link to the best version
-5. **Compare against official docs** (`docs/quilibrium-official/`):
-   - If official docs cover a topic comprehensively, condense transcript to unique insights only
-   - Keep examples, analogies, and context not in official docs
-6. **Show proposed changes** for user review
-7. **On approval, update the files**
+1. **Read DEDUPE-GUIDE.md** for the complete reference index and rules
+2. **Read the cleaned transcript** from `transcripts/cleaned/`
+3. **For each section**, check against the Official Docs Reference Index:
+   - **Tier 1 topics** (comprehensive official docs exist): Remove explanation, add cross-reference
+   - **Tier 2 content** (unique value): Keep analogies, Q&A, history, roadmap, examples
+   - **Tier 3 topics** (documentation gaps): Flag for potential extraction to official docs
+4. **Check against other transcripts** for duplicate explanations
+5. **Apply changes** using the replacement templates from DEDUPE-GUIDE.md
+6. **Quality check** using the checklist in DEDUPE-GUIDE.md
 
-### Duplicate Handling Rules
+### Quick Reference: What to Remove vs Keep
 
-| Situation | Action |
-|-----------|--------|
-| Same topic in multiple transcripts | Keep most complete explanation, reference it from others |
-| Topic fully covered in official docs | Condense to unique insights + "See official docs for details" |
-| Transcript has unique examples | Keep examples even if topic is covered elsewhere |
-| Historical context/roadmap updates | Keep - provides timeline context |
-| Identical explanations | Keep only one, remove from others |
+| Remove (Tier 1) | Keep (Tier 2) |
+|-----------------|---------------|
+| Q Storage/QKMS technical details | Analogies and metaphors |
+| Hypergraph/RDF definitions | Q&A answers |
+| Tokenomics/emissions formulas | Historical context / origin story |
+| Consensus mechanism details | Roadmap and future plans |
+| Node setup instructions | Time-specific status updates |
+| Mission statement | Real-world examples |
+| Core technology explanations | Comparisons to competitors |
 
 ### Cross-Reference Format
 
-When removing duplicate content, replace with:
+When removing content, replace with:
 
 ```markdown
 ## [Topic Name]
 
-For detailed information about [topic], see:
-- [Official documentation](link) for technical details
-- [Other transcript title](YYYY-MM-DD_other-transcript.md) for in-depth explanation
+For comprehensive information about [topic], see the [official documentation](../../../docs/quilibrium-official/[path]).
 
 [Keep any unique insights, examples, or context specific to this stream...]
 ```
@@ -181,8 +180,10 @@ After cleaning and deduping:
 
 ```bash
 cp .claude/skills/sync-transcripts/transcripts/cleaned/*.md docs/transcriptions/
-npm run ingest run --clean
+npm run ingest run
 ```
+
+**About the `--clean` flag:** The ingest pipeline is incremental - it only re-ingests files that have changed (based on content hash). The `--clean` flag removes orphaned chunks from files that were *deleted* from docs/. Use it when you've removed transcripts, not needed for adding new ones.
 
 The `youtube_url` field in frontmatter enables clickable YouTube links in bot citations.
 
@@ -219,4 +220,4 @@ High-level categories:
 
 ---
 
-*Last updated: 2025-01-29*
+*Last updated: 2026-01-29*
