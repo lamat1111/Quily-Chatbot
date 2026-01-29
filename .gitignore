@@ -109,3 +109,6 @@ docs/quilibrium-official/
 .claude/commands/gsd/
 .claude/get-shit-done/
 .claude/hooks/
+
+# GSD planning folder (development scaffolding)
+.planning/

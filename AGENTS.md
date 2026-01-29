@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Quily Chat is a self-hosted RAG chatbot that answers questions about the Quilibrium protocol. Users provide their own OpenRouter API keys, and the system retrieves relevant documentation chunks from Supabase (pgvector) before streaming responses via OpenRouter.
+Quily Chat is a self-hosted RAG chatbot that answers questions about the Quilibrium protocol. Users authenticate via OpenRouter API key or Chutes OAuth, and the system retrieves relevant documentation chunks from Supabase (pgvector) before streaming responses.
 
 ## Commands
 
@@ -59,7 +59,7 @@ User Query → Embed (text-embedding-3-small via OpenRouter)
 NEXT_PUBLIC_SUPABASE_URL    # Supabase project URL
 SUPABASE_SERVICE_ROLE_KEY   # Service role key (server-side only)
 COHERE_API_KEY              # Optional reranking
-OPENROUTER_API_KEY          # For ingestion only; users provide their own for chat
+OPENROUTER_API_KEY          # For ingestion; users can use OpenRouter or Chutes for chat
 ```
 
 ## Code Conventions

@@ -1,8 +1,10 @@
-# Quily Assistant
+# Quily Chat
 
 A self-hosted RAG chatbot that answers questions about the Quilibrium protocol using official documentation and livestream transcriptions.
 
-**Zero operational cost** — users bring their own API keys via OpenRouter.
+> **Beta**: This project is under active development. Expect rough edges and contributions are welcome!
+
+### [>> Try the live demo <<](https://quily.quilibrium.one/)
 
 ## Features
 
@@ -23,14 +25,14 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 
 - Node.js 18+
 - Supabase account (free tier works)
-- OpenRouter API key
+- OpenRouter API key **OR** Chutes account (for chat)
 - GitHub token (for docs sync, no scopes needed)
 
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/QuilibriumNetwork/quily-chatbot.git
-cd quily-chatbot
+git clone https://github.com/lamat1111/Quily-Chatbot.git
+cd Quily-Chatbot
 npm install
 ```
 
@@ -66,7 +68,8 @@ GITHUB_TOKEN=ghp_your_token_here
 
 **Get your keys:**
 - [Supabase](https://supabase.com) → Dashboard → Settings → API
-- [OpenRouter](https://openrouter.ai/keys)
+- [OpenRouter](https://openrouter.ai/keys) (for API key auth)
+- [Chutes](https://chutes.ai) → Create account (for OAuth sign-in, alternative to OpenRouter)
 - [Cohere](https://dashboard.cohere.com/api-keys) (optional)
 - [GitHub](https://github.com/settings/tokens) → Generate token (no scopes needed for public repos)
 
@@ -148,7 +151,7 @@ npm run ingest:run
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and enter your OpenRouter API key to start chatting.
+Open [http://localhost:3000](http://localhost:3000) and configure your preferred provider (OpenRouter API key or Chutes sign-in) in Settings to start chatting.
 
 ---
 
@@ -321,7 +324,7 @@ npm run ingest:status
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Service role key (server-side) |
 | `SUPABASE_URL` | Yes | Supabase URL (for scripts) |
 | `SUPABASE_SERVICE_KEY` | Yes | Service key (for scripts) |
-| `OPENROUTER_API_KEY` | Yes | For embeddings during ingestion |
+| `OPENROUTER_API_KEY` | Yes* | For embeddings during ingestion (*required for ingestion, optional for chat if using Chutes) |
 | `COHERE_API_KEY` | No | Enables reranking for better retrieval |
 | `GITHUB_TOKEN` | Yes | For docs sync (no scopes needed) |
 | `CHUTES_OAUTH_CLIENT_ID` | No | Chutes OAuth client ID (for Sign in with Chutes) |
@@ -357,13 +360,6 @@ npm run ingest:status
 4. Deploy
 
 The free tier is sufficient for most use cases.
-
-### Docker
-
-```bash
-docker build -t quily-chatbot .
-docker run -p 3000:3000 --env-file .env quily-chatbot
-```
 
 ---
 
@@ -408,6 +404,16 @@ For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.a
 
 ---
 
+## Related
+
+- [QuilibriumNetwork](https://github.com/QuilibriumNetwork) - Official Quilibrium GitHub organization
+- [Quilibrium Docs Repo](https://github.com/QuilibriumNetwork/docs) - Source for the RAG knowledge base
+- [docs.quilibrium.com](https://docs.quilibrium.com) - Official documentation
+- [quilibrium.com](https://quilibrium.com) - Official website
+- [Community Treasury](https://quilibrium.one/#treasury) - Support the project
+
+---
+
 ## Contributing
 
 Contributions welcome! Please:
@@ -420,4 +426,4 @@ Contributions welcome! Please:
 
 ## License
 
-MIT
+AGPL-3.0 license
