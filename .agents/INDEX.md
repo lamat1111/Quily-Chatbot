@@ -4,29 +4,30 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
-### Features
-- [RAG Knowledge Base Workflow](docs/features/rag-knowledge-base-workflow.md) - Complete guide to adding knowledge to the chatbot
-
-## 🐛 Bug Reports
-
-*No bug reports yet.*
+- [Model-Specific Instruction Handling](docs/model-specific-instruction-handling.md)
+- [RAG Knowledge Base Workflow](docs/rag-knowledge-base-workflow.md)
 
 ## 📋 Tasks
 
-- [Research: Consolidate to Single BGE-M3 Embedding Model](tasks/research-unified-bge-m3-embedding.md) - Investigate using BGE-M3 for both OpenRouter and Chutes to simplify architecture
-- [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md) - Add AI-generated smart titles for conversations via SettingsModal
+### Pending Tasks
 
-### Completed Tasks
-- [Convert Settings Modal to Standalone Settings Page](tasks/.done/convert-settings-modal-to-page.md) - Converted to full `/settings` page with card-based layout
-- [Implement Dual Embedding Storage for OpenRouter and Chutes Providers](tasks/.done/dual-embedding-storage-openrouter-chutes.md) - Enabled both providers with separate embedding tables (1536 vs 1024 dims)
+- [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md)
+- [Research: Consolidate to Single BGE-M3 Embedding Model](tasks/research-unified-bge-m3-embedding.md)
 
-### Archived Tasks
-- [Implement Jina Reranker](tasks/.archived/implement-jina-reranker.md) - Reverted due to CC-BY-NC licensing restrictions
+### .Archived
+- [Implement Jina Reranker as Free Alternative to Cohere](tasks/.archived/implement-jina-reranker.md)
+
+## 📋 Completed Tasks
+
+- [Convert Settings Modal to Standalone Settings Page](tasks/.done/convert-settings-modal-to-page.md)
+- [Implement Dual Embedding Storage for OpenRouter and Chutes Providers](tasks/.done/dual-embedding-storage-openrouter-chutes.md)
 
 ## 📊 Reports
 
-*No reports yet.*
+### Active Reports
+
+- [Frontend UI & Styling Architecture](reports/frontend-ui-styling-architecture_2026-01-29.md)
 
 ---
 
-**Last Updated**: 2026-01-28
+**Last Updated**: 2026-01-29 16:40:52

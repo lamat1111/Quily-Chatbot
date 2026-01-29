@@ -5,8 +5,9 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-01-25
-updated: 2026-01-25
-related_docs: []
+updated: 2026-01-29
+related_docs:
+  - "model-specific-instruction-handling.md"
 related_tasks: []
 ---
 
@@ -26,7 +27,8 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 |-----------|----------|---------|
 | Document Loader | `scripts/ingest/loader.ts` | Reads `.md` and `.txt` files from `./docs` |
 | Semantic Chunker | `scripts/ingest/chunker.ts` | Splits documents into 800-token chunks |
-| Embedder | `scripts/ingest/embedder.ts` | Generates 1536-dim vectors via OpenRouter |
+| Embedder | `scripts/ingest/embedder.ts` | Generates 1024-dim vectors via OpenRouter (BGE-M3) |
+| Embedder (Chutes) | `scripts/ingest/embedder-chutes.ts` | Generates 1024-dim vectors via Chutes (BGE-M3) |
 | Uploader | `scripts/ingest/uploader.ts` | Batch inserts to Supabase pgvector |
 | CLI Orchestrator | `scripts/ingest/index.ts` | Coordinates the ingestion pipeline |
 | Docs Sync | `scripts/sync-docs/` | Syncs docs from GitHub repository |
@@ -58,14 +60,14 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
          │
          ├─→ Chunker (500-1000 tokens, heading context)
          │
-         ├─→ Embedder (OpenRouter text-embedding-3-small)
+         ├─→ Embedder (BGE-M3 via OpenRouter or Chutes)
          │
          └─→ Supabase pgvector Database
                       │
-                      ├─ document_chunks table
-                      ├─ 1536-dim vectors
+                      ├─ document_chunks_chutes table
+                      ├─ 1024-dim vectors (BGE-M3)
                       ├─ HNSW index
-                      └─ match_document_chunks() RPC
+                      └─ match_document_chunks_chutes() RPC
                            │
                            ▼
                 ┌───────────────────┐
@@ -174,18 +176,19 @@ The schema creates:
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-2. **document_chunks table**:
+2. **document_chunks_chutes table** (unified BGE-M3 embeddings):
 ```sql
-CREATE TABLE document_chunks (
+CREATE TABLE document_chunks_chutes (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   content TEXT NOT NULL,
-  embedding vector(1536),
+  embedding vector(1024) NOT NULL,  -- BGE-M3 produces 1024 dimensions
   source_file TEXT NOT NULL,
   heading_path TEXT,
   chunk_index INTEGER NOT NULL,
   token_count INTEGER NOT NULL,
   version TEXT,
   content_hash TEXT NOT NULL,
+  source_url TEXT,  -- External URL for source attribution (e.g., YouTube URL)
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(source_file, chunk_index)
 );
@@ -193,24 +196,25 @@ CREATE TABLE document_chunks (
 
 3. **HNSW index for fast similarity search**:
 ```sql
-CREATE INDEX document_chunks_embedding_idx
-  ON document_chunks
+CREATE INDEX document_chunks_chutes_embedding_idx
+  ON document_chunks_chutes
   USING hnsw (embedding vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 ```
 
-4. **match_document_chunks() RPC function**:
+4. **match_document_chunks_chutes() RPC function**:
 ```sql
-CREATE OR REPLACE FUNCTION match_document_chunks(
-  query_embedding vector(1536),
+CREATE OR REPLACE FUNCTION match_document_chunks_chutes(
+  query_embedding vector(1024),
   match_threshold float DEFAULT 0.7,
-  match_count int DEFAULT 10
+  match_count int DEFAULT 5
 )
 RETURNS TABLE (
   id bigint,
   content text,
   source_file text,
   heading_path text,
+  source_url text,
   similarity float
 )
 LANGUAGE plpgsql
@@ -222,8 +226,9 @@ BEGIN
     dc.content,
     dc.source_file,
     dc.heading_path,
+    dc.source_url,
     1 - (dc.embedding <=> query_embedding) AS similarity
-  FROM document_chunks dc
+  FROM document_chunks_chutes dc
   WHERE 1 - (dc.embedding <=> query_embedding) > match_threshold
   ORDER BY dc.embedding <=> query_embedding
   LIMIT match_count;
@@ -349,7 +354,7 @@ npm run ingest -- clean --dry-run
 1. **Loading**: Reads all `.md` and `.txt` files from `./docs` recursively
 2. **Cleaning** (if `--clean`): Removes chunks for files that no longer exist
 3. **Chunking**: Splits into ~800-token chunks with 100-token overlap
-4. **Embedding**: Generates 1536-dimensional vectors using `text-embedding-3-small`
+4. **Embedding**: Generates 1024-dimensional vectors using BGE-M3 (via OpenRouter or Chutes)
 5. **Uploading**: Upserts chunks to Supabase (updates on re-ingestion)
 
 ### Expected Output
@@ -431,9 +436,9 @@ When a user sends a message:
 
 1. **Extract Query**: The chat API extracts the user's latest message
 
-2. **Embed Query**: The query is converted to a 1536-dim vector using the same embedding model
+2. **Embed Query**: The query is converted to a 1024-dim vector using BGE-M3 (via OpenRouter or Chutes, depending on provider)
 
-3. **Vector Search**: Supabase RPC `match_document_chunks()` finds top 15 similar chunks by cosine similarity
+3. **Vector Search**: Supabase RPC `match_document_chunks_chutes()` finds top 15 similar chunks by cosine similarity
 
 4. **Reranking** (if Cohere key available):
    - Cohere's `rerank-v3.5` model reorders the 15 candidates
@@ -466,11 +471,14 @@ The retrieval system accepts these options (`src/lib/rag/types.ts`):
 
 ```typescript
 interface RetrievalOptions {
-  embeddingApiKey: string;           // OpenRouter key
-  cohereApiKey?: string;             // Optional reranking
+  embeddingProvider?: 'openrouter' | 'chutes';  // Provider for embeddings
+  embeddingApiKey?: string;          // OpenRouter API key
+  chutesAccessToken?: string;        // Chutes access token
+  embeddingModel?: string;           // Optional model ID override
+  cohereApiKey?: string;             // Optional reranking (paid)
   initialCount?: number;             // 15 (candidates)
   finalCount?: number;               // 5 (final results)
-  similarityThreshold?: number;      // 0.5 (cosine similarity)
+  similarityThreshold?: number;      // 0.35 (cosine similarity)
 }
 ```
 
@@ -524,9 +532,10 @@ interface RetrievalOptions {
 
 ### "Embedding failed" errors
 
-- Verify `OPENROUTER_API_KEY` is valid
+- Verify `OPENROUTER_API_KEY` is valid (or Chutes session is active)
 - Check OpenRouter account has credits
 - Review rate limiting (100ms delay between batches)
+- If using Chutes, verify OAuth session hasn't expired
 
 ### Deleted files still appearing in results
 
@@ -554,6 +563,13 @@ interface RetrievalOptions {
 - **Overlap**: 100-token overlap preserves context across boundaries
 - **Embedding quality**: Fits well within embedding model limits
 
+### Why BGE-M3 instead of text-embedding-3-small?
+
+- **Better retrieval quality**: MTEB score 63.0 vs 55.8 for text-embedding-3-small
+- **Open source**: MIT licensed, no vendor lock-in
+- **Provider compatibility**: Both OpenRouter and Chutes produce identical vectors
+- **Unified table**: Single database table works regardless of which provider generates embeddings
+
 ### Why HNSW index?
 
 - **Speed**: Sub-millisecond query times even with millions of vectors
@@ -572,6 +588,10 @@ interface RetrievalOptions {
 - **Flexibility**: Not all content needs markdown formatting
 - **Simplicity**: No conversion needed for raw text content
 
+### Model-Specific Behavior
+
+The chat API implements differentiated behavior based on model capabilities. See [Model-Specific Instruction Handling](model-specific-instruction-handling.md) for details on how frontier models (Claude/GPT/Gemini) vs open-source models handle low-relevance RAG results.
+
 ---
 
-_Updated: 2026-01-25 20:30_
+_Updated: 2026-01-29_
