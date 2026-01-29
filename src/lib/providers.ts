@@ -23,12 +23,16 @@ export interface AIProvider {
   /** Longer explanation shown during setup for inexperienced users */
   setupDescription?: string;
   status: 'active' | 'coming';
+  /** Whether this provider is recommended */
+  isRecommended?: boolean;
   /** Authentication type for provider setup */
   authType: 'apiKey' | 'oauth';
   keyPrefix?: string;
   keyPlaceholder?: string;
   storageKey: string;
   setupSteps: SetupStep[];
+  /** URL for signing up (used for OAuth providers without setup steps) */
+  signupUrl?: string;
   validateKey: (key: string) => Promise<boolean>;
   /** Factory to create the AI SDK provider */
   createProvider: (options: { apiKey?: string; accessToken?: string }) => any;
@@ -39,11 +43,30 @@ export interface AIProvider {
  */
 export const PROVIDERS: AIProvider[] = [
   {
+    id: 'chutes',
+    name: 'Chutes',
+    description: "Subscription plans. Powered by Bittensor's decentralized network.",
+    setupDescription:
+      'Your Chutes subscription also gives you access to image generation, video, audio, and more.',
+    status: 'active',
+    isRecommended: true,
+    authType: 'oauth',
+    keyPlaceholder: '',
+    storageKey: 'chutes-session',
+    setupSteps: [],
+    signupUrl: 'https://chutes.ai',
+    validateKey: async () => true,
+    createProvider: ({ accessToken }) => {
+      const { createChutes } = require('@chutes-ai/ai-sdk-provider');
+      return createChutes({ apiKey: accessToken });
+    },
+  },
+  {
     id: 'openrouter',
     name: 'OpenRouter',
-    description: 'Pay-as-you-go AI models via API key',
+    description: 'Pay-as-you-go. Add credits and pay per message.',
     setupDescription:
-      'OpenRouter is a service that gives you access to many AI models with a single API key. You only pay for what you use.',
+      'Your OpenRouter credits work across many AI apps and services, not just Quily Chat.',
     status: 'active',
     authType: 'apiKey',
     keyPrefix: 'sk-or-',
@@ -58,23 +81,6 @@ export const PROVIDERS: AIProvider[] = [
     createProvider: ({ apiKey }) => {
       const { createOpenRouter } = require('@openrouter/ai-sdk-provider');
       return createOpenRouter({ apiKey });
-    },
-  },
-  {
-    id: 'chutes',
-    name: 'Chutes',
-    description: 'Sign in with Chutes to use their AI models',
-    setupDescription:
-      'Chutes lets you authenticate with OAuth so your app can use AI models without managing API keys.',
-    status: 'active',
-    authType: 'oauth',
-    keyPlaceholder: '',
-    storageKey: 'chutes-session',
-    setupSteps: [{ label: 'Sign in with Chutes', url: 'https://chutes.ai' }],
-    validateKey: async () => true,
-    createProvider: ({ accessToken }) => {
-      const { createChutes } = require('@chutes-ai/ai-sdk-provider');
-      return createChutes({ apiKey: accessToken });
     },
   },
 ];

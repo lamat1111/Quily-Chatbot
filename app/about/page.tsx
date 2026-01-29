@@ -51,7 +51,7 @@ export default function AboutPage() {
               </a>.
             </p>
 
-            <h2 className="text-xl font-semibold text-text-primary mt-8 mb-4">
+            <h2 className="text-xl font-semibold text-text-primary mt-8 mb-4 font-title">
               Data Sources
             </h2>
             <ul className="list-disc list-inside text-text-secondary mb-4 space-y-2">
@@ -77,7 +77,7 @@ export default function AboutPage() {
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-text-primary mt-8 mb-4">
+            <h2 className="text-xl font-semibold text-text-primary mt-8 mb-4 font-title">
               Support the Project
             </h2>
             <p className="text-text-secondary mb-4">

@@ -2,6 +2,20 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 /**
+ * Generate a UUID, with fallback for environments where crypto.randomUUID is unavailable.
+ */
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // Fallback using crypto.getRandomValues
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> (c === 'x' ? 0 : 3);
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+/**
  * Message in a conversation.
  */
 export interface Message {
@@ -64,7 +78,7 @@ export const useConversationStore = create<ConversationStore>()(
       _hasHydrated: false,
 
       addConversation: (title?: string) => {
-        const id = crypto.randomUUID();
+        const id = generateUUID();
         const now = Date.now();
 
         const newConversation: Conversation = {

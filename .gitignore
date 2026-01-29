@@ -102,6 +102,13 @@ docs/quilibrium-official/
 .vercel
 .env*.local
 
-# Claude Code GSD tooling (development scaffolding, not part of the app)
-.claude/
+# Claude Code - include .claude folder but exclude specific items
+!.claude/
+.claude/settings.local.json
+.claude/agents/gsd*
+.claude/commands/gsd/
+.claude/get-shit-done/
+.claude/hooks/
+
+# GSD planning folder (development scaffolding)
 .planning/

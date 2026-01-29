@@ -133,11 +133,11 @@ export default function SettingsPage() {
           {/* Provider Selection Card */}
           <section className="mb-8">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
                 <Icon name="zap" size={20} className="text-accent" />
                 Provider
               </h2>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {getActiveProviders().map((p) => {
                   const isChutesUnavailable = p.id === 'chutes' && !chutesAvailable;
                   const isDisabled = isChutesUnavailable;
@@ -158,6 +158,11 @@ export default function SettingsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{p.name}</span>
+                        {p.isRecommended && !isDisabled && (
+                          <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-accent/10 text-accent">
+                            Recommended
+                          </span>
+                        )}
                         {isChutesUnavailable && (
                           <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                             Unavailable
@@ -181,7 +186,7 @@ export default function SettingsPage() {
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
               {isOpenRouter && (
                 <>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
                     <Icon name="key" size={20} className="text-accent" />
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
                     {provider?.name || 'Provider'} API Key
@@ -229,14 +234,14 @@ export default function SettingsPage() {
                       <button
                         onClick={handleSaveApiKey}
                         disabled={isValidating || !inputValue.trim()}
-                        className="flex-1 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                        className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
                           text-accent
-                          bg-transparent
-                          border border-accent
-                          hover:bg-accent/10 dark:hover:bg-accent/20
-                          disabled:text-gray-400 disabled:border-gray-400 disabled:hover:bg-transparent
+                          bg-accent/10 dark:bg-accent/15
+                          border border-accent/30
+                          hover:bg-accent/20 dark:hover:bg-accent/25
+                          disabled:text-gray-400 disabled:bg-gray-500/10 disabled:border-gray-400/30 disabled:hover:bg-gray-500/10
                           transition-colors
-                          focus:outline-none focus:bg-accent/10 dark:focus:bg-accent/20
+                          focus:outline-none focus:bg-accent/20 dark:focus:bg-accent/25
                           disabled:cursor-not-allowed"
                       >
                         {isValidating ? 'Validating...' : 'Save Key'}
@@ -254,28 +259,31 @@ export default function SettingsPage() {
                       )}
                     </div>
 
-                    {/* Clear Confirmation Inline Banner */}
+                    {/* Clear Confirmation Inline */}
                     {showClearConfirm && (
-                      <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <h3 className="text-sm font-semibold text-text-primary mb-1">Clear API Key?</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          Are you sure you want to remove your API key? You&apos;ll need to enter it again to use the chat.
+                      <div className="mt-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <p className="text-sm text-text-secondary mb-3">
+                          Clear your API key? You&apos;ll need to enter it again to use the chat.
                         </p>
                         <div className="flex gap-2">
                           <button
+                            onClick={confirmClearApiKey}
+                            className="px-4 py-2 text-sm font-medium rounded-lg
+                              text-red-400
+                              bg-red-500/10 dark:bg-red-500/15
+                              border border-red-500/30
+                              hover:bg-red-500/20 dark:hover:bg-red-500/25
+                              transition-colors"
+                          >
+                            Clear Key
+                          </button>
+                          <button
                             onClick={() => setShowClearConfirm(false)}
-                            className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
+                            className="px-4 py-2 text-sm font-medium rounded-lg
                               bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
                               text-text-secondary transition-colors"
                           >
                             Cancel
-                          </button>
-                          <button
-                            onClick={confirmClearApiKey}
-                            className="flex-1 px-3 py-2 text-sm font-medium rounded-lg
-                              bg-red-500 hover:bg-red-600 text-white transition-colors"
-                          >
-                            Clear Key
                           </button>
                         </div>
                       </div>
@@ -302,7 +310,7 @@ export default function SettingsPage() {
 
               {isChutes && (
                 <>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
                     <Icon name="user" size={20} className="text-accent" />
                     <span className={`w-2 h-2 rounded-full ${isChutesSignedIn ? 'bg-green-500' : 'bg-red-500'}`} />
                     Chutes Account
@@ -319,7 +327,7 @@ export default function SettingsPage() {
                       </p>
                       <button
                         onClick={logout}
-                        className="w-full px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                        className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
                           bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
                           text-text-secondary transition-colors"
                       >
@@ -342,7 +350,7 @@ export default function SettingsPage() {
           {/* Model Selection Card */}
           <section className="mb-8">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
                 <Icon name="cpu" size={20} className="text-accent" />
                 Model
               </h2>

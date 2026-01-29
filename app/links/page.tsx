@@ -78,7 +78,7 @@ export default function LinksPage() {
 
           {/* Official Links */}
           <section className="mb-10">
-            <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
               <Icon name="shield" size={20} className="text-accent" />
               Official Links
             </h2>
@@ -124,7 +124,7 @@ export default function LinksPage() {
 
           {/* Community Links */}
           <section>
-            <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
               <Icon name="users" size={20} className="text-accent" />
               Community Links
             </h2>

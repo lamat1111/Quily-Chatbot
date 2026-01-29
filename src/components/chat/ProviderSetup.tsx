@@ -6,6 +6,7 @@ import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
+import { Icon } from '@/src/components/ui/Icon';
 
 interface ProviderSetupProps {
   onConnect: (providerId: string, apiKey: string) => void;
@@ -117,7 +118,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
             Connect an AI Provider
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-            Choose how you want to access AI models.
+            Quily Chat connects to AI providers to answer your questions. Choose how you&apos;d like to pay for AI usage:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -139,6 +140,11 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-medium text-text-primary">{provider.name}</h3>
+                    {provider.isRecommended && !isDisabled && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-accent/10 text-accent">
+                        Recommended
+                      </span>
+                    )}
                     {provider.status === 'coming' && (
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
                         Coming soon
@@ -156,8 +162,8 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                       : provider.description}
                   </p>
                   {!isDisabled && (
-                    <div className="mt-3 text-sm font-medium text-accent">
-                      Set up &rarr;
+                    <div className="mt-3 text-sm font-medium text-accent inline-flex items-center gap-1">
+                      Set up <Icon name="chevron-right" size={16} />
                     </div>
                   )}
                 </button>
@@ -180,9 +186,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
             className="p-1 rounded hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors cursor-pointer"
             aria-label="Back to providers"
           >
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <Icon name="chevron-left" size={20} className="text-gray-500" />
           </button>
           <h2 className="text-lg font-semibold text-text-primary">
             {selectedProvider.name} Setup
@@ -206,9 +210,9 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                   href={step.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent hover:underline"
+                  className="text-accent hover:underline inline-flex items-center gap-0.5"
                 >
-                  {step.label} &rarr;
+                  {step.label} <Icon name="chevron-right" size={14} />
                 </a>
               </div>
             ))}
@@ -277,7 +281,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <a
                   href={loginUrl}
                   className="link-unstyled inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
@@ -285,7 +289,15 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                   Sign in with Chutes
                 </a>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  You&apos;ll be redirected to Chutes to sign in securely.
+                  Don&apos;t have an account?{' '}
+                  <a
+                    href={selectedProvider.signupUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent hover:underline"
+                  >
+                    Sign up
+                  </a>
                 </p>
               </div>
             )}

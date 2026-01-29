@@ -12,7 +12,8 @@ import {
   formatSourcesForClient,
 } from '@/src/lib/rag/prompt';
 import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
-import { getOAuthConfig, refreshTokens } from '@/src/lib/chutesAuth';
+import { getOAuthConfig, refreshTokens, checkChutesBalance } from '@/src/lib/chutesAuth';
+import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
 import { getProvider } from '@/src/lib/providers';
 import {
   COOKIE_ACCESS_TOKEN,
@@ -332,6 +333,9 @@ export async function POST(request: Request) {
       | { refreshToken?: string; expiresIn?: number }
       | null = null;
 
+    // Track balance check result (runs in parallel with RAG)
+    let balanceCheckPromise: Promise<{ hasCredits: boolean; error?: string }> | null = null;
+
     try {
       const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
       // Use Chutes embeddings if explicitly configured OR if on Chutes provider with no OR key
@@ -353,6 +357,17 @@ export async function POST(request: Request) {
             { status: 401, headers: { 'Content-Type': 'application/json' } }
           );
         }
+      }
+
+      // Start balance check in parallel (non-blocking, has 3s timeout)
+      // This runs alongside RAG retrieval so it doesn't add latency
+      if (provider === 'chutes' && chutesAccessToken) {
+        balanceCheckPromise = checkChutesBalance(chutesAccessToken);
+      } else if (provider === 'openrouter' && openrouterKey) {
+        balanceCheckPromise = validateApiKeyWithCredits(openrouterKey).then((result) => ({
+          hasCredits: result.hasCredits,
+          error: result.error,
+        }));
       }
 
       const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
@@ -383,6 +398,27 @@ export async function POST(request: Request) {
   } catch (ragError) {
     console.error('RAG retrieval error:', ragError);
   }
+
+    // Check balance result (should be ready by now since RAG takes longer)
+    if (balanceCheckPromise) {
+      try {
+        const balanceResult = await balanceCheckPromise;
+        if (!balanceResult.hasCredits) {
+          const isChutes = provider === 'chutes';
+          return new Response(
+            JSON.stringify({
+              error: 'Insufficient credits',
+              message: isChutes
+                ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
+                : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
+            }),
+            { status: 402, headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+      } catch {
+        // Balance check failed - proceed anyway, the actual API call will fail with proper error
+      }
+    }
 
   // Fallback response for low-relevance queries on non-instruction-following models
   if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
@@ -432,24 +468,56 @@ export async function POST(request: Request) {
       if (provider === 'chutes') {
         const textId = `text-${Date.now()}`;
         writer.write({ type: 'text-start', id: textId });
+        let receivedAnyContent = false;
+        let hadError = false;
         try {
           for await (const chunk of result.textStream) {
-            writer.write({ type: 'text-delta', id: textId, delta: chunk });
+            if (chunk) {
+              receivedAnyContent = true;
+              writer.write({ type: 'text-delta', id: textId, delta: chunk });
+            }
+          }
+          // If we got no content at all, something went wrong (likely auth/credits issue)
+          if (!receivedAnyContent) {
+            hadError = true;
+            writer.write({
+              type: 'text-delta',
+              id: textId,
+              delta: '**Unable to get a response.** This may be due to insufficient credits or an authentication issue. Please check your [Chutes account](https://chutes.ai) balance, or switch to OpenRouter in Settings.',
+            });
           }
         } catch (streamError) {
+          hadError = true;
           console.error('Chutes streaming error:', streamError);
           const errorMsg = streamError instanceof Error ? streamError.message : 'Streaming failed';
-          writer.write({ type: 'text-delta', id: textId, delta: `\n\nError: ${errorMsg}` });
+          // Check for insufficient credits error
+          const isCreditsError =
+            errorMsg.includes('402') ||
+            errorMsg.toLowerCase().includes('insufficient') ||
+            errorMsg.toLowerCase().includes('credit') ||
+            errorMsg.toLowerCase().includes('balance') ||
+            errorMsg.toLowerCase().includes('payment required');
+          if (isCreditsError) {
+            writer.write({
+              type: 'text-delta',
+              id: textId,
+              delta: '\n\n**Your Chutes account has run out of credits.** Please add more credits at [chutes.ai](https://chutes.ai) to continue chatting.',
+            });
+          } else {
+            writer.write({ type: 'text-delta', id: textId, delta: `\n\nError: ${errorMsg}` });
+          }
         }
         writer.write({ type: 'text-end', id: textId });
-        // Write sources after streaming completes
-        for (const source of sources) {
-          writer.write({
-            type: 'source-url',
-            sourceId: `source-${source.index}`,
-            url: source.url ?? '',
-            title: source.heading || source.file,
-          });
+        // Only write sources if we got actual content (not on error/empty response)
+        if (!hadError) {
+          for (const source of sources) {
+            writer.write({
+              type: 'source-url',
+              sourceId: `source-${source.index}`,
+              url: source.url ?? '',
+              title: source.heading || source.file,
+            });
+          }
         }
       } else {
         // OpenRouter and other providers: use standard toUIMessageStream()
@@ -497,12 +565,14 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Chat API error:', error);
 
-    // Check for OpenRouter insufficient credits error (402)
+    // Check for insufficient credits error (402) - works for both OpenRouter and Chutes
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const isInsufficientCredits =
       errorMessage.includes('402') ||
       errorMessage.toLowerCase().includes('insufficient') ||
-      errorMessage.toLowerCase().includes('credit');
+      errorMessage.toLowerCase().includes('credit') ||
+      errorMessage.toLowerCase().includes('balance') ||
+      errorMessage.toLowerCase().includes('payment required');
 
     const isChutesUnauthorized =
       errorMessage.toLowerCase().includes('unauthorized') ||
@@ -510,11 +580,16 @@ export async function POST(request: Request) {
       errorMessage.includes('401');
 
     if (isInsufficientCredits) {
+      // Detect provider from error message context
+      const isChutesError =
+        errorMessage.toLowerCase().includes('chutes') ||
+        errorMessage.includes('api.chutes.ai');
       return new Response(
         JSON.stringify({
           error: 'Insufficient credits',
-          message:
-            'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
+          message: isChutesError
+            ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
+            : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
         }),
         {
           status: 402,

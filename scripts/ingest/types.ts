@@ -14,6 +14,8 @@ export interface ChunkMetadata {
   version: string;
   /** MD5 hash of content for deduplication */
   content_hash: string;
+  /** External URL for source attribution (e.g., YouTube URL from frontmatter) */
+  source_url?: string;
 }
 
 /**
@@ -58,6 +60,7 @@ export interface SearchResult {
   content: string;
   source_file: string;
   heading_path: string | null;
+  source_url: string | null;
   similarity: number;
 }
 
