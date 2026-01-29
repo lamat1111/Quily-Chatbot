@@ -1,7 +1,6 @@
 import { embed, rerank } from 'ai';
 import { createCohere } from '@ai-sdk/cohere';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { createChutes } from '@chutes-ai/ai-sdk-provider';
 import { supabase } from '../supabase';
 import type { RetrievedChunk, RetrievalOptions } from './types';
 
@@ -9,7 +8,44 @@ import type { RetrievedChunk, RetrievalOptions } from './types';
 // Both OpenRouter and Chutes produce identical vectors for this model,
 // allowing us to use a single table regardless of which provider generates the query embedding
 const UNIFIED_EMBEDDING_MODEL = 'baai/bge-m3';
-const CHUTES_EMBEDDING_MODEL = 'chutes-baai-bge-m3';
+const CHUTES_EMBEDDING_MODEL_SLUG = 'chutes-baai-bge-m3';
+
+// Chutes API response type
+interface ChutesEmbeddingResponse {
+  data: Array<{
+    embedding: number[];
+    index: number;
+  }>;
+  model: string;
+}
+
+/**
+ * Call Chutes embedding API directly
+ * The AI SDK provider has a bug where it routes to api.chutes.ai instead of the chute URL
+ */
+async function getChutesEmbedding(text: string, apiKey: string): Promise<number[]> {
+  const url = `https://${CHUTES_EMBEDDING_MODEL_SLUG}.chutes.ai/v1/embeddings`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      input: [text],
+      model: 'BAAI/bge-m3',
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new Error(`Chutes API error ${response.status}: ${errorText}`);
+  }
+
+  const data = (await response.json()) as ChutesEmbeddingResponse;
+  return data.data[0].embedding;
+}
 
 /**
  * Two-stage retrieval with optional Cohere reranking
@@ -40,34 +76,28 @@ export async function retrieveWithReranking(
 
   // Stage 1: Vector search using unified BGE-M3 model
   // Both providers produce identical vectors, so we use the same table for all queries
-  let embeddingResult;
+  let embedding: number[];
 
   if (embeddingProvider === 'chutes') {
     if (!chutesAccessToken) {
       throw new Error('Chutes access token is required for embeddings');
     }
-    const chutes = createChutes({ apiKey: chutesAccessToken });
-    const modelId = embeddingModel || CHUTES_EMBEDDING_MODEL;
-
-    embeddingResult = await embed({
-      model: chutes.textEmbeddingModel(modelId),
-      value: query,
-    });
+    // Use direct API call (Chutes AI SDK has a routing bug)
+    embedding = await getChutesEmbedding(query, chutesAccessToken);
   } else {
     if (!embeddingApiKey) {
       throw new Error('OpenRouter API key is required for embeddings');
     }
     const openrouter = createOpenRouter({ apiKey: embeddingApiKey });
 
-    embeddingResult = await embed({
+    const embeddingResult = await embed({
       model: openrouter.textEmbeddingModel(
         embeddingModel || process.env.OPENROUTER_EMBEDDING_MODEL || UNIFIED_EMBEDDING_MODEL
       ),
       value: query,
     });
+    embedding = embeddingResult.embedding;
   }
-
-  const { embedding } = embeddingResult;
 
   // Use unified BGE-M3 table (1024-dim) for all providers
   // OpenRouter and Chutes BGE-M3 produce identical vectors, verified by compatibility testing
