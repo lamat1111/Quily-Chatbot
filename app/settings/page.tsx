@@ -158,6 +158,11 @@ export default function SettingsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{p.name}</span>
+                        {p.isRecommended && !isDisabled && (
+                          <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-accent/10 text-accent">
+                            Recommended
+                          </span>
+                        )}
                         {isChutesUnavailable && (
                           <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                             Unavailable
