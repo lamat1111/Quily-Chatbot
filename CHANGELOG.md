@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-01-30
+
+### Features
+
+- add push confirmation to release skill ([46d9141](https://github.com/lamat1111/Quily-Chatbot/commit/46d914129a82d1d6a117ee31c60c0b7b19fe070b))
+- add starred chats and chat management UI ([a3d3d1e](https://github.com/lamat1111/Quily-Chatbot/commit/a3d3d1e71b72ded5f1642622cfb67869cc8e5566))
+- add conversation search modal ([83d3ee8](https://github.com/lamat1111/Quily-Chatbot/commit/83d3ee8514b989a256a082426c49acad4e553da0))
+- add estimated cost info to provider setup ([fd3979d](https://github.com/lamat1111/Quily-Chatbot/commit/fd3979dfea4e0cc70358060ac8e7e8b498e64962))
+
+### Documentation
+
+- update agents documentation and tasks ([3039337](https://github.com/lamat1111/Quily-Chatbot/commit/3039337fe3e1a1043d5ce7fb3adad5e9e3878d9c))
+
+### Refactoring
+
+- consolidate settings layout and move theme toggle ([9979803](https://github.com/lamat1111/Quily-Chatbot/commit/99798037b5875f4617d723d3018bb703eef5f500))
+
+### Styles
+
+- new og image ([366f701](https://github.com/lamat1111/Quily-Chatbot/commit/366f701829e41e38c6d864d46620dc197039d6bf))
+- update og image ([61eccdb](https://github.com/lamat1111/Quily-Chatbot/commit/61eccdb8928f99a80df02606491610e1436724ad))
+
+### Maintenance
+
+- add report issues link ([224280e](https://github.com/lamat1111/Quily-Chatbot/commit/224280eed0ffbd01769610292fff3ff538290a41))
+
+### Other
+
+- Merge pull request #6 from lamat1111/dev ([56327d8](https://github.com/lamat1111/Quily-Chatbot/commit/56327d80664262143bceebbf4ff31eb5db690c3b))
+- Merge pull request #7 from lamat1111/dev ([2304eef](https://github.com/lamat1111/Quily-Chatbot/commit/2304eefdd1caa8a6abea6465ab6af2e4031316fc))
+- reorganize completed tasks to .done folder ([37b004f](https://github.com/lamat1111/Quily-Chatbot/commit/37b004f2ca6c08b20b63d38f8de6bdf74fad89a5))
+
 ## [0.2.0] - 2026-01-30
 
 ### Features
