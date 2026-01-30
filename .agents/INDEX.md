@@ -13,6 +13,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md)
+- [Implement Conversation Search Modal](tasks/conversation-search-modal.md)
 - [Implement Data Export/Import Feature](tasks/data-export-import-feature.md)
 - [Starred Chats and Chat Management UI](tasks/starred-chats-management-ui.md)
 
@@ -37,4 +38,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-30 15:01:16
+**Last Updated**: 2026-01-30 15:47:41
