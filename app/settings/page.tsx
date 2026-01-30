@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useTheme } from 'next-themes';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { getRecommendedModels, DEFAULT_MODEL_ID, ModelMetadata } from '@/src/lib/openrouter';
@@ -222,6 +223,15 @@ export default function SettingsPage() {
   const keyHint =
     isOpenRouter && apiKey.length > 6 ? `Current: ••••••${apiKey.slice(-6)}` : null;
 
+  // Theme state
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  // Avoid hydration mismatch for theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 py-12 w-full">
@@ -231,9 +241,10 @@ export default function SettingsPage() {
             Configure your AI provider, API key, and preferred model.
           </p>
 
-          {/* Provider Selection Card */}
+          {/* Provider Card - unified container for provider, auth, and model */}
           <section className="mb-8">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              {/* Provider Selection */}
               <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
                 <Icon name="zap" size={20} className="text-accent" />
                 Provider
@@ -279,19 +290,16 @@ export default function SettingsPage() {
                   );
                 })}
               </div>
-            </div>
-          </section>
 
-          {/* Authentication Card */}
-          <section className="mb-8">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              {/* Authentication Section - internal divider */}
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               {isOpenRouter && (
                 <>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
-                    <Icon name="key" size={20} className="text-accent" />
+                  <h3 className="text-base font-medium text-text-primary mb-4 flex items-center gap-2">
+                    <Icon name="key" size={18} className="text-gray-400" />
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
                     {provider?.name || 'Provider'} API Key
-                  </h2>
+                  </h3>
 
                   <div className="space-y-3">
                     <div>
@@ -411,11 +419,11 @@ export default function SettingsPage() {
 
               {isChutes && (
                 <>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
-                    <Icon name={authMethod === 'oauth' ? 'user' : 'key'} size={20} className="text-accent" />
+                  <h3 className="text-base font-medium text-text-primary mb-4 flex items-center gap-2">
+                    <Icon name={authMethod === 'oauth' ? 'user' : 'key'} size={18} className="text-gray-400" />
                     <span className={`w-2 h-2 rounded-full ${isChutesSignedIn ? 'bg-green-500' : 'bg-red-500'}`} />
                     {authMethod === 'oauth' ? 'Chutes Account' : authMethod === 'apiKey' ? 'Chutes API Key' : 'Chutes Authentication'}
-                  </h2>
+                  </h3>
 
                   {chutesLoading ? (
                     <p className="text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
@@ -841,16 +849,14 @@ export default function SettingsPage() {
                   )}
                 </>
               )}
-            </div>
-          </section>
+              </div>
 
-          {/* Model Selection Card */}
-          <section className="mb-8">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
-                <Icon name="cpu" size={20} className="text-accent" />
+              {/* Model Section - internal divider */}
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-base font-medium text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="cpu" size={18} className="text-gray-400" />
                 Model
-              </h2>
+              </h3>
 
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                 Select the AI model to use for conversations.
@@ -1048,6 +1054,57 @@ export default function SettingsPage() {
                       />
                     </div>
                   )}
+                </div>
+              )}
+              </div>
+            </div>
+          </section>
+
+          {/* Appearance Card */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
+                <Icon name="sun" size={20} className="text-accent" />
+                Appearance
+              </h2>
+
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                Choose your preferred color theme.
+              </p>
+
+              {mounted && (
+                <div className="grid grid-cols-3 gap-2">
+                  {(['light', 'dark', 'system'] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setTheme(option)}
+                      className={`px-3 py-2 text-sm rounded-lg border transition-colors text-center capitalize
+                        ${theme === option
+                          ? 'border-accent bg-accent/10 text-text-primary'
+                          : 'border-gray-200 dark:border-gray-700 text-text-secondary hover:bg-surface/5 dark:hover:bg-surface/10'
+                        }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Icon
+                          name={option === 'light' ? 'sun' : option === 'dark' ? 'moon' : 'monitor'}
+                          size={16}
+                        />
+                        <span className="font-medium">{option}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!mounted && (
+                <div className="grid grid-cols-3 gap-2">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="px-3 py-2 h-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-surface/5"
+                    />
+                  ))}
                 </div>
               )}
             </div>

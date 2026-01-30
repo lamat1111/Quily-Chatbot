@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
-import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
@@ -69,7 +68,6 @@ export function Sidebar() {
           Quily Chat
           <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
         </h1>
-        <ThemeToggle />
       </div>
 
       {/* Mobile backdrop */}
@@ -93,13 +91,12 @@ export function Sidebar() {
           lg:translate-x-0
         `}
       >
-        {/* Header with title and theme toggle */}
-        <div className="flex items-center justify-between p-4">
+        {/* Header with title */}
+        <div className="p-4">
           <h1 className="text-lg font-semibold text-text-primary font-title">
             Quily Chat
             <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
           </h1>
-          <ThemeToggle />
         </div>
 
         {/* Navigation items */}
