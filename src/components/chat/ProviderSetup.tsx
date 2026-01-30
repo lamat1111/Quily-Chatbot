@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { PROVIDERS, AIProvider } from '@/src/lib/providers';
-import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
@@ -59,7 +58,12 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     try {
       // Use enhanced validation for OpenRouter that checks credits
       if (selectedProvider.id === 'openrouter') {
-        const result = await validateApiKeyWithCredits(apiKey);
+        const res = await fetch('/api/auth/openrouter/validate-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey }),
+        });
+        const result = await res.json();
 
         if (result.valid && result.hasCredits) {
           onConnect(selectedProvider.id, apiKey);
