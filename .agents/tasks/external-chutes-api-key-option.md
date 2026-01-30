@@ -4,42 +4,140 @@ title: "Add External Chutes API Key Option"
 status: open
 complexity: medium
 ai_generated: true
-reviewed_by: null
+reviewed_by: claude
 created: 2026-01-29
-updated: 2026-01-29
+updated: 2026-01-30
 related_tasks:
   - tasks/.done/insufficient-credits-detection.md
 ---
 
 # Add External Chutes API Key Option
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-
-**Files**:
-- `src/components/chat/ProviderSetup.tsx` - Add API key input field to advanced options
-- `src/lib/chutesAuth.ts` - Add API key validation and storage logic
-- `src/hooks/useChutesSession.ts` - Update session hook to check for external API key
-- `app/api/chat/route.ts` - Use external API key when available
-- `src/lib/rag/retriever.ts` - Use external API key for embeddings
+**Files to modify:**
+- `src/lib/chutesApiKey.ts` (NEW) - Client-side API key storage and format validation
+- `src/lib/chutesAuth.ts` - Add server-side API key validation function
+- `src/components/chat/ProviderSetup.tsx` - Add "Or use API Key" section on setup screen
+- `app/settings/page.tsx` - Add API key override section for signed-in users
+- `src/hooks/useChutesSession.ts` - Detect external API key and report auth method
+- `app/api/chat/route.ts` - Accept and prioritize external API key from request body
+- `src/lib/rag/retriever.ts` - Support external API key for Chutes embeddings
+- `src/components/chat/ChatContainer.tsx` - Pass external API key in chat requests
 
 ## What & Why
 
-**Current State**: Users must sign in via OAuth to use Chutes as a provider. This requires authentication through the Chutes IDP.
+**Current State**: Users must sign in via OAuth to use Chutes as a provider.
 
-**Desired State**: Users can optionally provide their own Chutes API key (`cpk_...`) in advanced settings, which will be used instead of OAuth authentication when present.
+**Desired State**: Users can use their own Chutes API key (`cpk_...`) in two ways:
+1. **On the setup screen** - Skip OAuth entirely by entering an API key directly
+2. **In settings** - Override an existing OAuth session with an API key
 
 **Value**:
 - Power users can use specific API keys with custom scopes/permissions
-- Users who prefer not to use OAuth can still access Chutes
+- Users who prefer not to use OAuth can skip it entirely
 - Easier integration for CI/CD or automated setups
 - Consistent with how other providers (OpenRouter) handle API keys
 
-## Context
+## Architecture Decision
 
-- **Existing pattern**: OpenRouter already supports external API keys - follow that pattern
-- **Chutes API keys**: Format is `cpk_...`, used with `Authorization: Bearer <key>` header
-- **Priority logic**: External API key takes precedence over OAuth token when both exist
-- **Validation endpoint**: `GET https://api.chutes.ai/users/me` can verify key validity
+### Auth Method Priority
+When both OAuth and external API key exist, the **external API key takes precedence**:
+1. Check localStorage for `chutes-external-api-key` (client-side)
+2. If present, send in request body to server
+3. Server uses external API key instead of OAuth cookies
+4. OAuth session remains intact as fallback if API key is removed
+
+### Client vs Server Separation
+- **Client-side** (`src/lib/chutesApiKey.ts`): localStorage storage, format validation (`cpk_` prefix)
+- **Server-side** (`src/lib/chutesAuth.ts`): API key validation via `/users/me` endpoint
+
+### Session Hook Changes
+`useChutesSession` will return an additional `authMethod` field:
+```typescript
+type UseChutesSessionReturn = {
+  // ... existing fields
+  authMethod: 'oauth' | 'apiKey' | null;
+};
+```
+
+## UI Design
+
+### Entry Point 1: Setup Screen (Not Signed In)
+
+```
+┌─────────────────────────────────┐
+│        Chutes Setup             │
+│                                 │
+│  Your Chutes subscription...    │
+│                                 │
+│  ┌─────────────────────────┐    │
+│  │  Sign in with Chutes    │    │  ← OAuth (primary)
+│  └─────────────────────────┘    │
+│                                 │
+│  Don't have an account? Sign up │
+│                                 │
+│  ─────────── or ────────────    │  ← Divider
+│                                 │
+│  ▼ Use API Key instead          │  ← Collapsible (default closed)
+│    ┌─────────────────────┐      │
+│    │ cpk_...             │      │
+│    └─────────────────────┘      │
+│    [Validate & Connect]         │
+│    Get a key at chutes.ai       │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Location**: `src/components/chat/ProviderSetup.tsx` lines 283-303 (the `!isSignedIn` branch)
+
+### Entry Point 2: Settings Page
+
+The Settings page adapts based on how the user connected:
+
+**Case A: User connected via API Key (no OAuth)**
+```
+┌─────────────────────────────────┐
+│  🔑 Chutes Account              │
+│  ● Using API Key                │
+│    Current: ••••••abc123        │
+│    ┌─────────────────────┐      │
+│    │ cpk_...             │      │  ← Can change key
+│    └─────────────────────┘      │
+│    [Save Key]  [Clear]          │
+│                                 │
+│  ─────────────────────────────  │
+│  Or sign in with Chutes instead │
+│  [Sign in with Chutes]          │
+└─────────────────────────────────┘
+```
+
+**Case B: User signed in via OAuth**
+```
+┌─────────────────────────────────┐
+│  🔑 Chutes Account              │
+│  ● Signed in as username        │
+│  [Sign out]                     │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  ▼ Advanced: Use API Key        │  ← Collapsible
+│    Override OAuth with your     │
+│    own API key                  │
+│    ┌─────────────────────┐      │
+│    │ cpk_...             │      │
+│    └─────────────────────┘      │
+│    [Validate & Save]            │
+│    ✓ Using API Key (overrides)  │  ← Status when active
+│    [Remove API Key]             │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Case C: User has both OAuth AND API Key**
+- Shows OAuth info ("Signed in as username")
+- Shows "✓ Using API Key" status (since API key takes priority)
+- Can remove API key to fall back to OAuth
+
+**Location**: `app/settings/page.tsx` lines 311-346 (the `isChutes` section)
 
 ## Research Findings
 
@@ -47,87 +145,155 @@ Chutes fully supports API key authentication:
 - Keys created via dashboard or CLI: `chutes keys create --name my-key`
 - Used with `Authorization: Bearer cpk_your_key` header
 - All API endpoints work with API keys (chat completions, embeddings, etc.)
-- Other apps (Roo Code, Mastra) use API key-only authentication
+- `/users/me` endpoint validates keys and returns user info
 
 ## Implementation
 
-### Phase 1: Storage & UI
-- [ ] **Add API key storage** (`src/lib/chutesAuth.ts`)
-  - Add localStorage key constant for Chutes API key
-  - Create getter/setter functions for external API key
-  - Done when: Can store and retrieve API key from localStorage
+### Phase 1: Client-Side Storage & Utilities
 
-- [ ] **Add UI input field** (`src/components/chat/ProviderSetup.tsx`)
-  - Add collapsible "Advanced Options" section for Chutes provider
-  - Include password-type input for API key with show/hide toggle
-  - Add helper text explaining when to use this option
-  - Done when: Users can input and save their API key
+- [ ] **Create client-side API key utility** (`src/lib/chutesApiKey.ts`)
+  ```typescript
+  const STORAGE_KEY = 'chutes-external-api-key';
 
-### Phase 2: Validation
-- [ ] **Implement API key validation** (`src/lib/chutesAuth.ts`)
-  - Create function to validate key via `/users/me` endpoint
-  - Return user info on success, error on failure
-  - Done when: Can verify if an API key is valid before saving
+  export function getChutesExternalApiKey(): string | null
+  export function setChutesExternalApiKey(key: string): void
+  export function removeChutesExternalApiKey(): void
+  export function isValidChutesKeyFormat(key: string): boolean // checks cpk_ prefix
+  ```
+  - Done when: Can store/retrieve/remove API key from localStorage
 
-- [ ] **Add validation feedback in UI** (`src/components/chat/ProviderSetup.tsx`)
-  - Show loading state during validation
-  - Display success/error message after validation
-  - Done when: Users get clear feedback on key validity
+### Phase 2: Server-Side Validation
 
-### Phase 3: Integration
-- [ ] **Update session hook** (`src/hooks/useChutesSession.ts`)
-  - Check for external API key first
-  - Return appropriate session state when API key is present
-  - Done when: `useChutesSession` recognizes external API key as valid auth
+- [ ] **Add API key validation** (`src/lib/chutesAuth.ts`)
+  ```typescript
+  export async function validateChutesApiKey(apiKey: string): Promise<{
+    valid: boolean;
+    user?: { username?: string; email?: string };
+    error?: 'invalid_key' | 'network_error';
+  }>
+  ```
+  - Call `GET https://api.chutes.ai/users/me` with `Authorization: Bearer {key}`
+  - Return user info on 200, error on 401/403
+  - Handle network timeouts (5s max)
+  - Done when: Can validate if an API key is valid
+
+### Phase 3: UI - Setup Screen
+
+- [ ] **Add API key option to ProviderSetup** (`src/components/chat/ProviderSetup.tsx`)
+  - In the `!isSignedIn` branch (lines 283-303), add after the sign-up link:
+    - Horizontal divider with "or" text
+    - Collapsible "Use API Key instead" section (default closed)
+    - Password input with show/hide toggle
+    - "Validate & Connect" button
+    - Helper text: "Get a key at chutes.ai"
+  - On successful validation: call `onConnect(selectedProvider.id, apiKey)`
+  - Done when: Users can connect with API key without signing in
+
+### Phase 4: UI - Settings Page
+
+- [ ] **Update Chutes section in Settings** (`app/settings/page.tsx`)
+  - Rewrite the Chutes section to handle three cases:
+
+  **Case A: API Key only (no OAuth)**
+  - Show "Using API Key" with key hint (`••••••last6`)
+  - Input to change key, "Save Key" and "Clear" buttons
+  - Below: "Or sign in with Chutes instead" with sign-in button
+
+  **Case B: OAuth only (no API Key)**
+  - Show "Signed in as {username}" with "Sign out" button
+  - Collapsible "Advanced: Use API Key" section to add override
+
+  **Case C: Both OAuth and API Key**
+  - Show "Signed in as {username}"
+  - Show "✓ Using API Key" status (indicates override is active)
+  - "Remove API Key" button to fall back to OAuth
+
+  - Done when: Settings page correctly reflects all auth states
+
+### Phase 5: Session Hook Update
+
+- [ ] **Update useChutesSession hook** (`src/hooks/useChutesSession.ts`)
+  - Import `getChutesExternalApiKey` from client utility
+  - Add `authMethod` to state and return type
+  - In `refresh()`: check for external API key first
+    - If API key exists: `authMethod: 'apiKey'`, `isSignedIn: true`
+    - If OAuth session: `authMethod: 'oauth'`
+    - Neither: `authMethod: null`, `isSignedIn: false`
+  - Done when: Hook reports which auth method is active
+
+### Phase 6: Backend Integration
 
 - [ ] **Update chat route** (`app/api/chat/route.ts`)
-  - Accept API key from request headers or body
-  - Prioritize external API key over OAuth token
-  - Done when: Chat works with external API key
+  - Accept `chutesApiKey` in request body
+  - Modify `ensureChutesAccessToken()` or add check before it:
+    ```typescript
+    // Priority: external API key > dev bypass > OAuth cookies
+    if (body.chutesApiKey) {
+      chutesAccessToken = body.chutesApiKey;
+    } else {
+      const ensured = await ensureChutesAccessToken();
+      chutesAccessToken = ensured.accessToken;
+    }
+    ```
+  - Done when: Chat works with external API key in body
+
+- [ ] **Update ChatContainer** (`src/components/chat/ChatContainer.tsx`)
+  - Read external API key from localStorage
+  - Include in chat request body when provider is Chutes:
+    ```typescript
+    body: { ...existing, chutesApiKey: getChutesExternalApiKey() }
+    ```
+  - Done when: External key flows from client to server
 
 - [ ] **Update RAG retriever** (`src/lib/rag/retriever.ts`)
-  - Pass external API key for Chutes embeddings
+  - Accept optional `chutesExternalApiKey` in options
+  - Prioritize over `chutesAccessToken` when both present
   - Done when: Embeddings work with external API key
-
-### Phase 4: UX Polish
-- [ ] **Update provider status display**
-  - Show "API Key" badge when using external key vs "Signed In" for OAuth
-  - Done when: Users can distinguish auth method in use
-
-- [ ] **Add key removal option**
-  - Allow users to clear saved API key
-  - Done when: Users can remove their API key and fall back to OAuth
 
 ## Verification
 
-✅ **API key input works**
-   - Test: Enter valid `cpk_...` key → Should validate and save
-   - Test: Enter invalid key → Should show error message
+**Setup screen API key works:**
+- [ ] Select Chutes → See OAuth button AND "Use API Key" option
+- [ ] Enter valid `cpk_...` key → Validates and connects
+- [ ] Enter invalid key → Shows error, doesn't connect
 
-✅ **Priority logic works**
-   - Test: Have both OAuth and API key → Should use API key
-   - Test: Remove API key → Should fall back to OAuth
+**Settings API key override works:**
+- [ ] Sign in with OAuth → See "Advanced: Use API Key" section
+- [ ] Add valid API key → Shows "Using API Key" status
+- [ ] Remove API key → Falls back to OAuth seamlessly
 
-✅ **Chat works with API key**
-   - Test: Send message with only API key auth → Should get response
+**Priority logic works:**
+- [ ] Have OAuth only → Chat uses OAuth token
+- [ ] Have API key only → Chat uses API key
+- [ ] Have both → Chat uses API key (priority)
+- [ ] Remove API key → Falls back to OAuth
 
-✅ **Embeddings work with API key**
-   - Test: Create embedding with API key → Should succeed
+**Chat & embeddings work:**
+- [ ] Send message with API key → Gets response
+- [ ] RAG retrieval uses API key for embeddings
 
-✅ **TypeScript compiles**
-   - Run: `npx tsc --noEmit`
+**TypeScript compiles:**
+- [ ] `npx tsc --noEmit` passes
+
+## Security Considerations
+
+- API keys stored in localStorage are vulnerable to XSS. This is an acceptable tradeoff for client-side apps (same as OpenRouter pattern).
+- Keys are transmitted in request body over HTTPS, not exposed in URLs.
+- Server validates keys before use, preventing abuse with invalid keys.
 
 ## Definition of Done
 
-- [ ] API key input field in advanced options
-- [ ] Validation on key entry
-- [ ] Chat completions work with external API key
-- [ ] Embeddings work with external API key
-- [ ] Clear indication of which auth method is active
-- [ ] Option to remove saved API key
+- [ ] New `src/lib/chutesApiKey.ts` utility created
+- [ ] API key validation function in `chutesAuth.ts`
+- [ ] Setup screen: "Use API Key" option below OAuth
+- [ ] Settings page: "Advanced" section for API key override
+- [ ] Session hook reports `authMethod`
+- [ ] Chat route accepts and prioritizes external API key
+- [ ] Status indicators show which auth method is active
 - [ ] TypeScript passes
 - [ ] Manual testing successful
 
 ---
 
 _Created: 2026-01-29_
+_Updated: 2026-01-30 - Added two entry points: setup screen (skip OAuth) and settings (override OAuth)_

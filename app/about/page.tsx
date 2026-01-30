@@ -1,3 +1,5 @@
+import { VERSION } from '@/src/lib/version';
+
 /**
  * About page describing Quily Chat.
  */
@@ -91,6 +93,11 @@ export default function AboutPage() {
               </a>.
             </p>
           </div>
+
+          {/* Version */}
+          <p className="text-xs text-text-tertiary mt-12 text-center">
+            v{VERSION}
+          </p>
         </div>
       </div>
   );
