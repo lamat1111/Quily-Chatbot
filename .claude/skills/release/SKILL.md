@@ -65,13 +65,22 @@ After execution, report:
 - Summary of changes (features, fixes, etc.)
 - The commit and tag that were created
 
-### Step 3: Remind to Push
+### Step 3: Ask to Push to Remote
 
-Tell the user to push their changes:
+After the release is created locally, ask the user if they want to push to the remote repository.
 
-```
+Use AskUserQuestion with:
+- Question: "Push release to remote?"
+- Options:
+  - "Yes, push now" (Recommended) - Push commit and tag to origin
+  - "No, I'll push later" - Skip pushing, user will do it manually
+
+If the user selects "Yes, push now", execute:
+```bash
 git push && git push --tags
 ```
+
+Then confirm what was pushed (branch and tag).
 
 ## Edge Cases
 
@@ -121,8 +130,15 @@ Claude: Running automated release...
   Commit: chore(release): v0.2.0
   Tag: v0.2.0
 
-📤 Next step - push your changes:
-  git push && git push --tags
+Claude: [Asks user] Push release to remote?
+  - Yes, push now (Recommended)
+  - No, I'll push later
+
+User: Yes, push now
+
+Claude: Pushing to remote...
+✅ Pushed dev -> dev
+✅ Pushed tag v0.2.0
 ```
 
 ---
