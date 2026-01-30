@@ -33,6 +33,7 @@ export interface Conversation {
   messages: Message[];
   createdAt: number;
   updatedAt: number;
+  starred: boolean;
 }
 
 /**
@@ -51,6 +52,7 @@ interface ConversationStore {
   setActive: (id: string | null) => void;
   updateMessages: (id: string, messages: Message[]) => void;
   updateTitle: (id: string, title: string) => void;
+  toggleStarred: (id: string) => void;
   deleteConversation: (id: string) => void;
   getActiveConversation: () => Conversation | null;
 }
@@ -87,6 +89,7 @@ export const useConversationStore = create<ConversationStore>()(
           messages: [],
           createdAt: now,
           updatedAt: now,
+          starred: false,
         };
 
         set((state) => {
@@ -148,6 +151,14 @@ export const useConversationStore = create<ConversationStore>()(
         }));
       },
 
+      toggleStarred: (id: string) => {
+        set((state) => ({
+          conversations: state.conversations.map((conv) =>
+            conv.id === id ? { ...conv, starred: !conv.starred } : conv
+          ),
+        }));
+      },
+
       deleteConversation: (id: string) => {
         set((state) => {
           const conversations = state.conversations.filter((c) => c.id !== id);
@@ -171,6 +182,11 @@ export const useConversationStore = create<ConversationStore>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
+          // Migrate existing conversations: add starred field if missing
+          state.conversations = state.conversations.map((conv) => ({
+            ...conv,
+            starred: conv.starred ?? false,
+          }));
           state._hasHydrated = true;
         }
       },

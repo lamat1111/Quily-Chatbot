@@ -6,6 +6,7 @@ import { DefaultChatTransport } from 'ai';
 import type { UIMessage } from '@ai-sdk/react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+import { ChatHeader } from './ChatHeader';
 import { ProviderSetup } from './ProviderSetup';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
@@ -218,6 +219,7 @@ export function ChatContainer({
 
   return (
     <div className="flex flex-col h-full">
+      {conversationId && <ChatHeader conversationId={conversationId} />}
       <MessageList
         messages={messages}
         status={status}

@@ -19,6 +19,11 @@
   --brand-text-muted: #6B3344;
   /* Surface color for backgrounds with opacity - burgundy for light theme */
   --brand-surface: #40001B;
+  /* Button colors - light theme */
+  --brand-btn-secondary: #e5e7eb; /* gray-200 */
+  --brand-btn-secondary-hover: #d1d5db; /* gray-300 */
+  --brand-btn-danger: #dc2626; /* red-600 */
+  --brand-btn-danger-hover: #b91c1c; /* red-700 */
 }
 
 /* Dark theme values - same classes, different colors */
@@ -38,6 +43,11 @@
   --brand-text-muted: #9ca3af;
   /* Surface color for backgrounds with opacity - light gray for dark theme */
   --brand-surface: #9ca3af;
+  /* Button colors - dark theme */
+  --brand-btn-secondary: #374151; /* gray-700 */
+  --brand-btn-secondary-hover: #4b5563; /* gray-600 */
+  --brand-btn-danger: #7f1d1d; /* red-900 - muted for dark theme */
+  --brand-btn-danger-hover: #991b1b; /* red-800 */
 }
 
 /* Register colors and fonts with Tailwind */
@@ -55,6 +65,11 @@
   --color-text-muted: var(--brand-text-muted);
   /* Burgundy base for opacity usage - light theme uses burgundy tint, dark uses gray */
   --color-surface: var(--brand-surface);
+  /* Button colors */
+  --color-btn-secondary: var(--brand-btn-secondary);
+  --color-btn-secondary-hover: var(--brand-btn-secondary-hover);
+  --color-btn-danger: var(--brand-btn-danger);
+  --color-btn-danger-hover: var(--brand-btn-danger-hover);
   /* Brand title font (Jost) */
   --font-title: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 }
