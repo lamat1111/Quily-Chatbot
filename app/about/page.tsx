@@ -25,6 +25,16 @@ export default function AboutPage() {
                   official Quilibrium documentation
                 </a>.
               </p>
+              <p className="text-sm mt-2">
+                Found a bug?{' '}
+                <a
+                  href="https://github.com/lamat1111/Quily-Chatbot/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Report it on GitHub
+                </a>.
+              </p>
             </div>
 
             <p className="text-text-secondary mb-4">
