@@ -33,9 +33,10 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Reports
 
 - [Frontend UI & Styling Architecture](reports/frontend-ui-styling-architecture_2026-01-29.md)
+- [LLM Provider Pricing Research](reports/llm-provider-pricing-research_2026-01-30.md)
 - [Multilingual Support Analysis for RAG Chatbot](reports/multilingual-rag-support-analysis_2026-01-30.md)
 - [Starred Chats Management UI - Code Quality Analysis](reports/starred-chats-management-ui-analysis_2026-01-30.md)
 
 ---
 
-**Last Updated**: 2026-01-30 15:47:41
+**Last Updated**: 2026-01-30 16:30:00

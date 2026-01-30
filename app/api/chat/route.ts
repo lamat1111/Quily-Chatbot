@@ -109,16 +109,20 @@ Feel free to ask me any of these or your own questions about Quilibrium!`,
 My knowledge comes from the following official sources:
 
 **Primary Documentation:**
-- [Official Quilibrium Whitepaper](https://quilibrium.com/quilibrium.pdf) — Core concepts, architecture, and technical details
 - [Quilibrium Documentation](https://docs.quilibrium.com) — Node operation guides and tutorials
 
-**Key Topics Covered:**
-- Quilibrium protocol architecture
-- Consensus mechanisms
-- Node setup and operation
-- MPC (Multi-Party Computation)
-- Privacy and security features
-- QConsole services (S3, KMS)
+**Official Live Streams & AMAs:**
+- All official Quilibrium live streams featuring Cassandra Heart and the team
+- Community AMAs, protocol updates, and roadmap discussions
+- Technical deep dives and Q&A sessions
+
+**What I Can Help With:**
+- **Protocol & Architecture** — How Quilibrium works, consensus mechanisms, cryptographic foundations
+- **Node Operations** — Setup guides, troubleshooting, hardware requirements, best practices
+- **$QUIL Token** — Tokenomics, rewards structure
+- **QConsole Services** — S3 storage, KMS key management, and other decentralized services
+- **Roadmap & Development** — Current progress, upcoming features, and protocol evolution
+- **Community Questions** — Common topics discussed in live streams and AMAs
 
 ---
 
