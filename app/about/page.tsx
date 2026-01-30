@@ -95,9 +95,19 @@ export default function AboutPage() {
           </div>
 
           {/* Version */}
-          <p className="text-xs text-text-tertiary mt-12 text-center">
-            v{VERSION}
-          </p>
+          <hr className="mt-12 mb-4 border-surface/20" />
+          <div className="flex items-center justify-start gap-2 text-xs text-text-muted">
+            <span>v{VERSION}</span>
+            <span>·</span>
+            <a
+              href="https://github.com/lamat1111/Quily-Chatbot/blob/main/CHANGELOG.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-text-secondary transition-colors"
+            >
+              Changelog
+            </a>
+          </div>
         </div>
       </div>
   );
