@@ -45,7 +45,7 @@ export const PROVIDERS: AIProvider[] = [
   {
     id: 'chutes',
     name: 'Chutes',
-    description: "Subscription plans. Powered by Bittensor's decentralized network.",
+    description: 'Decentralized AI on Bittensor. Pay-as-you-go.',
     setupDescription:
       'Your Chutes subscription also gives you access to image generation, video, audio, and more.',
     status: 'active',
@@ -64,7 +64,7 @@ export const PROVIDERS: AIProvider[] = [
   {
     id: 'openrouter',
     name: 'OpenRouter',
-    description: 'Pay-as-you-go. Add credits and pay per message.',
+    description: 'Centralized API gateway. Pay-as-you-go.',
     setupDescription:
       'Your OpenRouter credits work across many AI apps and services, not just Quily Chat.',
     status: 'active',

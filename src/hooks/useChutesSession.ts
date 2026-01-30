@@ -2,11 +2,13 @@
  * Chutes Session Hook
  *
  * React hook for managing Chutes OAuth session state on the client.
+ * Supports both OAuth and external API key authentication methods.
  */
 
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { getChutesExternalApiKey } from '@/src/lib/chutesApiKey';
 
 // ============================================================================
 // Types
@@ -29,8 +31,11 @@ type ChutesSession = {
 /** Reason why Chutes is unavailable */
 type ChutesUnavailableReason = 'disabled' | 'not_configured' | null;
 
+/** Which authentication method is currently active */
+type ChutesAuthMethod = 'oauth' | 'apiKey' | null;
+
 type UseChutesSessionReturn = {
-  /** Whether the user is currently signed in */
+  /** Whether the user is currently signed in (via OAuth or API key) */
   isSignedIn: boolean;
   /** The authenticated user's profile, if signed in */
   user: ChutesUser | null | undefined;
@@ -44,6 +49,8 @@ type UseChutesSessionReturn = {
   unavailableReason: ChutesUnavailableReason;
   /** Message explaining why Chutes is unavailable */
   unavailableMessage: string | null;
+  /** Which auth method is active: 'oauth' | 'apiKey' | null */
+  authMethod: ChutesAuthMethod;
   /** Function to refresh the session state */
   refresh: () => Promise<void>;
   /** Function to log out the current user */
@@ -60,24 +67,39 @@ export function useChutesSession(): UseChutesSessionReturn {
   const [isAvailable, setIsAvailable] = useState(true);
   const [unavailableReason, setUnavailableReason] = useState<ChutesUnavailableReason>(null);
   const [unavailableMessage, setUnavailableMessage] = useState<string | null>(null);
+  const [authMethod, setAuthMethod] = useState<ChutesAuthMethod>(null);
 
   /**
    * Fetch the current session state from the server.
+   * Checks for external API key first (takes priority over OAuth).
    */
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
+      // Check for external API key first (it takes priority)
+      const externalApiKey = getChutesExternalApiKey();
+      if (externalApiKey) {
+        setSession({ signedIn: true });
+        setAuthMethod('apiKey');
+        setLoading(false);
+        return;
+      }
+
+      // Fall back to OAuth session check
       const res = await fetch('/api/auth/chutes/session', {
         cache: 'no-store',
       });
       if (!res.ok) {
         setSession({ signedIn: false });
+        setAuthMethod(null);
       } else {
         const data = (await res.json()) as ChutesSession;
         setSession({ signedIn: Boolean(data.signedIn), user: data.user });
+        setAuthMethod(data.signedIn ? 'oauth' : null);
       }
     } catch {
       setSession({ signedIn: false });
+      setAuthMethod(null);
     } finally {
       setLoading(false);
     }
@@ -127,6 +149,7 @@ export function useChutesSession(): UseChutesSessionReturn {
     isAvailable,
     unavailableReason,
     unavailableMessage,
+    authMethod,
     refresh,
     logout,
   };

@@ -7,6 +7,13 @@ import { getRecommendedModels, DEFAULT_MODEL_ID, ModelMetadata } from '@/src/lib
 import { getProvider, getActiveProviders, getDefaultProvider } from '@/src/lib/providers';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
+import {
+  getChutesExternalApiKey,
+  setChutesExternalApiKey,
+  removeChutesExternalApiKey,
+  isValidChutesKeyFormat,
+  getMaskedApiKey,
+} from '@/src/lib/chutesApiKey';
 
 /**
  * Settings page for API key and model configuration.
@@ -58,7 +65,23 @@ export default function SettingsPage() {
     loginUrl,
     logout,
     isAvailable: chutesAvailable,
+    authMethod,
+    refresh: refreshChutesSession,
   } = useChutesSession();
+
+  // Chutes API key state
+  const [chutesApiKeyInput, setChutesApiKeyInput] = useState('');
+  const [isValidatingChutesKey, setIsValidatingChutesKey] = useState(false);
+  const [chutesKeyError, setChutesKeyError] = useState<string | null>(null);
+  const [chutesKeySuccess, setChutesKeySuccess] = useState(false);
+  const [showChutesApiKeySection, setShowChutesApiKeySection] = useState(false);
+  const [showClearChutesKeyConfirm, setShowClearChutesKeyConfirm] = useState(false);
+
+  // Get current external API key
+  const currentChutesExternalKey = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    return getChutesExternalApiKey();
+  }, [authMethod]); // Re-compute when authMethod changes
   const { models: chutesModels, loading: chutesModelsLoading, error: chutesModelsError } =
     useChutesModels('llm', isChutes && isChutesSignedIn);
 
@@ -116,6 +139,60 @@ export default function SettingsPage() {
     setValidationResult(null);
     setShowClearConfirm(false);
   }, [setApiKey]);
+
+  // Chutes API key handlers
+  const handleSaveChutesApiKey = useCallback(async () => {
+    if (!chutesApiKeyInput.trim()) return;
+
+    if (!isValidChutesKeyFormat(chutesApiKeyInput)) {
+      setChutesKeyError('API keys should start with "cpk_". Check you copied the full key.');
+      return;
+    }
+
+    setIsValidatingChutesKey(true);
+    setChutesKeyError(null);
+    setChutesKeySuccess(false);
+
+    try {
+      const res = await fetch('/api/auth/chutes/validate-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey: chutesApiKeyInput }),
+      });
+
+      const data = await res.json();
+
+      if (data.valid) {
+        setChutesExternalApiKey(chutesApiKeyInput);
+        setChutesApiKeyInput('');
+        setChutesKeySuccess(true);
+        await refreshChutesSession();
+        // Auto-hide success after 3s
+        setTimeout(() => setChutesKeySuccess(false), 3000);
+      } else if (data.error === 'invalid_key') {
+        setChutesKeyError('Invalid API key. Please check and try again.');
+      } else {
+        setChutesKeyError('Could not validate key. Check your connection and try again.');
+      }
+    } catch {
+      setChutesKeyError('Could not validate key. Check your connection and try again.');
+    } finally {
+      setIsValidatingChutesKey(false);
+    }
+  }, [chutesApiKeyInput, refreshChutesSession]);
+
+  const handleClearChutesApiKey = useCallback(() => {
+    setShowClearChutesKeyConfirm(true);
+  }, []);
+
+  const confirmClearChutesApiKey = useCallback(async () => {
+    removeChutesExternalApiKey();
+    setChutesApiKeyInput('');
+    setChutesKeyError(null);
+    setChutesKeySuccess(false);
+    setShowClearChutesKeyConfirm(false);
+    await refreshChutesSession();
+  }, [refreshChutesSession]);
 
   // Display hint for existing key
   const keyHint =
@@ -311,36 +388,300 @@ export default function SettingsPage() {
               {isChutes && (
                 <>
                   <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
-                    <Icon name="user" size={20} className="text-accent" />
+                    <Icon name="key" size={20} className="text-accent" />
                     <span className={`w-2 h-2 rounded-full ${isChutesSignedIn ? 'bg-green-500' : 'bg-red-500'}`} />
                     Chutes Account
                   </h2>
+
                   {chutesLoading ? (
                     <p className="text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
+                  ) : authMethod === 'apiKey' ? (
+                    /* Case A: Connected via API Key (no OAuth) */
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <Icon name="check" size={16} className="text-green-500" />
+                        Using API Key
+                        {currentChutesExternalKey && (
+                          <span className="text-gray-500">
+                            ({getMaskedApiKey(currentChutesExternalKey)})
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Change/Update API Key */}
+                      <div className="space-y-2">
+                        <input
+                          type="password"
+                          value={chutesApiKeyInput}
+                          onChange={(e) => {
+                            setChutesApiKeyInput(e.target.value);
+                            setChutesKeyError(null);
+                            setChutesKeySuccess(false);
+                          }}
+                          placeholder="Enter new API key (cpk_...)"
+                          className={`w-full px-3 py-2 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent transition-colors ${
+                            chutesKeyError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                          }`}
+                        />
+                        {chutesKeyError && (
+                          <p className="text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                        )}
+                        {chutesKeySuccess && (
+                          <p className="text-xs text-green-600 dark:text-green-400">API key saved successfully!</p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveChutesApiKey}
+                          disabled={isValidatingChutesKey || !chutesApiKeyInput.trim()}
+                          className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                            text-accent bg-accent/10 dark:bg-accent/15 border border-accent/30
+                            hover:bg-accent/20 dark:hover:bg-accent/25
+                            disabled:text-gray-400 disabled:bg-gray-500/10 disabled:border-gray-400/30
+                            disabled:cursor-not-allowed transition-colors"
+                        >
+                          {isValidatingChutesKey ? 'Validating...' : 'Save Key'}
+                        </button>
+                        <button
+                          onClick={handleClearChutesApiKey}
+                          className="px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
+                            bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                            text-text-secondary transition-colors"
+                        >
+                          Clear
+                        </button>
+                      </div>
+
+                      {/* Clear Confirmation */}
+                      {showClearChutesKeyConfirm && (
+                        <div className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                          <p className="text-sm text-text-secondary mb-3">
+                            Clear your API key? You&apos;ll need to sign in or enter a new key to use Chutes.
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={confirmClearChutesApiKey}
+                              className="px-4 py-2 text-sm font-medium rounded-lg
+                                text-red-400 bg-red-500/10 dark:bg-red-500/15
+                                border border-red-500/30 hover:bg-red-500/20 dark:hover:bg-red-500/25
+                                transition-colors"
+                            >
+                              Clear Key
+                            </button>
+                            <button
+                              onClick={() => setShowClearChutesKeyConfirm(false)}
+                              className="px-4 py-2 text-sm font-medium rounded-lg
+                                bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                                text-text-secondary transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* OAuth alternative */}
+                      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                          Or sign in with Chutes instead:
+                        </p>
+                        <a
+                          href={loginUrl}
+                          className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                        >
+                          Sign in with Chutes
+                        </a>
+                      </div>
+                    </div>
                   ) : isChutesSignedIn ? (
-                    <div className="space-y-2">
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        Signed in as{' '}
-                        <span className="font-medium text-text-primary">
-                          {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
-                        </span>
-                      </p>
-                      <button
-                        onClick={logout}
-                        className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
-                          bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
-                          text-text-secondary transition-colors"
-                      >
-                        Sign out
-                      </button>
+                    /* Case B & C: Signed in via OAuth (may have API key override) */
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          Signed in as{' '}
+                          <span className="font-medium text-text-primary">
+                            {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
+                          </span>
+                        </p>
+                        {currentChutesExternalKey && (
+                          <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                            <Icon name="check" size={16} />
+                            Using API Key (overrides OAuth)
+                          </div>
+                        )}
+                        <button
+                          onClick={logout}
+                          className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                            bg-surface/10 dark:bg-surface/15 hover:bg-surface/15 dark:hover:bg-surface/20
+                            text-text-secondary transition-colors"
+                        >
+                          Sign out
+                        </button>
+                      </div>
+
+                      {/* Advanced: API Key Override */}
+                      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button
+                          type="button"
+                          onClick={() => setShowChutesApiKeySection(!showChutesApiKeySection)}
+                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
+                        >
+                          <Icon
+                            name="chevron-down"
+                            size={16}
+                            className={`transition-transform ${showChutesApiKeySection ? 'rotate-180' : ''}`}
+                          />
+                          Advanced: Use API Key
+                        </button>
+
+                        {showChutesApiKeySection && (
+                          <div className="mt-3 space-y-3">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Override your OAuth session with an API key for custom scopes or permissions.
+                            </p>
+
+                            {currentChutesExternalKey ? (
+                              /* Has API key override active */
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                                  <Icon name="check" size={16} />
+                                  API Key active ({getMaskedApiKey(currentChutesExternalKey)})
+                                </div>
+                                <button
+                                  onClick={confirmClearChutesApiKey}
+                                  className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                                    text-red-400 bg-red-500/10 dark:bg-red-500/15
+                                    border border-red-500/30 hover:bg-red-500/20 dark:hover:bg-red-500/25
+                                    transition-colors"
+                                >
+                                  Remove API Key
+                                </button>
+                              </div>
+                            ) : (
+                              /* No API key override - show input */
+                              <div className="space-y-2">
+                                <input
+                                  type="password"
+                                  value={chutesApiKeyInput}
+                                  onChange={(e) => {
+                                    setChutesApiKeyInput(e.target.value);
+                                    setChutesKeyError(null);
+                                    setChutesKeySuccess(false);
+                                  }}
+                                  placeholder="cpk_..."
+                                  className={`w-full px-3 py-2 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent transition-colors ${
+                                    chutesKeyError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                                  }`}
+                                />
+                                {chutesKeyError && (
+                                  <p className="text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                                )}
+                                {chutesKeySuccess && (
+                                  <p className="text-xs text-green-600 dark:text-green-400">API key saved!</p>
+                                )}
+                                <button
+                                  onClick={handleSaveChutesApiKey}
+                                  disabled={isValidatingChutesKey || !chutesApiKeyInput.trim()}
+                                  className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                                    text-accent bg-accent/10 dark:bg-accent/15 border border-accent/30
+                                    hover:bg-accent/20 dark:hover:bg-accent/25
+                                    disabled:text-gray-400 disabled:bg-gray-500/10 disabled:border-gray-400/30
+                                    disabled:cursor-not-allowed transition-colors"
+                                >
+                                  {isValidatingChutesKey ? 'Validating...' : 'Validate & Save'}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
-                    <a
-                      href={loginUrl}
-                      className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
-                    >
-                      Sign in with Chutes
-                    </a>
+                    /* Not signed in at all */
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <a
+                          href={loginUrl}
+                          className="link-unstyled inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
+                        >
+                          Sign in with Chutes
+                        </a>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Don&apos;t have an account?{' '}
+                          <a
+                            href="https://chutes.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent hover:underline"
+                          >
+                            Sign up
+                          </a>
+                        </p>
+                      </div>
+
+                      {/* API Key Option */}
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setShowChutesApiKeySection(!showChutesApiKeySection)}
+                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
+                        >
+                          <Icon
+                            name="chevron-down"
+                            size={16}
+                            className={`transition-transform ${showChutesApiKeySection ? 'rotate-180' : ''}`}
+                          />
+                          Use API Key instead
+                        </button>
+
+                        {showChutesApiKeySection && (
+                          <div className="mt-3 space-y-3">
+                            <input
+                              type="password"
+                              value={chutesApiKeyInput}
+                              onChange={(e) => {
+                                setChutesApiKeyInput(e.target.value);
+                                setChutesKeyError(null);
+                                setChutesKeySuccess(false);
+                              }}
+                              placeholder="cpk_..."
+                              className={`w-full px-3 py-2 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent transition-colors ${
+                                chutesKeyError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                              }`}
+                            />
+                            {chutesKeyError && (
+                              <p className="text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                            )}
+                            {chutesKeySuccess && (
+                              <p className="text-xs text-green-600 dark:text-green-400">API key saved!</p>
+                            )}
+                            <button
+                              onClick={handleSaveChutesApiKey}
+                              disabled={isValidatingChutesKey || !chutesApiKeyInput.trim()}
+                              className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                                text-accent bg-accent/10 dark:bg-accent/15 border border-accent/30
+                                hover:bg-accent/20 dark:hover:bg-accent/25
+                                disabled:text-gray-400 disabled:bg-gray-500/10 disabled:border-gray-400/30
+                                disabled:cursor-not-allowed transition-colors"
+                            >
+                              {isValidatingChutesKey ? 'Validating...' : 'Validate & Connect'}
+                            </button>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Get a key at{' '}
+                              <a
+                                href="https://chutes.ai"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-accent hover:underline"
+                              >
+                                chutes.ai
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </>
               )}

@@ -241,10 +241,12 @@ export async function POST(request: Request) {
     }
 
     const provider = body.provider || 'openrouter';
+    const chutesExternalApiKey = body.chutesApiKey || null;
     console.log('Chat request:', {
       provider,
       model: body.model || null,
       messageCount: Array.isArray(body.messages) ? body.messages.length : 0,
+      hasExternalChutesKey: Boolean(chutesExternalApiKey),
     });
     if (provider !== 'openrouter' && provider !== 'chutes') {
       return new Response(
@@ -342,13 +344,19 @@ export async function POST(request: Request) {
       const useChutesEmbeddings = provider === 'chutes';
 
       if (provider === 'chutes' || useChutesEmbeddings) {
-        const ensured = await ensureChutesAccessToken();
-        chutesAccessToken = ensured.accessToken;
-        if (ensured.refreshed) {
-          refreshedTokenInfo = {
-            refreshToken: ensured.refreshToken,
-            expiresIn: ensured.expiresIn,
-          };
+        // Priority: external API key > dev bypass > OAuth cookies
+        if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
+          console.log('[Chutes] Using external API key');
+          chutesAccessToken = chutesExternalApiKey;
+        } else {
+          const ensured = await ensureChutesAccessToken();
+          chutesAccessToken = ensured.accessToken;
+          if (ensured.refreshed) {
+            refreshedTokenInfo = {
+              refreshToken: ensured.refreshToken,
+              expiresIn: ensured.expiresIn,
+            };
+          }
         }
         if (provider === 'chutes' && !chutesAccessToken) {
           return new Response(
