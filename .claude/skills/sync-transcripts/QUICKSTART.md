@@ -14,7 +14,7 @@ python .claude/skills/sync-transcripts/scripts/status.py
 
 # 4. Copy to docs and ingest
 cp .claude/skills/sync-transcripts/transcripts/cleaned/*.md docs/transcriptions/
-npm run ingest run
+yarn ingest run
 ```
 
 ---
@@ -68,7 +68,7 @@ Raw transcripts have no punctuation, filler words, and transcription errors. Cla
 cp .claude/skills/sync-transcripts/transcripts/cleaned/*.md docs/transcriptions/
 
 # Ingest into RAG database (incremental - only processes new/changed files)
-npm run ingest run
+yarn ingest run
 ```
 
 ---

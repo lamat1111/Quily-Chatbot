@@ -19,7 +19,7 @@ Synchronize documentation from the Quilibrium Network GitHub repository and opti
 Run the sync-docs status command to see what's changed:
 
 ```bash
-npm run sync-docs status
+yarn sync-docs status
 ```
 
 This will show:
@@ -66,12 +66,12 @@ If no changes, skip to final step.
 
 For "Sync & Update RAG":
 ```bash
-npm run sync-docs sync --ingest
+yarn sync-docs sync --ingest
 ```
 
 For "Sync Only":
 ```bash
-npm run sync-docs sync
+yarn sync-docs sync
 ```
 
 For "Skip":
@@ -88,7 +88,7 @@ If ingestion was run, show:
 - Confirmation of database update
 
 If only sync was run:
-- Remind user to run `npm run ingest run` when ready to update RAG
+- Remind user to run `yarn ingest run` when ready to update RAG
 </step>
 
 <step name="summary">

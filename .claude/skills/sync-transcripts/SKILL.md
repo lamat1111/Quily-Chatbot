@@ -180,7 +180,7 @@ After cleaning and deduping:
 
 ```bash
 cp .claude/skills/sync-transcripts/transcripts/cleaned/*.md docs/transcriptions/
-npm run ingest run
+yarn ingest run
 ```
 
 **About the `--clean` flag:** The ingest pipeline is incremental - it only re-ingests files that have changed (based on content hash). The `--clean` flag removes orphaned chunks from files that were *deleted* from docs/. Use it when you've removed transcripts, not needed for adding new ones.

@@ -10,6 +10,7 @@ import { ProviderSetup } from './ProviderSetup';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
+import { getChutesExternalApiKey } from '@/src/lib/chutesApiKey';
 
 interface ChatContainerProps {
   providerId: string;
@@ -45,8 +46,14 @@ export function ChatContainer({
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
-  const { isSignedIn: isChutesSignedIn, loading: chutesLoading } = useChutesSession();
+  const { isSignedIn: isChutesSignedIn, loading: chutesLoading, authMethod } = useChutesSession();
   const [chutesEmbeddingModel] = useLocalStorage<string>('chutes-embedding-model', '');
+
+  // Get external Chutes API key if available
+  const chutesExternalApiKey = useMemo(() => {
+    if (providerId !== 'chutes') return null;
+    return getChutesExternalApiKey();
+  }, [providerId, authMethod]); // Re-compute when authMethod changes
 
   // Debounce ref for store updates
   const storeUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,9 +69,10 @@ export function ChatContainer({
           apiKey,
           model,
           embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
+          chutesApiKey: chutesExternalApiKey || undefined,
         },
       }),
-    [apiKey, model, providerId, chutesEmbeddingModel]
+    [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
   );
 
   // Configure useChat with the transport

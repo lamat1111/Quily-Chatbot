@@ -307,7 +307,7 @@ After completing Phase 2 (cleaning):
 
 1. **Run Phase 3: Dedupe** - Follow [DEDUPE-GUIDE.md](DEDUPE-GUIDE.md) to remove content that duplicates official documentation
 2. **Copy to docs** - Move deduped files to `docs/transcriptions/`
-3. **Run ingestion** - `npm run ingest run`
+3. **Run ingestion** - `yarn ingest run`
 
 ---
 

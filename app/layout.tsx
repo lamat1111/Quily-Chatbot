@@ -17,27 +17,27 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: 'Quilibrium Chat',
+  title: 'Quily Chat',
   description: 'Get instant, accurate answers about Quilibrium from official sources',
   metadataBase: new URL('https://quily.quilibrium.one'),
   openGraph: {
-    title: 'Quilibrium Chat',
+    title: 'Quily Chat',
     description: 'Get instant, accurate answers about Quilibrium from official sources',
     url: 'https://quily.quilibrium.one',
-    siteName: 'Quilibrium Chat',
+    siteName: 'Quily Chat',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Quilibrium Chat',
+        alt: 'Quily Chat',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Quilibrium Chat',
+    title: 'Quily Chat',
     description: 'Get instant, accurate answers about Quilibrium from official sources',
     images: ['/og-image.png'],
   },

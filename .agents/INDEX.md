@@ -7,6 +7,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Model-Specific Instruction Handling](docs/model-specific-instruction-handling.md)
 - [RAG Knowledge Base Workflow](docs/rag-knowledge-base-workflow.md)
 
+### Features
+- [Automated Versioning and Release System](docs/features/versioning-release-system.md)
+
 ## 📋 Tasks
 
 ### Pending Tasks
@@ -32,4 +35,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-01-30 09:57:00

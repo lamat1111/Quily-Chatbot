@@ -3,8 +3,6 @@
  * Designed to easily add new providers (OpenRouter, Chutes, etc.)
  */
 
-import { validateApiKey as validateOpenRouterKey } from './openrouter';
-
 /**
  * Setup step with label and URL for external link
  */
@@ -45,7 +43,7 @@ export const PROVIDERS: AIProvider[] = [
   {
     id: 'chutes',
     name: 'Chutes',
-    description: "Subscription plans. Powered by Bittensor's decentralized network.",
+    description: 'Decentralized AI on Bittensor. Pay-as-you-go.',
     setupDescription:
       'Your Chutes subscription also gives you access to image generation, video, audio, and more.',
     status: 'active',
@@ -64,7 +62,7 @@ export const PROVIDERS: AIProvider[] = [
   {
     id: 'openrouter',
     name: 'OpenRouter',
-    description: 'Pay-as-you-go. Add credits and pay per message.',
+    description: 'Centralized API gateway. Pay-as-you-go.',
     setupDescription:
       'Your OpenRouter credits work across many AI apps and services, not just Quily Chat.',
     status: 'active',
@@ -77,7 +75,15 @@ export const PROVIDERS: AIProvider[] = [
       { label: 'Add credits', url: 'https://openrouter.ai/settings/billing' },
       { label: 'Get API key', url: 'https://openrouter.ai/settings/keys' },
     ],
-    validateKey: validateOpenRouterKey,
+    validateKey: async (apiKey: string) => {
+      const res = await fetch('/api/auth/openrouter/validate-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey }),
+      });
+      const data = await res.json();
+      return data.valid && data.hasCredits;
+    },
     createProvider: ({ apiKey }) => {
       const { createOpenRouter } = require('@openrouter/ai-sdk-provider');
       return createOpenRouter({ apiKey });

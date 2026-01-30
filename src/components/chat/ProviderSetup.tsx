@@ -2,11 +2,14 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { PROVIDERS, AIProvider } from '@/src/lib/providers';
-import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { Icon } from '@/src/components/ui/Icon';
+import {
+  isValidChutesKeyFormat,
+  setChutesExternalApiKey,
+} from '@/src/lib/chutesApiKey';
 
 interface ProviderSetupProps {
   onConnect: (providerId: string, apiKey: string) => void;
@@ -21,6 +24,10 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
   const [apiKey, setApiKey] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showApiKeyOption, setShowApiKeyOption] = useState(false);
+  const [chutesApiKeyInput, setChutesApiKeyInput] = useState('');
+  const [isValidatingChutesKey, setIsValidatingChutesKey] = useState(false);
+  const [chutesKeyError, setChutesKeyError] = useState<string | null>(null);
   const {
     isSignedIn,
     user,
@@ -28,6 +35,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     loginUrl,
     logout,
     isAvailable: chutesAvailable,
+    refresh: refreshChutesSession,
   } = useChutesSession();
   const [chutesModel, setChutesModel] = useLocalStorage<string>('chutes-model', '');
   const { models: chutesModels } = useChutesModels(
@@ -50,7 +58,12 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     try {
       // Use enhanced validation for OpenRouter that checks credits
       if (selectedProvider.id === 'openrouter') {
-        const result = await validateApiKeyWithCredits(apiKey);
+        const res = await fetch('/api/auth/openrouter/validate-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey }),
+        });
+        const result = await res.json();
 
         if (result.valid && result.hasCredits) {
           onConnect(selectedProvider.id, apiKey);
@@ -95,7 +108,50 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     setSelectedProvider(null);
     setApiKey('');
     setError(null);
+    setShowApiKeyOption(false);
+    setChutesApiKeyInput('');
+    setChutesKeyError(null);
   }, []);
+
+  // Handle Chutes API key validation and connection
+  const handleChutesApiKeyConnect = useCallback(async () => {
+    if (!chutesApiKeyInput.trim()) return;
+
+    // Format validation
+    if (!isValidChutesKeyFormat(chutesApiKeyInput)) {
+      setChutesKeyError('API keys should start with "cpk_". Check you copied the full key.');
+      return;
+    }
+
+    setIsValidatingChutesKey(true);
+    setChutesKeyError(null);
+
+    try {
+      // Validate the API key by calling our API endpoint
+      const res = await fetch('/api/auth/chutes/validate-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey: chutesApiKeyInput }),
+      });
+
+      const data = await res.json();
+
+      if (data.valid) {
+        // Store the API key and connect
+        setChutesExternalApiKey(chutesApiKeyInput);
+        await refreshChutesSession();
+        onConnect('chutes', '');
+      } else if (data.error === 'invalid_key') {
+        setChutesKeyError('Invalid API key. Please check and try again.');
+      } else {
+        setChutesKeyError('Could not validate key. Check your connection and try again.');
+      }
+    } catch {
+      setChutesKeyError('Could not validate key. Check your connection and try again.');
+    } finally {
+      setIsValidatingChutesKey(false);
+    }
+  }, [chutesApiKeyInput, onConnect, refreshChutesSession]);
 
   // Provider selection view
   if (!selectedProvider) {
@@ -281,24 +337,90 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
-                <a
-                  href={loginUrl}
-                  className="link-unstyled inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
-                >
-                  Sign in with Chutes
-                </a>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Don&apos;t have an account?{' '}
+              <div className="space-y-4">
+                <div className="space-y-3">
                   <a
-                    href={selectedProvider.signupUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-accent hover:underline"
+                    href={loginUrl}
+                    className="link-unstyled inline-flex items-center justify-center w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg bg-[#00DC82] text-black hover:bg-[#00c474] transition-colors"
                   >
-                    Sign up
+                    Sign in with Chutes
                   </a>
-                </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Don&apos;t have an account?{' '}
+                    <a
+                      href={selectedProvider.signupUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent hover:underline"
+                    >
+                      Sign up
+                    </a>
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200 dark:border-gray-700" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">or</span>
+                  </div>
+                </div>
+
+                {/* API Key Option */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKeyOption(!showApiKeyOption)}
+                    className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
+                  >
+                    <Icon
+                      name="chevron-down"
+                      size={16}
+                      className={`transition-transform ${showApiKeyOption ? 'rotate-180' : ''}`}
+                    />
+                    Use API Key instead
+                  </button>
+
+                  {showApiKeyOption && (
+                    <div className="mt-3 space-y-3">
+                      <input
+                        type="password"
+                        value={chutesApiKeyInput}
+                        onChange={(e) => {
+                          setChutesApiKeyInput(e.target.value);
+                          setChutesKeyError(null);
+                        }}
+                        placeholder="cpk_..."
+                        className={`w-full px-4 py-3 text-sm rounded-lg border bg-surface/5 dark:bg-surface/10 text-text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-accent dark:focus:border-accent transition-colors ${
+                          chutesKeyError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        }`}
+                      />
+                      <button
+                        onClick={handleChutesApiKeyConnect}
+                        disabled={isValidatingChutesKey || !chutesApiKeyInput.trim()}
+                        className="w-full px-5 py-3 text-sm font-medium rounded-lg cursor-pointer bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all"
+                      >
+                        {isValidatingChutesKey ? 'Validating...' : 'Validate & Connect'}
+                      </button>
+                      {chutesKeyError && (
+                        <p className="text-sm text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                      )}
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Get a key at{' '}
+                        <a
+                          href="https://chutes.ai"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline"
+                        >
+                          chutes.ai
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

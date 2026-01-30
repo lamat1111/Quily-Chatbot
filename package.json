@@ -19,7 +19,11 @@
     "sync-docs:force": "tsx scripts/sync-docs/index.ts sync --force",
     "sync-docs:ingest": "tsx scripts/sync-docs/index.ts sync --ingest",
     "sync-docs:status": "tsx scripts/sync-docs/index.ts status",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "version:bump": "tsx scripts/version-bump.ts",
+    "release": "tsx scripts/release/index.ts",
+    "release:prepare": "tsx scripts/release/index.ts prepare",
+    "release:run": "tsx scripts/release/index.ts run"
   },
   "keywords": [],
   "author": "",

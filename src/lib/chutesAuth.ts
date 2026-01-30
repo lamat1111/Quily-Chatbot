@@ -314,3 +314,65 @@ export async function checkChutesBalance(
     return { hasCredits: true, error: 'network_error' };
   }
 }
+
+// ============================================================================
+// API Key Validation
+// ============================================================================
+
+export interface ChutesApiKeyValidationResult {
+  valid: boolean;
+  user?: { username?: string; email?: string };
+  error?: 'invalid_key' | 'network_error';
+}
+
+/**
+ * Validate a Chutes API key by calling the /users/me endpoint.
+ * API keys start with 'cpk_' prefix and work with Bearer auth.
+ *
+ * @param apiKey - The API key to validate (cpk_...)
+ * @returns Validation result with user info on success
+ */
+export async function validateChutesApiKey(
+  apiKey: string
+): Promise<ChutesApiKeyValidationResult> {
+  if (!apiKey || !apiKey.startsWith('cpk_')) {
+    return { valid: false, error: 'invalid_key' };
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+    const res = await fetch(`${IDP_BASE_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (res.status === 401 || res.status === 403) {
+      return { valid: false, error: 'invalid_key' };
+    }
+
+    if (!res.ok) {
+      console.warn(`Chutes API key validation returned ${res.status}`);
+      return { valid: false, error: 'network_error' };
+    }
+
+    const data = await res.json();
+    return {
+      valid: true,
+      user: {
+        username: data?.username,
+        email: data?.email,
+      },
+    };
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn('Chutes API key validation timed out');
+    } else {
+      console.warn('Chutes API key validation failed:', error);
+    }
+    return { valid: false, error: 'network_error' };
+  }
+}

@@ -33,7 +33,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 ```bash
 git clone https://github.com/lamat1111/Quily-Chatbot.git
 cd Quily-Chatbot
-npm install
+yarn
 ```
 
 ### 2. Configure Environment
@@ -139,16 +139,16 @@ $$;
 
 ```bash
 # Sync docs from Quilibrium GitHub repo
-npm run sync-docs:run
+yarn sync-docs:run
 
 # Ingest into vector database
-npm run ingest:run
+yarn ingest:run
 ```
 
 ### 5. Run Development Server
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and configure your preferred provider (OpenRouter API key or Chutes sign-in) in Settings to start chatting.
@@ -165,13 +165,13 @@ Official Quilibrium docs are synced from [QuilibriumNetwork/docs](https://github
 
 ```bash
 # Check what would change
-npm run sync-docs:status
+yarn sync-docs:status
 
 # Sync latest docs
-npm run sync-docs:run
+yarn sync-docs:run
 
 # Force re-download everything
-npm run sync-docs:force
+yarn sync-docs:force
 ```
 
 ### 2. Custom docs (your uploads, COMMITTED)
@@ -207,33 +207,33 @@ docs/
 
 ```bash
 # 1. Sync latest from GitHub
-npm run sync-docs:run
+yarn sync-docs:run
 
 # 2. Update the RAG database
-npm run ingest:run
+yarn ingest:run
 ```
 
 ### One-command update
 
 ```bash
-npm run sync-docs:ingest
+yarn sync-docs:ingest
 ```
 
 ### After deleting files
 
 ```bash
 # Remove orphaned chunks from database
-npm run ingest:clean
+yarn ingest:clean
 ```
 
 ### Check sync status
 
 ```bash
 # GitHub sync status
-npm run sync-docs:status
+yarn sync-docs:status
 
 # Database sync status
-npm run ingest:status
+yarn ingest:status
 ```
 
 ---
@@ -244,32 +244,32 @@ npm run ingest:status
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run typecheck` | TypeScript type checking |
+| `yarn dev` | Start development server |
+| `yarn build` | Production build |
+| `yarn start` | Start production server |
+| `yarn typecheck` | TypeScript type checking |
 
 ### Documentation Sync
 
 | Command | Description |
 |---------|-------------|
-| `npm run sync-docs:status` | Check for remote changes |
-| `npm run sync-docs:run` | Sync docs from GitHub |
-| `npm run sync-docs:force` | Force re-download all |
-| `npm run sync-docs:ingest` | Sync + auto-ingest |
-| `npm run sync-docs:dry` | Preview without downloading |
-| `npm run sync-docs verify` | Verify local files match manifest |
+| `yarn sync-docs:status` | Check for remote changes |
+| `yarn sync-docs:run` | Sync docs from GitHub |
+| `yarn sync-docs:force` | Force re-download all |
+| `yarn sync-docs:ingest` | Sync + auto-ingest |
+| `yarn sync-docs:dry` | Preview without downloading |
+| `yarn sync-docs verify` | Verify local files match manifest |
 
 ### Ingestion
 
 | Command | Description |
 |---------|-------------|
-| `npm run ingest:run` | Run ingestion pipeline |
-| `npm run ingest:clean` | Ingest + remove orphaned chunks |
-| `npm run ingest:dry` | Preview without uploading |
-| `npm run ingest:status` | Show local vs database sync |
-| `npm run ingest:count` | Count chunks in database |
-| `npm run ingest clean` | Remove orphaned chunks only |
+| `yarn ingest:run` | Run ingestion pipeline |
+| `yarn ingest:clean` | Ingest + remove orphaned chunks |
+| `yarn ingest:dry` | Preview without uploading |
+| `yarn ingest:status` | Show local vs database sync |
+| `yarn ingest:count` | Count chunks in database |
+| `yarn ingest clean` | Remove orphaned chunks only |
 
 ---
 
@@ -369,34 +369,34 @@ The free tier is sufficient for most use cases.
 
 ```bash
 # Check for doc updates and sync
-npm run sync-docs:ingest
+yarn sync-docs:ingest
 ```
 
 ### After removing outdated content
 
 ```bash
 # Delete files from ./docs, then:
-npm run ingest:clean
+yarn ingest:clean
 ```
 
 ### Full refresh (if something seems wrong)
 
 ```bash
-npm run sync-docs:force
-npm run ingest:clean
+yarn sync-docs:force
+yarn ingest:clean
 ```
 
 ### Adding new transcriptions
 
 1. Add `.txt` or `.md` files to `./docs/video-transcriptions/`
-2. Run `npm run ingest:run`
+2. Run `yarn ingest:run`
 
 ### Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
 | Sync rate limited | Add `GITHUB_TOKEN` to `.env` |
-| Deleted files still in search | Run `npm run ingest:clean` |
+| Deleted files still in search | Run `yarn ingest:clean` |
 | Embeddings failing | Check `OPENROUTER_API_KEY` and credits |
 | Poor search results | Add `COHERE_API_KEY` for reranking |
 

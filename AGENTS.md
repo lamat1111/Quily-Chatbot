@@ -10,16 +10,16 @@ Quily Chat is a self-hosted RAG chatbot that answers questions about the Quilibr
 
 ```bash
 # Development
-npm run dev              # Start Next.js dev server
+yarn dev              # Start Next.js dev server
 
 # Build & Type Check
-npm run build            # Production build
-npm run typecheck        # TypeScript type checking (tsc --noEmit)
+yarn build            # Production build
+yarn typecheck        # TypeScript type checking (tsc --noEmit)
 
 # Data Ingestion
-npm run ingest run -d ./docs           # Ingest markdown docs into Supabase
-npm run ingest run -d ./docs --dry-run # Preview ingestion without uploading
-npm run ingest count                    # Count chunks in database
+yarn ingest run -d ./docs           # Ingest markdown docs into Supabase
+yarn ingest run -d ./docs --dry-run # Preview ingestion without uploading
+yarn ingest count                    # Count chunks in database
 ```
 
 ## Architecture
