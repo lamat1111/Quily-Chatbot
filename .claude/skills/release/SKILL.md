@@ -46,7 +46,7 @@ When the user invokes `/release`, execute these steps immediately without asking
 Run the release command directly:
 
 ```bash
-npm run release:run
+yarn release:run
 ```
 
 This will:
@@ -90,10 +90,10 @@ the current VERSION value (0.1.0) as the baseline for bumping.
 ## CLI Commands Reference
 
 ```bash
-npm run release:run              # Execute release (main command)
-npm run release:prepare          # Preview only (for debugging)
-npm run release:run --dry-run    # Preview without changes
-npm run release:run --force major  # Force specific bump type
+yarn release:run              # Execute release (main command)
+yarn release:prepare          # Preview only (for debugging)
+yarn release:run --dry-run    # Preview without changes
+yarn release:run --force major  # Force specific bump type
 ```
 
 ## Files Modified

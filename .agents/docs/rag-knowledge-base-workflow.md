@@ -53,7 +53,7 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
                      ▼
          ┌───────────────────────┐
          │   Ingestion Pipeline   │
-         │   (npm run ingest)     │
+         │   (yarn ingest)     │
          └───────────┬───────────┘
                      │
          ├─→ Loader (reads .md and .txt files)
@@ -281,22 +281,22 @@ The sync system pulls documentation from the Quilibrium Network GitHub repositor
 
 ```bash
 # Check sync status (shows what would change)
-npm run sync-docs:status
+yarn sync-docs:status
 
 # Sync docs from GitHub (incremental - only downloads changes)
-npm run sync-docs:run
+yarn sync-docs:run
 
 # Preview changes without downloading
-npm run sync-docs:dry
+yarn sync-docs:dry
 
 # Force re-download all files (ignores manifest)
-npm run sync-docs:force
+yarn sync-docs:force
 
 # Sync and automatically run RAG ingestion
-npm run sync-docs:ingest
+yarn sync-docs:ingest
 
 # Verify local files match manifest
-npm run sync-docs verify
+yarn sync-docs verify
 ```
 
 ### How Sync Works
@@ -321,32 +321,32 @@ Files in `docs/transcriptions/` and `docs/custom/` are:
 
 ```bash
 # Full ingestion (add/update chunks)
-npm run ingest:run
+yarn ingest:run
 
 # Full ingestion with cleanup of deleted files
-npm run ingest:clean
+yarn ingest:clean
 
 # Preview without uploading (dry run)
-npm run ingest:dry
+yarn ingest:dry
 
 # Specify docs directory and version tag
-npm run ingest -- run -d ./docs -v "v1.0"
+yarn ingest -- run -d ./docs -v "v1.0"
 ```
 
 ### Maintenance Commands
 
 ```bash
 # Check sync status between local docs and database
-npm run ingest:status
+yarn ingest:status
 
 # Count total chunks in database
-npm run ingest:count
+yarn ingest:count
 
 # Remove chunks for deleted files (standalone cleanup)
-npm run ingest clean
+yarn ingest clean
 
 # Preview cleanup without making changes
-npm run ingest -- clean --dry-run
+yarn ingest -- clean --dry-run
 ```
 
 ### What Happens During Ingestion
@@ -385,20 +385,20 @@ npm run ingest -- clean --dry-run
 
 ```bash
 # 1. Add files to ./docs (manually or via sync)
-npm run sync-docs:run
+yarn sync-docs:run
 
 # 2. Run ingestion
-npm run ingest:run
+yarn ingest:run
 ```
 
 ### Updating Existing Documentation
 
 ```bash
 # 1. Sync latest from GitHub
-npm run sync-docs:run
+yarn sync-docs:run
 
 # 2. Re-ingest (upserts handle updates)
-npm run ingest:run
+yarn ingest:run
 ```
 
 ### Deleting Documentation
@@ -407,23 +407,23 @@ npm run ingest:run
 # 1. Delete files from ./docs
 
 # 2. Run ingestion with cleanup
-npm run ingest:clean
+yarn ingest:clean
 ```
 
 ### Full Refresh
 
 ```bash
 # 1. Force sync all docs from GitHub
-npm run sync-docs:force
+yarn sync-docs:force
 
 # 2. Clean and re-ingest everything
-npm run ingest:clean
+yarn ingest:clean
 ```
 
 ### One-Command Update (Sync + Ingest)
 
 ```bash
-npm run sync-docs:ingest
+yarn sync-docs:ingest
 ```
 
 ---
@@ -490,17 +490,17 @@ interface RetrievalOptions {
 
 | Command | Description |
 |---------|-------------|
-| `npm run sync-docs:status` | Check for remote changes |
-| `npm run sync-docs:run` | Sync docs from GitHub |
-| `npm run sync-docs:force` | Force re-download all |
-| `npm run sync-docs:ingest` | Sync + auto-ingest |
-| `npm run sync-docs:dry` | Preview without downloading |
-| `npm run ingest:run` | Run ingestion pipeline |
-| `npm run ingest:clean` | Ingest + remove orphans |
-| `npm run ingest:dry` | Preview without uploading |
-| `npm run ingest:status` | Show local vs DB sync status |
-| `npm run ingest:count` | Count chunks in database |
-| `npm run ingest clean` | Remove orphaned chunks |
+| `yarn sync-docs:status` | Check for remote changes |
+| `yarn sync-docs:run` | Sync docs from GitHub |
+| `yarn sync-docs:force` | Force re-download all |
+| `yarn sync-docs:ingest` | Sync + auto-ingest |
+| `yarn sync-docs:dry` | Preview without downloading |
+| `yarn ingest:run` | Run ingestion pipeline |
+| `yarn ingest:clean` | Ingest + remove orphans |
+| `yarn ingest:dry` | Preview without uploading |
+| `yarn ingest:status` | Show local vs DB sync status |
+| `yarn ingest:count` | Count chunks in database |
+| `yarn ingest clean` | Remove orphaned chunks |
 
 ### Checklist
 
@@ -508,10 +508,10 @@ interface RetrievalOptions {
 |------|--------|---------|
 | 1 | Set environment variables | Edit `.env` |
 | 2 | Run database schema | Supabase SQL Editor |
-| 3 | Sync docs from GitHub | `npm run sync-docs:run` |
+| 3 | Sync docs from GitHub | `yarn sync-docs:run` |
 | 4 | Add manual docs (optional) | Copy to `./docs/` |
-| 5 | Run ingestion | `npm run ingest:run` |
-| 6 | Verify | `npm run ingest:status` |
+| 5 | Run ingestion | `yarn ingest:run` |
+| 6 | Verify | `yarn ingest:status` |
 | 7 | Test the chatbot | Ask questions in the UI |
 
 ---
@@ -522,7 +522,7 @@ interface RetrievalOptions {
 
 - Verify `.env` has correct Supabase credentials
 - Check that `./docs` folder contains `.md` or `.txt` files
-- Run `npm run ingest:dry` to see what would be processed
+- Run `yarn ingest:dry` to see what would be processed
 
 ### Poor search results
 
@@ -539,8 +539,8 @@ interface RetrievalOptions {
 
 ### Deleted files still appearing in results
 
-- Run `npm run ingest:clean` to remove orphaned chunks
-- Or run `npm run ingest clean` followed by `npm run ingest:run`
+- Run `yarn ingest:clean` to remove orphaned chunks
+- Or run `yarn ingest clean` followed by `yarn ingest:run`
 
 ### GitHub sync rate limited
 
@@ -550,7 +550,7 @@ interface RetrievalOptions {
 ### Sync not detecting changes
 
 - Check `.sync-manifest.json` exists in `./docs/`
-- Run `npm run sync-docs:force` to re-download all files
+- Run `yarn sync-docs:force` to re-download all files
 - Verify `GITHUB_TOKEN` is set correctly
 
 ---

@@ -450,7 +450,7 @@ program
       console.log();
       if (notIngested.length > 0 || orphaned.length > 0) {
         console.log(chalk.gray('To sync database with local docs:'));
-        console.log(chalk.gray('  npm run ingest run --clean\n'));
+        console.log(chalk.gray('  yarn ingest run --clean\n'));
       } else {
         console.log(chalk.green('✅ Database is fully in sync with local docs!\n'));
       }

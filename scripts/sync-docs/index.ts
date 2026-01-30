@@ -114,7 +114,7 @@ program
         console.log(chalk.blue('\n🔄 Running RAG ingestion...\n'));
         await runIngestion();
       } else if (result.needsReingestion) {
-        console.log(chalk.yellow('\n⚠️  Documents changed - run `npm run ingest run` to update RAG knowledge base\n'));
+        console.log(chalk.yellow('\n⚠️  Documents changed - run `yarn ingest run` to update RAG knowledge base\n'));
       }
 
       console.log(chalk.green('✅ Sync complete!\n'));
@@ -137,7 +137,7 @@ program
 
       if (!manifest) {
         spinner.info('No manifest found - docs have not been synced yet');
-        console.log(chalk.gray('\nRun `npm run sync-docs sync` to download docs\n'));
+        console.log(chalk.gray('\nRun `yarn sync-docs sync` to download docs\n'));
         return;
       }
 
@@ -160,7 +160,7 @@ program
       console.log();
 
       if (hasChanges(diff)) {
-        console.log(chalk.yellow('Run `npm run sync-docs sync` to update\n'));
+        console.log(chalk.yellow('Run `yarn sync-docs sync` to update\n'));
       }
     } catch (error) {
       spinner.fail('Status check failed');
@@ -195,7 +195,7 @@ program
         for (const issue of issues) {
           console.log(chalk.yellow(`  - ${issue}`));
         }
-        console.log(chalk.gray('\nRun `npm run sync-docs sync --force` to fix\n'));
+        console.log(chalk.gray('\nRun `yarn sync-docs sync --force` to fix\n'));
       }
     } catch (error) {
       spinner.fail('Verification failed');
@@ -209,7 +209,7 @@ program
  */
 async function runIngestion(): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn('npm', ['run', 'ingest', 'run'], {
+    const child = spawn('yarn', ['ingest', 'run'], {
       stdio: 'inherit',
       shell: true,
     });

@@ -3,9 +3,9 @@
  * Automated release CLI for Quily Chat.
  *
  * Commands:
- *   npm run release           - Show help
- *   npm run release prepare   - Analyze commits and preview release
- *   npm run release run       - Execute release (bump + changelog + commit + tag)
+ *   yarn release           - Show help
+ *   yarn release prepare   - Analyze commits and preview release
+ *   yarn release run       - Execute release (bump + changelog + commit + tag)
  */
 
 import 'dotenv/config';
@@ -173,9 +173,9 @@ program
       // Next steps
       console.log(chalk.blue('\n🚀 Next Steps\n'));
       console.log('  Run one of these commands to create the release:\n');
-      console.log(chalk.gray(`    npm run release run                  # Release as v${result.newVersion}`));
-      console.log(chalk.gray('    npm run release run --dry-run        # Preview without changes'));
-      console.log(chalk.gray('    npm run release run --force major    # Force major bump'));
+      console.log(chalk.gray(`    yarn release run                  # Release as v${result.newVersion}`));
+      console.log(chalk.gray('    yarn release run --dry-run        # Preview without changes'));
+      console.log(chalk.gray('    yarn release run --force major    # Force major bump'));
       console.log('');
     } catch (error) {
       spinner.fail('Preparation failed');
