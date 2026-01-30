@@ -46,8 +46,26 @@ CREATE INDEX IF NOT EXISTS document_chunks_chutes_embedding_idx
 CREATE INDEX IF NOT EXISTS document_chunks_chutes_source_idx
   ON document_chunks_chutes(source_file);
 
--- RPC function for similarity search
--- Called by the retriever regardless of which provider generates the query embedding
+-- =============================================================================
+-- ROW LEVEL SECURITY (RLS)
+-- =============================================================================
+-- Enable RLS to protect the table from unauthorized access.
+-- - Public read access: Anyone can query the knowledge base (for RAG)
+-- - Write access: Only service role can insert/update/delete (for ingestion)
+
+ALTER TABLE document_chunks_chutes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access"
+  ON document_chunks_chutes
+  FOR SELECT
+  USING (true);
+
+-- =============================================================================
+-- RPC FUNCTION FOR SIMILARITY SEARCH
+-- =============================================================================
+-- Called by the retriever regardless of which provider generates the query embedding.
+-- SET search_path = '' prevents search path manipulation attacks.
+
 CREATE OR REPLACE FUNCTION match_document_chunks_chutes(
   query_embedding vector(1024),
   match_threshold FLOAT DEFAULT 0.7,
@@ -62,6 +80,7 @@ RETURNS TABLE (
   similarity FLOAT
 )
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
   RETURN QUERY
@@ -72,7 +91,7 @@ BEGIN
     dc.heading_path,
     dc.source_url,
     1 - (dc.embedding <=> query_embedding) AS similarity
-  FROM document_chunks_chutes dc
+  FROM public.document_chunks_chutes dc
   WHERE 1 - (dc.embedding <=> query_embedding) > match_threshold
   ORDER BY dc.embedding <=> query_embedding
   LIMIT match_count;
