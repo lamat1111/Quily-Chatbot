@@ -67,7 +67,7 @@ CREATE POLICY "Allow public read access"
 -- SET search_path = '' prevents search path manipulation attacks.
 
 CREATE OR REPLACE FUNCTION match_document_chunks_chutes(
-  query_embedding vector(1024),
+  query_embedding extensions.vector(1024),
   match_threshold FLOAT DEFAULT 0.7,
   match_count INT DEFAULT 5
 )
@@ -80,7 +80,7 @@ RETURNS TABLE (
   similarity FLOAT
 )
 LANGUAGE plpgsql
-SET search_path = ''
+SET search_path = 'extensions, public'
 AS $$
 BEGIN
   RETURN QUERY
@@ -90,10 +90,10 @@ BEGIN
     dc.source_file,
     dc.heading_path,
     dc.source_url,
-    1 - (dc.embedding <=> query_embedding) AS similarity
+    1 - (dc.embedding OPERATOR(extensions.<=>) query_embedding) AS similarity
   FROM public.document_chunks_chutes dc
-  WHERE 1 - (dc.embedding <=> query_embedding) > match_threshold
-  ORDER BY dc.embedding <=> query_embedding
+  WHERE 1 - (dc.embedding OPERATOR(extensions.<=>) query_embedding) > match_threshold
+  ORDER BY dc.embedding OPERATOR(extensions.<=>) query_embedding
   LIMIT match_count;
 END;
 $$;
