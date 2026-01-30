@@ -8,7 +8,8 @@ reviewed_by: null
 created: 2026-01-28
 updated: 2026-01-28
 related_docs: []
-related_tasks: []
+related_tasks:
+  - starred-chats-management-ui.md
 ---
 
 # Implement AI-Powered Chat Renaming Feature
@@ -24,10 +25,11 @@ related_tasks: []
 
 Currently, chat conversations are auto-titled using the first 50 characters of the user's first message, which often results in unclear or unhelpful names like "How do I..." or "Can you help me with...". Users should be able to generate meaningful, context-aware titles for their conversations using AI summarization.
 
-This feature adds a "Conversations" section to the SettingsModal that allows users to:
-1. View all their saved conversations
-2. Generate AI-powered smart titles based on conversation content
-3. Manually edit titles if desired
+**Note**: Manual rename functionality is now handled by `starred-chats-management-ui.md`. This task focuses solely on **AI-powered title generation** that can be added as a "Generate Title" option in the dropdown menus.
+
+This feature adds AI title generation capability:
+1. Generate AI-powered smart titles based on conversation content
+2. Integrate as menu option in sidebar/header dropdowns (from starred-chats task)
 
 ## Context
 
