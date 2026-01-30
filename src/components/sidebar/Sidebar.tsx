@@ -4,10 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
+import { SearchModal } from './SearchModal';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
+import { useSearch } from '@/src/contexts/SearchContext';
 
 /**
  * Main sidebar component containing navigation and conversation history.
@@ -31,6 +33,7 @@ export function Sidebar() {
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
   const { isSignedIn: isChutesSignedIn } = useChutesSession();
   const addConversation = useConversationStore((s) => s.addConversation);
+  const { isSearchOpen, openSearch, closeSearch } = useSearch();
 
   const isConnected =
     providerId === 'chutes' ? isChutesSignedIn : Boolean(apiKey);
@@ -119,6 +122,25 @@ export function Sidebar() {
             New Chat
           </button>
 
+          {/* Search - always visible */}
+          <button
+            onClick={openSearch}
+            className="
+              w-full px-3 py-2
+              text-sm
+              text-gray-500 dark:text-gray-400
+              hover:text-text-primary
+              hover:bg-surface/10 dark:hover:bg-surface/15
+              rounded-lg
+              transition-colors
+              flex items-center gap-3
+              cursor-pointer
+            "
+          >
+            <Icon name="search" size={18} />
+            Search
+          </button>
+
           {/* Collapsible items */}
           <div
             className={`
@@ -186,6 +208,13 @@ export function Sidebar() {
           </Link>
         </div>
       </aside>
+
+      {/* Search Modal */}
+      <SearchModal
+        open={isSearchOpen}
+        onOpenChange={(open) => (open ? openSearch() : closeSearch())}
+        onCloseSidebar={() => setSidebarOpen(false)}
+      />
     </>
   );
 }

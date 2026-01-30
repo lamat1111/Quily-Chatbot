@@ -8,6 +8,7 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ChatHeader } from './ChatHeader';
 import { ProviderSetup } from './ProviderSetup';
+import { ChatSkeleton } from '@/src/components/ui/Skeleton';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
@@ -205,6 +206,11 @@ export function ChatContainer({
       doUpdate();
     }
   }, [conversationId, messages, updateMessages, isStreaming]);
+
+  // Show skeleton while Chutes session is loading to prevent flash of ProviderSetup
+  if (providerId === 'chutes' && chutesLoading) {
+    return <ChatSkeleton />;
+  }
 
   // Show provider setup when no API key
   if (!hasAccess) {
