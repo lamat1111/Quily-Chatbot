@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-01-31
+
+### Features
+
+- update /sources command with live streams ([ac4ebf8](https://github.com/lamat1111/Quily-Chatbot/commit/ac4ebf81f5bd6d25fdcbf558d698450e4172ec20))
+- add danger zone with wipe data option ([63c3e51](https://github.com/lamat1111/Quily-Chatbot/commit/63c3e51c9c966b73b5a235359b0bf67b7e4bd954))
+- add user profile customization ([c2ee2ce](https://github.com/lamat1111/Quily-Chatbot/commit/c2ee2ce4467734dc1243bf3aeb428a97bac86f95))
+
+### Bug Fixes
+
+- improve Chutes OAuth workflow and UX ([15030d0](https://github.com/lamat1111/Quily-Chatbot/commit/15030d06162d6ddfd148dcedce3f127374aa8fa2))
+
+### Styles
+
+- implement semantic color system ([7124724](https://github.com/lamat1111/Quily-Chatbot/commit/712472423352653402323a82f6aeead6dc1fe899))
+
+### Maintenance
+
+- stop tracking .agents files except docs/ ([b192ddf](https://github.com/lamat1111/Quily-Chatbot/commit/b192ddfe834a2f0f5db6fff3f073c71e69f01221))
+
 ## [0.3.0] - 2026-01-30
 
 ### Features
