@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
+import * as Dialog from '@radix-ui/react-dialog';
 import { Icon } from '@/src/components/ui/Icon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { getRecommendedModels, DEFAULT_MODEL_ID, ModelMetadata } from '@/src/lib/openrouter';
@@ -53,6 +54,7 @@ export default function SettingsPage() {
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showWipeDataConfirm, setShowWipeDataConfirm] = useState(false);
 
   const provider = getProvider('openrouter');
   const isOpenRouter = providerId === 'openrouter';
@@ -233,6 +235,7 @@ export default function SettingsPage() {
   }, []);
 
   return (
+    <>
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 py-12 w-full">
           {/* Page Header */}
@@ -1109,7 +1112,95 @@ export default function SettingsPage() {
               )}
             </div>
           </section>
+
+          {/* Danger Zone */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-red-300 dark:border-red-900 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2 font-title">
+                <Icon name="alert-triangle" size={20} className="text-red-500" />
+                Danger Zone
+              </h2>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-medium text-text-primary">Wipe All Data</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Delete all local data including conversations, settings, and API keys.
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowWipeDataConfirm(true)}
+                  className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer
+                    text-red-600 dark:text-red-400
+                    bg-red-500/10 dark:bg-red-500/15
+                    border border-red-500/30
+                    hover:bg-red-500/20 dark:hover:bg-red-500/25
+                    transition-colors whitespace-nowrap"
+                >
+                  Wipe Data
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
+
+      {/* Wipe Data Confirmation Dialog */}
+      <Dialog.Root open={showWipeDataConfirm} onOpenChange={setShowWipeDataConfirm}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 animate-in fade-in-0 z-50" />
+          <Dialog.Content
+            className="
+              fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              w-full max-w-sm p-6
+              bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700
+              rounded-xl shadow-xl
+              animate-in fade-in-0 zoom-in-95
+              z-50
+            "
+          >
+            <Dialog.Title className="text-lg font-semibold text-text-primary">
+              Wipe all data?
+            </Dialog.Title>
+            <Dialog.Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              This will permanently delete all your conversations, API keys, preferences, and cached data.
+              The page will reload after wiping. This action cannot be undone.
+            </Dialog.Description>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowWipeDataConfirm(false)}
+                className="
+                  px-4 py-2
+                  text-sm font-medium text-text-primary
+                  bg-btn-secondary hover:bg-btn-secondary-hover
+                  rounded-lg
+                  transition-colors
+                "
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.reload();
+                }}
+                className="
+                  px-4 py-2
+                  text-sm font-medium text-white
+                  bg-btn-danger hover:bg-btn-danger-hover
+                  rounded-lg
+                  transition-colors
+                "
+              >
+                Wipe Everything
+              </button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 }
