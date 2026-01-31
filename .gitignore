@@ -112,3 +112,7 @@ docs/quilibrium-official/
 
 # GSD planning folder (development scaffolding)
 .planning/
+
+# .agents folder - only commit docs/
+.agents/*
+!.agents/docs/
