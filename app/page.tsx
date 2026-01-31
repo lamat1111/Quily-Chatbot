@@ -86,7 +86,9 @@ export default function HomePage() {
 
   const activeModel = providerId === 'chutes' ? chutesModel : openrouterModel;
 
-  if (!isHydrated) {
+  // Show skeleton until localStorage is hydrated AND Chutes session check completes
+  // This prevents flash of ProviderSetup when returning from OAuth
+  if (!isHydrated || (providerId === 'chutes' && chutesLoading)) {
     return <ChatSkeleton />;
   }
 

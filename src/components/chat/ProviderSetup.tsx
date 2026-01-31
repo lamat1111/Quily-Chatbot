@@ -38,16 +38,28 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
     refresh: refreshChutesSession,
   } = useChutesSession();
   const [chutesModel, setChutesModel] = useLocalStorage<string>('chutes-model', '');
+  // Fetch models when signed in (needed for auto-connect after OAuth callback)
+  // or when Chutes provider is selected
   const { models: chutesModels } = useChutesModels(
     'llm',
-    selectedProvider?.id === 'chutes' && isSignedIn
+    isSignedIn || selectedProvider?.id === 'chutes'
   );
 
+  // Auto-select first model when signed in and no model selected
   useEffect(() => {
-    if (selectedProvider?.id === 'chutes' && isSignedIn && !chutesModel && chutesModels.length > 0) {
+    if (isSignedIn && !chutesModel && chutesModels.length > 0) {
       setChutesModel(chutesModels[0].id);
     }
-  }, [selectedProvider, isSignedIn, chutesModel, chutesModels, setChutesModel]);
+  }, [isSignedIn, chutesModel, chutesModels, setChutesModel]);
+
+  // Auto-connect when user is signed in via Chutes OAuth and a model is available
+  // This handles the case where user returns from OAuth callback
+  useEffect(() => {
+    if (isSignedIn && chutesModel) {
+      // User is signed in and has a model selected - auto-connect to skip redundant screen
+      onConnect('chutes', '');
+    }
+  }, [isSignedIn, chutesModel, onConnect]);
 
   const handleConnect = useCallback(async () => {
     if (!selectedProvider || selectedProvider.authType !== 'apiKey' || !apiKey.trim()) return;
@@ -97,12 +109,6 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
       setIsValidating(false);
     }
   }, [selectedProvider, apiKey, onConnect]);
-
-  const handleOAuthConnect = useCallback(() => {
-    if (!selectedProvider || selectedProvider.authType !== 'oauth') return;
-    if (!isSignedIn) return;
-    onConnect(selectedProvider.id, '');
-  }, [selectedProvider, onConnect, isSignedIn]);
 
   const handleBack = useCallback(() => {
     setSelectedProvider(null);
@@ -317,6 +323,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
         ) : (
           <div className="space-y-4">
             {isSignedIn ? (
+              // User is signed in - show loading state while auto-connecting
               <div className="space-y-3">
                 <div className="text-sm text-gray-600 dark:text-gray-300">
                   Signed in as{' '}
@@ -324,21 +331,17 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
                     {user?.username || user?.name || user?.email || 'Chutes user'}
                   </span>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    onClick={handleOAuthConnect}
-                    className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg cursor-pointer bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white transition-all"
-                  >
-                    Use Chutes
-                  </button>
-                  <button
-                    onClick={logout}
-                    disabled={chutesLoading}
-                    className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-text-primary hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
-                  >
-                    Sign out
-                  </button>
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                  <span>Loading models...</span>
                 </div>
+                <button
+                  onClick={logout}
+                  disabled={chutesLoading}
+                  className="w-full sm:w-auto px-5 py-3 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-text-primary hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
+                >
+                  Sign out
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
