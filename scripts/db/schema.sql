@@ -29,6 +29,9 @@ CREATE TABLE IF NOT EXISTS document_chunks_chutes (
   version TEXT,
   content_hash TEXT NOT NULL,
   source_url TEXT,  -- External URL for source attribution (e.g., YouTube URL for transcripts)
+  published_date DATE,  -- Publication date from frontmatter (when content was created)
+  title TEXT,  -- Document title from frontmatter
+  doc_type TEXT,  -- Document type: 'livestream_transcript', 'documentation', etc.
   created_at TIMESTAMPTZ DEFAULT NOW(),
 
   -- Unique constraint for upsert (prevents duplicates on re-ingestion)
@@ -45,6 +48,14 @@ CREATE INDEX IF NOT EXISTS document_chunks_chutes_embedding_idx
 -- Index for filtering by source file
 CREATE INDEX IF NOT EXISTS document_chunks_chutes_source_idx
   ON document_chunks_chutes(source_file);
+
+-- Index for filtering/sorting by publication date
+CREATE INDEX IF NOT EXISTS document_chunks_chutes_published_date_idx
+  ON document_chunks_chutes(published_date DESC NULLS LAST);
+
+-- Index for filtering by document type
+CREATE INDEX IF NOT EXISTS document_chunks_chutes_doc_type_idx
+  ON document_chunks_chutes(doc_type);
 
 -- =============================================================================
 -- ROW LEVEL SECURITY (RLS)
@@ -77,6 +88,9 @@ RETURNS TABLE (
   source_file TEXT,
   heading_path TEXT,
   source_url TEXT,
+  published_date DATE,
+  title TEXT,
+  doc_type TEXT,
   similarity FLOAT
 )
 LANGUAGE plpgsql
@@ -90,6 +104,9 @@ BEGIN
     dc.source_file,
     dc.heading_path,
     dc.source_url,
+    dc.published_date,
+    dc.title,
+    dc.doc_type,
     1 - (dc.embedding OPERATOR(extensions.<=>) query_embedding) AS similarity
   FROM public.document_chunks_chutes dc
   WHERE 1 - (dc.embedding OPERATOR(extensions.<=>) query_embedding) > match_threshold

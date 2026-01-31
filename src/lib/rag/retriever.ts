@@ -130,6 +130,9 @@ export async function retrieveWithReranking(
         source_file: original.source_file,
         heading_path: original.heading_path,
         source_url: original.source_url,
+        published_date: original.published_date,
+        title: original.title,
+        doc_type: original.doc_type,
         similarity: original.similarity,
         citationIndex: idx + 1,
       };
@@ -148,6 +151,9 @@ export async function retrieveWithReranking(
             source_file: string;
             heading_path: string | null;
             source_url: string | null;
+            published_date: string | null;
+            title: string | null;
+            doc_type: string | null;
             similarity: number;
           },
           idx: number

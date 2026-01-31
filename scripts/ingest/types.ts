@@ -16,6 +16,12 @@ export interface ChunkMetadata {
   content_hash: string;
   /** External URL for source attribution (e.g., YouTube URL from frontmatter) */
   source_url?: string;
+  /** Publication date from frontmatter (when content was originally created) */
+  published_date?: string;
+  /** Document title from frontmatter */
+  title?: string;
+  /** Document type: 'livestream_transcript', 'documentation', etc. */
+  doc_type?: string;
 }
 
 /**
@@ -61,6 +67,9 @@ export interface SearchResult {
   source_file: string;
   heading_path: string | null;
   source_url: string | null;
+  published_date: string | null;
+  title: string | null;
+  doc_type: string | null;
   similarity: number;
 }
 

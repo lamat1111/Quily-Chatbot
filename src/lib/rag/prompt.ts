@@ -51,12 +51,46 @@ export function buildContextBlock(chunks: RetrievedChunk[]): ContextBlockResult 
     .map((chunk) => {
       // Priority: 1) source_url from frontmatter (YouTube, etc.), 2) official docs URL
       const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
-      const title = chunk.heading_path || getTitleFromPath(chunk.source_file);
+
+      // Check if this is a livestream transcript
+      const isLivestream = chunk.doc_type === 'livestream_transcript';
+
+      // For livestreams, use "Livestream" as link text (titles don't reflect varied content)
+      // For other docs, use frontmatter title, then heading path, then derive from file path
+      const title = isLivestream
+        ? 'Livestream'
+        : chunk.title || chunk.heading_path || getTitleFromPath(chunk.source_file);
+
+      // Build metadata annotation (type + date)
+      // For livestreams, only show date (type is already in the link text)
+      const metaParts: string[] = [];
+      if (chunk.doc_type && !isLivestream) {
+        // Format doc_type for display: 'livestream_transcript' -> 'Livestream'
+        const typeLabel = chunk.doc_type
+          .replace(/_transcript$/, '')
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+        metaParts.push(typeLabel);
+      } else if (!chunk.doc_type && chunk.source_file.startsWith('quilibrium-official/')) {
+        // Mark official documentation
+        metaParts.push('Official Docs');
+      }
+      if (chunk.published_date) {
+        // Format date: '2026-01-21' -> 'Jan 21, 2026'
+        const date = new Date(chunk.published_date + 'T00:00:00');
+        const formatted = date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
+        metaParts.push(formatted);
+      }
+      const metaAnnotation = metaParts.length > 0 ? ` (${metaParts.join(', ')})` : '';
 
       // Include URL in context so LLM can create proper links
       const sourceInfo = url
-        ? `Source: [${title}](${url})`
-        : `Source: ${title} (internal document)`;
+        ? `Source: [${title}](${url})${metaAnnotation}`
+        : `Source: ${title}${metaAnnotation} (internal document)`;
 
       return `[${chunk.citationIndex}] ${sourceInfo}
 ---
@@ -241,6 +275,9 @@ export function formatSourcesForClient(chunks: RetrievedChunk[]): SourceReferenc
       file: chunk.source_file,
       heading: chunk.heading_path,
       url,
+      title: chunk.title,
+      published_date: chunk.published_date,
+      doc_type: chunk.doc_type,
     };
   });
 }

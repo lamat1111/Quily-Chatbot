@@ -109,8 +109,17 @@ export async function chunkDocuments(
       // Find the heading path for this chunk
       const headingPath = findHeadingPath(chunkStart, doc.content, headingMap);
 
-      // Extract source_url from frontmatter (youtube_url for transcripts)
+      // Extract metadata from frontmatter
       const sourceUrl = doc.frontmatter?.youtube_url as string | undefined;
+      const title = doc.frontmatter?.title as string | undefined;
+      const docType = doc.frontmatter?.type as string | undefined;
+      // Handle date as string (YAML dates may be parsed as Date objects or strings)
+      const rawDate = doc.frontmatter?.date;
+      const publishedDate = rawDate
+        ? rawDate instanceof Date
+          ? rawDate.toISOString().split('T')[0]
+          : String(rawDate)
+        : undefined;
 
       const metadata: ChunkMetadata = {
         source_file: doc.path,
@@ -120,6 +129,9 @@ export async function chunkDocuments(
         version,
         content_hash: hashContent(chunkContent),
         source_url: sourceUrl,
+        published_date: publishedDate,
+        title,
+        doc_type: docType,
       };
 
       allChunks.push({

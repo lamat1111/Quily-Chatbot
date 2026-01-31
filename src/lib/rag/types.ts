@@ -18,6 +18,12 @@ export interface RetrievedChunk {
   heading_path: string | null;
   /** External source URL (e.g., YouTube URL for transcripts) or null */
   source_url: string | null;
+  /** Publication date (YYYY-MM-DD) or null */
+  published_date: string | null;
+  /** Document title or null */
+  title: string | null;
+  /** Document type ('livestream_transcript', 'documentation', etc.) or null */
+  doc_type: string | null;
   /** Cosine similarity score (0-1) */
   similarity: number;
   /** Citation index for display (1-based) */
@@ -58,4 +64,10 @@ export interface SourceReference {
   heading: string | null;
   /** URL to source if available */
   url: string | null;
+  /** Document title or null */
+  title: string | null;
+  /** Publication date (YYYY-MM-DD) or null */
+  published_date: string | null;
+  /** Document type or null */
+  doc_type: string | null;
 }

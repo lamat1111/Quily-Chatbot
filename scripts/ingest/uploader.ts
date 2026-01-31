@@ -57,6 +57,9 @@ export async function uploadChunks(
       version: chunk.metadata.version,
       content_hash: chunk.metadata.content_hash,
       source_url: chunk.metadata.source_url || null,
+      published_date: chunk.metadata.published_date || null,
+      title: chunk.metadata.title || null,
+      doc_type: chunk.metadata.doc_type || null,
     }));
 
     try {
