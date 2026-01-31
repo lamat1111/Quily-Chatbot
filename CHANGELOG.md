@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-01-31
+
+### Features
+
+- add document metadata for RAG citations ([47cc485](https://github.com/lamat1111/Quily-Chatbot/commit/47cc4852943222efcbe22d3a6137619d1f66531c))
+- add temporal awareness to RAG retrieval ([43ab83b](https://github.com/lamat1111/Quily-Chatbot/commit/43ab83b3e3c5ccb9f7ed4b0d3a25534a906e8a64))
+- natural scroll occlusion for sidebar nav ([21f21cc](https://github.com/lamat1111/Quily-Chatbot/commit/21f21cc3164a4c75e854a11cae6822b23b3976e0))
+
+### Styles
+
+- mute sidebar chat text color ([b2f861f](https://github.com/lamat1111/Quily-Chatbot/commit/b2f861f2828c2e429fe23832c7754a376ddf76a5))
+
 ## [0.4.0] - 2026-01-31
 
 ### Features
