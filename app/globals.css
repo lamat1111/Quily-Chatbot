@@ -1,88 +1,330 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Brand colors - Quilibrium palette */
+/* ============================================================================
+   SEMANTIC COLOR SYSTEM
+   ============================================================================
+   Three-tier architecture:
+   1. Primitives (raw values) - defined inline in semantic tokens
+   2. Semantic tokens (purpose-based) - what we define here
+   3. Component usage - classes use semantic tokens
+
+   Naming convention: --color-{category}-{variant}
+   Categories: bg, text, border, interactive
+   ============================================================================ */
+
 /* Light theme values (default) */
 :root {
-  --brand-accent: #FF6000;
-  --brand-accent-hover: #E55500;
-  --brand-secondary: #40001B;
-  --brand-secondary-light: #5A0026;
-  /* Lighter gradient for light theme buttons */
-  --brand-gradient-from: #8B2942;
-  --brand-gradient-to: #FF6000;
-  --brand-gradient-from-hover: #A03350;
-  --brand-gradient-to-hover: #E55500;
-  /* Primary text color - burgundy for light theme */
-  --brand-text-primary: #40001B;
-  --brand-text-secondary: #5A0026;
-  --brand-text-muted: #6B3344;
-  /* Surface color for backgrounds with opacity - burgundy for light theme */
-  --brand-surface: #40001B;
-  /* Button colors - light theme */
-  --brand-btn-secondary: #e5e7eb; /* gray-200 */
-  --brand-btn-secondary-hover: #d1d5db; /* gray-300 */
-  --brand-btn-danger: #dc2626; /* red-600 */
-  --brand-btn-danger-hover: #b91c1c; /* red-700 */
+  /* ==========================================================================
+     BACKGROUNDS
+     ========================================================================== */
+  --color-bg-base: #ffffff;           /* Main content area */
+  --color-bg-muted: #f3f4f6;          /* Sidebar, secondary areas (gray-100) */
+  --color-bg-subtle: #f9fafb;         /* Hover states, highlights (gray-50) */
+  --color-bg-elevated: #ffffff;       /* Modals, popovers, dropdowns */
+  --color-bg-inset: #f3f4f6;          /* Inputs, code blocks (gray-100) */
+  --color-bg-overlay: rgba(0, 0, 0, 0.5); /* Backdrop overlay */
+
+  /* ==========================================================================
+     BORDERS
+     ========================================================================== */
+  --color-border: #e5e7eb;            /* Default borders (gray-200) */
+  --color-border-muted: #f3f4f6;      /* Subtle borders (gray-100) */
+  --color-border-strong: #d1d5db;     /* Emphasized borders (gray-300) */
+  --color-border-focus: #9ca3af;      /* Focus state borders (gray-400) */
+
+  /* ==========================================================================
+     TEXT
+     ========================================================================== */
+  --color-text-base: #111827;         /* Primary body text (gray-900) */
+  --color-text-muted: #6b7280;        /* Secondary text (gray-500) */
+  --color-text-subtle: #9ca3af;       /* Tertiary/disabled text (gray-400) */
+  --color-text-inverted: #ffffff;     /* Text on dark backgrounds */
+  /* Brand text colors (for branded headings) */
+  --color-text-brand: #40001B;        /* Brand primary text */
+  --color-text-brand-muted: #5A0026;  /* Brand secondary text */
+
+  /* ==========================================================================
+     INTERACTIVE / HOVER STATES
+     ========================================================================== */
+  --color-hover: #f3f4f6;             /* Hover background (gray-100) */
+  --color-hover-strong: #e5e7eb;      /* Strong hover (gray-200) */
+  --color-active: #e5e7eb;            /* Active/pressed state (gray-200) */
+  --color-selected: #f3f4f6;          /* Selected item background */
+
+  /* ==========================================================================
+     ACCENT / BRAND COLORS
+     ========================================================================== */
+  --color-accent: #FF6000;            /* Primary accent (orange) */
+  --color-accent-hover: #E55500;      /* Accent hover state */
+  --color-accent-muted: rgba(255, 96, 0, 0.1); /* Accent with opacity */
+
+  /* Brand gradient (for primary buttons) */
+  --color-gradient-from: #8B2942;
+  --color-gradient-to: #FF6000;
+  --color-gradient-from-hover: #A03350;
+  --color-gradient-to-hover: #E55500;
+
+  /* Secondary brand color (burgundy) */
+  --color-secondary: #40001B;
+  --color-secondary-light: #5A0026;
+
+  /* Surface color for opacity overlays */
+  --color-surface: #40001B;
+
+  /* ==========================================================================
+     BUTTONS
+     ========================================================================== */
+  --color-btn-secondary: #e5e7eb;       /* gray-200 */
+  --color-btn-secondary-hover: #d1d5db; /* gray-300 */
+  --color-btn-danger: #dc2626;          /* red-600 */
+  --color-btn-danger-hover: #b91c1c;    /* red-700 */
+  --color-btn-disabled: #9ca3af;        /* gray-400 */
+
+  /* ==========================================================================
+     FEEDBACK / SEMANTIC STATES
+     ========================================================================== */
+  --color-success: #16a34a;           /* green-600 */
+  --color-success-muted: #dcfce7;     /* green-100 */
+  --color-error: #dc2626;             /* red-600 */
+  --color-error-muted: #fef2f2;       /* red-50 */
+  --color-warning: #ca8a04;           /* yellow-600 */
+  --color-warning-muted: #fefce8;     /* yellow-50 */
+
+  /* ==========================================================================
+     SKELETON / LOADING
+     ========================================================================== */
+  --color-skeleton: #d1d5db;          /* gray-300 */
+
+  /* ==========================================================================
+     SCROLLBARS
+     ========================================================================== */
+  --color-scrollbar: #d1d5db;         /* gray-300 - default scrollbar thumb */
+  --color-scrollbar-hover: #9ca3af;   /* gray-400 - scrollbar thumb hover */
+  --color-scrollbar-code: #9ca3af;    /* gray-400 - code block scrollbar */
+  --color-scrollbar-code-hover: #6b7280; /* gray-500 */
+
+  /* ==========================================================================
+     SELECTION
+     ========================================================================== */
+  --color-selection-bg: rgba(64, 0, 27, 0.2);
+  --color-selection-text: #40001B;
+
+  /* ==========================================================================
+     LINKS
+     ========================================================================== */
+  --color-link-hover: #FF8533;        /* Brighter orange on hover */
+
+  /* ==========================================================================
+     CALLOUTS
+     ========================================================================== */
+  --color-callout-info-bg: #eff6ff;   /* blue-50 */
+  --color-callout-info-border: #93c5fd; /* blue-300 */
+  --color-callout-info-text: #1e40af; /* blue-800 */
 }
 
-/* Dark theme values - same classes, different colors */
+/* Dark theme - same semantic tokens, different values */
 .dark {
-  --brand-accent: #D4601A;
-  --brand-accent-hover: #C05515;
-  --brand-secondary: #5A0026;
-  --brand-secondary-light: #70002F;
-  /* Richer gradient for dark theme */
-  --brand-gradient-from: #5A0026;
-  --brand-gradient-to: #D4601A;
-  --brand-gradient-from-hover: #70002F;
-  --brand-gradient-to-hover: #C05515;
-  /* Primary text color - light gray for dark theme */
-  --brand-text-primary: #f3f4f6;
-  --brand-text-secondary: #e5e7eb;
-  --brand-text-muted: #9ca3af;
-  /* Surface color for backgrounds with opacity - light gray for dark theme */
-  --brand-surface: #9ca3af;
-  /* Button colors - dark theme */
-  --brand-btn-secondary: #374151; /* gray-700 */
-  --brand-btn-secondary-hover: #4b5563; /* gray-600 */
-  --brand-btn-danger: #7f1d1d; /* red-900 - muted for dark theme */
-  --brand-btn-danger-hover: #991b1b; /* red-800 */
+  /* ==========================================================================
+     BACKGROUNDS
+     ========================================================================== */
+  --color-bg-base: #1a1f2e;           /* Main content area (custom blue-gray) */
+  --color-bg-muted: #12161f;          /* Sidebar, secondary areas (darker blue-gray) */
+  --color-bg-subtle: #1f2937;         /* Hover states, highlights (gray-800) */
+  --color-bg-elevated: #1f2937;       /* Modals, popovers, dropdowns (gray-800) */
+  --color-bg-inset: #111827;          /* Inputs, code blocks (gray-900) */
+  --color-bg-overlay: rgba(0, 0, 0, 0.7); /* Backdrop overlay */
+
+  /* ==========================================================================
+     BORDERS
+     ========================================================================== */
+  --color-border: #374151;            /* Default borders (gray-700) */
+  --color-border-muted: #1f2937;      /* Subtle borders (gray-800) */
+  --color-border-strong: #4b5563;     /* Emphasized borders (gray-600) */
+  --color-border-focus: #6b7280;      /* Focus state borders (gray-500) */
+
+  /* ==========================================================================
+     TEXT
+     ========================================================================== */
+  --color-text-base: #f3f4f6;         /* Primary body text (gray-100) */
+  --color-text-muted: #9ca3af;        /* Secondary text (gray-400) */
+  --color-text-subtle: #6b7280;       /* Tertiary/disabled text (gray-500) */
+  --color-text-inverted: #111827;     /* Text on light backgrounds */
+  /* Brand text colors (for branded headings) */
+  --color-text-brand: #f3f4f6;        /* Brand primary text (same as base in dark) */
+  --color-text-brand-muted: #e5e7eb;  /* Brand secondary text */
+
+  /* ==========================================================================
+     INTERACTIVE / HOVER STATES
+     ========================================================================== */
+  --color-hover: #1f2937;             /* Hover background (gray-800) */
+  --color-hover-strong: #374151;      /* Strong hover (gray-700) */
+  --color-active: #374151;            /* Active/pressed state (gray-700) */
+  --color-selected: #1f2937;          /* Selected item background */
+
+  /* ==========================================================================
+     ACCENT / BRAND COLORS
+     ========================================================================== */
+  --color-accent: #D4601A;            /* Primary accent (orange - slightly muted) */
+  --color-accent-hover: #C05515;      /* Accent hover state */
+  --color-accent-muted: rgba(212, 96, 26, 0.15); /* Accent with opacity */
+
+  /* Brand gradient (for primary buttons) */
+  --color-gradient-from: #5A0026;
+  --color-gradient-to: #D4601A;
+  --color-gradient-from-hover: #70002F;
+  --color-gradient-to-hover: #C05515;
+
+  /* Secondary brand color (burgundy) */
+  --color-secondary: #5A0026;
+  --color-secondary-light: #70002F;
+
+  /* Surface color for opacity overlays */
+  --color-surface: #9ca3af;
+
+  /* ==========================================================================
+     BUTTONS
+     ========================================================================== */
+  --color-btn-secondary: #374151;       /* gray-700 */
+  --color-btn-secondary-hover: #4b5563; /* gray-600 */
+  --color-btn-danger: #7f1d1d;          /* red-900 */
+  --color-btn-danger-hover: #991b1b;    /* red-800 */
+  --color-btn-disabled: #4b5563;        /* gray-600 */
+
+  /* ==========================================================================
+     FEEDBACK / SEMANTIC STATES
+     ========================================================================== */
+  --color-success: #22c55e;           /* green-500 */
+  --color-success-muted: rgba(34, 197, 94, 0.15);
+  --color-error: #ef4444;             /* red-500 */
+  --color-error-muted: rgba(239, 68, 68, 0.15);
+  --color-warning: #eab308;           /* yellow-500 */
+  --color-warning-muted: rgba(234, 179, 8, 0.15);
+
+  /* ==========================================================================
+     SKELETON / LOADING
+     ========================================================================== */
+  --color-skeleton: #374151;          /* gray-700 */
+
+  /* ==========================================================================
+     SCROLLBARS
+     ========================================================================== */
+  --color-scrollbar: #4b5563;         /* gray-600 - default scrollbar thumb */
+  --color-scrollbar-hover: #6b7280;   /* gray-500 - scrollbar thumb hover */
+  --color-scrollbar-code: #374151;    /* gray-700 - code block scrollbar */
+  --color-scrollbar-code-hover: #4b5563; /* gray-600 */
+
+  /* ==========================================================================
+     SELECTION
+     ========================================================================== */
+  --color-selection-bg: rgba(212, 96, 26, 0.3);
+  --color-selection-text: #f3f4f6;
+
+  /* ==========================================================================
+     LINKS
+     ========================================================================== */
+  --color-link-hover: #FF6000;        /* Brighter orange on hover in dark */
+
+  /* ==========================================================================
+     CALLOUTS
+     ========================================================================== */
+  --color-callout-info-bg: rgba(30, 58, 138, 0.15);
+  --color-callout-info-border: rgba(96, 165, 250, 0.3);
+  --color-callout-info-text: #93c5fd; /* blue-300 */
 }
 
-/* Register colors and fonts with Tailwind */
+/* Register semantic colors with Tailwind */
 @theme {
-  --color-accent: var(--brand-accent);
-  --color-accent-hover: var(--brand-accent-hover);
-  --color-secondary: var(--brand-secondary);
-  --color-secondary-light: var(--brand-secondary-light);
-  --color-gradient-from: var(--brand-gradient-from);
-  --color-gradient-to: var(--brand-gradient-to);
-  --color-gradient-from-hover: var(--brand-gradient-from-hover);
-  --color-gradient-to-hover: var(--brand-gradient-to-hover);
-  --color-text-primary: var(--brand-text-primary);
-  --color-text-secondary: var(--brand-text-secondary);
-  --color-text-muted: var(--brand-text-muted);
-  /* Burgundy base for opacity usage - light theme uses burgundy tint, dark uses gray */
-  --color-surface: var(--brand-surface);
-  /* Button colors */
-  --color-btn-secondary: var(--brand-btn-secondary);
-  --color-btn-secondary-hover: var(--brand-btn-secondary-hover);
-  --color-btn-danger: var(--brand-btn-danger);
-  --color-btn-danger-hover: var(--brand-btn-danger-hover);
+  /* Backgrounds */
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-muted: var(--color-bg-muted);
+  --color-bg-subtle: var(--color-bg-subtle);
+  --color-bg-elevated: var(--color-bg-elevated);
+  --color-bg-inset: var(--color-bg-inset);
+  --color-bg-overlay: var(--color-bg-overlay);
+
+  /* Borders */
+  --color-border: var(--color-border);
+  --color-border-muted: var(--color-border-muted);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-focus: var(--color-border-focus);
+
+  /* Text */
+  --color-text-base: var(--color-text-base);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-subtle: var(--color-text-subtle);
+  --color-text-inverted: var(--color-text-inverted);
+  --color-text-brand: var(--color-text-brand);
+  --color-text-brand-muted: var(--color-text-brand-muted);
+
+  /* Interactive states */
+  --color-hover: var(--color-hover);
+  --color-hover-strong: var(--color-hover-strong);
+  --color-active: var(--color-active);
+  --color-selected: var(--color-selected);
+
+  /* Accent / Brand */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-muted: var(--color-accent-muted);
+  --color-gradient-from: var(--color-gradient-from);
+  --color-gradient-to: var(--color-gradient-to);
+  --color-gradient-from-hover: var(--color-gradient-from-hover);
+  --color-gradient-to-hover: var(--color-gradient-to-hover);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-light: var(--color-secondary-light);
+  --color-surface: var(--color-surface);
+
+  /* Buttons */
+  --color-btn-secondary: var(--color-btn-secondary);
+  --color-btn-secondary-hover: var(--color-btn-secondary-hover);
+  --color-btn-danger: var(--color-btn-danger);
+  --color-btn-danger-hover: var(--color-btn-danger-hover);
+  --color-btn-disabled: var(--color-btn-disabled);
+
+  /* Feedback states */
+  --color-success: var(--color-success);
+  --color-success-muted: var(--color-success-muted);
+  --color-error: var(--color-error);
+  --color-error-muted: var(--color-error-muted);
+  --color-warning: var(--color-warning);
+  --color-warning-muted: var(--color-warning-muted);
+
+  /* Skeleton */
+  --color-skeleton: var(--color-skeleton);
+
+  /* Scrollbars */
+  --color-scrollbar: var(--color-scrollbar);
+  --color-scrollbar-hover: var(--color-scrollbar-hover);
+  --color-scrollbar-code: var(--color-scrollbar-code);
+  --color-scrollbar-code-hover: var(--color-scrollbar-code-hover);
+
+  /* Selection */
+  --color-selection-bg: var(--color-selection-bg);
+  --color-selection-text: var(--color-selection-text);
+
+  /* Links */
+  --color-link-hover: var(--color-link-hover);
+
+  /* Callouts */
+  --color-callout-info-bg: var(--color-callout-info-bg);
+  --color-callout-info-border: var(--color-callout-info-border);
+  --color-callout-info-text: var(--color-callout-info-text);
+
+  /* Legacy aliases for backwards compatibility */
+  --color-text-primary: var(--color-text-brand);
+  --color-text-secondary: var(--color-text-brand-muted);
+  --color-chat: var(--color-bg-base);
+  --color-sidebar: var(--color-bg-muted);
+
   /* Brand title font (Jost) */
   --font-title: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Custom text selection colors */
 ::selection {
-  background-color: rgba(64, 0, 27, 0.2);
-  color: #40001B;
-}
-
-.dark ::selection {
-  background-color: rgba(212, 96, 26, 0.3);
-  color: #f3f4f6;
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-text);
 }
 
 /* Ensure all interactive elements have pointer cursor */
@@ -98,19 +340,14 @@ input[type="button"] {
 /* Global link styles - uses brand accent color */
 /* Excludes nav links, sidebar links, .link-unstyled, and .link-muted which have their own styling */
 a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted) {
-  color: var(--brand-accent);
+  color: var(--color-accent);
   text-decoration: none;
   transition: color 0.15s ease, text-decoration 0.15s ease;
 }
 
 a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted):hover {
-  color: #FF8533; /* Brighter orange on hover */
+  color: var(--color-link-hover);
   text-decoration: underline;
-}
-
-.dark a:not(nav a):not(aside a):not(.link-unstyled):not(.link-muted):hover {
-  color: #FF6000; /* Brighter orange on hover in dark mode */
-  text-decoration: none;
 }
 
 /* Muted links - inherit text color, always underlined */
@@ -133,31 +370,24 @@ a.link-muted:hover {
 }
 
 /* Callout/notice boxes */
-.callout-warning {
-  background-color: #eff6ff; /* blue-50 */
-  border: 1px solid #93c5fd; /* blue-300 */
+.callout-info {
+  background-color: var(--color-callout-info-bg);
+  border: 1px solid var(--color-callout-info-border);
   border-radius: 0.5rem;
   padding: 1rem;
-  color: #1e40af; /* blue-800 */
+  color: var(--color-callout-info-text);
 }
 
-.dark .callout-warning {
-  background-color: rgba(30, 58, 138, 0.15); /* subtle blue tint */
-  border-color: rgba(96, 165, 250, 0.3); /* muted blue-400 */
-  color: #93c5fd; /* blue-300 */
-}
-
-.callout-warning a {
+.callout-info a {
   color: inherit;
   text-decoration: underline;
 }
 
-.callout-warning a:hover {
+.callout-info a:hover {
   opacity: 0.8;
 }
 
-/* Custom scrollbar for code blocks - Light theme */
-/* Uses Tailwind gray scale: gray-200 (#e5e7eb), gray-400 (#9ca3af), gray-500 (#6b7280) */
+/* Custom scrollbar for code blocks */
 .code-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -169,37 +399,21 @@ a.link-muted:hover {
 }
 
 .code-scrollbar::-webkit-scrollbar-thumb {
-  background: #9ca3af; /* gray-400 */
+  background: var(--color-scrollbar-code);
   border-radius: 4px;
 }
 
 .code-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
+  background: var(--color-scrollbar-code-hover);
 }
 
-/* Firefox scrollbar - Light theme */
+/* Firefox scrollbar */
 .code-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #9ca3af transparent; /* gray-400 */
-}
-
-/* Custom scrollbar for code blocks - Dark theme */
-/* Uses Tailwind gray scale: gray-950 (#030712), gray-700 (#374151), gray-600 (#4b5563) */
-.dark .code-scrollbar::-webkit-scrollbar-thumb {
-  background: #374151; /* gray-700 */
-}
-
-.dark .code-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #4b5563; /* gray-600 */
-}
-
-/* Firefox scrollbar - Dark theme */
-.dark .code-scrollbar {
-  scrollbar-color: #374151 transparent; /* gray-700 */
+  scrollbar-color: var(--color-scrollbar-code) transparent;
 }
 
 /* Sidebar scrollbar - subtle, only visible when needed */
-/* Light theme */
 .sidebar-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -209,36 +423,21 @@ a.link-muted:hover {
 }
 
 .sidebar-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db; /* gray-300 */
+  background: var(--color-scrollbar);
   border-radius: 3px;
 }
 
 .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af; /* gray-400 */
+  background: var(--color-scrollbar-hover);
 }
 
-/* Firefox scrollbar - Light theme */
+/* Firefox scrollbar */
 .sidebar-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent; /* gray-300 */
-}
-
-/* Sidebar scrollbar - Dark theme */
-.dark .sidebar-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563; /* gray-600 */
-}
-
-.dark .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
-}
-
-/* Firefox scrollbar - Dark theme */
-.dark .sidebar-scrollbar {
-  scrollbar-color: #4b5563 transparent; /* gray-600 */
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 /* Chat area scrollbar - subtle and consistent */
-/* Light theme */
 .chat-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
@@ -248,36 +447,21 @@ a.link-muted:hover {
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db; /* gray-300 */
+  background: var(--color-scrollbar);
   border-radius: 4px;
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af; /* gray-400 */
+  background: var(--color-scrollbar-hover);
 }
 
-/* Firefox scrollbar - Light theme */
+/* Firefox scrollbar */
 .chat-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent; /* gray-300 */
-}
-
-/* Chat area scrollbar - Dark theme */
-.dark .chat-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563; /* gray-600 */
-}
-
-.dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
-}
-
-/* Firefox scrollbar - Dark theme */
-.dark .chat-scrollbar {
-  scrollbar-color: #4b5563 transparent; /* gray-600 */
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 /* Input textarea scrollbar - minimal and subtle */
-/* Light theme */
 .input-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -287,40 +471,25 @@ a.link-muted:hover {
 }
 
 .input-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db; /* gray-300 */
+  background: var(--color-scrollbar);
   border-radius: 2px;
 }
 
 .input-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af; /* gray-400 */
+  background: var(--color-scrollbar-hover);
 }
 
-/* Firefox scrollbar - Light theme */
+/* Firefox scrollbar */
 .input-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
 
 .input-scrollbar:hover {
-  scrollbar-color: #d1d5db transparent; /* gray-300 */
-}
-
-/* Input textarea scrollbar - Dark theme */
-.dark .input-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563; /* gray-600 */
-}
-
-.dark .input-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
-}
-
-/* Firefox scrollbar - Dark theme */
-.dark .input-scrollbar:hover {
-  scrollbar-color: #4b5563 transparent; /* gray-600 */
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 /* Modal scrollbar - consistent with app styling */
-/* Light theme */
 .modal-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -330,30 +499,16 @@ a.link-muted:hover {
 }
 
 .modal-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db; /* gray-300 */
+  background: var(--color-scrollbar);
   border-radius: 3px;
 }
 
 .modal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af; /* gray-400 */
+  background: var(--color-scrollbar-hover);
 }
 
-/* Firefox scrollbar - Light theme */
+/* Firefox scrollbar */
 .modal-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent; /* gray-300 */
-}
-
-/* Modal scrollbar - Dark theme */
-.dark .modal-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563; /* gray-600 */
-}
-
-.dark .modal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
-}
-
-/* Firefox scrollbar - Dark theme */
-.dark .modal-scrollbar {
-  scrollbar-color: #4b5563 transparent; /* gray-600 */
+  scrollbar-color: var(--color-scrollbar) transparent;
 }

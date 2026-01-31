@@ -13,7 +13,7 @@ export default function AboutPage() {
 
           <div className="prose dark:prose-invert max-w-none">
             {/* Beta Warning */}
-            <div className="callout-warning mb-8">
+            <div className="callout-info mb-8">
               <p className="text-sm">
                 <strong>Beta Notice:</strong> Quily Chat is currently in beta. Responses may not always
                 be accurate. For critical technical information, always verify with the{' '}

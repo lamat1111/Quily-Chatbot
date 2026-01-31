@@ -14,7 +14,7 @@ import { SearchProvider } from '@/src/contexts/SearchContext';
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SearchProvider>
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex h-screen bg-bg-base">
         <Sidebar />
         {/* Main content area - pt-14 on mobile for fixed header, pt-0 on desktop */}
         <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">

@@ -200,7 +200,7 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
 
     return (
       <div key={title}>
-        <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide px-3 py-2 font-medium">
+        <div className="text-xs text-text-muted uppercase tracking-wide px-3 py-2 font-medium">
           {title}
         </div>
         {items.map((conv, idx) => {
@@ -217,16 +217,16 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
                 transition-colors rounded-md mx-1
                 ${
                   isSelected
-                    ? 'bg-gray-100 dark:bg-gray-700/50 ring-1 ring-accent/50'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/30'
+                    ? 'bg-selected ring-1 ring-accent/50'
+                    : 'hover:bg-hover'
                 }
               `}
             >
-              <Icon name="message-square" size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="flex-1 truncate text-sm text-gray-900 dark:text-gray-100">
+              <Icon name="message-square" size={16} className="text-text-subtle flex-shrink-0" />
+              <span className="flex-1 truncate text-sm text-text-base">
                 {conv.title}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+              <span className="text-xs text-text-muted flex-shrink-0">
                 {formatRelativeTime(conv.updatedAt)}
               </span>
             </button>
@@ -251,7 +251,7 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[60] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content
-          className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-lg bg-white dark:bg-gray-900 rounded-lg shadow-xl z-[60] focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 border border-gray-200 dark:border-gray-700"
+          className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-lg bg-bg-elevated rounded-lg shadow-xl z-[60] focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 border border-border"
           onKeyDown={handleKeyDown}
         >
           <Dialog.Title className="sr-only">Search conversations</Dialog.Title>
@@ -260,23 +260,23 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
           </Dialog.Description>
 
           {/* Search input */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <Icon name="search" size={18} className="text-gray-400" />
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+            <Icon name="search" size={18} className="text-text-subtle" />
             <input
               ref={inputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search conversations..."
-              className="flex-1 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none"
+              className="flex-1 bg-transparent text-sm text-text-base placeholder-text-subtle focus:outline-none"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
+                className="p-1 hover:bg-hover rounded cursor-pointer"
                 aria-label="Clear search"
               >
-                <Icon name="x" size={16} className="text-gray-400" />
+                <Icon name="x" size={16} className="text-text-subtle" />
               </button>
             )}
           </div>
@@ -287,7 +287,7 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
             className="max-h-[50vh] overflow-y-auto p-2 modal-scrollbar"
           >
             {flatResults.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-center py-8 text-sm text-text-muted">
                 {debouncedQuery ? 'No results found' : 'No conversations yet'}
               </div>
             ) : (

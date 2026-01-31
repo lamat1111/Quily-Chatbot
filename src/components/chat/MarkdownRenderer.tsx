@@ -31,7 +31,7 @@ const CodeBlock = memo(function CodeBlock({
   isDark: boolean;
 }) {
   return (
-    <div className="group relative my-4 rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden">
+    <div className="group relative my-4 rounded-lg border border-border overflow-hidden">
       <CopyButton
         text={code}
         size="sm"
@@ -138,7 +138,7 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
         // Inline code - theme-aware background
         return (
           <code
-            className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono"
+            className="bg-bg-inset px-1.5 py-0.5 rounded text-sm font-mono"
             {...props}
           >
             {children}
@@ -195,7 +195,7 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
 
       blockquote({ children }) {
         return (
-          <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 my-4 italic text-gray-500 dark:text-gray-400">
+          <blockquote className="border-l-4 border-border-strong pl-4 my-4 italic text-text-muted">
             {children}
           </blockquote>
         );
@@ -204,7 +204,7 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
       table({ children }) {
         return (
           <div className="overflow-x-auto my-4">
-            <table className="min-w-full border-collapse border border-gray-300 dark:border-gray-600">
+            <table className="min-w-full border-collapse border border-border">
               {children}
             </table>
           </div>
@@ -213,7 +213,7 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
 
       th({ children }) {
         return (
-          <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 bg-gray-100 dark:bg-gray-700 font-semibold text-left">
+          <th className="border border-border px-4 py-2 bg-bg-subtle font-semibold text-left">
             {children}
           </th>
         );
@@ -221,14 +221,14 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
 
       td({ children }) {
         return (
-          <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
+          <td className="border border-border px-4 py-2">
             {children}
           </td>
         );
       },
 
       hr() {
-        return <hr className="my-6 border-gray-300 dark:border-gray-600" />;
+        return <hr className="my-6 border-border" />;
       },
     }),
     [isDark]

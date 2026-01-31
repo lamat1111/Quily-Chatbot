@@ -98,9 +98,9 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
     return (
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900 chat-scrollbar"
+        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-bg-base chat-scrollbar"
       >
-        <div className="text-center text-gray-500 dark:text-gray-400 max-w-md">
+        <div className="text-center text-text-muted max-w-md">
           <p className="text-3xl font-semibold mb-2 text-text-primary font-title">
             Quily Chat
             <sup className="ml-1 text-xs font-medium text-accent font-sans">beta</sup>
@@ -114,7 +114,7 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
                 <button
                   key={action.command}
                   onClick={() => onQuickAction(action.command)}
-                  className="px-4 py-2 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 transition-colors text-text-secondary cursor-pointer"
+                  className="px-4 py-2 text-sm rounded-full border border-border hover:bg-hover hover:border-border-strong transition-colors text-text-muted cursor-pointer"
                   title={action.description}
                 >
                   {action.label}
@@ -130,7 +130,7 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
   return (
     <div
       ref={scrollRef}
-      className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900 chat-scrollbar"
+      className="flex-1 overflow-y-auto p-4 bg-bg-base chat-scrollbar"
     >
       <div className="max-w-3xl mx-auto">
         {messages.map((message, index) => (

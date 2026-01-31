@@ -11,7 +11,7 @@ export function Skeleton({ className = '' }: SkeletonProps) {
     <div
       role="status"
       aria-label="Loading"
-      className={`animate-pulse bg-gray-300 dark:bg-gray-700 rounded ${className}`}
+      className={`animate-pulse bg-skeleton rounded ${className}`}
     >
       <span className="sr-only">Loading...</span>
     </div>
@@ -77,7 +77,7 @@ export function ConversationListSkeleton() {
  */
 export function ChatSkeleton() {
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="flex-1 flex flex-col bg-bg-base">
       {/* Welcome area skeleton - centered like the actual empty state */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
@@ -95,7 +95,7 @@ export function ChatSkeleton() {
       </div>
 
       {/* Input area skeleton */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+      <div className="border-t border-border p-4">
         <div className="max-w-3xl mx-auto">
           <Skeleton className="h-12 w-full rounded-xl" />
         </div>

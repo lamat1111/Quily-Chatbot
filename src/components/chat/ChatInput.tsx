@@ -69,7 +69,7 @@ export function ChatInput({
       : 'Ask a question about Quilibrium...';
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 p-2 sm:p-4">
+    <div className="bg-bg-base p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
         <div className="flex gap-2 sm:gap-3 items-end mb-2">
           <textarea
@@ -80,11 +80,11 @@ export function ChatInput({
             placeholder={placeholderText}
             disabled={disabled || isStreaming}
             rows={1}
-            className="flex-1 min-w-0 resize-none rounded-xl border border-gray-300 dark:border-gray-600
-                       bg-surface/5 dark:bg-surface/10 px-3 sm:px-4 py-3 text-text-primary
-                       placeholder-gray-400
-                       focus:outline-none focus:border-gray-400 dark:focus:border-gray-500
-                       disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50
+            className="flex-1 min-w-0 resize-none rounded-xl border border-border
+                       bg-bg-inset px-3 sm:px-4 py-3 text-text-base
+                       placeholder-text-subtle
+                       focus:outline-none focus:border-border-focus
+                       disabled:bg-bg-subtle disabled:cursor-not-allowed disabled:opacity-50
                        min-h-12 max-h-48 overflow-hidden input-scrollbar"
           />
 
@@ -112,7 +112,7 @@ export function ChatInput({
               type="submit"
               disabled={disabled || !input.trim()}
               className="flex-shrink-0 p-3 h-12 w-12 rounded-xl cursor-pointer
-                         bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-600
+                         bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover disabled:bg-btn-disabled disabled:from-btn-disabled disabled:to-btn-disabled
                          text-white font-medium transition-colors
                          focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
                          disabled:cursor-not-allowed flex items-center justify-center"
@@ -134,7 +134,7 @@ export function ChatInput({
             </button>
           )}
         </div>
-        <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-2">
+        <p className="text-xs text-center text-text-subtle mt-2">
           Quily can make mistakes. Verify important info with{' '}
           <a
             href="https://docs.quilibrium.com"
@@ -146,7 +146,7 @@ export function ChatInput({
           </a>
           .
         </p>
-        <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-1">
+        <p className="text-xs text-center text-text-subtle mt-1">
           This app is unofficial and not endorsed by Quilibrium Inc.
         </p>
       </form>

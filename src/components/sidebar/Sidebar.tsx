@@ -55,7 +55,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile header bar - takes space in layout, doesn't overlap content */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-bg-muted flex items-center px-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 cursor-pointer text-text-primary rounded-lg hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
@@ -86,8 +86,7 @@ export function Sidebar() {
         className={`
           fixed lg:static inset-y-0 left-0 z-40
           w-72
-          bg-white dark:bg-gray-800
-          border-r border-gray-200 dark:border-gray-700
+          bg-bg-muted
           flex flex-col
           transform transition-transform duration-200 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -103,7 +102,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation items */}
-        <nav className="px-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+        <nav className="px-2 pb-2">
           {/* New Chat - always visible, accent colored */}
           <button
             onClick={handleNewChat}
@@ -128,8 +127,8 @@ export function Sidebar() {
             className="
               w-full px-3 py-2
               text-sm
-              text-gray-500 dark:text-gray-400
-              hover:text-text-primary
+              text-text-muted
+              hover:text-text-brand
               hover:bg-surface/10 dark:hover:bg-surface/15
               rounded-lg
               transition-colors
@@ -154,9 +153,9 @@ export function Sidebar() {
               className="
                 w-full px-3 py-2
                 text-sm
-                text-gray-500 dark:text-gray-400
-                hover:text-text-primary
-                hover:bg-surface/10 dark:hover:bg-surface/15
+                text-text-muted
+                hover:text-text-brand
+                hover:bg-hover
                 rounded-lg
                 transition-colors
                 flex items-center gap-3
@@ -172,9 +171,9 @@ export function Sidebar() {
               className="
                 w-full px-3 py-2
                 text-sm
-                text-gray-500 dark:text-gray-400
-                hover:text-text-primary
-                hover:bg-surface/10 dark:hover:bg-surface/15
+                text-text-muted
+                hover:text-text-brand
+                hover:bg-hover
                 rounded-lg
                 transition-colors
                 flex items-center gap-3
@@ -193,13 +192,13 @@ export function Sidebar() {
         />
 
         {/* Settings at bottom - fixed */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4">
           <Link
             href="/settings"
             onClick={() => setSidebarOpen(false)}
             className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
-              text-text-secondary
-              hover:bg-surface/10 dark:hover:bg-surface/15
+              text-text-muted
+              hover:bg-hover
               transition-colors text-left"
           >
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
@@ -208,7 +207,7 @@ export function Sidebar() {
                 ? (chutesUser.username || chutesUser.name || chutesUser.email || 'Settings')
                 : 'Settings'}
             </span>
-            <Icon name="settings" size={16} className="text-gray-400" />
+            <Icon name="settings" size={16} className="text-text-subtle" />
           </Link>
         </div>
       </aside>

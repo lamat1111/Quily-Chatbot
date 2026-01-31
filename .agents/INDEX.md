@@ -13,9 +13,8 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Implement AI-Powered Chat Renaming Feature](tasks/ai-chat-renaming-feature.md)
-- [Implement Conversation Search Modal](tasks/conversation-search-modal.md)
 - [Implement Data Export/Import Feature](tasks/data-export-import-feature.md)
-- [Starred Chats and Chat Management UI](tasks/starred-chats-management-ui.md)
+- [User Profile Customization (Username & Avatar)](tasks/user-profile-customization.md)
 
 ### .Archived
 - [Implement Jina Reranker as Free Alternative to Cohere](tasks/.archived/implement-jina-reranker.md)
@@ -24,9 +23,11 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Add External Chutes API Key Option](tasks/.done/external-chutes-api-key-option.md)
 - [Convert Settings Modal to Standalone Settings Page](tasks/.done/convert-settings-modal-to-page.md)
+- [Implement Conversation Search Modal](tasks/.done/conversation-search-modal.md)
 - [Implement Dual Embedding Storage for OpenRouter and Chutes Providers](tasks/.done/dual-embedding-storage-openrouter-chutes.md)
 - [Implement Insufficient Credits Detection for Chutes and OpenRouter](tasks/.done/insufficient-credits-detection.md)
 - [Research: Consolidate to Single BGE-M3 Embedding Model](tasks/.done/research-unified-bge-m3-embedding.md)
+- [Starred Chats and Chat Management UI](tasks/.done/starred-chats-management-ui.md)
 
 ## 📊 Reports
 
@@ -39,4 +40,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-30 16:30:00
+**Last Updated**: 2026-01-31 15:23:18

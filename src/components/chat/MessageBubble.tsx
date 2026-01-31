@@ -89,7 +89,7 @@ export const MessageBubble = memo(function MessageBubble({
 
       {/* Footer with copy button and disclaimer - only show after streaming completes */}
       {!isStreaming && (
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
           {textContent && (
             <CopyButton
               text={textContent}
@@ -97,7 +97,7 @@ export const MessageBubble = memo(function MessageBubble({
               variant="minimal"
             />
           )}
-          <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <p className="flex items-center gap-2 text-sm text-text-muted">
             <Icon name="alert-circle" size={16} className="shrink-0" />
             <span>
               Always verify with{' '}
