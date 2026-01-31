@@ -109,7 +109,11 @@ function ConversationItem({
             "
           />
         ) : (
-          <p className="text-sm font-medium text-text-primary truncate">
+          <p
+            className={`text-sm font-medium truncate ${
+              isActive ? 'text-text-primary' : 'text-text-muted'
+            }`}
+          >
             {truncateTitle(conversation.title)}
           </p>
         )}
