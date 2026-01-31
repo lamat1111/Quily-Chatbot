@@ -17,7 +17,10 @@ function truncateTitle(title: string, maxLength: number = 30): string {
 
 interface ConversationListProps {
   onNavigate?: () => void;
-  onScroll?: (scrollTop: number) => void;
+  /** Secondary nav items (About, Links) rendered at top of scroll area */
+  secondaryNav?: React.ReactNode;
+  /** Callback when secondary nav scrolls out of view */
+  onSecondaryNavHidden?: (hidden: boolean) => void;
 }
 
 interface ConversationItemProps {
@@ -221,7 +224,7 @@ function ConversationItem({
  * Waits for hydration before rendering to prevent SSR mismatch.
  * New Chat button and Settings are handled by parent Sidebar component.
  */
-export function ConversationList({ onNavigate, onScroll }: ConversationListProps = {}) {
+export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidden }: ConversationListProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const conversations = useConversationStore((s) => s.conversations);
@@ -238,6 +241,32 @@ export function ConversationList({ onNavigate, onScroll }: ConversationListProps
   // State for collapsible sections
   const [starredCollapsed, setStarredCollapsed] = useState(false);
   const [recentsCollapsed, setRecentsCollapsed] = useState(false);
+
+  // Refs for scroll tracking
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const secondaryNavRef = useRef<HTMLDivElement>(null);
+
+  // Track when secondary nav scrolls out of view
+  useEffect(() => {
+    if (!secondaryNav || !onSecondaryNavHidden) return;
+
+    const scrollContainer = scrollContainerRef.current;
+    const secondaryNavEl = secondaryNavRef.current;
+    if (!scrollContainer || !secondaryNavEl) return;
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      // Show separator as soon as user starts scrolling (threshold of 8px)
+      const isHidden = scrollTop > 8;
+      onSecondaryNavHidden(isHidden);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial check
+    handleScroll();
+
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [secondaryNav, onSecondaryNavHidden]);
 
   // Show skeleton while hydrating
   if (!hasHydrated) {
@@ -289,9 +318,21 @@ export function ConversationList({ onNavigate, onScroll }: ConversationListProps
   return (
     <>
       <div
-        className="flex-1 overflow-y-auto p-2 space-y-1 sidebar-scrollbar"
-        onScroll={(e) => onScroll?.(e.currentTarget.scrollTop)}
+        ref={scrollContainerRef}
+        className="flex-1 min-h-0 overflow-y-auto px-2 pb-2 space-y-1 sidebar-scrollbar"
       >
+        {/* Secondary nav items scroll away naturally under the fixed nav */}
+        {secondaryNav && (
+          <div ref={secondaryNavRef}>
+            {secondaryNav}
+          </div>
+        )}
+
+        {/* Separator between nav items and conversations */}
+        {secondaryNav && sortedConversations.length > 0 && (
+          <div className="border-b border-surface/15 dark:border-surface/20 my-2 -mx-2" />
+        )}
+
         {sortedConversations.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
             No conversations yet
