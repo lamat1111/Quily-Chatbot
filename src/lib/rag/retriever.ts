@@ -10,6 +10,86 @@ import type { RetrievedChunk, RetrievalOptions } from './types';
 const UNIFIED_EMBEDDING_MODEL = 'baai/bge-m3';
 const CHUTES_EMBEDDING_MODEL_SLUG = 'chutes-baai-bge-m3';
 
+// Temporal keywords that indicate the user wants recent content
+// Includes translations for major languages to support multilingual queries
+const TEMPORAL_KEYWORDS = [
+  // English
+  'last', 'latest', 'recent', 'newest', 'most recent', 'previous',
+  // Chinese (Simplified & Traditional)
+  '最近', '最新', '上一次', '最後', '最后', '近期', '之前',
+  // Spanish
+  'último', 'última', 'reciente', 'más reciente', 'anterior',
+  // French
+  'dernier', 'dernière', 'récent', 'récente', 'plus récent', 'précédent',
+  // German
+  'letzte', 'letzten', 'neueste', 'aktuell', 'kürzlich', 'vorherige',
+  // Portuguese
+  'último', 'última', 'recente', 'mais recente', 'anterior',
+  // Italian
+  'ultimo', 'ultima', 'recente', 'più recente', 'precedente',
+  // Russian
+  'последний', 'последняя', 'недавний', 'новейший', 'предыдущий',
+  // Japanese
+  '最近', '最新', '前回', '直近',
+  // Korean
+  '최근', '최신', '마지막', '이전',
+  // Arabic
+  'الأخير', 'الأحدث', 'الأخيرة',
+  // Hindi
+  'पिछला', 'हाल', 'नवीनतम',
+];
+
+/**
+ * Check if query contains temporal keywords indicating recency intent
+ */
+function isTemporalQuery(query: string): boolean {
+  const lowerQuery = query.toLowerCase();
+  return TEMPORAL_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
+}
+
+/**
+ * Fetch the most recent document chunks by publication date
+ * Used to augment vector search for temporal queries
+ * Returns chunks from unique source files (most recent documents)
+ */
+async function fetchRecentChunks(limit: number = 3): Promise<{
+  id: number;
+  content: string;
+  source_file: string;
+  heading_path: string | null;
+  source_url: string | null;
+  published_date: string | null;
+  title: string | null;
+  doc_type: string | null;
+  similarity: number;
+}[]> {
+  const { data, error } = await supabase
+    .from('document_chunks_chutes')
+    .select('id, content, source_file, heading_path, source_url, published_date, title, doc_type')
+    .not('published_date', 'is', null)
+    .order('published_date', { ascending: false })
+    .limit(limit * 5); // Fetch more to get unique source files
+
+  if (error || !data) {
+    console.warn('Failed to fetch recent chunks:', error?.message);
+    return [];
+  }
+
+  // Deduplicate by source_file, keeping the first chunk from each unique document
+  const seen = new Set<string>();
+  const unique = data.filter(chunk => {
+    if (seen.has(chunk.source_file)) return false;
+    seen.add(chunk.source_file);
+    return true;
+  }).slice(0, limit);
+
+  // Add a synthetic similarity score (high since we're explicitly fetching for recency)
+  return unique.map(chunk => ({
+    ...chunk,
+    similarity: 0.6, // Synthetic score to indicate relevance
+  }));
+}
+
 // Chutes API response type
 interface ChutesEmbeddingResponse {
   data: Array<{
@@ -104,7 +184,7 @@ export async function retrieveWithReranking(
   const rpcFunction = 'match_document_chunks_chutes';
 
   // Call Supabase RPC for similarity search
-  const { data: candidates, error } = await supabase.rpc(rpcFunction, {
+  const { data: vectorCandidates, error } = await supabase.rpc(rpcFunction, {
     query_embedding: embedding,
     match_threshold: similarityThreshold,
     match_count: initialCount,
@@ -114,7 +194,23 @@ export async function retrieveWithReranking(
     throw new Error(`Supabase RPC error: ${error.message}`);
   }
 
-  if (!candidates || candidates.length === 0) {
+  // For temporal queries, augment with recent content by date
+  // This ensures "last/recent/latest" queries include actually recent documents
+  // regardless of how the user phrases their request (works for any language)
+  let candidates = vectorCandidates || [];
+
+  if (isTemporalQuery(query)) {
+    const recentChunks = await fetchRecentChunks(3);
+
+    // Merge recent chunks with vector results, avoiding duplicates
+    const existingIds = new Set(candidates.map((c: { id: number }) => c.id));
+    const newChunks = recentChunks.filter(c => !existingIds.has(c.id));
+
+    // Prepend recent chunks so they're prioritized
+    candidates = [...newChunks, ...candidates];
+  }
+
+  if (candidates.length === 0) {
     return [];
   }
 

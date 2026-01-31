@@ -12,28 +12,76 @@ interface SourcesCitationProps {
   sources: Source[];
 }
 
-/**
- * Determine the source type based on URL
- */
-function getSourceType(url: string | null): 'video' | 'docs' | 'internal' {
-  if (!url) return 'internal';
-  if (url.includes('youtube.com') || url.includes('youtu.be')) return 'video';
-  if (url.includes('docs.quilibrium.com')) return 'docs';
-  return 'internal';
+interface ParsedSource {
+  title: string;
+  docType: string | null;
+  publishedDate: string | null;
 }
 
 /**
- * Get display label for source type
+ * Parse the title field which contains encoded metadata
+ * Format: "Title|doc_type|published_date" (pipe-separated)
  */
-function getSourceLabel(type: 'video' | 'docs' | 'internal'): string {
-  switch (type) {
-    case 'video':
-      return 'video';
-    case 'docs':
-      return 'official docs';
-    case 'internal':
-      return 'internal';
+function parseSourceTitle(title: string | undefined): ParsedSource {
+  if (!title) {
+    return { title: 'Unknown source', docType: null, publishedDate: null };
   }
+  const parts = title.split('|');
+  return {
+    title: parts[0] || 'Unknown source',
+    docType: parts[1] || null,
+    publishedDate: parts[2] || null,
+  };
+}
+
+/**
+ * Format date string for display: '2026-01-21' -> 'Jan 21, 2026'
+ */
+function formatDate(dateStr: string | null): string | null {
+  if (!dateStr) return null;
+  const date = new Date(dateStr + 'T00:00:00');
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Get display label for source based on metadata
+ */
+function getSourceLabel(
+  url: string | null,
+  docType: string | null,
+  publishedDate: string | null
+): string {
+  const parts: string[] = [];
+
+  // Determine type label
+  if (docType === 'livestream_transcript') {
+    // For livestreams, type is shown in title as "Livestream"
+    // So just show the date
+  } else if (docType) {
+    // Format doc_type for display: 'some_type' -> 'Some Type'
+    const typeLabel = docType
+      .replace(/_transcript$/, '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    parts.push(typeLabel);
+  } else if (url?.includes('docs.quilibrium.com')) {
+    parts.push('Official Docs');
+  } else if (url?.includes('youtube.com') || url?.includes('youtu.be')) {
+    // Fallback for videos without doc_type
+    parts.push('Video');
+  }
+
+  // Add formatted date if available
+  const formattedDate = formatDate(publishedDate);
+  if (formattedDate) {
+    parts.push(formattedDate);
+  }
+
+  return parts.length > 0 ? parts.join(', ') : 'internal';
 }
 
 /**
@@ -75,9 +123,14 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
       {expanded && (
         <ul className="mt-2 space-y-1 pl-1">
           {sources.map((source, index) => {
-            const sourceType = getSourceType(source.url);
-            const sourceLabel = getSourceLabel(sourceType);
+            const parsed = parseSourceTitle(source.title);
+            const sourceLabel = getSourceLabel(source.url, parsed.docType, parsed.publishedDate);
             const hasLink = source.url && source.url.length > 0;
+
+            // For livestreams, display as "Livestream" link
+            const displayTitle = parsed.docType === 'livestream_transcript'
+              ? 'Livestream'
+              : parsed.title;
 
             return (
               <li key={source.sourceId || index}>
@@ -92,11 +145,13 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                       [{index + 1}]
                     </span>
                     <span className="truncate max-w-md">
-                      {source.title || source.url}
+                      {displayTitle}
                     </span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500 italic shrink-0">
-                      ({sourceLabel})
-                    </span>
+                    {sourceLabel && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic shrink-0">
+                        ({sourceLabel})
+                      </span>
+                    )}
                     <svg
                       className="w-3 h-3 shrink-0"
                       fill="none"
@@ -117,11 +172,13 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                       [{index + 1}]
                     </span>
                     <span className="truncate max-w-md">
-                      {source.title || 'Local document'}
+                      {displayTitle}
                     </span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-                      ({sourceLabel})
-                    </span>
+                    {sourceLabel && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                        ({sourceLabel})
+                      </span>
+                    )}
                   </span>
                 )}
               </li>

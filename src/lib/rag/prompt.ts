@@ -161,6 +161,15 @@ Your knowledge is LIMITED to the documentation context provided below. This may 
 - Transcripts from official Quilibrium streams and communications
 - Other verified Quilibrium sources
 
+**Today's Date:** ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+
+**CRITICAL - Determining Recency:**
+When users ask about "the last", "most recent", or "latest" livestream/content:
+1. Look at ALL publication dates in the documentation context below
+2. The "last" or "most recent" is the one with the date CLOSEST TO (but not after) today's date
+3. A date like "Jan 21, 2026" is MORE RECENT than "Mar 10, 2025" because 2026 > 2025
+4. Do NOT assume the first source listed is the most recent - CHECK THE DATES
+
 **Product Note:**
 All S3 and KMS services are offered by **QConsole**, a product by Quilibrium Inc. that runs on the Quilibrium network.
 

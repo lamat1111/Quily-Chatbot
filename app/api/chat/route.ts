@@ -522,11 +522,18 @@ export async function POST(request: Request) {
         // Only write sources if we got actual content (not on error/empty response)
         if (!hadError) {
           for (const source of sources) {
+            // Encode metadata into title for client display
+            // Format: "Title|doc_type|published_date" (pipe-separated for parsing)
+            const titleWithMeta = [
+              source.title || source.heading || source.file,
+              source.doc_type || '',
+              source.published_date || '',
+            ].join('|');
             writer.write({
               type: 'source-url',
               sourceId: `source-${source.index}`,
               url: source.url ?? '',
-              title: source.heading || source.file,
+              title: titleWithMeta,
             });
           }
         }
@@ -539,11 +546,18 @@ export async function POST(request: Request) {
           },
           onFinish: () => {
             for (const source of sources) {
+              // Encode metadata into title for client display
+              // Format: "Title|doc_type|published_date" (pipe-separated for parsing)
+              const titleWithMeta = [
+                source.title || source.heading || source.file,
+                source.doc_type || '',
+                source.published_date || '',
+              ].join('|');
               writer.write({
                 type: 'source-url',
                 sourceId: `source-${source.index}`,
                 url: source.url ?? '',
-                title: source.heading || source.file,
+                title: titleWithMeta,
               });
             }
           },
