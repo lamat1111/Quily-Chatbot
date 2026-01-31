@@ -124,14 +124,18 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
       code({ className, children, ...props }) {
         // Detect language from className (pattern: language-xxx)
         const match = /language-(\w+)/.exec(className || '');
-        const language = match ? match[1] : null;
+        const language = match ? match[1] : 'text';
 
-        // Check if it's a code block (has language) vs inline code
-        const isBlock = language !== null;
+        // Check if it's a code block vs inline code
+        // Code blocks have a className (language-xxx) or contain newlines
+        const codeContent = String(children);
+        const hasLanguage = match !== null;
+        const hasNewlines = codeContent.includes('\n');
+        const isBlock = hasLanguage || hasNewlines;
 
         if (isBlock) {
           // Pre-compute code string for both SyntaxHighlighter and CopyButton
-          const codeString = String(children).replace(/\n$/, '');
+          const codeString = codeContent.replace(/\n$/, '');
           return <CodeBlock language={language} code={codeString} isDark={isDark} />;
         }
 
@@ -229,6 +233,11 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
 
       hr() {
         return <hr className="my-6 border-border" />;
+      },
+
+      // Pre element just renders children - CodeBlock handles all styling
+      pre({ children }) {
+        return <>{children}</>;
       },
     }),
     [isDark]

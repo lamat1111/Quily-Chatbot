@@ -71,7 +71,9 @@ export function ChatInput({
   return (
     <div className="bg-bg-base p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-        <div className="flex gap-2 sm:gap-3 items-end mb-2">
+        <div className="relative flex items-end mb-2 rounded-xl border border-border bg-bg-inset
+                        focus-within:has-not-disabled:border-border-focus
+                        has-disabled:bg-bg-subtle">
           <textarea
             ref={textareaRef}
             value={input}
@@ -80,59 +82,61 @@ export function ChatInput({
             placeholder={placeholderText}
             disabled={disabled || isStreaming}
             rows={1}
-            className="flex-1 min-w-0 resize-none rounded-xl border border-border
-                       bg-bg-inset px-3 sm:px-4 py-3 text-text-base
+            className="flex-1 resize-none bg-transparent pl-3 sm:pl-4 pr-2 py-3 text-text-base
                        placeholder-text-subtle
-                       focus:outline-none focus:border-border-focus
-                       disabled:bg-bg-subtle disabled:cursor-not-allowed disabled:opacity-50
+                       focus:outline-none
+                       disabled:cursor-not-allowed disabled:opacity-50
                        min-h-12 max-h-48 overflow-hidden input-scrollbar"
           />
 
-          {isStreaming ? (
-            <button
-              type="button"
-              onClick={onStop}
-              className="flex-shrink-0 px-3 sm:px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 cursor-pointer
-                         text-white font-medium transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
-            >
-              <span className="flex items-center gap-2">
+          <div className="shrink-0 p-2 self-end">
+            {isStreaming ? (
+              <button
+                type="button"
+                onClick={onStop}
+                className="px-3 py-1.5 h-8 rounded-lg
+                           bg-btn-danger hover:bg-btn-danger-hover cursor-pointer
+                           text-white text-sm font-medium transition-colors
+                           focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
+                           flex items-center justify-center gap-1.5"
+                aria-label="Stop generation"
+              >
                 <svg
-                  className="w-5 h-5"
+                  className="w-3.5 h-3.5"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
-                <span className="hidden sm:inline">Stop</span>
-              </span>
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={disabled || !input.trim()}
-              className="flex-shrink-0 p-3 h-12 w-12 rounded-xl cursor-pointer
-                         bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover disabled:bg-btn-disabled disabled:from-btn-disabled disabled:to-btn-disabled
-                         text-white font-medium transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
-                         disabled:cursor-not-allowed flex items-center justify-center"
-              aria-label="Send message"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <span>Stop</span>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={disabled || !input.trim()}
+                className="p-2 h-8 w-8 rounded-lg cursor-pointer
+                           bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover disabled:bg-btn-disabled disabled:from-btn-disabled disabled:to-btn-disabled
+                           text-white font-medium transition-colors
+                           focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
+                           disabled:cursor-not-allowed flex items-center justify-center"
+                aria-label="Send message"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 10l7-7m0 0l7 7m-7-7v18"
-                />
-              </svg>
-            </button>
-          )}
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 10l7-7m0 0l7 7m-7-7v18"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
         <p className="text-xs text-center text-text-subtle mt-2">
           Quily can make mistakes. Verify important info with{' '}

@@ -482,10 +482,18 @@ export async function POST(request: Request) {
         let receivedAnyContent = false;
         let hadError = false;
         try {
+          let isFirstChunk = true;
           for await (const chunk of result.textStream) {
             if (chunk) {
               receivedAnyContent = true;
-              writer.write({ type: 'text-delta', id: textId, delta: chunk });
+              // Strip leading whitespace from first chunk to prevent markdown
+              // interpreting indentation as code blocks (some models like DeepSeek
+              // add heavy leading indentation)
+              const processedChunk = isFirstChunk ? chunk.trimStart() : chunk;
+              isFirstChunk = false;
+              if (processedChunk) {
+                writer.write({ type: 'text-delta', id: textId, delta: processedChunk });
+              }
             }
           }
           // If we got no content at all, something went wrong (likely auth/credits issue)
