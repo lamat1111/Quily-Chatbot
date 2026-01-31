@@ -47,6 +47,10 @@ export default function SettingsPage() {
     process.env.NEXT_PUBLIC_CHUTES_DEFAULT_MODEL || ''
   );
 
+  // Profile state
+  const [profileName, setProfileName, profileNameHydrated] = useLocalStorage<string>('user-profile-name', 'You');
+  const [profileCustomSet, setProfileCustomSet] = useLocalStorage<boolean>('user-profile-custom-set', false);
+
   // UI state
   const [inputValue, setInputValue] = useState('');
   const [modelListOpen, setModelListOpen] = useState(false);
@@ -122,6 +126,15 @@ export default function SettingsPage() {
       setModelListOpen(false);
     }
   }, [isOpenRouter]);
+
+  // Auto-populate profile name from Chutes OAuth (only if not manually set)
+  useEffect(() => {
+    if (!profileNameHydrated || profileCustomSet) return;
+    if (chutesUser?.username && profileName === 'You') {
+      setProfileName(chutesUser.username);
+      // Don't set profileCustomSet - allow re-population if they clear it
+    }
+  }, [chutesUser, profileName, profileNameHydrated, profileCustomSet, setProfileName]);
 
   // API key handlers
   const handleSaveApiKey = useCallback(async () => {
@@ -243,6 +256,41 @@ export default function SettingsPage() {
           <p className="text-text-secondary mb-8">
             Configure your AI provider, API key, and preferred model.
           </p>
+
+          {/* Profile Settings Card */}
+          <section className="mb-8">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2 font-title">
+                <Icon name="user" size={20} className="text-accent" />
+                Your Profile
+              </h2>
+
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="profile-name" className="block text-sm font-medium text-text-primary mb-2">
+                    Display Name
+                  </label>
+                  <input
+                    id="profile-name"
+                    type="text"
+                    value={profileName}
+                    onChange={(e) => {
+                      setProfileName(e.target.value);
+                      setProfileCustomSet(true);
+                    }}
+                    placeholder="You"
+                    className="w-full px-3 py-2 text-sm rounded-lg border
+                      bg-surface/5 dark:bg-surface/10
+                      text-text-primary
+                      placeholder-gray-400 dark:placeholder-gray-500
+                      border-gray-300 dark:border-gray-600
+                      focus:outline-none focus:border-secondary dark:focus:border-gray-400
+                      transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Provider Card - unified container for provider, auth, and model */}
           <section className="mb-8">
@@ -711,7 +759,7 @@ export default function SettingsPage() {
                       </div>
 
                       {/* API Key Option */}
-                      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="pt-4">
                         <button
                           type="button"
                           onClick={() => setShowChutesApiKeySection(!showChutesApiKeySection)}
@@ -1044,7 +1092,7 @@ export default function SettingsPage() {
 
                   {/* Custom model URL input */}
                   {isChutesSignedIn && (
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="mt-4 pt-4">
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                         Or enter a custom Chute URL to use any model:
                       </p>

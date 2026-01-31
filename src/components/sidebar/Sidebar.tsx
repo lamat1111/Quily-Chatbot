@@ -29,9 +29,10 @@ export function Sidebar() {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [providerId, , providerHydrated] = useLocalStorage<string>('selected-provider', 'openrouter');
+  const [providerId] = useLocalStorage<string>('selected-provider', 'openrouter');
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
-  const { isSignedIn: isChutesSignedIn, user: chutesUser } = useChutesSession();
+  const [profileName] = useLocalStorage<string>('user-profile-name', 'You');
+  const { isSignedIn: isChutesSignedIn } = useChutesSession();
   const addConversation = useConversationStore((s) => s.addConversation);
   const { isSearchOpen, openSearch, closeSearch } = useSearch();
 
@@ -203,9 +204,7 @@ export function Sidebar() {
           >
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
             <span className="flex-1 truncate">
-              {providerHydrated && providerId === 'chutes' && isChutesSignedIn && chutesUser
-                ? (chutesUser.username || chutesUser.name || chutesUser.email || 'Settings')
-                : 'Settings'}
+              {profileName}
             </span>
             <Icon name="settings" size={16} className="text-text-subtle" />
           </Link>
