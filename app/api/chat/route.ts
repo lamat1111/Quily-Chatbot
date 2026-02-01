@@ -139,6 +139,17 @@ function getCommandResponse(message: string): string | null {
 }
 
 /**
+ * Validate priority doc IDs from client
+ * Ensures array of positive integers, capped at 20
+ */
+function validatePriorityDocIds(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((id): id is number => typeof id === 'number' && Number.isInteger(id) && id > 0)
+    .slice(0, 20);
+}
+
+/**
  * Extract text content from message (handles various formats)
  */
 function getMessageContent(msg: Record<string, unknown>): string {
@@ -259,6 +270,7 @@ export async function POST(request: Request) {
       );
     }
     const apiKey = body.apiKey;
+    const priorityDocIds = validatePriorityDocIds(body.priorityDocIds);
 
     const messages = body.messages;
     const model =
@@ -398,6 +410,7 @@ export async function POST(request: Request) {
           chutesAccessToken: embeddingProvider === 'chutes' ? chutesAccessToken || undefined : undefined,
           embeddingModel,
           cohereApiKey: process.env.COHERE_API_KEY,
+          priorityDocIds,
         });
       }
       const { context, quality, avgSimilarity } = buildContextBlock(chunks);
@@ -539,7 +552,7 @@ export async function POST(request: Request) {
             ].join('|');
             writer.write({
               type: 'source-url',
-              sourceId: `source-${source.index}`,
+              sourceId: `source-${source.index}-${source.id}`,
               url: source.url ?? '',
               title: titleWithMeta,
             });
@@ -563,7 +576,7 @@ export async function POST(request: Request) {
               ].join('|');
               writer.write({
                 type: 'source-url',
-                sourceId: `source-${source.index}`,
+                sourceId: `source-${source.index}-${source.id}`,
                 url: source.url ?? '',
                 title: titleWithMeta,
               });

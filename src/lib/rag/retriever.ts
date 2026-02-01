@@ -90,6 +90,39 @@ async function fetchRecentChunks(limit: number = 3): Promise<{
   }));
 }
 
+/**
+ * Fetch document chunks by their database IDs
+ * Used for conversational context - re-retrieving previously cited docs
+ */
+async function fetchPriorityChunks(ids: number[]): Promise<{
+  id: number;
+  content: string;
+  source_file: string;
+  heading_path: string | null;
+  source_url: string | null;
+  published_date: string | null;
+  title: string | null;
+  doc_type: string | null;
+  similarity: number;
+}[]> {
+  if (ids.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('document_chunks_chutes')
+    .select('id, content, source_file, heading_path, source_url, published_date, title, doc_type')
+    .in('id', ids);
+
+  if (error || !data) {
+    console.warn('Failed to fetch priority chunks:', error?.message);
+    return [];
+  }
+
+  return data.map((chunk) => ({
+    ...chunk,
+    similarity: 0.8, // Synthetic score - these are explicitly requested
+  }));
+}
+
 // Chutes API response type
 interface ChutesEmbeddingResponse {
   data: Array<{
@@ -152,7 +185,12 @@ export async function retrieveWithReranking(
     initialCount = 15,
     finalCount = 5,
     similarityThreshold = 0.35, // Lower threshold - text-embedding-3-small typically produces 0.3-0.6 similarity scores
+    priorityDocIds = [],
   } = options;
+
+  // Fetch priority docs in parallel with vector search for better latency
+  const priorityChunksPromise =
+    priorityDocIds.length > 0 ? fetchPriorityChunks(priorityDocIds) : Promise.resolve([]);
 
   // Stage 1: Vector search using unified BGE-M3 model
   // Both providers produce identical vectors, so we use the same table for all queries
@@ -194,11 +232,22 @@ export async function retrieveWithReranking(
     throw new Error(`Supabase RPC error: ${error.message}`);
   }
 
+  let candidates = vectorCandidates || [];
+
+  // Merge priority docs (previously cited) - await parallel fetch
+  const priorityChunks = await priorityChunksPromise;
+  if (priorityChunks.length > 0) {
+    // Remove priority docs from vector results to avoid duplicates
+    const priorityIds = new Set(priorityChunks.map((c) => c.id));
+    candidates = candidates.filter((c: { id: number }) => !priorityIds.has(c.id));
+
+    // Prepend priority docs so they're always included
+    candidates = [...priorityChunks, ...candidates];
+  }
+
   // For temporal queries, augment with recent content by date
   // This ensures "last/recent/latest" queries include actually recent documents
   // regardless of how the user phrases their request (works for any language)
-  let candidates = vectorCandidates || [];
-
   if (isTemporalQuery(query)) {
     const recentChunks = await fetchRecentChunks(3);
 

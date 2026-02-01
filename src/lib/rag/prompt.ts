@@ -280,6 +280,7 @@ export function formatSourcesForClient(chunks: RetrievedChunk[]): SourceReferenc
     const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
 
     return {
+      id: chunk.id,
       index: chunk.citationIndex,
       file: chunk.source_file,
       heading: chunk.heading_path,

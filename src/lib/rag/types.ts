@@ -50,12 +50,16 @@ export interface RetrievalOptions {
   finalCount?: number;
   /** Minimum similarity threshold (default 0.35) */
   similarityThreshold?: number;
+  /** Document IDs to prioritize from previous conversation */
+  priorityDocIds?: number[];
 }
 
 /**
  * Source reference for client-side citation display
  */
 export interface SourceReference {
+  /** Database ID of the chunk */
+  id: number;
   /** Citation index (1-based) */
   index: number;
   /** Source file path */

@@ -27,6 +27,28 @@ interface ChatContainerProps {
 const STORE_UPDATE_DEBOUNCE_MS = 300;
 
 /**
+ * Extract database IDs from the last assistant message's sources.
+ * Format: "source-1-42" -> 42
+ */
+function extractPriorityDocIds(messages: UIMessage[]): number[] {
+  const lastAssistant = messages.filter((m) => m.role === 'assistant').at(-1);
+  if (!lastAssistant?.parts) return [];
+
+  const docIds: number[] = [];
+  for (const part of lastAssistant.parts) {
+    if (part.type === 'source-url' && 'sourceId' in part) {
+      const match = (part.sourceId as string).match(/^source-\d+-(\d+)$/);
+      if (match) {
+        const dbId = parseInt(match[1], 10);
+        if (dbId > 0) docIds.push(dbId);
+      }
+    }
+  }
+
+  return [...new Set(docIds)];
+}
+
+/**
  * Main chat container orchestrating useChat hook with UI components.
  *
  * - Manages chat state via useChat from AI SDK
@@ -62,16 +84,23 @@ export function ChatContainer({
 
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
+  // Uses prepareSendMessagesRequest to extract priority doc IDs from the current message state
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: '/api/chat',
-        body: {
-          provider: providerId,
-          apiKey,
-          model,
-          embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
-          chutesApiKey: chutesExternalApiKey || undefined,
+        prepareSendMessagesRequest({ messages: reqMessages }) {
+          return {
+            body: {
+              messages: reqMessages,
+              provider: providerId,
+              apiKey,
+              model,
+              embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
+              chutesApiKey: chutesExternalApiKey || undefined,
+              priorityDocIds: extractPriorityDocIds(reqMessages),
+            },
+          };
         },
       }),
     [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
