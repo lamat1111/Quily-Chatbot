@@ -88,6 +88,9 @@ export function ChatContainer({
   // Thinking process steps state
   const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([]);
 
+  // Follow-up questions state (keyed by message ID, but we only need the latest)
+  const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
+
   // Get external Chutes API key if available
   const chutesExternalApiKey = useMemo(() => {
     if (providerId !== 'chutes') return null;
@@ -147,12 +150,19 @@ export function ChatContainer({
     [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
   );
 
-  // Handle data parts from the stream (status updates)
+  // Handle data parts from the stream (status updates and follow-up questions)
   const handleData = useCallback(
     (dataPart: { type: string; data: unknown }) => {
       // Check if this is a status update
       if (dataPart.type === 'data-status') {
         handleStatusUpdate(dataPart.data as StatusUpdate);
+      }
+      // Check if this is follow-up questions
+      if (dataPart.type === 'data-follow-up') {
+        const questions = dataPart.data;
+        if (Array.isArray(questions) && questions.every((q) => typeof q === 'string')) {
+          setFollowUpQuestions(questions as string[]);
+        }
       }
     },
     [handleStatusUpdate]
@@ -212,8 +222,9 @@ export function ChatContainer({
     (text: string) => {
       if (!hasAccess) return;
 
-      // Clear thinking steps for new message
+      // Clear thinking steps and follow-up questions for new message
       setThinkingSteps([]);
+      setFollowUpQuestions([]);
 
       sendMessage({
         text,
@@ -317,6 +328,7 @@ export function ChatContainer({
         error={error || null}
         onQuickAction={handleSubmit}
         thinkingSteps={thinkingSteps}
+        followUpQuestions={followUpQuestions}
       />
 
       <ChatInput

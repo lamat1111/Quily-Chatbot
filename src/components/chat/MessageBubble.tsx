@@ -3,6 +3,7 @@
 import { memo, useMemo } from 'react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { SourcesCitation } from './SourcesCitation';
+import { FollowUpQuestions } from './FollowUpQuestions';
 import { CopyButton } from '@/src/components/ui/CopyButton';
 import { Icon } from '@/src/components/ui/Icon';
 import type { UIMessage } from '@ai-sdk/react';
@@ -10,20 +11,42 @@ import type { UIMessage } from '@ai-sdk/react';
 interface MessageBubbleProps {
   message: UIMessage;
   isStreaming?: boolean;
+  followUpQuestions?: string[];
+  onFollowUpSelect?: (question: string) => void;
 }
+
+/**
+ * Regex to match JSON code fence with follow-up questions at end of response.
+ * Strips this from display since it's only for parsing follow-ups.
+ */
+const FOLLOW_UP_CODE_FENCE_REGEX = /```json\s*\n?\s*\[[\s\S]*?\]\s*\n?```\s*$/;
+
+/**
+ * Regex to match partial/in-progress JSON code fence during streaming.
+ * Catches: ```json, ```json\n[, ```json\n["..., etc.
+ */
+const PARTIAL_FOLLOW_UP_REGEX = /```json\s*\n?\s*\[?[\s\S]*$/;
 
 /**
  * Extract text content from UIMessage parts array.
  * UIMessage in AI SDK v6 uses parts[] instead of content string.
+ * Also strips follow-up JSON block if present (complete or partial during streaming).
  */
-function getTextContent(message: UIMessage): string {
+function getTextContent(message: UIMessage, isStreaming: boolean = false): string {
   if (!message.parts) return '';
 
   const textParts = message.parts
     .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
     .map((part) => part.text);
 
-  return textParts.join('');
+  const fullText = textParts.join('');
+
+  // Strip follow-up JSON block from display
+  // During streaming, also strip partial blocks that are being typed
+  if (isStreaming) {
+    return fullText.replace(PARTIAL_FOLLOW_UP_REGEX, '').trimEnd();
+  }
+  return fullText.replace(FOLLOW_UP_CODE_FENCE_REGEX, '').trimEnd();
 }
 
 /**
@@ -54,11 +77,14 @@ function getSources(message: UIMessage): Array<{ sourceId: string; url: string; 
 export const MessageBubble = memo(function MessageBubble({
   message,
   isStreaming = false,
+  followUpQuestions,
+  onFollowUpSelect,
 }: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
   // Memoize text extraction to avoid recalculating on every render
-  const textContent = useMemo(() => getTextContent(message), [message.parts]);
+  // Pass isStreaming to handle partial JSON blocks during streaming
+  const textContent = useMemo(() => getTextContent(message, isStreaming), [message.parts, isStreaming]);
   const sources = useMemo(() => getSources(message), [message.parts]);
 
   if (isUser) {
@@ -85,6 +111,14 @@ export const MessageBubble = memo(function MessageBubble({
         <div className="mt-4">
           <SourcesCitation sources={sources} />
         </div>
+      )}
+
+      {/* Follow-up questions - show after sources */}
+      {!isStreaming && followUpQuestions && followUpQuestions.length > 0 && onFollowUpSelect && (
+        <FollowUpQuestions
+          questions={followUpQuestions}
+          onSelect={onFollowUpSelect}
+        />
       )}
 
       {/* Footer with copy button and disclaimer - only show after streaming completes */}

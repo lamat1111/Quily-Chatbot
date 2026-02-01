@@ -14,6 +14,7 @@ interface MessageListProps {
   error: Error | null;
   onQuickAction?: (command: string) => void;
   thinkingSteps?: ThinkingStep[];
+  followUpQuestions?: string[];
 }
 
 /** Throttle interval for scroll updates during streaming (ms) */
@@ -38,7 +39,7 @@ const QUICK_ACTIONS = [
  * - Empty state for new conversations
  * - Throttled scroll updates during streaming to reduce layout thrashing
  */
-export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [] }: MessageListProps) {
+export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [], followUpQuestions = [] }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
@@ -134,13 +135,22 @@ export function MessageList({ messages, status, error, onQuickAction, thinkingSt
       className="flex-1 overflow-y-auto p-4 bg-bg-base chat-scrollbar"
     >
       <div className="max-w-3xl mx-auto">
-        {messages.map((message, index) => (
-          <MessageBubble
-            key={message.id || index}
-            message={message}
-            isStreaming={isStreaming && index === messages.length - 1 && message.role === 'assistant'}
-          />
-        ))}
+        {messages.map((message, index) => {
+          const isLastAssistant = index === messages.length - 1 && message.role === 'assistant';
+          const isCurrentlyStreaming = isStreaming && isLastAssistant;
+          // Only show follow-ups on the last assistant message when not streaming
+          const showFollowUps = isLastAssistant && !isStreaming && followUpQuestions.length > 0;
+
+          return (
+            <MessageBubble
+              key={message.id || index}
+              message={message}
+              isStreaming={isCurrentlyStreaming}
+              followUpQuestions={showFollowUps ? followUpQuestions : undefined}
+              onFollowUpSelect={showFollowUps ? onQuickAction : undefined}
+            />
+          );
+        })}
 
         {/* Thinking process indicator during streaming (shows before assistant message appears) */}
         {isStreaming && (

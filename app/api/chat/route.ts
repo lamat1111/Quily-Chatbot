@@ -11,6 +11,7 @@ import {
   buildSystemPrompt,
   formatSourcesForClient,
 } from '@/src/lib/rag/prompt';
+import { parseFollowUpQuestions } from '@/src/lib/rag/followUpParser';
 import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
 import { getOAuthConfig, refreshTokens, checkChutesBalance } from '@/src/lib/chutesAuth';
 import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
@@ -576,11 +577,13 @@ export async function POST(request: Request) {
         writer.write({ type: 'text-start', id: textId });
         let receivedAnyContent = false;
         let hadError = false;
+        let fullResponseText = ''; // Collect for follow-up parsing
         try {
           let isFirstChunk = true;
           for await (const chunk of result.textStream) {
             if (chunk) {
               receivedAnyContent = true;
+              fullResponseText += chunk;
               // Strip leading whitespace from first chunk to prevent markdown
               // interpreting indentation as code blocks (some models like DeepSeek
               // add heavy leading indentation)
@@ -623,7 +626,7 @@ export async function POST(request: Request) {
         }
         writer.write({ type: 'text-end', id: textId });
 
-        // Only write sources if we got actual content (not on error/empty response)
+        // Only write sources and follow-ups if we got actual content (not on error/empty response)
         if (!hadError) {
           for (const source of sources) {
             // Encode metadata into title for client display
@@ -640,6 +643,15 @@ export async function POST(request: Request) {
               title: titleWithMeta,
             });
           }
+
+          // Parse and send follow-up questions
+          const { questions } = parseFollowUpQuestions(fullResponseText);
+          if (questions && questions.length > 0) {
+            writer.write({
+              type: 'data-follow-up' as const,
+              data: questions,
+            });
+          }
         }
       } else {
         // OpenRouter and other providers: use standard toUIMessageStream()
@@ -648,7 +660,7 @@ export async function POST(request: Request) {
             console.error('UI message stream error:', error);
             return error instanceof Error ? error.message : 'An error occurred while streaming the response.';
           },
-          onFinish: () => {
+          onFinish: async () => {
             for (const source of sources) {
               // Encode metadata into title for client display
               // Format: "Title|doc_type|published_date" (pipe-separated for parsing)
@@ -663,6 +675,20 @@ export async function POST(request: Request) {
                 url: source.url ?? '',
                 title: titleWithMeta,
               });
+            }
+
+            // Parse and send follow-up questions
+            try {
+              const fullText = await result.text;
+              const { questions } = parseFollowUpQuestions(fullText);
+              if (questions && questions.length > 0) {
+                writer.write({
+                  type: 'data-follow-up' as const,
+                  data: questions,
+                });
+              }
+            } catch (e) {
+              console.warn('[FollowUp] Failed to get full text for parsing:', e);
             }
           },
         }));
