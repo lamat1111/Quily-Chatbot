@@ -84,7 +84,7 @@ export function Sidebar() {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          w-72 h-screen lg:h-auto
+          w-72 2xl:w-80 h-screen lg:h-auto
           bg-bg-muted
           flex flex-col
           overflow-hidden
