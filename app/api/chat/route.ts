@@ -238,18 +238,53 @@ function buildSetCookieHeader(name: string, value: string, maxAge?: number): str
 }
 
 /**
- * Status step IDs for the thinking process display
- */
-type StatusStepId = 'search' | 'analyze' | 'generate';
-
-/**
- * Status update structure sent to client via data-status parts
+ * Status update structure sent to client via data-status parts.
+ * Currently only 'search' step is shown - other steps flash too quickly to be visible.
  */
 interface StatusUpdate {
-  stepId: StatusStepId;
+  stepId: 'search';
   label: string;
   description?: string;
   status: 'pending' | 'active' | 'completed';
+}
+
+/**
+ * Playful search status messages - randomly selected for each query.
+ * Mix of creative/whimsical and Quilibrium-themed messages.
+ */
+const SEARCH_MESSAGES = [
+  // Creative/playful
+  'Summoning ancient wisdom...',
+  'Peeking behind the curtain...',
+  'Consulting the sacred scrolls...',
+  'Interrogating the documents...',
+  'Rummaging through the library...',
+  'Decoding the mysteries...',
+  'Spinning up the knowledge hamster...',
+  'Bribing the database...',
+  'Whispering to the servers...',
+  'Shaking the knowledge tree...',
+  'Poking the oracle...',
+  'Dusting off the archives...',
+  'Feeding the query monster...',
+  // Quilibrium-themed
+  'Querying the hypergraph...',
+  'Traversing hyperedges...',
+  'Spinning the time reel...',
+  'Buzzing the BlossomSub...',
+  'Garbling circuits...',
+  'Proving with bulletproofs...',
+  'Threading the onion router...',
+  'Executing oblivious queries...',
+  'Resolving CRDT conflicts...',
+  'Calculating planted cliques...',
+];
+
+/**
+ * Get a random search message
+ */
+function getRandomSearchMessage(): string {
+  return SEARCH_MESSAGES[Math.floor(Math.random() * SEARCH_MESSAGES.length)];
 }
 
 /**
@@ -456,12 +491,15 @@ export async function POST(request: Request) {
         : 'baai/bge-m3');
 
     // Create UI message stream - RAG retrieval and LLM streaming happen inside
+    // Pick a random search message for this request
+    const searchMessage = getRandomSearchMessage();
+
     const stream = createUIMessageStream({
       execute: async ({ writer }) => {
         // Step 1: Search knowledge base
         writeStatus(writer, {
           stepId: 'search',
-          label: 'Searching knowledge base',
+          label: searchMessage,
           status: 'active',
         });
 
@@ -492,7 +530,7 @@ export async function POST(request: Request) {
           // Step 1 complete
           writeStatus(writer, {
             stepId: 'search',
-            label: 'Searching knowledge base',
+            label: searchMessage,
             description: chunks.length > 0 ? `Found ${chunks.length} relevant sources` : 'No sources found',
             status: 'completed',
           });
@@ -501,54 +539,20 @@ export async function POST(request: Request) {
           // Mark search as completed even on error (we'll continue without RAG)
           writeStatus(writer, {
             stepId: 'search',
-            label: 'Searching knowledge base',
+            label: searchMessage,
             description: 'Search completed',
-            status: 'completed',
-          });
-        }
-
-        // Step 2: Analyze context (brief step)
-        if (chunks.length > 0) {
-          writeStatus(writer, {
-            stepId: 'analyze',
-            label: 'Analyzing sources',
-            description: `Processing ${chunks.length} documents`,
-            status: 'active',
-          });
-          // Brief pause to show the analyze step (sources are already processed above)
-          writeStatus(writer, {
-            stepId: 'analyze',
-            label: 'Analyzing sources',
-            description: `${chunks.length} sources ready`,
             status: 'completed',
           });
         }
 
         // Check for low-relevance fallback on non-instruction-following models
         if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
-          writeStatus(writer, {
-            stepId: 'generate',
-            label: 'Generating response',
-            status: 'active',
-          });
           const textId = 'fallback-response';
           writer.write({ type: 'text-start', id: textId });
           writer.write({ type: 'text-delta', id: textId, delta: LOW_RELEVANCE_FALLBACK_RESPONSE });
           writer.write({ type: 'text-end', id: textId });
-          writeStatus(writer, {
-            stepId: 'generate',
-            label: 'Generating response',
-            status: 'completed',
-          });
           return;
         }
-
-        // Step 3: Generate response
-        writeStatus(writer, {
-          stepId: 'generate',
-          label: 'Generating response',
-          status: 'active',
-        });
 
         const llmMessages = messages.map((m: Record<string, unknown>) => ({
           role: getMessageRole(m),
@@ -619,13 +623,6 @@ export async function POST(request: Request) {
         }
         writer.write({ type: 'text-end', id: textId });
 
-        // Mark generate step as completed
-        writeStatus(writer, {
-          stepId: 'generate',
-          label: 'Generating response',
-          status: 'completed',
-        });
-
         // Only write sources if we got actual content (not on error/empty response)
         if (!hadError) {
           for (const source of sources) {
@@ -652,13 +649,6 @@ export async function POST(request: Request) {
             return error instanceof Error ? error.message : 'An error occurred while streaming the response.';
           },
           onFinish: () => {
-            // Mark generate step as completed
-            writeStatus(writer, {
-              stepId: 'generate',
-              label: 'Generating response',
-              status: 'completed',
-            });
-
             for (const source of sources) {
               // Encode metadata into title for client display
               // Format: "Title|doc_type|published_date" (pipe-separated for parsing)

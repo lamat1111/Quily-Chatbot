@@ -28,23 +28,15 @@ interface ChatContainerProps {
 const STORE_UPDATE_DEBOUNCE_MS = 300;
 
 /**
- * Status update from the API (matches server-side StatusUpdate)
+ * Status update from the API (matches server-side StatusUpdate).
+ * Currently only 'search' step is shown - other steps flash too quickly to be visible.
  */
 interface StatusUpdate {
-  stepId: 'search' | 'analyze' | 'generate';
+  stepId: 'search';
   label: string;
   description?: string;
   status: 'pending' | 'active' | 'completed';
 }
-
-/**
- * Map status update step IDs to ThinkingStep icons
- */
-const STEP_ICONS: Record<StatusUpdate['stepId'], ThinkingStep['icon']> = {
-  search: 'search',
-  analyze: 'docs',
-  generate: 'generate',
-};
 
 /**
  * Extract database IDs from the last assistant message's sources.
@@ -116,7 +108,7 @@ export function ChatContainer({
         label: update.label,
         description: update.description,
         status: update.status,
-        icon: STEP_ICONS[update.stepId],
+        icon: 'search', // Only search step is currently used
       };
 
       if (existingIndex >= 0) {
