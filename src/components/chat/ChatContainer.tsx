@@ -13,6 +13,7 @@ import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { getChutesExternalApiKey } from '@/src/lib/chutesApiKey';
+import type { ThinkingStep } from './ThinkingProcess';
 
 interface ChatContainerProps {
   providerId: string;
@@ -25,6 +26,25 @@ interface ChatContainerProps {
 
 /** Debounce delay for store updates during streaming (ms) */
 const STORE_UPDATE_DEBOUNCE_MS = 300;
+
+/**
+ * Status update from the API (matches server-side StatusUpdate)
+ */
+interface StatusUpdate {
+  stepId: 'search' | 'analyze' | 'generate';
+  label: string;
+  description?: string;
+  status: 'pending' | 'active' | 'completed';
+}
+
+/**
+ * Map status update step IDs to ThinkingStep icons
+ */
+const STEP_ICONS: Record<StatusUpdate['stepId'], ThinkingStep['icon']> = {
+  search: 'search',
+  analyze: 'docs',
+  generate: 'generate',
+};
 
 /**
  * Extract database IDs from the last assistant message's sources.
@@ -73,6 +93,9 @@ export function ChatContainer({
   const { isSignedIn: isChutesSignedIn, loading: chutesLoading, authMethod } = useChutesSession();
   const [chutesEmbeddingModel] = useLocalStorage<string>('chutes-embedding-model', '');
 
+  // Thinking process steps state
+  const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([]);
+
   // Get external Chutes API key if available
   const chutesExternalApiKey = useMemo(() => {
     if (providerId !== 'chutes') return null;
@@ -81,6 +104,32 @@ export function ChatContainer({
 
   // Debounce ref for store updates
   const storeUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle status updates from the API stream
+  const handleStatusUpdate = useCallback((update: StatusUpdate) => {
+    setThinkingSteps((prev) => {
+      // Find if this step already exists
+      const existingIndex = prev.findIndex((s) => s.id === update.stepId);
+
+      const newStep: ThinkingStep = {
+        id: update.stepId,
+        label: update.label,
+        description: update.description,
+        status: update.status,
+        icon: STEP_ICONS[update.stepId],
+      };
+
+      if (existingIndex >= 0) {
+        // Update existing step
+        const updated = [...prev];
+        updated[existingIndex] = newStep;
+        return updated;
+      } else {
+        // Add new step
+        return [...prev, newStep];
+      }
+    });
+  }, []);
 
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
@@ -106,10 +155,22 @@ export function ChatContainer({
     [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
   );
 
-  // Configure useChat with the transport
+  // Handle data parts from the stream (status updates)
+  const handleData = useCallback(
+    (dataPart: { type: string; data: unknown }) => {
+      // Check if this is a status update
+      if (dataPart.type === 'data-status') {
+        handleStatusUpdate(dataPart.data as StatusUpdate);
+      }
+    },
+    [handleStatusUpdate]
+  );
+
+  // Configure useChat with the transport and data handler
   const { messages, status, error, stop, sendMessage, setMessages } = useChat({
     id: conversationId || 'new-chat',
     transport,
+    onData: handleData,
   });
 
   // Load stored messages on mount (component remounts when conversationId changes via key prop)
@@ -158,6 +219,9 @@ export function ChatContainer({
   const handleSubmit = useCallback(
     (text: string) => {
       if (!hasAccess) return;
+
+      // Clear thinking steps for new message
+      setThinkingSteps([]);
 
       sendMessage({
         text,
@@ -260,6 +324,7 @@ export function ChatContainer({
         status={status}
         error={error || null}
         onQuickAction={handleSubmit}
+        thinkingSteps={thinkingSteps}
       />
 
       <ChatInput

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { MessageBubble } from './MessageBubble';
-import { TypingIndicator } from './TypingIndicator';
+import { ThinkingProcess, ThinkingStep } from './ThinkingProcess';
 import { useScrollAnchor } from '@/src/hooks/useScrollAnchor';
 import type { UIMessage } from '@ai-sdk/react';
 
@@ -13,6 +13,7 @@ interface MessageListProps {
   status: ChatStatus;
   error: Error | null;
   onQuickAction?: (command: string) => void;
+  thinkingSteps?: ThinkingStep[];
 }
 
 /** Throttle interval for scroll updates during streaming (ms) */
@@ -37,7 +38,7 @@ const QUICK_ACTIONS = [
  * - Empty state for new conversations
  * - Throttled scroll updates during streaming to reduce layout thrashing
  */
-export function MessageList({ messages, status, error, onQuickAction }: MessageListProps) {
+export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [] }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
@@ -141,15 +142,11 @@ export function MessageList({ messages, status, error, onQuickAction }: MessageL
           />
         ))}
 
-        {/* Typing indicator during streaming */}
+        {/* Thinking process indicator during streaming (shows before assistant message appears) */}
         {isStreaming && (
           messages.length === 0 || messages[messages.length - 1].role === 'user'
         ) && (
-          <div className="flex justify-start mb-4">
-            <div className="max-w-[95%] sm:max-w-[80%] bg-surface/10 dark:bg-surface/15 rounded-2xl rounded-bl-sm px-4 py-2">
-              <TypingIndicator />
-            </div>
-          </div>
+          <ThinkingProcess steps={thinkingSteps} isVisible={true} />
         )}
 
         {/* Error message */}

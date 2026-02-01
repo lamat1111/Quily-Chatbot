@@ -238,6 +238,36 @@ function buildSetCookieHeader(name: string, value: string, maxAge?: number): str
 }
 
 /**
+ * Status step IDs for the thinking process display
+ */
+type StatusStepId = 'search' | 'analyze' | 'generate';
+
+/**
+ * Status update structure sent to client via data-status parts
+ */
+interface StatusUpdate {
+  stepId: StatusStepId;
+  label: string;
+  description?: string;
+  status: 'pending' | 'active' | 'completed';
+}
+
+/**
+ * Helper to write a status update to the stream.
+ * Uses 'data-status' type which the client will receive via onData callback.
+ */
+function writeStatus(
+  writer: { write: (chunk: { type: `data-${string}`; data: unknown; transient?: boolean }) => void },
+  update: StatusUpdate
+) {
+  writer.write({
+    type: 'data-status' as const,
+    data: update,
+    transient: true, // Don't persist in message history
+  });
+}
+
+/**
  * POST /api/chat
  *
  * Streaming chat endpoint with RAG context injection.
@@ -342,88 +372,50 @@ export async function POST(request: Request) {
       return createUIMessageStreamResponse({ stream });
     }
 
-    // Retrieve relevant context
-    let chunks: Awaited<ReturnType<typeof retrieveWithReranking>> = [];
-    let systemPrompt = 'You are a helpful assistant that answers questions about Quilibrium.';
-    let ragQuality: 'high' | 'low' | 'none' = 'none';
+    // Auth and setup variables
     let chutesAccessToken: string | null = null;
     let refreshedTokenInfo:
       | { refreshToken?: string; expiresIn?: number }
       | null = null;
+    const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
+    const useChutesEmbeddings = provider === 'chutes';
 
-    // Track balance check result (runs in parallel with RAG)
-    let balanceCheckPromise: Promise<{ hasCredits: boolean; error?: string }> | null = null;
-
-    try {
-      const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
-      // Use the same provider for embeddings as for LLM - user pays for their own usage
-      const useChutesEmbeddings = provider === 'chutes';
-
-      if (provider === 'chutes' || useChutesEmbeddings) {
-        // Priority: external API key > dev bypass > OAuth cookies
-        if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
-          console.log('[Chutes] Using external API key');
-          chutesAccessToken = chutesExternalApiKey;
-        } else {
-          const ensured = await ensureChutesAccessToken();
-          chutesAccessToken = ensured.accessToken;
-          if (ensured.refreshed) {
-            refreshedTokenInfo = {
-              refreshToken: ensured.refreshToken,
-              expiresIn: ensured.expiresIn,
-            };
-          }
-        }
-        if (provider === 'chutes' && !chutesAccessToken) {
-          return new Response(
-            JSON.stringify({ error: 'Not authenticated with Chutes' }),
-            { status: 401, headers: { 'Content-Type': 'application/json' } }
-          );
-        }
-      }
-
-      // Start balance check in parallel (non-blocking, has 3s timeout)
-      // This runs alongside RAG retrieval so it doesn't add latency
-      if (provider === 'chutes' && chutesAccessToken) {
-        balanceCheckPromise = checkChutesBalance(chutesAccessToken);
-      } else if (provider === 'openrouter' && openrouterKey) {
-        balanceCheckPromise = validateApiKeyWithCredits(openrouterKey).then((result) => ({
-          hasCredits: result.hasCredits,
-          error: result.error,
-        }));
-      }
-
-      const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
-      // Both providers use BGE-M3 (1024-dim) - vectors are identical and query the same table
-      const embeddingModel =
-        body.embeddingModel ||
-        (useChutesEmbeddings
-          ? process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3'
-          : 'baai/bge-m3');
-
-      if (embeddingProvider === 'openrouter' && !openrouterKey) {
-        console.warn('Skipping RAG retrieval: OpenRouter API key missing for embeddings.');
+    // Handle Chutes authentication (must happen before streaming)
+    if (provider === 'chutes' || useChutesEmbeddings) {
+      // Priority: external API key > dev bypass > OAuth cookies
+      if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
+        console.log('[Chutes] Using external API key');
+        chutesAccessToken = chutesExternalApiKey;
       } else {
-        chunks = await retrieveWithReranking(userQuery, {
-          embeddingProvider,
-          embeddingApiKey: embeddingProvider === 'openrouter' ? openrouterKey || undefined : undefined,
-          chutesAccessToken: embeddingProvider === 'chutes' ? chutesAccessToken || undefined : undefined,
-          embeddingModel,
-          cohereApiKey: process.env.COHERE_API_KEY,
-          priorityDocIds,
-        });
+        const ensured = await ensureChutesAccessToken();
+        chutesAccessToken = ensured.accessToken;
+        if (ensured.refreshed) {
+          refreshedTokenInfo = {
+            refreshToken: ensured.refreshToken,
+            expiresIn: ensured.expiresIn,
+          };
+        }
       }
-      const { context, quality, avgSimilarity } = buildContextBlock(chunks);
-      ragQuality = quality;
-      console.log(
-        `RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
-      );
-      systemPrompt = buildSystemPrompt(context, chunks.length);
-  } catch (ragError) {
-    console.error('RAG retrieval error:', ragError);
-  }
+      if (provider === 'chutes' && !chutesAccessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Not authenticated with Chutes' }),
+          { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
 
-    // Check balance result (should be ready by now since RAG takes longer)
+    // Start balance check in parallel (non-blocking, has 3s timeout)
+    let balanceCheckPromise: Promise<{ hasCredits: boolean; error?: string }> | null = null;
+    if (provider === 'chutes' && chutesAccessToken) {
+      balanceCheckPromise = checkChutesBalance(chutesAccessToken);
+    } else if (provider === 'openrouter' && openrouterKey) {
+      balanceCheckPromise = validateApiKeyWithCredits(openrouterKey).then((result) => ({
+        hasCredits: result.hasCredits,
+        error: result.error,
+      }));
+    }
+
+    // Check balance before starting stream (await in parallel with nothing - quick check)
     if (balanceCheckPromise) {
       try {
         const balanceResult = await balanceCheckPromise;
@@ -444,48 +436,134 @@ export async function POST(request: Request) {
       }
     }
 
-  // Fallback response for low-relevance queries on non-instruction-following models
-  if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
-    return createUIMessageStreamResponse({
-      stream: createUIMessageStream({
-        execute: async ({ writer }) => {
+    // Create provider using registry factory
+    const providerConfig = getProvider(provider);
+    if (!providerConfig) {
+      return new Response(JSON.stringify({ error: 'Provider not found' }), { status: 404 });
+    }
+
+    const modelProvider = providerConfig.createProvider({
+      apiKey: provider === 'openrouter' ? apiKey : undefined,
+      accessToken: provider === 'chutes' ? chutesAccessToken || undefined : undefined,
+    });
+
+    // Embedding configuration for RAG
+    const embeddingProvider = useChutesEmbeddings ? 'chutes' : 'openrouter';
+    const embeddingModel =
+      body.embeddingModel ||
+      (useChutesEmbeddings
+        ? process.env.CHUTES_EMBEDDING_MODEL || 'chutes-baai-bge-m3'
+        : 'baai/bge-m3');
+
+    // Create UI message stream - RAG retrieval and LLM streaming happen inside
+    const stream = createUIMessageStream({
+      execute: async ({ writer }) => {
+        // Step 1: Search knowledge base
+        writeStatus(writer, {
+          stepId: 'search',
+          label: 'Searching knowledge base',
+          status: 'active',
+        });
+
+        let chunks: Awaited<ReturnType<typeof retrieveWithReranking>> = [];
+        let systemPrompt = 'You are a helpful assistant that answers questions about Quilibrium.';
+        let ragQuality: 'high' | 'low' | 'none' = 'none';
+
+        try {
+          if (embeddingProvider === 'openrouter' && !openrouterKey) {
+            console.warn('Skipping RAG retrieval: OpenRouter API key missing for embeddings.');
+          } else {
+            chunks = await retrieveWithReranking(userQuery, {
+              embeddingProvider,
+              embeddingApiKey: embeddingProvider === 'openrouter' ? openrouterKey || undefined : undefined,
+              chutesAccessToken: embeddingProvider === 'chutes' ? chutesAccessToken || undefined : undefined,
+              embeddingModel,
+              cohereApiKey: process.env.COHERE_API_KEY,
+              priorityDocIds,
+            });
+          }
+          const { context, quality, avgSimilarity } = buildContextBlock(chunks);
+          ragQuality = quality;
+          console.log(
+            `RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
+          );
+          systemPrompt = buildSystemPrompt(context, chunks.length);
+
+          // Step 1 complete
+          writeStatus(writer, {
+            stepId: 'search',
+            label: 'Searching knowledge base',
+            description: chunks.length > 0 ? `Found ${chunks.length} relevant sources` : 'No sources found',
+            status: 'completed',
+          });
+        } catch (ragError) {
+          console.error('RAG retrieval error:', ragError);
+          // Mark search as completed even on error (we'll continue without RAG)
+          writeStatus(writer, {
+            stepId: 'search',
+            label: 'Searching knowledge base',
+            description: 'Search completed',
+            status: 'completed',
+          });
+        }
+
+        // Step 2: Analyze context (brief step)
+        if (chunks.length > 0) {
+          writeStatus(writer, {
+            stepId: 'analyze',
+            label: 'Analyzing sources',
+            description: `Processing ${chunks.length} documents`,
+            status: 'active',
+          });
+          // Brief pause to show the analyze step (sources are already processed above)
+          writeStatus(writer, {
+            stepId: 'analyze',
+            label: 'Analyzing sources',
+            description: `${chunks.length} sources ready`,
+            status: 'completed',
+          });
+        }
+
+        // Check for low-relevance fallback on non-instruction-following models
+        if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
+          writeStatus(writer, {
+            stepId: 'generate',
+            label: 'Generating response',
+            status: 'active',
+          });
           const textId = 'fallback-response';
           writer.write({ type: 'text-start', id: textId });
           writer.write({ type: 'text-delta', id: textId, delta: LOW_RELEVANCE_FALLBACK_RESPONSE });
           writer.write({ type: 'text-end', id: textId });
-        },
-      }),
-    });
-  }
+          writeStatus(writer, {
+            stepId: 'generate',
+            label: 'Generating response',
+            status: 'completed',
+          });
+          return;
+        }
 
-  // Create provider using registry factory
-  const providerConfig = getProvider(provider);
-  if (!providerConfig) {
-    return new Response(JSON.stringify({ error: 'Provider not found' }), { status: 404 });
-  }
+        // Step 3: Generate response
+        writeStatus(writer, {
+          stepId: 'generate',
+          label: 'Generating response',
+          status: 'active',
+        });
 
-  const modelProvider = providerConfig.createProvider({
-    apiKey: provider === 'openrouter' ? apiKey : undefined,
-    accessToken: provider === 'chutes' ? chutesAccessToken || undefined : undefined,
-  });
+        const llmMessages = messages.map((m: Record<string, unknown>) => ({
+          role: getMessageRole(m),
+          content: getMessageContent(m),
+        }));
 
-  // Create UI message stream with LLM response
-  const stream = createUIMessageStream({
-    execute: async ({ writer }) => {
-      const llmMessages = messages.map((m: Record<string, unknown>) => ({
-        role: getMessageRole(m),
-        content: getMessageContent(m),
-      }));
-
-      const sources = formatSourcesForClient(chunks);
-      const result = streamText({
-        model: modelProvider(model) as any,
-        system: systemPrompt,
-        messages: llmMessages,
-        onError: (error) => {
-          console.error('LLM streaming error:', error);
-        },
-      });
+        const sources = formatSourcesForClient(chunks);
+        const result = streamText({
+          model: modelProvider(model) as Parameters<typeof streamText>[0]['model'],
+          system: systemPrompt,
+          messages: llmMessages,
+          onError: (error) => {
+            console.error('LLM streaming error:', error);
+          },
+        });
 
       // Chutes provider uses older @ai-sdk/provider versions incompatible with AI SDK v6's
       // toUIMessageStream(). Manually stream text to maintain proper text-start/delta/end protocol.
@@ -540,6 +618,14 @@ export async function POST(request: Request) {
           }
         }
         writer.write({ type: 'text-end', id: textId });
+
+        // Mark generate step as completed
+        writeStatus(writer, {
+          stepId: 'generate',
+          label: 'Generating response',
+          status: 'completed',
+        });
+
         // Only write sources if we got actual content (not on error/empty response)
         if (!hadError) {
           for (const source of sources) {
@@ -566,6 +652,13 @@ export async function POST(request: Request) {
             return error instanceof Error ? error.message : 'An error occurred while streaming the response.';
           },
           onFinish: () => {
+            // Mark generate step as completed
+            writeStatus(writer, {
+              stepId: 'generate',
+              label: 'Generating response',
+              status: 'completed',
+            });
+
             for (const source of sources) {
               // Encode metadata into title for client display
               // Format: "Title|doc_type|published_date" (pipe-separated for parsing)
