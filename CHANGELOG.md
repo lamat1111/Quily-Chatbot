@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-02-01
+
+### Features
+
+- improve chat input layout and fix rendering ([b6d91c9](https://github.com/lamat1111/Quily-Chatbot/commit/b6d91c9ba09c658e77cd6686e6efb87e23da5a46))
+- add expert panel analysis command ([c546ed2](https://github.com/lamat1111/Quily-Chatbot/commit/c546ed225858c40e1ddcfcf4a5506b997b0e7d78))
+- add transcript and improve cleaning guides ([4e03384](https://github.com/lamat1111/Quily-Chatbot/commit/4e03384682ac53c3c5152b9056c86d5ac8b1a797))
+- add conversational context to RAG ([1cf66a5](https://github.com/lamat1111/Quily-Chatbot/commit/1cf66a512acc7542ce4bd6ea695436458b2af326))
+
 ## [0.5.0] - 2026-01-31
 
 ### Features
