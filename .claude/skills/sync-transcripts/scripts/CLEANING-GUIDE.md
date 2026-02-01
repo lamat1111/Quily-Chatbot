@@ -22,6 +22,50 @@ The goal is to transform these into clean, well-structured documentation that:
 
 ---
 
+## Critical: Clean, Don't Summarize
+
+**Your job is to REMOVE unwanted content, not to REWRITE wanted content.**
+
+This is the most important principle of transcript cleaning. Think of yourself as a surgeon removing bad tissue, not a writer condensing a book into a summary.
+
+### DO:
+- Delete filler words ("um", "uh", "like", "you know"), leaving the rest of the sentence intact
+- Delete entire sections that are boilerplate (disclaimer, mission statement, greetings)
+- Delete stream housekeeping and technical difficulties
+- Delete off-topic tangents
+- Fix transcription errors (spelling, punctuation, term corrections)
+- Add section headers to organize content
+- Break run-on text into paragraphs
+
+### DON'T:
+- Paraphrase or reword Cassie's explanations
+- Condense multiple sentences into fewer sentences
+- Summarize technical details into shorter descriptions
+- "Clean up" sentence structure or word choice beyond fixing errors
+- Combine related points into a single condensed statement
+- Remove specific details, numbers, or examples to make text shorter
+
+### The Length Test
+
+If Cassie explained something in 5 sentences, the cleaned version should have approximately 5 sentences (minus any filler words removed). If your output is significantly shorter than the input (after removing only boilerplate/filler), you're summarizing, not cleaning.
+
+**Example - WRONG (summarizing):**
+
+Raw input (3 sentences):
+> "So the way that MPC works is that you have key shares that live in different places. And so when you're doing a signing operation, instead of bringing those key shares together, you're actually doing a multi-party computation where the shares never meet. And that's really important because it means no single party ever has the full key."
+
+Bad output (1 sentence):
+> "MPC keeps key shares separate during signing so no single party has the full key."
+
+**Example - CORRECT (cleaning):**
+
+Good output (3 sentences):
+> "The way MPC works is that you have key shares that live in different places. When you're doing a signing operation, instead of bringing those key shares together, you're actually doing a multi-party computation where the shares never meet. That's really important because it means no single party ever has the full key."
+
+Notice: Same number of sentences, same level of detail, just filler words removed.
+
+---
+
 ## Cleaning Workflow
 
 ### Step 1: Initial Review
@@ -273,15 +317,25 @@ basically like your data is encrypted and um it's stored in a
 way that is like provably encrypted
 ```
 
-### After (Cleaned)
+### After (Cleaned) - CORRECT
+```markdown
+## How Data Storage Works on Quilibrium
+
+What I want to talk about is the way that Quilibrium handles the storage of data on the network. When you're storing data to the hypergraph, that directly corresponds to a fee. The way that works is through verifiable encryption. Your data is encrypted and it's stored in a way that is provably encrypted.
+```
+
+Notice: The content is the same length and detail level. Only filler words ("so", "um", "basically", "uh", "you know", "like") and stutters ("is is", "the the") were removed. The spelling error "equilibrium" was fixed to "Quilibrium" and "hyper graph" was fixed to "hypergraph".
+
+### After (Cleaned) - WRONG (summarizing)
 ```markdown
 ## How Data Storage Works on Quilibrium
 
 When you store data to the hypergraph, it directly corresponds to a fee.
 The storage mechanism uses verifiable encryption, meaning your data is
-encrypted and stored in a way that is provably encrypted. This ensures
-that even node operators cannot access your unencrypted data.
+encrypted and stored in a way that is provably encrypted.
 ```
+
+This version is too condensed. It loses Cassie's framing ("what I want to talk about") and combines her explanation into fewer sentences.
 
 ---
 
@@ -311,4 +365,4 @@ After completing Phase 2 (cleaning):
 
 ---
 
-*Last updated: 2026-01-29*
+*Last updated: 2026-02-01*

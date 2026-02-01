@@ -125,7 +125,7 @@ These content types should be KEPT even if related topics exist in official docs
 
 ### Tier 3: Flag for Extraction (Missing from Official Docs)
 
-These topics appear in transcripts but have NO official documentation. Flag them for potential extraction into new official docs:
+These topics appear in transcripts but have NO official documentation. Track them for potential extraction into new official docs.
 
 | Topic | Notes |
 |-------|-------|
@@ -135,13 +135,10 @@ These topics appear in transcripts but have NO official documentation. Flag them
 | **Bridge to Ethereum** | wQUIL bridge details |
 | **Farcaster integration** | Social integration details |
 | **Game engine integrations** | Unity, Godot, Fyrox mentions |
+| **QQ (SQS-compatible queue)** | Service mentioned in streams |
+| **Quark SDK** | Game asset SDK |
 
-When you find substantial content on these topics, add a note:
-
-```markdown
-> **📝 Documentation Gap:** This section covers [topic] which is not yet in official docs.
-> Consider extracting to `docs/quilibrium-official/[appropriate-section]/`.
-```
+**Important:** Do NOT add "Documentation Gap" flags directly into the transcript. These are working notes for the maintainer. Instead, note the gap in the table above or in a separate tracking system. The ingested transcript should contain only RAG-retrievable content.
 
 ---
 
@@ -356,55 +353,42 @@ When multiple transcripts cover a topic NOT in official docs, designate one as c
 
 ---
 
-## Replacement Templates
+## Working Annotations vs. Ingested Content
 
-### Template 1: Topic Fully Covered in Official Docs
+During dedupe, you may use annotations to track your decisions. However, these are **working notes only** and must be stripped before Phase 4 (copying to `docs/transcriptions/`).
 
-Use when removing a section entirely:
+### Annotations to Strip Before Ingestion
 
-```markdown
-## [Topic Name]
+The following should NEVER appear in the final ingested transcript:
 
-For comprehensive information about [topic], see the [official documentation](../../../docs/quilibrium-official/[path]).
-```
+1. **Cross-reference links to local docs** - Links like `../../../docs/quilibrium-official/...` or `[official documentation](docs/...)` are meaningless to the RAG bot and users
+2. **Documentation gap flags** - Emoji markers like `📝 Documentation Gap:` are internal workflow notes
+3. **Cross-references to other transcripts** - Links like `[2025-02-03_transcript.md](...)` don't help RAG retrieval
 
-### Template 2: Topic Covered, But Transcript Has Unique Insights
+### What to Do Instead
 
-Use when keeping partial content:
+**For Tier 1 content (duplicates official docs):**
+- Simply delete the redundant content entirely
+- Do NOT add a cross-reference placeholder
+- The RAG system will retrieve from official docs when needed
 
-```markdown
-## [Topic Name]
+**For Tier 3 content (documentation gaps):**
+- Keep the full content in the transcript (it's valuable!)
+- Track the gap in the Tier 3 table above or in a separate task tracker
+- Do NOT add inline flags to the transcript
 
-For technical details, see the [official documentation](../../../docs/quilibrium-official/[path]).
+**For cross-transcript references:**
+- Keep the unique insights from THIS stream
+- Don't add links to other transcripts
+- Each transcript should stand on its own for RAG
 
-[Keep unique insights, examples, or context below...]
+### Quality Check Before Phase 4
 
-In this stream, Cassie explained [unique perspective/example/analogy]...
-```
-
-### Template 3: Cross-Reference to Another Transcript
-
-Use when another transcript has the canonical explanation:
-
-```markdown
-## [Topic Name]
-
-For a detailed explanation, see [Transcript Title](YYYY-MM-DD_transcript-name.md#section-anchor).
-
-[Keep any unique insights from THIS stream...]
-```
-
-### Template 4: Documentation Gap Flag
-
-Use when content should be extracted to official docs:
-
-```markdown
-## [Topic Name]
-
-> **📝 Documentation Gap:** This topic is not yet covered in official documentation.
-
-[Full content preserved...]
-```
+Before copying to `docs/transcriptions/`, verify the transcript contains:
+- No relative file paths (`../`, `./`, `docs/...`)
+- No emoji markers or workflow flags
+- No cross-references to other transcripts
+- Only content that would be useful for RAG retrieval
 
 ---
 
@@ -454,17 +438,19 @@ Before saving, verify:
 
 ## Quality Checklist
 
-Before marking a transcript as deduped:
+Before marking a transcript as deduped and ready for Phase 4:
 
 - [ ] Checked all sections against Official Docs Reference Index
-- [ ] Removed redundant technical explanations (Tier 1)
+- [ ] Removed redundant technical explanations (Tier 1) - deleted entirely, no placeholders
 - [ ] Preserved unique insights, analogies, examples (Tier 2)
-- [ ] Flagged documentation gaps (Tier 3)
-- [ ] Added cross-references for all removed content
+- [ ] Noted documentation gaps (Tier 3) in the guide's table, NOT in the transcript
 - [ ] Preserved all time-specific content
 - [ ] Preserved all Q&A content
-- [ ] Verified cross-references link to correct files/sections
+- [ ] **No relative file paths** (`../`, `docs/...`) in the transcript
+- [ ] **No emoji markers or workflow flags** (`📝`, `Documentation Gap`, etc.)
+- [ ] **No cross-references to other transcripts**
 - [ ] File has substantial remaining content (not hollow)
+- [ ] YAML frontmatter is still valid
 
 ---
 
@@ -486,4 +472,4 @@ Every 3-6 months, review:
 
 ---
 
-*Last updated: 2026-01-29*
+*Last updated: 2026-02-01*
