@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-02-02
+
+### Features
+
+- add real-time status indicator during chat ([4a03d7a](https://github.com/lamat1111/Quily-Chatbot/commit/4a03d7ad113bb6b21881a8d31d5734488e003974))
+- add playful random search status messages ([c696e30](https://github.com/lamat1111/Quily-Chatbot/commit/c696e309c133a3674d79a44e119949fc4b7f7e46))
+- add follow-up question suggestions ([1ca85c3](https://github.com/lamat1111/Quily-Chatbot/commit/1ca85c35eb5cff64b52d6c9fba906aef153d73e6))
+- improve sidebar UX with logo and delete flow ([54ddc65](https://github.com/lamat1111/Quily-Chatbot/commit/54ddc65002a94291395a39ca0a68a9ae142a6f69))
+
+### Bug Fixes
+
+- persist citation sources across page refresh ([92fba30](https://github.com/lamat1111/Quily-Chatbot/commit/92fba30e5b8fbca15e9882c6c6782593949a8f61))
+
+### Documentation
+
+- add Quorum notifications doc, remove footers ([a0c050b](https://github.com/lamat1111/Quily-Chatbot/commit/a0c050bacaec7f203d5fa73bec1b0d06239847a7))
+- update README to prioritize Chutes provider ([f76e3ed](https://github.com/lamat1111/Quily-Chatbot/commit/f76e3edb3290efc9b5904ba113ff5c25ef625ea9))
+
+### Styles
+
+- widen sidebar on 2xl screens ([604a2b4](https://github.com/lamat1111/Quily-Chatbot/commit/604a2b4043cc8409998886b870b94d68a114553d))
+- rebrand from burgundy to blue color scheme ([5352e26](https://github.com/lamat1111/Quily-Chatbot/commit/5352e262c5481056485a1124a1b4e7d73e8d3320))
+
+### Maintenance
+
+- update next-env.d.ts types path ([c00d6ec](https://github.com/lamat1111/Quily-Chatbot/commit/c00d6eca73dd12940eaaacef32e33a7a6fc9b50f))
+
 ## [0.6.0] - 2026-02-01
 
 ### Features
