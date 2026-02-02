@@ -186,11 +186,27 @@ export function ChatContainer({
     if (!conversation || conversation.messages.length === 0) return;
 
     // Convert stored Message format to UIMessage format
-    const uiMessages: UIMessage[] = conversation.messages.map((msg) => ({
-      id: msg.id,
-      role: msg.role,
-      parts: [{ type: 'text', text: msg.content }],
-    }));
+    const uiMessages: UIMessage[] = conversation.messages.map((msg) => {
+      const parts: UIMessage['parts'] = [{ type: 'text', text: msg.content }];
+
+      // Reconstruct source-url parts if sources were saved
+      if (msg.sources && msg.sources.length > 0) {
+        for (const source of msg.sources) {
+          parts.push({
+            type: 'source-url',
+            sourceId: source.sourceId,
+            url: source.url,
+            title: source.title,
+          } as UIMessage['parts'][number]);
+        }
+      }
+
+      return {
+        id: msg.id,
+        role: msg.role,
+        parts,
+      };
+    });
 
     // Use setTimeout to ensure useChat has fully initialized
     setTimeout(() => {
@@ -277,10 +293,23 @@ export function ChatContainer({
             .map((part) => part.text)
             .join('') || '';
 
+        // Extract sources from parts
+        const sources = msg.parts
+          ?.filter(
+            (part): part is { type: 'source-url'; sourceId: string; url: string; title?: string } =>
+              part.type === 'source-url'
+          )
+          .map((part) => ({
+            sourceId: part.sourceId,
+            url: part.url,
+            title: part.title,
+          }));
+
         return {
           id: msg.id,
           role: msg.role as 'user' | 'assistant',
           content: textContent,
+          sources: sources && sources.length > 0 ? sources : undefined,
         };
       });
 

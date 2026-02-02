@@ -139,7 +139,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                     href={source.url!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-accent hover:underline flex items-center gap-1"
+                    className="link-unstyled text-accent hover:text-accent-hover flex items-center gap-1"
                   >
                     <span className="text-gray-400 dark:text-gray-500">
                       [{index + 1}]

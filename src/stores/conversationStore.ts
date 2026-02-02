@@ -16,12 +16,22 @@ function generateUUID(): string {
 }
 
 /**
+ * Source citation attached to a message.
+ */
+export interface MessageSource {
+  sourceId: string;
+  url: string;
+  title?: string;
+}
+
+/**
  * Message in a conversation.
  */
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  sources?: MessageSource[];
 }
 
 /**
