@@ -165,10 +165,19 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
       <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
         {/* App title and description */}
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2 sm:mb-3">
-            Quily Chat
-            <sup className="ml-1.5 text-xs sm:text-sm font-medium text-accent">beta</sup>
-          </h1>
+          <div className="flex items-start justify-center gap-1 mb-2 sm:mb-3">
+            <img
+              src="/quily-logo-dark.png"
+              alt="Quily"
+              className="h-14 sm:h-16 hidden dark:block"
+            />
+            <img
+              src="/quily-logo-light.png"
+              alt="Quily"
+              className="h-14 sm:h-16 dark:hidden"
+            />
+            <span className="text-xs sm:text-sm font-medium text-accent mt-3 sm:mt-4">beta</span>
+          </div>
           <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
             Your AI assistant for all things Quilibrium.
             Ask questions about the protocol, documentation, and more.

@@ -41,8 +41,8 @@
   --color-text-subtle: #9ca3af;       /* Tertiary/disabled text (gray-400) */
   --color-text-inverted: #ffffff;     /* Text on dark backgrounds */
   /* Brand text colors (for branded headings) */
-  --color-text-brand: #40001B;        /* Brand primary text */
-  --color-text-brand-muted: #5A0026;  /* Brand secondary text */
+  --color-text-brand: #19336B;        /* Brand primary text (logo blue) */
+  --color-text-brand-muted: #2A4A8C;  /* Brand secondary text */
 
   /* ==========================================================================
      INTERACTIVE / HOVER STATES
@@ -59,18 +59,18 @@
   --color-accent-hover: #E55500;      /* Accent hover state */
   --color-accent-muted: rgba(255, 96, 0, 0.1); /* Accent with opacity */
 
-  /* Brand gradient (for primary buttons) */
-  --color-gradient-from: #8B2942;
-  --color-gradient-to: #FF6000;
-  --color-gradient-from-hover: #A03350;
-  --color-gradient-to-hover: #E55500;
+  /* Brand gradient (for primary buttons) - now solid blue */
+  --color-gradient-from: #19336B;
+  --color-gradient-to: #19336B;
+  --color-gradient-from-hover: #243F7A;
+  --color-gradient-to-hover: #243F7A;
 
-  /* Secondary brand color (burgundy) */
-  --color-secondary: #40001B;
-  --color-secondary-light: #5A0026;
+  /* Secondary brand color (blue) */
+  --color-secondary: #19336B;
+  --color-secondary-light: #243F7A;
 
   /* Surface color for opacity overlays */
-  --color-surface: #40001B;
+  --color-surface: #19336B;
 
   /* ==========================================================================
      BUTTONS
@@ -107,8 +107,8 @@
   /* ==========================================================================
      SELECTION
      ========================================================================== */
-  --color-selection-bg: rgba(64, 0, 27, 0.2);
-  --color-selection-text: #40001B;
+  --color-selection-bg: rgba(25, 51, 107, 0.2);
+  --color-selection-text: #19336B;
 
   /* ==========================================================================
      LINKS
@@ -169,15 +169,15 @@
   --color-accent-hover: #C05515;      /* Accent hover state */
   --color-accent-muted: rgba(212, 96, 26, 0.15); /* Accent with opacity */
 
-  /* Brand gradient (for primary buttons) */
-  --color-gradient-from: #5A0026;
-  --color-gradient-to: #D4601A;
-  --color-gradient-from-hover: #70002F;
-  --color-gradient-to-hover: #C05515;
+  /* Brand gradient (for primary buttons) - now solid blue */
+  --color-gradient-from: #3B5998;
+  --color-gradient-to: #3B5998;
+  --color-gradient-from-hover: #4A6AAA;
+  --color-gradient-to-hover: #4A6AAA;
 
-  /* Secondary brand color (burgundy) */
-  --color-secondary: #5A0026;
-  --color-secondary-light: #70002F;
+  /* Secondary brand color (blue) */
+  --color-secondary: #3B5998;
+  --color-secondary-light: #4A6AAA;
 
   /* Surface color for opacity overlays */
   --color-surface: #9ca3af;

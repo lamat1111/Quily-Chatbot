@@ -103,10 +103,19 @@ export function MessageList({ messages, status, error, onQuickAction, thinkingSt
         className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-bg-base chat-scrollbar"
       >
         <div className="text-center text-text-muted max-w-md">
-          <p className="text-3xl font-semibold mb-2 text-text-primary font-title">
-            Quily Chat
-            <sup className="ml-1 text-xs font-medium text-accent font-sans">beta</sup>
-          </p>
+          <div className="flex items-start justify-center gap-1 mb-2">
+            <img
+              src="/quily-logo-dark.png"
+              alt="Quily"
+              className="h-14 hidden dark:block"
+            />
+            <img
+              src="/quily-logo-light.png"
+              alt="Quily"
+              className="h-14 dark:hidden"
+            />
+            <span className="text-xs font-medium text-accent mt-3">beta</span>
+          </div>
           <p className="mb-6">Ask a question about Quilibrium to get started</p>
 
           {/* Quick action buttons */}
