@@ -9,8 +9,9 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 ## Features
 
 - **RAG-powered answers** with source citations from official Quilibrium docs
-- **Streaming responses** via OpenRouter (supports Llama, Mixtral, Claude, GPT-4, etc.)
-- **Optional Chutes OAuth** for using Chutes models without API keys
+- **Streaming responses** via Chutes (recommended) or OpenRouter
+- **Chutes OAuth** for easy sign-in without API keys
+- **OpenRouter support** as an alternative provider (requires API key)
 - **Two-stage retrieval** with optional Cohere reranking for improved accuracy
 - **Auto-sync** documentation from GitHub with incremental updates
 - **Conversation history** persisted in browser localStorage
@@ -25,7 +26,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 
 - Node.js 18+
 - Supabase account (free tier works)
-- OpenRouter API key **OR** Chutes account (for chat)
+- Chutes account (recommended) **OR** OpenRouter API key (for chat)
 - GitHub token (for docs sync, no scopes needed)
 
 ### 1. Clone and Install
@@ -47,10 +48,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_KEY=your_service_role_key
 
-# OpenRouter (required for ingestion and embeddings)
-OPENROUTER_API_KEY=your_openrouter_key
-
-# Chutes OAuth (optional - enables Sign in with Chutes)
+# Chutes OAuth (recommended - enables Sign in with Chutes)
 CHUTES_OAUTH_CLIENT_ID=cid_xxx
 CHUTES_OAUTH_CLIENT_SECRET=csc_xxx
 CHUTES_OAUTH_SCOPES="openid profile chutes:invoke"
@@ -58,6 +56,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # Optional overrides
 # CHUTES_OAUTH_REDIRECT_URI=https://your-domain.com/api/auth/chutes/callback
 # CHUTES_IDP_BASE_URL=https://api.chutes.ai
+
+# OpenRouter (alternative provider - requires API key)
+OPENROUTER_API_KEY=your_openrouter_key
 
 # Cohere reranking (optional, improves retrieval quality)
 COHERE_API_KEY=your_cohere_key
@@ -68,8 +69,8 @@ GITHUB_TOKEN=ghp_your_token_here
 
 **Get your keys:**
 - [Supabase](https://supabase.com) → Dashboard → Settings → API
-- [OpenRouter](https://openrouter.ai/keys) (for API key auth)
-- [Chutes](https://chutes.ai) → Create account (for OAuth sign-in, alternative to OpenRouter)
+- [Chutes](https://chutes.ai) → Create account (recommended, for OAuth sign-in)
+- [OpenRouter](https://openrouter.ai/keys) (alternative, requires API key)
 - [Cohere](https://dashboard.cohere.com/api-keys) (optional)
 - [GitHub](https://github.com/settings/tokens) → Generate token (no scopes needed for public repos)
 
@@ -77,63 +78,7 @@ GITHUB_TOKEN=ghp_your_token_here
 
 Create a new Supabase project and run the schema from `scripts/db/schema.sql` in the SQL Editor.
 
-Or run this minimal setup:
-
-```sql
--- Enable pgvector extension
-create extension if not exists vector;
-
--- Create document chunks table
-create table document_chunks (
-  id bigint primary key generated always as identity,
-  content text not null,
-  embedding vector(1536),
-  source_file text not null,
-  heading_path text,
-  chunk_index integer not null,
-  token_count integer not null,
-  version text,
-  content_hash text not null,
-  created_at timestamptz default now(),
-  unique(source_file, chunk_index)
-);
-
--- Create HNSW index for fast similarity search
-create index document_chunks_embedding_idx
-  on document_chunks
-  using hnsw (embedding vector_cosine_ops)
-  with (m = 16, ef_construction = 64);
-
--- Create similarity search function
-create or replace function match_document_chunks(
-  query_embedding vector(1536),
-  match_threshold float default 0.7,
-  match_count int default 10
-)
-returns table (
-  id bigint,
-  content text,
-  source_file text,
-  heading_path text,
-  similarity float
-)
-language plpgsql
-as $$
-begin
-  return query
-  select
-    dc.id,
-    dc.content,
-    dc.source_file,
-    dc.heading_path,
-    1 - (dc.embedding <=> query_embedding) as similarity
-  from document_chunks dc
-  where 1 - (dc.embedding <=> query_embedding) > match_threshold
-  order by dc.embedding <=> query_embedding
-  limit match_count;
-end;
-$$;
-```
+The schema uses BGE-M3 embeddings (1024 dimensions) which work with both Chutes and OpenRouter providers.
 
 ### 4. Sync and Ingest Documentation
 
@@ -151,7 +96,7 @@ yarn ingest:run
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and configure your preferred provider (OpenRouter API key or Chutes sign-in) in Settings to start chatting.
+Open [http://localhost:3000](http://localhost:3000) and configure your preferred provider (Chutes sign-in or OpenRouter API key) in Settings to start chatting.
 
 ---
 
@@ -289,7 +234,8 @@ yarn ingest:status
 │   │   ├── index.ts            # CLI orchestrator
 │   │   ├── loader.ts           # Document loader (.md, .txt)
 │   │   ├── chunker.ts          # Semantic chunking
-│   │   ├── embedder.ts         # OpenRouter embeddings
+│   │   ├── embedder.ts         # BGE-M3 embeddings (OpenRouter)
+│   │   ├── embedder-chutes.ts  # BGE-M3 embeddings (Chutes)
 │   │   └── uploader.ts         # Supabase upload + cleanup
 │   ├── sync-docs/              # GitHub sync system
 │   │   ├── index.ts            # CLI orchestrator
@@ -324,11 +270,9 @@ yarn ingest:status
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Service role key (server-side) |
 | `SUPABASE_URL` | Yes | Supabase URL (for scripts) |
 | `SUPABASE_SERVICE_KEY` | Yes | Service key (for scripts) |
-| `OPENROUTER_API_KEY` | Yes* | For embeddings during ingestion (*required for ingestion, optional for chat if using Chutes) |
-| `COHERE_API_KEY` | No | Enables reranking for better retrieval |
 | `GITHUB_TOKEN` | Yes | For docs sync (no scopes needed) |
-| `CHUTES_OAUTH_CLIENT_ID` | No | Chutes OAuth client ID (for Sign in with Chutes) |
-| `CHUTES_OAUTH_CLIENT_SECRET` | No | Chutes OAuth client secret |
+| `CHUTES_OAUTH_CLIENT_ID` | Recommended | Chutes OAuth client ID (for Sign in with Chutes) |
+| `CHUTES_OAUTH_CLIENT_SECRET` | Recommended | Chutes OAuth client secret |
 | `CHUTES_OAUTH_SCOPES` | No | OAuth scopes (default: `openid profile chutes:invoke`) |
 | `NEXT_PUBLIC_APP_URL` | No | Used to build OAuth redirect URL |
 | `CHUTES_OAUTH_REDIRECT_URI` | No | Override redirect URL |
@@ -336,6 +280,8 @@ yarn ingest:status
 | `CHUTES_DEFAULT_MODEL` | No | Default Chutes LLM chute URL |
 | `NEXT_PUBLIC_CHUTES_DEFAULT_MODEL` | No | Client default Chutes model |
 | `CHUTES_EMBEDDING_MODEL` | No | Chutes embedding chute URL |
+| `OPENROUTER_API_KEY` | No* | Alternative to Chutes (*required if not using Chutes) |
+| `COHERE_API_KEY` | No | Enables reranking for better retrieval |
 
 ---
 
@@ -344,7 +290,8 @@ yarn ingest:status
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS 4
 - **State**: Zustand + localStorage
-- **AI**: Vercel AI SDK + OpenRouter
+- **AI**: Vercel AI SDK + Chutes (recommended) or OpenRouter
+- **Embeddings**: BGE-M3 (1024 dimensions)
 - **Vector DB**: Supabase pgvector
 - **Reranking**: Cohere (optional)
 
@@ -388,7 +335,7 @@ yarn ingest:clean
 
 ### Adding new transcriptions
 
-1. Add `.txt` or `.md` files to `./docs/video-transcriptions/`
+1. Add `.txt` or `.md` files to `./docs/transcriptions/` or `./docs/custom/`
 2. Run `yarn ingest:run`
 
 ### Troubleshooting
@@ -397,7 +344,7 @@ yarn ingest:clean
 |-------|----------|
 | Sync rate limited | Add `GITHUB_TOKEN` to `.env` |
 | Deleted files still in search | Run `yarn ingest:clean` |
-| Embeddings failing | Check `OPENROUTER_API_KEY` and credits |
+| Embeddings failing | Check Chutes session or `OPENROUTER_API_KEY` |
 | Poor search results | Add `COHERE_API_KEY` for reranking |
 
 For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.agents/docs/rag-knowledge-base-workflow.md).
