@@ -66,10 +66,23 @@ export function Sidebar() {
             <Icon name="menu" size={24} />
           )}
         </button>
-        <h1 className="ml-2 text-lg font-semibold text-text-primary flex-1 font-title">
-          Quily Chat
-          <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
-        </h1>
+        <button
+          onClick={handleNewChat}
+          className="ml-2 flex items-start gap-1 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+          aria-label="New conversation"
+        >
+          <img
+            src="/quily-logo-dark.png"
+            alt="Quily"
+            className="h-8 hidden dark:block"
+          />
+          <img
+            src="/quily-logo-light.png"
+            alt="Quily"
+            className="h-8 dark:hidden"
+          />
+          <span className="text-[10px] font-medium text-accent mt-1.5">beta</span>
+        </button>
       </div>
 
       {/* Mobile backdrop */}
@@ -95,10 +108,23 @@ export function Sidebar() {
       >
         {/* Header with title */}
         <div className="p-4">
-          <h1 className="text-lg font-semibold text-text-primary font-title">
-            Quily Chat
-            <sup className="ml-1 text-[10px] font-medium text-accent font-sans">beta</sup>
-          </h1>
+          <button
+            onClick={handleNewChat}
+            className="flex items-start gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            aria-label="New conversation"
+          >
+            <img
+              src="/quily-logo-dark.png"
+              alt="Quily"
+              className="h-8 hidden dark:block"
+            />
+            <img
+              src="/quily-logo-light.png"
+              alt="Quily"
+              className="h-8 dark:hidden"
+            />
+            <span className="text-[10px] font-medium text-accent mt-1.5">beta</span>
+          </button>
         </div>
 
         {/* Fixed navigation - stays visible, content scrolls under */}

@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as Dialog from '@radix-ui/react-dialog';
 import { useConversationStore, Conversation } from '@/src/stores/conversationStore';
 import { Icon } from '@/src/components/ui/Icon';
 
@@ -29,7 +28,7 @@ interface ConversationItemProps {
   onSelect: () => void;
   onToggleStarred: () => void;
   onRename: (newTitle: string) => void;
-  onRequestDelete: () => void;
+  onDelete: () => void;
 }
 
 function ConversationItem({
@@ -38,11 +37,22 @@ function ConversationItem({
   onSelect,
   onToggleStarred,
   onRename,
-  onRequestDelete,
+  onDelete,
 }: ConversationItemProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(conversation.title);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Reset delete confirmation after 3 seconds or when menu closes
+  useEffect(() => {
+    return () => {
+      if (deleteTimeoutRef.current) {
+        clearTimeout(deleteTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isRenaming && inputRef.current) {
@@ -195,19 +205,36 @@ function ConversationItem({
               <DropdownMenu.Item
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRequestDelete();
+                  e.preventDefault();
+                  if (deleteConfirm) {
+                    onDelete();
+                    setDeleteConfirm(false);
+                  } else {
+                    setDeleteConfirm(true);
+                    // Auto-reset after 3 seconds
+                    if (deleteTimeoutRef.current) {
+                      clearTimeout(deleteTimeoutRef.current);
+                    }
+                    deleteTimeoutRef.current = setTimeout(() => {
+                      setDeleteConfirm(false);
+                    }, 3000);
+                  }
                 }}
-                className="
+                onSelect={(e) => e.preventDefault()}
+                className={`
                   flex items-center gap-2 px-2 py-1.5
-                  text-sm text-red-500 dark:text-red-400
+                  text-sm
                   rounded cursor-pointer
                   outline-none
-                  hover:bg-red-500/10 dark:hover:bg-red-400/10
-                  focus:bg-red-500/10 dark:focus:bg-red-400/10
-                "
+                  transition-colors
+                  ${deleteConfirm
+                    ? 'text-white bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700'
+                    : 'text-red-500 dark:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-400/10 focus:bg-red-500/10 dark:focus:bg-red-400/10'
+                  }
+                `}
               >
                 <Icon name="trash-2" size={16} />
-                Delete
+                {deleteConfirm ? 'Sure?' : 'Delete'}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
@@ -234,9 +261,6 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
   const deleteConversation = useConversationStore((s) => s.deleteConversation);
   const toggleStarred = useConversationStore((s) => s.toggleStarred);
   const updateTitle = useConversationStore((s) => s.updateTitle);
-
-  // State for delete confirmation dialog
-  const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null);
 
   // State for collapsible sections
   const [starredCollapsed, setStarredCollapsed] = useState(false);
@@ -296,13 +320,6 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
     onNavigate?.();
   };
 
-  const handleConfirmDelete = () => {
-    if (deleteTarget) {
-      deleteConversation(deleteTarget.id);
-      setDeleteTarget(null);
-    }
-  };
-
   const renderConversation = (conversation: Conversation) => (
     <ConversationItem
       key={conversation.id}
@@ -311,7 +328,7 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
       onSelect={() => handleSelect(conversation.id)}
       onToggleStarred={() => toggleStarred(conversation.id)}
       onRename={(newTitle) => updateTitle(conversation.id, newTitle)}
-      onRequestDelete={() => setDeleteTarget(conversation)}
+      onDelete={() => deleteConversation(conversation.id)}
     />
   );
 
@@ -395,57 +412,6 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
           </>
         )}
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog.Root open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/50 animate-in fade-in-0 z-50" />
-          <Dialog.Content
-            className="
-              fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              w-full max-w-sm p-6
-              bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700
-              rounded-xl shadow-xl
-              animate-in fade-in-0 zoom-in-95
-              z-50
-            "
-          >
-            <Dialog.Title className="text-lg font-semibold text-text-primary">
-              Delete chat?
-            </Dialog.Title>
-            <Dialog.Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              This will permanently delete &quot;{truncateTitle(deleteTarget?.title || '', 40)}&quot;. This action cannot be undone.
-            </Dialog.Description>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() => setDeleteTarget(null)}
-                className="
-                  px-4 py-2
-                  text-sm font-medium text-text-primary
-                  bg-btn-secondary hover:bg-btn-secondary-hover
-                  rounded-lg
-                  transition-colors
-                "
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="
-                  px-4 py-2
-                  text-sm font-medium text-white
-                  bg-btn-danger hover:bg-btn-danger-hover
-                  rounded-lg
-                  transition-colors
-                "
-              >
-                Delete
-              </button>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
     </>
   );
 }
