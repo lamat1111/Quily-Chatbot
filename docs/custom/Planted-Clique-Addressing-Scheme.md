@@ -112,8 +112,3 @@ PCAS works in conjunction with:
 
 Together, these components enable Quilibrium's privacy-preserving communication layer.
 
----
-
-*Source: Quilibrium Whitepaper, Section 2.1 - Planted Clique Addressing Scheme*
-
-*Last updated: 2025-01-28*

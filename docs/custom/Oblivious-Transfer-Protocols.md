@@ -153,8 +153,3 @@ In Quilibrium's hypergraph:
 
 Oblivious Transfer is the cryptographic primitive that makes Quilibrium's privacy guarantees possible. Starting from the simple but slow base protocol, extensions like Correlated OT and Ferret achieve practical speeds while maintaining the core property: **receivers get exactly what they request, senders never learn what was requested, and observers learn nothing**.
 
----
-
-*Source: Quilibrium Whitepaper, Section 4.2 - Oblivious Transfer*
-
-*Last updated: 2025-01-28*

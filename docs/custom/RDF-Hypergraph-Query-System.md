@@ -171,8 +171,3 @@ SELECT ?doc WHERE {
 2. Follow to "wrote" (shares the ?person variable)
 3. Return matching documents
 
----
-
-*Source: Quilibrium Whitepaper, Sections 4.3-4.5*
-
-*Last updated: 2025-01-28*

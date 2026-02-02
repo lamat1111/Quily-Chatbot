@@ -288,8 +288,3 @@ This model enables:
 3. **Network-wide accessibility** through access keys
 4. **Decentralized governance** through foundation ownership
 
----
-
-*Source: Quilibrium Whitepaper, Section 5 - Operating System*
-
-*Last updated: 2025-01-28*
