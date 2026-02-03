@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   title: 'Quily Chat',
   description: 'Get instant, accurate answers about Quilibrium from official sources',
   metadataBase: new URL('https://quily.quilibrium.one'),
+  manifest: '/manifest.webmanifest',
   openGraph: {
     title: 'Quily Chat',
     description: 'Get instant, accurate answers about Quilibrium from official sources',

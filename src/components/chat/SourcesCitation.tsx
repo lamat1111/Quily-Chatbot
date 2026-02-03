@@ -148,7 +148,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                       {displayTitle}
                     </span>
                     {sourceLabel && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500 italic shrink-0">
+                      <span className="text-sm sm:text-xs text-gray-400 dark:text-gray-500 italic shrink-0">
                         ({sourceLabel})
                       </span>
                     )}
@@ -175,7 +175,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                       {displayTitle}
                     </span>
                     {sourceLabel && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                      <span className="text-sm sm:text-xs text-gray-400 dark:text-gray-500 italic">
                         ({sourceLabel})
                       </span>
                     )}

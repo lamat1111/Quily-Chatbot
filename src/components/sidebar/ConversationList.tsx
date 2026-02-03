@@ -124,7 +124,7 @@ function ConversationItem({
         ) : (
           <p
             className={`text-sm font-medium truncate ${
-              isActive ? 'text-text-primary' : 'text-text-muted'
+              isActive ? 'text-text-primary' : 'text-text-primary sm:text-text-muted'
             }`}
           >
             {truncateTitle(conversation.title)}
@@ -363,7 +363,7 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
                   onClick={() => setStarredCollapsed(!starredCollapsed)}
                   className="
                     w-full flex items-center gap-1 px-3 py-1
-                    text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider
+                    text-sm sm:text-xs font-medium text-text-primary sm:text-gray-500 sm:dark:text-gray-400 uppercase tracking-wider
                     hover:text-text-primary transition-colors
                   "
                 >
@@ -390,7 +390,7 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
                     onClick={() => setRecentsCollapsed(!recentsCollapsed)}
                     className="
                       w-full flex items-center gap-1 px-3 py-1
-                      text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider
+                      text-sm sm:text-xs font-medium text-text-primary sm:text-gray-500 sm:dark:text-gray-400 uppercase tracking-wider
                       hover:text-text-primary transition-colors
                     "
                   >

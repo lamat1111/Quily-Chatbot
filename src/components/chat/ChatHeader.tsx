@@ -84,7 +84,8 @@ export function ChatHeader({ conversationId }: ChatHeaderProps) {
 
   return (
     <>
-      <div className="flex items-center gap-2 px-4 py-3">
+      {/* Hidden on mobile - title shown in mobile header bar instead */}
+      <div className="hidden lg:flex items-center gap-2 px-4 py-3">
         {isRenaming ? (
           <input
             ref={inputRef}
