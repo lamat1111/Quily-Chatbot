@@ -6,6 +6,7 @@ import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useChutesModels } from '@/src/hooks/useChutesModels';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { Icon } from '@/src/components/ui/Icon';
+import { Logo } from '@/src/components/ui/Logo';
 import {
   isValidChutesKeyFormat,
   setChutesExternalApiKey,
@@ -166,16 +167,7 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
         {/* App title and description */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-start justify-center gap-1 mb-2 sm:mb-3">
-            <img
-              src="/quily-logo-dark.png"
-              alt="Quily"
-              className="h-14 sm:h-16 hidden dark:block"
-            />
-            <img
-              src="/quily-logo-light.png"
-              alt="Quily"
-              className="h-14 sm:h-16 dark:hidden"
-            />
+            <Logo height={56} className="sm:h-16" />
             <span className="text-xs sm:text-sm font-medium text-accent mt-3 sm:mt-4">beta</span>
           </div>
           <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">

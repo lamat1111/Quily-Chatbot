@@ -5,6 +5,7 @@ import { MessageBubble } from './MessageBubble';
 import { ThinkingProcess, ThinkingStep } from './ThinkingProcess';
 import { useScrollAnchor } from '@/src/hooks/useScrollAnchor';
 import type { UIMessage } from '@ai-sdk/react';
+import { Logo } from '@/src/components/ui/Logo';
 
 type ChatStatus = 'submitted' | 'streaming' | 'ready' | 'error';
 
@@ -104,16 +105,7 @@ export function MessageList({ messages, status, error, onQuickAction, thinkingSt
       >
         <div className="text-center text-text-muted max-w-md">
           <div className="flex items-start justify-center gap-1 mb-2">
-            <img
-              src="/quily-logo-dark.png"
-              alt="Quily"
-              className="h-14 hidden dark:block"
-            />
-            <img
-              src="/quily-logo-light.png"
-              alt="Quily"
-              className="h-14 dark:hidden"
-            />
+            <Logo height={56} />
             <span className="text-xs font-medium text-accent mt-3">beta</span>
           </div>
           <p className="mb-6">Ask a question about Quilibrium to get started</p>

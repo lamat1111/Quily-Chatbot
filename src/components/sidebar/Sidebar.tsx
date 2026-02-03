@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
 import { SearchModal } from './SearchModal';
 import { Icon } from '@/src/components/ui/Icon';
+import { LogoIcon } from '@/src/components/ui/LogoIcon';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
@@ -68,20 +69,10 @@ export function Sidebar() {
         </button>
         <button
           onClick={handleNewChat}
-          className="ml-2 flex items-start gap-1 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+          className="ml-2 flex items-center cursor-pointer hover:opacity-80 transition-opacity"
           aria-label="New conversation"
         >
-          <img
-            src="/quily-logo-dark.png"
-            alt="Quily"
-            className="h-8 hidden dark:block"
-          />
-          <img
-            src="/quily-logo-light.png"
-            alt="Quily"
-            className="h-8 dark:hidden"
-          />
-          <span className="text-[10px] font-medium text-accent mt-1.5">beta</span>
+          <LogoIcon size={36} />
         </button>
       </div>
 
@@ -106,24 +97,14 @@ export function Sidebar() {
           lg:translate-x-0
         `}
       >
-        {/* Header with title */}
+        {/* Header with logo */}
         <div className="p-4">
           <button
             onClick={handleNewChat}
-            className="flex items-start gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
             aria-label="New conversation"
           >
-            <img
-              src="/quily-logo-dark.png"
-              alt="Quily"
-              className="h-8 hidden dark:block"
-            />
-            <img
-              src="/quily-logo-light.png"
-              alt="Quily"
-              className="h-8 dark:hidden"
-            />
-            <span className="text-[10px] font-medium text-accent mt-1.5">beta</span>
+            <LogoIcon size={36} />
           </button>
         </div>
 
