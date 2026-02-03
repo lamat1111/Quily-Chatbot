@@ -89,10 +89,11 @@ function ConversationItem({
     <div
       className={`
         group relative
-        px-3 py-2
+        px-3 py-3 sm:py-2
         rounded-lg
         cursor-pointer
         transition-colors
+        min-h-11 sm:min-h-0
         ${
           isActive
             ? 'bg-surface/15 dark:bg-surface/20'
@@ -113,7 +114,7 @@ function ConversationItem({
             onClick={(e) => e.stopPropagation()}
             className="
               w-full
-              text-sm font-medium
+              text-base sm:text-sm font-medium
               bg-transparent
               border-b border-text-primary/30
               text-text-primary
@@ -123,7 +124,7 @@ function ConversationItem({
           />
         ) : (
           <p
-            className={`text-sm font-medium truncate ${
+            className={`text-base sm:text-sm font-medium truncate ${
               isActive ? 'text-text-primary' : 'text-text-primary sm:text-text-muted'
             }`}
           >
@@ -133,13 +134,15 @@ function ConversationItem({
       </div>
 
       {/* Dropdown menu - always visible */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+      <div className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button
               onClick={(e) => e.stopPropagation()}
               className="
-                p-1.5 rounded
+                p-2.5 sm:p-1.5 rounded
+                min-w-11 min-h-11 sm:min-w-0 sm:min-h-0
+                flex items-center justify-center
                 text-gray-400 dark:text-gray-500
                 hover:text-text-primary
                 hover:bg-surface/15 dark:hover:bg-surface/20
@@ -147,14 +150,14 @@ function ConversationItem({
               "
               aria-label="Chat options"
             >
-              <Icon name="more-horizontal" size={16} />
+              <Icon name="more-horizontal" size={18} className="sm:w-4 sm:h-4" />
             </button>
           </DropdownMenu.Trigger>
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
               className="
-                min-w-40 p-1
+                min-w-44 p-1.5 sm:p-1
                 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700
                 rounded-lg shadow-xl
                 animate-in fade-in-0 zoom-in-95
@@ -169,8 +172,9 @@ function ConversationItem({
                   onToggleStarred();
                 }}
                 className="
-                  flex items-center gap-2 px-2 py-1.5
-                  text-sm text-text-primary
+                  flex items-center gap-3 sm:gap-2 px-3 sm:px-2 py-3 sm:py-1.5
+                  min-h-11 sm:min-h-0
+                  text-base sm:text-sm text-text-primary
                   rounded cursor-pointer
                   outline-none
                   hover:bg-surface/10 dark:hover:bg-surface/15
@@ -179,7 +183,8 @@ function ConversationItem({
               >
                 <Icon
                   name={conversation.starred ? 'lucide:star-off' : 'star'}
-                  size={16}
+                  size={18}
+                  className="sm:w-4 sm:h-4"
                 />
                 {conversation.starred ? 'Unstar' : 'Star'}
               </DropdownMenu.Item>
@@ -190,15 +195,16 @@ function ConversationItem({
                   setIsRenaming(true);
                 }}
                 className="
-                  flex items-center gap-2 px-2 py-1.5
-                  text-sm text-text-primary
+                  flex items-center gap-3 sm:gap-2 px-3 sm:px-2 py-3 sm:py-1.5
+                  min-h-11 sm:min-h-0
+                  text-base sm:text-sm text-text-primary
                   rounded cursor-pointer
                   outline-none
                   hover:bg-surface/10 dark:hover:bg-surface/15
                   focus:bg-surface/10 dark:focus:bg-surface/15
                 "
               >
-                <Icon name="edit-2" size={16} />
+                <Icon name="edit-2" size={18} className="sm:w-4 sm:h-4" />
                 Rename
               </DropdownMenu.Item>
 
@@ -222,8 +228,9 @@ function ConversationItem({
                 }}
                 onSelect={(e) => e.preventDefault()}
                 className={`
-                  flex items-center gap-2 px-2 py-1.5
-                  text-sm
+                  flex items-center gap-3 sm:gap-2 px-3 sm:px-2 py-3 sm:py-1.5
+                  min-h-11 sm:min-h-0
+                  text-base sm:text-sm
                   rounded cursor-pointer
                   outline-none
                   transition-colors
@@ -233,7 +240,7 @@ function ConversationItem({
                   }
                 `}
               >
-                <Icon name="trash-2" size={16} />
+                <Icon name="trash-2" size={18} className="sm:w-4 sm:h-4" />
                 {deleteConfirm ? 'Sure?' : 'Delete'}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -351,7 +358,7 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
         )}
 
         {sortedConversations.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+          <p className="text-base sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">
             No conversations yet
           </p>
         ) : (
@@ -362,15 +369,16 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
                 <button
                   onClick={() => setStarredCollapsed(!starredCollapsed)}
                   className="
-                    w-full flex items-center gap-1 px-3 py-1
+                    w-full flex items-center gap-2 sm:gap-1 px-3 py-2.5 sm:py-1
+                    min-h-11 sm:min-h-0
                     text-sm sm:text-xs font-medium text-text-primary sm:text-gray-500 sm:dark:text-gray-400 uppercase tracking-wider
                     hover:text-text-primary transition-colors
                   "
                 >
                   <Icon
                     name="chevron-down"
-                    size={12}
-                    className={`transition-transform ${starredCollapsed ? '-rotate-90' : ''}`}
+                    size={14}
+                    className={`sm:w-3 sm:h-3 transition-transform ${starredCollapsed ? '-rotate-90' : ''}`}
                   />
                   Starred
                 </button>
@@ -389,15 +397,16 @@ export function ConversationList({ onNavigate, secondaryNav, onSecondaryNavHidde
                   <button
                     onClick={() => setRecentsCollapsed(!recentsCollapsed)}
                     className="
-                      w-full flex items-center gap-1 px-3 py-1
+                      w-full flex items-center gap-2 sm:gap-1 px-3 py-2.5 sm:py-1
+                      min-h-11 sm:min-h-0
                       text-sm sm:text-xs font-medium text-text-primary sm:text-gray-500 sm:dark:text-gray-400 uppercase tracking-wider
                       hover:text-text-primary transition-colors
                     "
                   >
                     <Icon
                       name="chevron-down"
-                      size={12}
-                      className={`transition-transform ${recentsCollapsed ? '-rotate-90' : ''}`}
+                      size={14}
+                      className={`sm:w-3 sm:h-3 transition-transform ${recentsCollapsed ? '-rotate-90' : ''}`}
                     />
                     Recents
                   </button>

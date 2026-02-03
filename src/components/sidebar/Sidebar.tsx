@@ -93,7 +93,7 @@ export function Sidebar() {
           <Icon name={sidebarOpen ? 'x' : 'menu'} size={22} />
         </button>
         {showChatTitle && (
-          <span className="ml-3 text-sm font-medium text-text-primary truncate flex-1 min-w-0">
+          <span className="ml-3 text-base sm:text-sm font-medium text-text-primary truncate flex-1 min-w-0">
             {activeConversation.title}
           </span>
         )}
@@ -248,8 +248,9 @@ export function Sidebar() {
           <button
             onClick={handleNewChat}
             className="
-              w-full px-3 py-2
-              text-sm font-medium
+              w-full px-3 py-3 sm:py-2
+              min-h-11 sm:min-h-0
+              text-base sm:text-sm font-medium
               text-accent
               hover:bg-accent/10 dark:hover:bg-accent/15
               rounded-lg
@@ -258,7 +259,7 @@ export function Sidebar() {
               cursor-pointer
             "
           >
-            <Icon name="plus" size={18} className="text-accent" />
+            <Icon name="plus" size={20} className="sm:w-4.5 sm:h-4.5 text-accent" />
             New Chat
           </button>
 
@@ -272,8 +273,9 @@ export function Sidebar() {
               }
             }}
             className="
-              w-full px-3 py-2
-              text-sm
+              w-full px-3 py-3 sm:py-2
+              min-h-11 sm:min-h-0
+              text-base sm:text-sm
               text-text-primary sm:text-text-muted
               hover:text-text-brand
               hover:bg-surface/10 dark:hover:bg-surface/15
@@ -283,7 +285,7 @@ export function Sidebar() {
               cursor-pointer
             "
           >
-            <Icon name="search" size={18} />
+            <Icon name="search" size={20} className="sm:w-4.5 sm:h-4.5" />
             Search
           </button>
 
@@ -316,8 +318,9 @@ export function Sidebar() {
                   if (!isDesktop) closeSidebar();
                 }}
                 className="
-                  w-full px-3 py-2
-                  text-sm
+                  w-full px-3 py-3 sm:py-2
+                  min-h-11 sm:min-h-0
+                  text-base sm:text-sm
                   text-text-primary sm:text-text-muted
                   hover:text-text-brand
                   hover:bg-hover
@@ -326,7 +329,7 @@ export function Sidebar() {
                   flex items-center gap-3
                 "
               >
-                <Icon name="info" size={18} />
+                <Icon name="info" size={20} className="sm:w-4.5 sm:h-4.5" />
                 About
               </Link>
 
@@ -336,8 +339,9 @@ export function Sidebar() {
                   if (!isDesktop) closeSidebar();
                 }}
                 className="
-                  w-full px-3 py-2
-                  text-sm
+                  w-full px-3 py-3 sm:py-2
+                  min-h-11 sm:min-h-0
+                  text-base sm:text-sm
                   text-text-primary sm:text-text-muted
                   hover:text-text-brand
                   hover:bg-hover
@@ -346,7 +350,7 @@ export function Sidebar() {
                   flex items-center gap-3
                 "
               >
-                <Icon name="link" size={18} />
+                <Icon name="link" size={20} className="sm:w-4.5 sm:h-4.5" />
                 Quilibrium Links
               </Link>
             </>
@@ -360,16 +364,16 @@ export function Sidebar() {
             onClick={() => {
               if (!isDesktop) closeSidebar();
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
+            className="w-full flex items-center gap-3 px-3 py-3 sm:py-2 min-h-11 sm:min-h-0 text-base sm:text-sm rounded-lg
               text-text-primary sm:text-text-muted
               hover:bg-hover
               transition-colors text-left"
           >
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className={`w-2.5 sm:w-2 h-2.5 sm:h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
             <span className="flex-1 truncate">
               {profileName}
             </span>
-            <Icon name="settings" size={16} className="text-text-subtle" />
+            <Icon name="settings" size={18} className="sm:w-4 sm:h-4 text-text-subtle" />
           </Link>
         </div>
       </aside>

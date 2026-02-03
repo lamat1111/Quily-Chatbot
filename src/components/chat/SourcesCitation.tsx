@@ -98,15 +98,16 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
   }
 
   return (
-    <div className="text-sm">
+    <div className="text-base sm:text-sm">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="text-accent hover:text-accent-hover font-medium flex items-center gap-1 cursor-pointer"
+        className="text-accent hover:text-accent-hover font-medium flex items-center gap-2 sm:gap-1 cursor-pointer py-2 sm:py-0 min-h-11 sm:min-h-0"
       >
         <span>{sources.length} source{sources.length !== 1 ? 's' : ''}</span>
         <svg
-          className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          className="w-5 h-5 sm:w-4 sm:h-4 transition-transform"
+          style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -121,7 +122,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
       </button>
 
       {expanded && (
-        <ul className="mt-2 space-y-1 pl-1">
+        <ul className="mt-1 space-y-0 pl-1">
           {sources.map((source, index) => {
             const parsed = parseSourceTitle(source.title);
             const sourceLabel = getSourceLabel(source.url, parsed.docType, parsed.publishedDate);
@@ -139,9 +140,9 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                     href={source.url!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="link-unstyled text-accent hover:text-accent-hover flex items-center gap-1"
+                    className="link-unstyled text-accent hover:text-accent-hover flex items-center gap-2 sm:gap-1 py-2.5 sm:py-1 min-h-11 sm:min-h-0"
                   >
-                    <span className="text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-400 dark:text-gray-500 shrink-0">
                       [{index + 1}]
                     </span>
                     <span className="truncate max-w-md">
@@ -153,7 +154,7 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                       </span>
                     )}
                     <svg
-                      className="w-3 h-3 shrink-0"
+                      className="w-4 h-4 sm:w-3 sm:h-3 shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -167,8 +168,8 @@ export function SourcesCitation({ sources }: SourcesCitationProps) {
                     </svg>
                   </a>
                 ) : (
-                  <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                    <span className="text-gray-400 dark:text-gray-500">
+                  <span className="text-gray-500 dark:text-gray-400 flex items-center gap-2 sm:gap-1 py-2.5 sm:py-1 min-h-11 sm:min-h-0">
+                    <span className="text-gray-400 dark:text-gray-500 shrink-0">
                       [{index + 1}]
                     </span>
                     <span className="truncate max-w-md">

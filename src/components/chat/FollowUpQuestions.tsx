@@ -37,7 +37,7 @@ export const FollowUpQuestions = memo(function FollowUpQuestions({
 
   return (
     <div className="mt-4">
-      <p className="text-sm text-text-muted mb-2">Follow-up questions:</p>
+      <p className="text-base sm:text-sm text-text-muted mb-2">Follow-up questions:</p>
       <div className="flex flex-col gap-2">
         {questions.map((question, index) => {
           const isSelected = selectedQuestion === question;
@@ -49,7 +49,7 @@ export const FollowUpQuestions = memo(function FollowUpQuestions({
               onClick={() => handleClick(question)}
               disabled={isDisabled}
               className={`
-                px-4 py-2.5 text-sm rounded-lg border transition-colors text-left
+                px-4 py-3 sm:py-2.5 min-h-11 sm:min-h-0 text-base sm:text-sm rounded-lg border transition-colors text-left
                 ${
                   isSelected
                     ? 'bg-accent/10 border-accent text-accent cursor-default'

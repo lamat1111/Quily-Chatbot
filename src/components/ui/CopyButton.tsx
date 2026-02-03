@@ -45,12 +45,15 @@ export function CopyButton({
 
   const iconSize = size === 'sm' ? 16 : size === 'lg' ? 20 : 20;
 
-  const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer';
-  const paddingStyles = variant === 'minimal' ? 'p-0' : 'p-1.5';
+  const baseStyles = 'rounded transition-all focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer flex items-center justify-center';
+  // Mobile: ensure minimum 44px touch target, desktop: compact
+  const paddingStyles = variant === 'minimal'
+    ? 'p-2.5 sm:p-0 min-w-11 min-h-11 sm:min-w-0 sm:min-h-0'
+    : 'p-2.5 sm:p-1.5 min-w-11 min-h-11 sm:min-w-0 sm:min-h-0';
   const variantStyles = variant === 'ghost'
     ? 'opacity-0 group-hover:opacity-100 hover:bg-gray-700 dark:hover:bg-gray-600'
     : variant === 'minimal'
-      ? 'hover:text-gray-600 dark:hover:text-gray-300'
+      ? 'hover:text-gray-600 dark:hover:text-gray-300 hover:bg-surface/10 dark:hover:bg-surface/15 sm:hover:bg-transparent sm:dark:hover:bg-transparent'
       : 'bg-gray-700 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500';
 
   return (
@@ -64,13 +67,13 @@ export function CopyButton({
         <Icon
           name="check"
           size={iconSize}
-          className="text-green-400"
+          className="text-green-400 sm:w-5 sm:h-5"
         />
       ) : (
         <Icon
           name="copy"
           size={iconSize}
-          className={variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}
+          className={`sm:w-5 sm:h-5 ${variant === 'minimal' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-300 dark:text-gray-400'}`}
         />
       )}
     </button>
