@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-02-03
+
+### Features
+
+- add SVG logo components with theme support ([fd540c9](https://github.com/lamat1111/Quily-Chatbot/commit/fd540c9dbc615b0408d17a0bb14c81bd57a76e21))
+- add desktop collapsed sidebar with tooltips ([5cb0a2b](https://github.com/lamat1111/Quily-Chatbot/commit/5cb0a2b590c15fc4632cd766e1632458e84bccd9))
+- center chat input in welcome screen ([05faa9f](https://github.com/lamat1111/Quily-Chatbot/commit/05faa9f86cdcb5e4cb3a348ae882e5df03372d55))
+- add mobile search page with chat management ([ab9c3b2](https://github.com/lamat1111/Quily-Chatbot/commit/ab9c3b2ef16ffc121eb031d879e4a6e340c90900))
+- improve sidebar and focus state consistency ([914aa84](https://github.com/lamat1111/Quily-Chatbot/commit/914aa8407d90014e5a999fd56628e3b1f1d918c6))
+
+### Maintenance
+
+- add skills, og-image asset, and adjust logo theme colors ([d8d07a7](https://github.com/lamat1111/Quily-Chatbot/commit/d8d07a78dec354612e4029c3fb30959791d2b302))
+
 ## [0.7.0] - 2026-02-02
 
 ### Features
