@@ -32,6 +32,7 @@
   --color-border-muted: #f3f4f6;      /* Subtle borders (gray-100) */
   --color-border-strong: #d1d5db;     /* Emphasized borders (gray-300) */
   --color-border-focus: #9ca3af;      /* Focus state borders (gray-400) */
+  --color-input-focus: rgba(255, 96, 0, 0.5); /* Input focus ring (muted orange) */
 
   /* ==========================================================================
      TEXT
@@ -142,6 +143,7 @@
   --color-border-muted: #1f2937;      /* Subtle borders (gray-800) */
   --color-border-strong: #4b5563;     /* Emphasized borders (gray-600) */
   --color-border-focus: #6b7280;      /* Focus state borders (gray-500) */
+  --color-input-focus: rgba(212, 96, 26, 0.6); /* Input focus ring (muted orange) */
 
   /* ==========================================================================
      TEXT
@@ -248,6 +250,7 @@
   --color-border-muted: var(--color-border-muted);
   --color-border-strong: var(--color-border-strong);
   --color-border-focus: var(--color-border-focus);
+  --color-input-focus: var(--color-input-focus);
 
   /* Text */
   --color-text-base: var(--color-text-base);

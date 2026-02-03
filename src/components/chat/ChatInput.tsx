@@ -79,8 +79,8 @@ export function ChatInput({
   const textareaSize = embedded ? 'py-4 min-h-14' : 'py-3 min-h-12';
 
   const inputField = (
-    <div className={`relative flex items-end rounded-xl border bg-bg-muted
-                    ${disabled ? 'border-border-muted bg-bg-subtle' : 'border-border focus-within:border-border-focus'}`}>
+    <div className={`relative flex items-end rounded-xl border bg-bg-muted transition-colors
+                    ${disabled ? 'border-border-muted bg-bg-subtle' : 'border-border focus-within:border-input-focus'}`}>
       <textarea
         ref={textareaRef}
         value={input}

@@ -260,25 +260,27 @@ export function SearchModal({ open, onOpenChange, onCloseSidebar }: SearchModalP
           </Dialog.Description>
 
           {/* Search input */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-            <Icon name="search" size={18} className="text-text-subtle" />
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search conversations..."
-              className="flex-1 bg-transparent text-sm text-text-base placeholder-text-subtle focus:outline-none"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="p-1 hover:bg-hover rounded cursor-pointer"
-                aria-label="Clear search"
-              >
-                <Icon name="x" size={16} className="text-text-subtle" />
-              </button>
-            )}
+          <div className="px-3 py-3 border-b border-border">
+            <div className="flex items-center gap-2 bg-bg-inset rounded-lg px-3 py-2 border border-transparent focus-within:border-input-focus transition-colors">
+              <Icon name="search" size={18} className="text-text-muted" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search conversations..."
+                className="flex-1 bg-transparent text-sm text-text-base placeholder-text-muted focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 hover:bg-hover rounded cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <Icon name="x" size={16} className="text-text-subtle" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Results */}

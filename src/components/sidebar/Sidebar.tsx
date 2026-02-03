@@ -241,7 +241,10 @@ export function Sidebar() {
 
           {/* Search */}
           <button
-            onClick={openSearch}
+            onClick={() => {
+              openSearch();
+              setSidebarOpen(false);
+            }}
             className="
               w-full px-3 py-2
               text-sm
