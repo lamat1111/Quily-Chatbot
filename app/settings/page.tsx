@@ -332,7 +332,7 @@ export default function SettingsPage() {
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                         {isChutesUnavailable
                           ? 'Coming soon'
                           : p.description}
@@ -375,15 +375,15 @@ export default function SettingsPage() {
                         `}
                       />
                       {keyHint && (
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
+                        <p className="mt-1 text-sm sm:text-xs text-gray-500 dark:text-gray-400">{keyHint}</p>
                       )}
                       {validationResult === 'invalid' && (
-                        <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                        <p className="mt-1 text-sm sm:text-xs text-red-600 dark:text-red-400">
                           Invalid API key. Make sure you have credits in your account.
                         </p>
                       )}
                       {validationResult === 'valid' && (
-                        <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                        <p className="mt-1 text-sm sm:text-xs text-green-600 dark:text-green-400">
                           API key validated successfully!
                         </p>
                       )}
@@ -451,7 +451,7 @@ export default function SettingsPage() {
 
                     {/* Help text with single link */}
                     {provider && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                         Need a key? Go to{' '}
                         <a
                           href="https://openrouter.ai"
@@ -477,13 +477,13 @@ export default function SettingsPage() {
                   </h3>
 
                   {chutesLoading ? (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
+                    <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">Checking session...</p>
                   ) : hasBothMethods ? (
                     /* CASE: Both OAuth and API key exist - show toggle */
                     <div className="space-y-4">
                       {/* Auth Method Toggle */}
                       <div className="space-y-2">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                           You have both authentication methods available. Choose which to use:
                         </p>
                         <div className="grid grid-cols-2 gap-2">
@@ -500,7 +500,7 @@ export default function SettingsPage() {
                               <Icon name="user" size={16} />
                               <span className="font-medium">Account</span>
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {chutesUser?.username || chutesUser?.email || 'Signed in'}
                             </p>
                           </button>
@@ -517,7 +517,7 @@ export default function SettingsPage() {
                               <Icon name="key" size={16} />
                               <span className="font-medium">API Key</span>
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {getMaskedApiKey(currentChutesExternalKey || '')}
                             </p>
                           </button>
@@ -527,7 +527,7 @@ export default function SettingsPage() {
                       {/* Active method details */}
                       {authMethod === 'oauth' ? (
                         <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
-                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                          <p className="text-base sm:text-sm text-gray-600 dark:text-gray-300">
                             Using account:{' '}
                             <span className="font-medium text-text-primary">
                               {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
@@ -561,15 +561,15 @@ export default function SettingsPage() {
                               `}
                             />
                             {currentChutesExternalKey && (
-                              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                              <p className="mt-1 text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                                 Current: {getMaskedApiKey(currentChutesExternalKey)}
                               </p>
                             )}
                             {chutesKeyError && (
-                              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                              <p className="mt-1 text-sm sm:text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
                             )}
                             {chutesKeySuccess && (
-                              <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                              <p className="mt-1 text-sm sm:text-xs text-green-600 dark:text-green-400">
                                 API key validated successfully!
                               </p>
                             )}
@@ -597,7 +597,7 @@ export default function SettingsPage() {
                           </div>
                           {showClearChutesKeyConfirm && (
                             <div className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                              <p className="text-sm text-text-secondary mb-3">
+                              <p className="text-base sm:text-sm text-text-secondary mb-3">
                                 Clear your API key? Account will become the only auth method.
                               </p>
                               <div className="flex gap-2">
@@ -649,15 +649,15 @@ export default function SettingsPage() {
                           `}
                         />
                         {currentChutesExternalKey && (
-                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <p className="mt-1 text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                             Current: {getMaskedApiKey(currentChutesExternalKey)}
                           </p>
                         )}
                         {chutesKeyError && (
-                          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                          <p className="mt-1 text-sm sm:text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
                         )}
                         {chutesKeySuccess && (
-                          <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                          <p className="mt-1 text-sm sm:text-xs text-green-600 dark:text-green-400">
                             API key validated successfully!
                           </p>
                         )}
@@ -687,7 +687,7 @@ export default function SettingsPage() {
 
                       {showClearChutesKeyConfirm && (
                         <div className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                          <p className="text-sm text-text-secondary mb-3">
+                          <p className="text-base sm:text-sm text-text-secondary mb-3">
                             Clear your API key? You&apos;ll need to enter it again to use Chutes.
                           </p>
                           <div className="flex gap-2">
@@ -712,7 +712,7 @@ export default function SettingsPage() {
                         </div>
                       )}
 
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                         Need a key? Go to{' '}
                         <a
                           href="https://chutes.ai"
@@ -727,7 +727,7 @@ export default function SettingsPage() {
 
                       {/* OAuth alternative */}
                       <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 mb-2">
                           Or sign in with your Chutes account:
                         </p>
                         <a
@@ -742,7 +742,7 @@ export default function SettingsPage() {
                     /* CASE: Only OAuth exists */
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-base sm:text-sm text-gray-600 dark:text-gray-300">
                           Signed in as{' '}
                           <span className="font-medium text-text-primary">
                             {chutesUser?.username || chutesUser?.name || chutesUser?.email || 'Chutes user'}
@@ -763,7 +763,7 @@ export default function SettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowChutesApiKeySection(!showChutesApiKeySection)}
-                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
+                          className="flex items-center gap-1 text-base sm:text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
                         >
                           <Icon
                             name="chevron-down"
@@ -775,7 +775,7 @@ export default function SettingsPage() {
 
                         {showChutesApiKeySection && (
                           <div className="mt-3 space-y-3">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                               Add an API key for custom scopes or permissions.
                             </p>
                             <input
@@ -792,10 +792,10 @@ export default function SettingsPage() {
                               }`}
                             />
                             {chutesKeyError && (
-                              <p className="text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                              <p className="text-sm sm:text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
                             )}
                             {chutesKeySuccess && (
-                              <p className="text-xs text-green-600 dark:text-green-400">API key saved!</p>
+                              <p className="text-sm sm:text-xs text-green-600 dark:text-green-400">API key saved!</p>
                             )}
                             <button
                               onClick={handleSaveChutesApiKey}
@@ -822,7 +822,7 @@ export default function SettingsPage() {
                         >
                           Sign in with Chutes
                         </a>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                           Don&apos;t have an account?{' '}
                           <a
                             href="https://chutes.ai"
@@ -840,7 +840,7 @@ export default function SettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowChutesApiKeySection(!showChutesApiKeySection)}
-                          className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
+                          className="flex items-center gap-1 text-base sm:text-sm text-gray-600 dark:text-gray-400 hover:text-text-primary transition-colors"
                         >
                           <Icon
                             name="chevron-down"
@@ -866,10 +866,10 @@ export default function SettingsPage() {
                               }`}
                             />
                             {chutesKeyError && (
-                              <p className="text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
+                              <p className="text-sm sm:text-xs text-red-600 dark:text-red-400">{chutesKeyError}</p>
                             )}
                             {chutesKeySuccess && (
-                              <p className="text-xs text-green-600 dark:text-green-400">API key saved!</p>
+                              <p className="text-sm sm:text-xs text-green-600 dark:text-green-400">API key saved!</p>
                             )}
                             <button
                               onClick={handleSaveChutesApiKey}
@@ -882,7 +882,7 @@ export default function SettingsPage() {
                             >
                               {isValidatingChutesKey ? 'Validating...' : 'Validate & Connect'}
                             </button>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
                               Get a key at{' '}
                               <a
                                 href="https://chutes.ai"
@@ -909,7 +909,7 @@ export default function SettingsPage() {
                 Model
               </h3>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 mb-4">
                 Select the AI model to use for conversations.
               </p>
 

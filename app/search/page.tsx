@@ -150,11 +150,11 @@ function SearchResultItem({
               "
             />
           ) : (
-            <p className="text-sm font-medium text-text-primary truncate">
+            <p className="text-base sm:text-sm font-medium text-text-primary truncate">
               {truncateTitle(conversation.title)}
             </p>
           )}
-          <p className="text-xs text-text-muted mt-0.5">
+          <p className="text-sm sm:text-xs text-text-muted mt-0.5">
             Last message {formatRelativeTime(conversation.updatedAt)}
           </p>
         </div>
@@ -198,7 +198,7 @@ function SearchResultItem({
                 }}
                 className="
                   flex items-center gap-2 px-2 py-1.5
-                  text-sm text-text-primary
+                  text-base sm:text-sm text-text-primary
                   rounded cursor-pointer
                   outline-none
                   hover:bg-surface/10 dark:hover:bg-surface/15
@@ -219,7 +219,7 @@ function SearchResultItem({
                 }}
                 className="
                   flex items-center gap-2 px-2 py-1.5
-                  text-sm text-text-primary
+                  text-base sm:text-sm text-text-primary
                   rounded cursor-pointer
                   outline-none
                   hover:bg-surface/10 dark:hover:bg-surface/15
@@ -250,7 +250,7 @@ function SearchResultItem({
                 onSelect={(e) => e.preventDefault()}
                 className={`
                   flex items-center gap-2 px-2 py-1.5
-                  text-sm
+                  text-base sm:text-sm
                   rounded cursor-pointer
                   outline-none
                   transition-colors
@@ -394,7 +394,7 @@ export default function SearchPage() {
 
     return (
       <div key={title}>
-        <div className="text-sm text-text-muted uppercase tracking-wide px-4 py-2 font-medium bg-bg-muted sticky top-0">
+        <div className="text-base sm:text-sm text-text-muted uppercase tracking-wide px-4 py-2 font-medium bg-bg-muted sticky top-0">
           {title}
         </div>
         {items.map((conv) => (
@@ -449,7 +449,7 @@ export default function SearchPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search conversations..."
-              className="flex-1 bg-transparent text-sm text-text-primary placeholder-text-muted focus:outline-none"
+              className="flex-1 bg-transparent text-base sm:text-sm text-text-primary placeholder-text-muted focus:outline-none"
             />
             {searchQuery && (
               <button
@@ -466,7 +466,7 @@ export default function SearchPage() {
         {/* Results */}
         <div className="pb-8">
           {flatResults.length === 0 ? (
-            <div className="text-center py-12 text-sm text-text-muted">
+            <div className="text-center py-12 text-base sm:text-sm text-text-muted">
               {debouncedQuery ? 'No results found' : 'No conversations yet'}
             </div>
           ) : (

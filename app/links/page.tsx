@@ -105,10 +105,10 @@ export default function LinksPage() {
                     <Icon name={link.icon} size={20} className="text-accent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
+                    <h3 className="text-base sm:text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
                       {link.title}
                     </h3>
-                    <p className="text-xs text-text-secondary truncate">
+                    <p className="text-sm sm:text-xs text-text-secondary truncate">
                       {link.description}
                     </p>
                   </div>
@@ -151,10 +151,10 @@ export default function LinksPage() {
                     <Icon name={link.icon} size={20} className="text-accent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
+                    <h3 className="text-base sm:text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
                       {link.title}
                     </h3>
-                    <p className="text-xs text-text-secondary truncate">
+                    <p className="text-sm sm:text-xs text-text-secondary truncate">
                       {link.description}
                     </p>
                   </div>
