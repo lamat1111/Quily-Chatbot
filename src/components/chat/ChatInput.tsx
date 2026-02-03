@@ -8,6 +8,8 @@ interface ChatInputProps {
   isStreaming: boolean;
   disabled: boolean;
   disabledMessage?: string;
+  /** When true, renders without outer padding/background for embedding in empty state */
+  embedded?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function ChatInput({
   isStreaming,
   disabled,
   disabledMessage,
+  embedded = false,
 }: ChatInputProps) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -68,91 +71,97 @@ export function ChatInput({
       ? 'Waiting for response...'
       : 'Ask a question about Quilibrium...';
 
+  const hasText = input.trim().length > 0;
+
+  // Sizes - larger when embedded in welcome screen, original size in normal chat
+  const buttonSize = embedded ? 'h-10 w-10 p-2.5' : 'h-8 w-8 p-2';
+  const iconSize = embedded ? 'w-5 h-5' : 'w-4 h-4';
+  const textareaSize = embedded ? 'py-4 min-h-14' : 'py-3 min-h-12';
+
+  const inputField = (
+    <div className={`relative flex items-end rounded-xl border bg-bg-muted
+                    ${disabled ? 'border-border-muted bg-bg-subtle' : 'border-border focus-within:border-border-focus'}`}>
+      <textarea
+        ref={textareaRef}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholderText}
+        disabled={disabled || isStreaming}
+        rows={1}
+        className={`flex-1 resize-none bg-transparent pl-3 sm:pl-4 pr-2 text-text-base
+                   placeholder-text-subtle
+                   focus:outline-none
+                   disabled:cursor-not-allowed disabled:opacity-50
+                   max-h-48 overflow-hidden input-scrollbar ${textareaSize}`}
+      />
+
+      <div className="shrink-0 p-2 self-end">
+        {isStreaming ? (
+          <button
+            type="button"
+            onClick={onStop}
+            className="px-3 py-1.5 h-8 rounded-lg
+                       bg-btn-danger hover:bg-btn-danger-hover cursor-pointer
+                       text-white text-sm font-medium transition-colors
+                       focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
+                       flex items-center justify-center gap-1.5"
+            aria-label="Stop generation"
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <rect x="6" y="6" width="12" height="12" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={disabled || !hasText}
+            className={`${buttonSize} rounded-lg transition-all
+                       focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
+                       flex items-center justify-center
+                       ${hasText && !disabled
+                         ? 'bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white cursor-pointer'
+                         : 'bg-btn-secondary text-text-subtle cursor-not-allowed'
+                       }`}
+            aria-label="Send message"
+          >
+            <svg
+              className={iconSize}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
+            </svg>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  // When embedded in empty state, render just the input (no disclaimers)
+  if (embedded) {
+    return (
+      <form onSubmit={handleSubmit} className="w-full max-w-xl">
+        {inputField}
+      </form>
+    );
+  }
+
   return (
     <div className="bg-bg-base p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-        <div className="relative flex items-end mb-2 rounded-xl border border-border bg-bg-inset
-                        focus-within:has-not-disabled:border-border-focus
-                        has-disabled:bg-bg-subtle">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholderText}
-            disabled={disabled || isStreaming}
-            rows={1}
-            className="flex-1 resize-none bg-transparent pl-3 sm:pl-4 pr-2 py-3 text-text-base
-                       placeholder-text-subtle
-                       focus:outline-none
-                       disabled:cursor-not-allowed disabled:opacity-50
-                       min-h-12 max-h-48 overflow-hidden input-scrollbar"
-          />
-
-          <div className="shrink-0 p-2 self-end">
-            {isStreaming ? (
-              <button
-                type="button"
-                onClick={onStop}
-                className="px-3 py-1.5 h-8 rounded-lg
-                           bg-btn-danger hover:bg-btn-danger-hover cursor-pointer
-                           text-white text-sm font-medium transition-colors
-                           focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
-                           flex items-center justify-center gap-1.5"
-                aria-label="Stop generation"
-              >
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <rect x="6" y="6" width="12" height="12" rx="2" />
-                </svg>
-                <span>Stop</span>
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={disabled || !input.trim()}
-                className="p-2 h-8 w-8 rounded-lg cursor-pointer
-                           bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover disabled:bg-btn-disabled disabled:from-btn-disabled disabled:to-btn-disabled
-                           text-white font-medium transition-colors
-                           focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
-                           disabled:cursor-not-allowed flex items-center justify-center"
-                aria-label="Send message"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 10l7-7m0 0l7 7m-7-7v18"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-        <p className="text-xs text-center text-text-subtle mt-2">
-          Quily can make mistakes. Verify important info with{' '}
-          <a
-            href="https://docs.quilibrium.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-muted"
-          >
-            official docs
-          </a>
-          .
-        </p>
-        <p className="text-xs text-center text-text-subtle mt-1">
-          This app is unofficial and not endorsed by Quilibrium Inc.
-        </p>
+        {inputField}
       </form>
     </div>
   );

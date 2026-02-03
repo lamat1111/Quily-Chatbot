@@ -348,6 +348,23 @@ export function ChatContainer({
     );
   }
 
+  // Check if in empty state (no messages and not streaming)
+  const isEmpty = messages.length === 0 && !isStreaming;
+
+  // Common input props used in both embedded and bottom positions
+  const inputProps = {
+    onSubmit: handleSubmit,
+    onStop: handleStop,
+    isStreaming,
+    disabled: !hasAccess || chutesLoading,
+    disabledMessage:
+      providerId === 'chutes'
+        ? isChutesSignedIn
+          ? 'Select a Chutes model to start chatting...'
+          : 'Sign in with Chutes to start chatting...'
+        : 'Enter your API key to start chatting...',
+  };
+
   return (
     <div className="flex flex-col h-full">
       {conversationId && <ChatHeader conversationId={conversationId} />}
@@ -358,21 +375,19 @@ export function ChatContainer({
         onQuickAction={handleSubmit}
         thinkingSteps={thinkingSteps}
         followUpQuestions={followUpQuestions}
+        inputProps={isEmpty ? inputProps : undefined}
       />
 
-      <ChatInput
-        onSubmit={handleSubmit}
-        onStop={handleStop}
-        isStreaming={isStreaming}
-        disabled={!hasAccess || chutesLoading}
-        disabledMessage={
-          providerId === 'chutes'
-            ? isChutesSignedIn
-              ? 'Select a Chutes model to start chatting...'
-              : 'Sign in with Chutes to start chatting...'
-            : 'Enter your API key to start chatting...'
-        }
-      />
+      {/* Only show bottom input when not in empty state */}
+      {!isEmpty && (
+        <ChatInput
+          onSubmit={inputProps.onSubmit}
+          onStop={inputProps.onStop}
+          isStreaming={inputProps.isStreaming}
+          disabled={inputProps.disabled}
+          disabledMessage={inputProps.disabledMessage}
+        />
+      )}
     </div>
   );
 }

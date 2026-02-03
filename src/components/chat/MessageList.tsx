@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { ThinkingProcess, ThinkingStep } from './ThinkingProcess';
+import { ChatInput } from './ChatInput';
 import { useScrollAnchor } from '@/src/hooks/useScrollAnchor';
 import type { UIMessage } from '@ai-sdk/react';
 import { Logo } from '@/src/components/ui/Logo';
@@ -16,6 +17,14 @@ interface MessageListProps {
   onQuickAction?: (command: string) => void;
   thinkingSteps?: ThinkingStep[];
   followUpQuestions?: string[];
+  /** Input props for embedding in empty state */
+  inputProps?: {
+    onSubmit: (text: string) => void;
+    onStop: () => void;
+    isStreaming: boolean;
+    disabled: boolean;
+    disabledMessage?: string;
+  };
 }
 
 /** Throttle interval for scroll updates during streaming (ms) */
@@ -40,7 +49,7 @@ const QUICK_ACTIONS = [
  * - Empty state for new conversations
  * - Throttled scroll updates during streaming to reduce layout thrashing
  */
-export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [], followUpQuestions = [] }: MessageListProps) {
+export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [], followUpQuestions = [], inputProps }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
@@ -96,35 +105,69 @@ export function MessageList({ messages, status, error, onQuickAction, thinkingSt
     }
   }, [messages.length, scrollToBottomImmediate]);
 
-  // Empty state
+  // Empty state - centered welcome with embedded input
   if (messages.length === 0 && !isStreaming) {
     return (
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 flex items-center justify-center bg-bg-base chat-scrollbar"
+        className="flex-1 overflow-y-auto p-4 flex flex-col bg-bg-base chat-scrollbar"
       >
-        <div className="text-center text-text-muted max-w-md">
-          <div className="flex items-start justify-center gap-1 mb-2">
-            <Logo height={56} />
-            <span className="text-xs font-medium text-accent mt-3">beta</span>
-          </div>
-          <p className="mb-6">Ask a question about Quilibrium to get started</p>
-
-          {/* Quick action buttons */}
-          {onQuickAction && (
-            <div className="flex flex-wrap justify-center gap-2">
-              {QUICK_ACTIONS.map((action) => (
-                <button
-                  key={action.command}
-                  onClick={() => onQuickAction(action.command)}
-                  className="px-4 py-2 text-sm rounded-full border border-border hover:bg-hover hover:border-border-strong transition-colors text-text-muted cursor-pointer"
-                  title={action.description}
-                >
-                  {action.label}
-                </button>
-              ))}
+        {/* Centered content area */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-text-muted w-full max-w-xl px-4">
+            <div className="flex items-start justify-center gap-1 mb-2">
+              <Logo height={56} />
+              <span className="text-xs font-medium text-accent mt-3">beta</span>
             </div>
-          )}
+            <p className="mb-6">Ask a question about Quilibrium to get started</p>
+
+            {/* Quick action buttons */}
+            {onQuickAction && (
+              <div className="flex flex-wrap justify-center gap-2 mb-10">
+                {QUICK_ACTIONS.map((action) => (
+                  <button
+                    key={action.command}
+                    onClick={() => onQuickAction(action.command)}
+                    className="px-4 py-2 text-sm rounded-full border border-border hover:bg-hover hover:border-border-strong transition-colors text-text-muted cursor-pointer"
+                    title={action.description}
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Embedded chat input */}
+            {inputProps && (
+              <ChatInput
+                onSubmit={inputProps.onSubmit}
+                onStop={inputProps.onStop}
+                isStreaming={inputProps.isStreaming}
+                disabled={inputProps.disabled}
+                disabledMessage={inputProps.disabledMessage}
+                embedded
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Footer with disclaimers */}
+        <div className="text-center py-4">
+          <p className="text-xs text-text-subtle">
+            Quily can make mistakes. Verify important info with{' '}
+            <a
+              href="https://docs.quilibrium.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-muted"
+            >
+              official docs
+            </a>
+            .
+          </p>
+          <p className="text-xs text-text-subtle mt-1">
+            This app is unofficial and not endorsed by Quilibrium Inc.
+          </p>
         </div>
       </div>
     );
