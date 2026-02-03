@@ -31,7 +31,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
   const { isOpen } = useSidebar();
 
   return (
-    <div className="flex h-screen bg-bg-base">
+    <div className="flex h-screen-safe bg-bg-base">
       <Sidebar />
       {/* Main content area
           - pt-14 on mobile for fixed header bar

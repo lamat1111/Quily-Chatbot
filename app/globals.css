@@ -515,3 +515,24 @@ a.link-muted:hover {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
 }
+
+/* ============================================================================
+   MOBILE VIEWPORT HEIGHT FIX
+   ============================================================================
+   On touch devices, the virtual keyboard doesn't resize the viewport when using
+   100vh. Using dvh (dynamic viewport height) ensures the layout accounts for
+   the keyboard, keeping the input field visible.
+
+   Fallback chain: dvh -> svh -> vh for browser compatibility
+   ============================================================================ */
+.h-screen-safe {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Ensure the body and html also respect the safe height on mobile */
+@supports (height: 100dvh) {
+  html, body {
+    height: 100dvh;
+  }
+}
