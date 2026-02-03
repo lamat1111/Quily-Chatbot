@@ -34,8 +34,8 @@ export function Logo({ className = '', height = 32 }: LogoProps) {
         className="fill-accent"
       />
 
-      {/* Text paths - light: #0B1D45, dark: #A1B5DD */}
-      <g className="fill-[#233B71] dark:fill-[#A1B5DD]">
+      {/* Text paths - light: #3B5998 (medium blue), dark: #8A9DC0 (muted blue-gray) */}
+      <g className="fill-[#3B5998] dark:fill-[#8A9DC0]">
         {/* y */}
         <path d="M741.396 113.71L652.146 323.575H605.226L637.866 251.155L579.981 113.71H628.686L661.581 202.705L694.221 113.71H741.396Z" />
         {/* l */}
