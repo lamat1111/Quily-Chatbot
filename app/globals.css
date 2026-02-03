@@ -438,6 +438,12 @@ a.link-muted:hover {
 .sidebar-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
+  /* Enable smooth touch scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Ensure touch events are properly handled */
+  touch-action: pan-y;
+  /* Prevent scroll chaining to parent - keeps scroll contained in sidebar */
+  overscroll-behavior: contain;
 }
 
 /* Chat area scrollbar - subtle and consistent */

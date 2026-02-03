@@ -106,7 +106,7 @@ export default function AboutPage() {
 
           {/* Version */}
           <hr className="mt-12 mb-4 border-surface/20" />
-          <div className="flex items-center justify-start gap-2 text-xs text-text-muted">
+          <div className="flex items-center justify-start gap-2 text-sm sm:text-xs text-text-muted">
             <span>v{VERSION}</span>
             <span>·</span>
             <a
