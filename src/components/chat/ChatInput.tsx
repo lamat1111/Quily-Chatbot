@@ -122,7 +122,7 @@ export function ChatInput({
             type="submit"
             disabled={disabled || !hasText}
             className={`${buttonSize} rounded-lg transition-all
-                       focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-input-focus focus:ring-offset-2 focus:ring-offset-bg-muted
                        flex items-center justify-center
                        ${hasText && !disabled
                          ? 'bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white cursor-pointer'

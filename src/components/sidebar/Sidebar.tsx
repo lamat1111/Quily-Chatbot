@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ConversationList } from './ConversationList';
@@ -12,6 +12,7 @@ import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useSearch } from '@/src/contexts/SearchContext';
+import { useSidebar } from '@/src/contexts/SidebarContext';
 
 /**
  * Main sidebar component containing navigation and conversation history.
@@ -24,12 +25,12 @@ import { useSearch } from '@/src/contexts/SearchContext';
  *
  * Responsive:
  * - Mobile (< lg): Fixed header bar with hamburger + chat title, sidebar slides in as overlay
- * - Desktop (lg+): Collapsed icon sidebar always visible, expands to full sidebar on click
+ * - Desktop (lg+): Sidebar open by default, pushes content; can collapse to icon bar
  */
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isOpen: sidebarOpen, open: openSidebar, close: closeSidebar, toggle: toggleSidebar } = useSidebar();
   const [providerId] = useLocalStorage<string>('selected-provider', 'openrouter');
   const [apiKey] = useLocalStorage<string>('openrouter-api-key', '');
   const [profileName] = useLocalStorage<string>('user-profile-name', 'You');
@@ -49,13 +50,26 @@ export function Sidebar() {
   const activeConversation = conversations.find((c) => c.id === activeId);
   const showChatTitle = pathname === '/' && activeConversation;
 
+  // Track if we're on desktop for conditional behavior
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
   const handleNewChat = () => {
     addConversation();
     // Navigate to home if not already there
     if (pathname !== '/') {
       router.push('/');
     }
-    setSidebarOpen(false);
+    // Only close sidebar on mobile
+    if (!isDesktop) {
+      closeSidebar();
+    }
   };
 
   // Icon button style for collapsed sidebar
@@ -72,7 +86,7 @@ export function Sidebar() {
       {/* Mobile header bar - only on smaller screens */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-bg-muted flex items-center px-4">
         <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={toggleSidebar}
           className="p-2 cursor-pointer text-text-primary rounded-lg hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
           aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
@@ -95,19 +109,23 @@ export function Sidebar() {
         </button>
       </div>
 
-      {/* Desktop collapsed sidebar - always visible on lg+ */}
+      {/* Desktop collapsed sidebar - only visible on lg+ when sidebar is closed */}
       <TooltipProvider delayDuration={150}>
-        <nav className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-14 bg-bg-muted flex-col items-center pt-2 pb-4 border-r border-surface/10">
+        <nav
+          className={`
+            hidden lg:flex fixed inset-y-0 left-0 z-40 w-14 bg-bg-muted flex-col items-center pt-2 pb-4 border-r border-surface/10
+            transition-opacity duration-200
+            ${sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+          `}
+        >
           {/* Expand button */}
-          <Tooltip content="Expand menu">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className={iconButtonClass}
-              aria-label="Expand sidebar"
-            >
-              <Icon name="menu" size={20} />
-            </button>
-          </Tooltip>
+          <button
+            onClick={openSidebar}
+            className={iconButtonClass}
+            aria-label="Expand sidebar"
+          >
+            <Icon name="menu" size={20} />
+          </button>
 
           {/* New Chat */}
           <Tooltip content="New chat">
@@ -123,7 +141,7 @@ export function Sidebar() {
           {/* Chat List */}
           <Tooltip content="Chat history">
             <button
-              onClick={() => setSidebarOpen(true)}
+              onClick={openSidebar}
               className={iconButtonClass}
               aria-label="Chat history"
             >
@@ -181,24 +199,29 @@ export function Sidebar() {
         </nav>
       </TooltipProvider>
 
-      {/* Backdrop - visible on all screen sizes when sidebar is open */}
+      {/* Backdrop - only visible on mobile when sidebar is open */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/70 cursor-pointer lg:bg-black/50"
-          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/70 cursor-pointer lg:hidden"
+          onClick={closeSidebar}
         />
       )}
 
       {/* Expanded Sidebar */}
+      {/* Mobile: fixed overlay with transform animation */}
+      {/* Desktop: static sidebar that pushes content, transitions width */}
       <aside
         className={`
           fixed inset-y-0 left-0 z-40
-          w-[80vw] sm:w-72 2xl:w-80 h-screen
+          w-[80vw] sm:w-72 h-screen
           bg-bg-muted
           flex flex-col
           overflow-hidden
           transform transition-transform duration-200 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:relative lg:z-0 lg:shrink-0 lg:transform-none
+          lg:transition-[width] lg:duration-200
+          ${sidebarOpen ? 'lg:w-72 2xl:lg:w-80' : 'lg:w-0'}
         `}
       >
         {/* Header with logo and close button */}
@@ -211,7 +234,7 @@ export function Sidebar() {
             <LogoIcon size={36} />
           </button>
           <button
-            onClick={() => setSidebarOpen(false)}
+            onClick={closeSidebar}
             className="p-2 cursor-pointer text-text-primary rounded-lg hover:bg-surface/10 dark:hover:bg-surface/15 transition-colors"
             aria-label="Close sidebar"
           >
@@ -243,7 +266,10 @@ export function Sidebar() {
           <button
             onClick={() => {
               openSearch();
-              setSidebarOpen(false);
+              // Only close sidebar on mobile
+              if (!isDesktop) {
+                closeSidebar();
+              }
             }}
             className="
               w-full px-3 py-2
@@ -275,13 +301,20 @@ export function Sidebar() {
         {/* Conversation list - scrollable, fills remaining space */}
         {/* About/Links are inside the scroll area so they scroll away naturally */}
         <ConversationList
-          onNavigate={() => setSidebarOpen(false)}
+          onNavigate={() => {
+            // Only close sidebar on mobile
+            if (!isDesktop) {
+              closeSidebar();
+            }
+          }}
           onSecondaryNavHidden={setShowNavSeparator}
           secondaryNav={
             <>
               <Link
                 href="/about"
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => {
+                  if (!isDesktop) closeSidebar();
+                }}
                 className="
                   w-full px-3 py-2
                   text-sm
@@ -299,7 +332,9 @@ export function Sidebar() {
 
               <Link
                 href="/links"
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => {
+                  if (!isDesktop) closeSidebar();
+                }}
                 className="
                   w-full px-3 py-2
                   text-sm
@@ -322,7 +357,9 @@ export function Sidebar() {
         <div className="p-4">
           <Link
             href="/settings"
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => {
+              if (!isDesktop) closeSidebar();
+            }}
             className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg
               text-text-primary sm:text-text-muted
               hover:bg-hover
@@ -341,7 +378,9 @@ export function Sidebar() {
       <SearchModal
         open={isSearchOpen}
         onOpenChange={(open) => (open ? openSearch() : closeSearch())}
-        onCloseSidebar={() => setSidebarOpen(false)}
+        onCloseSidebar={() => {
+          if (!isDesktop) closeSidebar();
+        }}
       />
     </>
   );
