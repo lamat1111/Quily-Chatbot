@@ -45,6 +45,15 @@ export function ChatInput({
     }
   }, [input]);
 
+  // Scroll input into view when focused on mobile (keyboard may hide it)
+  const handleFocus = () => {
+    // Small delay to let the mobile keyboard finish animating
+    setTimeout(() => {
+      // Use 'nearest' to scroll only the minimum amount needed
+      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const trimmedInput = input.trim();
@@ -86,6 +95,7 @@ export function ChatInput({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
         placeholder={placeholderText}
         disabled={disabled || isStreaming}
         rows={1}
