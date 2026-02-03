@@ -1,19 +1,14 @@
 import type { Metadata } from 'next';
-import { Inter, Jost } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import { ThemeProvider } from '@/src/components/providers/ThemeProvider';
 import { AppLayout } from '@/src/components/layout/AppLayout';
 import './globals.css';
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
-});
-
-const jost = Jost({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-jost',
+  weight: ['600', '700'],
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
@@ -57,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jost.variable}`} suppressHydrationWarning>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <ThemeProvider>
           <AppLayout>{children}</AppLayout>

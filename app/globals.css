@@ -320,8 +320,8 @@
   --color-chat: var(--color-bg-base);
   --color-sidebar: var(--color-bg-muted);
 
-  /* Brand title font (Jost) */
-  --font-title: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  /* Title font (Poppins) */
+  --font-title: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Custom text selection colors */
