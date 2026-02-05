@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-02-05
+
+### Features
+
+- add RAG doc taxonomy with community/custom folders ([af1e2bc](https://github.com/lamat1111/Quily-Chatbot/commit/af1e2bc6aa02588372c9f763694525f6fba2e399))
+- add Cloudflare Workers AI as free reranking fallback ([d701e33](https://github.com/lamat1111/Quily-Chatbot/commit/d701e335c9c1c850986f3fa3e27e55ec17c19d6a))
+
+### Bug Fixes
+
+- keep input visible when mobile keyboard appears ([76c9631](https://github.com/lamat1111/Quily-Chatbot/commit/76c963151ecb8bd6baf03e515cc83f59d02f61c1))
+- enable sidebar scrolling on mobile devices ([3006318](https://github.com/lamat1111/Quily-Chatbot/commit/3006318bab6d26fbe4ff048413596810f7831ff6))
+- scroll input into view on mobile focus ([b8278b8](https://github.com/lamat1111/Quily-Chatbot/commit/b8278b8a9a61f832562ff09798de84397cc10acf))
+
+### Documentation
+
+- add 4 community wiki articles to RAG knowledge base ([f6eed57](https://github.com/lamat1111/Quily-Chatbot/commit/f6eed578f061b21c1d7fe1a13fe5953cad765cc5))
+
+### Styles
+
+- improve mobile touch targets and fonts ([d299346](https://github.com/lamat1111/Quily-Chatbot/commit/d299346f4b032a781dc1b7628645e08c9b42b43d))
+- improve mobile font sizes for readability ([f198e8a](https://github.com/lamat1111/Quily-Chatbot/commit/f198e8a0a17bd13596605ee5c7642c54c101c33a))
+- switch title font from Jost to Poppins ([aa873cf](https://github.com/lamat1111/Quily-Chatbot/commit/aa873cffac5523eb973309926a0eabfd041b0523))
+
+### Maintenance
+
+- mobile UX improvements and RAG source linking ([ecc6843](https://github.com/lamat1111/Quily-Chatbot/commit/ecc6843b5e119a2919f13ef8cda428455cf4cd64))
+
 ## [0.8.0] - 2026-02-03
 
 ### Features
