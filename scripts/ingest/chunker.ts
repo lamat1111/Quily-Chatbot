@@ -120,7 +120,6 @@ export async function chunkDocuments(
           ? rawDate.toISOString().split('T')[0]
           : String(rawDate)
         : undefined;
-
       const metadata: ChunkMetadata = {
         source_file: doc.path,
         heading_path: headingPath,

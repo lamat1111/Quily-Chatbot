@@ -49,8 +49,8 @@ export function buildContextBlock(chunks: RetrievedChunk[]): ContextBlockResult 
 
   const formattedChunks = chunks
     .map((chunk) => {
-      // Priority: 1) source_url from frontmatter (YouTube, etc.), 2) official docs URL
-      const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
+      // Priority: 1) source_url from frontmatter, 2) official docs URL, 3) repo docs URL
+      const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file) || getRepoDocsUrl(chunk.source_file);
 
       // Check if this is a livestream transcript
       const isLivestream = chunk.doc_type === 'livestream_transcript';
@@ -261,6 +261,34 @@ You are Quily. Answer only from the documentation above. Stay in character. Do n
 }
 
 /**
+ * GitHub repository base URL for community/custom docs
+ */
+const REPO_DOCS_BASE = 'https://github.com/lamat1111/Quily-Chatbot/blob/main/docs';
+
+/**
+ * Convert a community or custom doc path to a GitHub blob URL
+ *
+ * @param sourcePath - Relative file path from docs/ (e.g., "community/QNS-FAQ.md")
+ * @returns GitHub blob URL or null if not a community/custom doc
+ */
+export function getRepoDocsUrl(sourcePath: string): string | null {
+  const normalizedPath = sourcePath.replace(/\\/g, '/');
+
+  // Only handle community/ and custom/ folders
+  if (!normalizedPath.startsWith('community/') && !normalizedPath.startsWith('custom/')) {
+    return null;
+  }
+
+  // URL-encode path segments (handles spaces and special chars)
+  const encodedPath = normalizedPath
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+  return `${REPO_DOCS_BASE}/${encodedPath}`;
+}
+
+/**
  * Convert a local file path to the official docs website URL
  *
  * Transformation rules:
@@ -303,8 +331,8 @@ export function getOfficialDocsUrl(sourcePath: string): string | null {
  */
 export function formatSourcesForClient(chunks: RetrievedChunk[]): SourceReference[] {
   return chunks.map((chunk) => {
-    // Priority: 1) source_url from frontmatter (YouTube, etc.), 2) official docs URL
-    const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file);
+    // Priority: 1) source_url from frontmatter, 2) official docs URL, 3) repo docs URL
+    const url = chunk.source_url || getOfficialDocsUrl(chunk.source_file) || getRepoDocsUrl(chunk.source_file);
 
     return {
       id: chunk.id,

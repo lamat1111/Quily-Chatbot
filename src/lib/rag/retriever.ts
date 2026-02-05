@@ -119,7 +119,7 @@ async function fetchPriorityChunks(ids: number[]): Promise<{
 
   return data.map((chunk) => ({
     ...chunk,
-    similarity: 0.8, // Synthetic score - these are explicitly requested
+    similarity: 0.45, // Synthetic score - low enough that relevant new results can beat it
   }));
 }
 
@@ -285,8 +285,10 @@ export async function retrieveWithReranking(
   };
 
   // Helper for similarity-based fallback
+  // Sort all candidates by similarity so priority docs don't blindly take slots
   const fallbackToSimilarity = (): RetrievedChunk[] => {
-    return candidates
+    const sorted = [...candidates].sort((a, b) => b.similarity - a.similarity);
+    return sorted
       .slice(0, finalCount)
       .map(
         (
@@ -302,7 +304,7 @@ export async function retrieveWithReranking(
             similarity: number;
           },
           idx: number
-        ) => ({
+        ): RetrievedChunk => ({
           ...chunk,
           citationIndex: idx + 1,
         })

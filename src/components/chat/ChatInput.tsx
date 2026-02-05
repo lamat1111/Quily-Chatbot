@@ -49,8 +49,9 @@ export function ChatInput({
   const handleFocus = () => {
     // Small delay to let the mobile keyboard finish animating
     setTimeout(() => {
-      // Use 'nearest' to scroll only the minimum amount needed
-      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Scroll with extra margin to give breathing room above keyboard
+      // The scroll-margin-bottom on the textarea provides the spacing
+      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }, 300);
   };
 
@@ -103,7 +104,8 @@ export function ChatInput({
                    placeholder-text-subtle
                    focus:outline-none
                    disabled:cursor-not-allowed disabled:opacity-50
-                   max-h-48 overflow-hidden input-scrollbar ${textareaSize}`}
+                   max-h-48 overflow-hidden input-scrollbar
+                   scroll-mb-16 ${textareaSize}`}
       />
 
       <div className="shrink-0 p-2 self-end">
