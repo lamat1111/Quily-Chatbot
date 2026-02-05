@@ -4,6 +4,7 @@ source: Quilibrium Whitepaper
 pages: 23-25
 section: "4.2 - Oblivious Transfer"
 date: 2025-01-28
+type: whitepaper_excerpt
 ---
 
 # Oblivious Transfer Protocols

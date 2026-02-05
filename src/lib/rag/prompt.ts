@@ -61,19 +61,29 @@ export function buildContextBlock(chunks: RetrievedChunk[]): ContextBlockResult 
         ? 'Livestream'
         : chunk.title || chunk.heading_path || getTitleFromPath(chunk.source_file);
 
-      // Build metadata annotation (type + date)
+      // Build metadata annotation (type + date + trust level)
       // For livestreams, only show date (type is already in the link text)
       const metaParts: string[] = [];
+
+      // Check if this is community-contributed (unofficial) content
+      const normalizedPath = chunk.source_file.replace(/\\/g, '/');
+      const isCommunityDoc = normalizedPath.startsWith('community/');
+
       if (chunk.doc_type && !isLivestream) {
-        // Format doc_type for display: 'livestream_transcript' -> 'Livestream'
+        // Format doc_type for display: 'community_faq' -> 'Community Faq'
         const typeLabel = chunk.doc_type
           .replace(/_transcript$/, '')
           .replace(/_/g, ' ')
           .replace(/\b\w/g, (c) => c.toUpperCase());
         metaParts.push(typeLabel);
-      } else if (!chunk.doc_type && chunk.source_file.startsWith('quilibrium-official/')) {
+      } else if (!chunk.doc_type && normalizedPath.startsWith('quilibrium-official/')) {
         // Mark official documentation
         metaParts.push('Official Docs');
+      }
+
+      // Add trust level indicator for community docs
+      if (isCommunityDoc) {
+        metaParts.push('Unofficial');
       }
       if (chunk.published_date) {
         // Format date: '2026-01-21' -> 'Jan 21, 2026'

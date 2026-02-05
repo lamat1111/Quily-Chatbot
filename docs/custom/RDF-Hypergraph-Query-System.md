@@ -4,6 +4,7 @@ source: Quilibrium Whitepaper
 pages: 22-27
 section: "4.3-4.5 - RDF to Hypergraph, Query Planner, Query Evaluator"
 date: 2025-01-28
+type: whitepaper_excerpt
 ---
 
 # RDF to Hypergraph Query System

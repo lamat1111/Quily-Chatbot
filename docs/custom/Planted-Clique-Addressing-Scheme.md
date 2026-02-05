@@ -4,6 +4,7 @@ source: Quilibrium Whitepaper
 pages: 6-7
 section: "2.1 - Planted Clique Addressing Scheme"
 date: 2025-01-28
+type: whitepaper_excerpt
 ---
 
 # Planted Clique Addressing Scheme (PCAS)

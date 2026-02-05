@@ -1,3 +1,10 @@
+---
+title: Quilibrium Architecture
+source: codebase_analysis
+date: 2025-01-28
+type: technical_reference
+---
+
 # Quilibrium Architecture
 
 ## Overview

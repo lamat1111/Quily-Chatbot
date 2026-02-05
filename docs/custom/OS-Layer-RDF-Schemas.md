@@ -4,6 +4,7 @@ source: Quilibrium Whitepaper
 pages: 28-32
 section: "5 - Operating System"
 date: 2025-01-28
+type: whitepaper_excerpt
 ---
 
 # Operating System Layer RDF Schemas
