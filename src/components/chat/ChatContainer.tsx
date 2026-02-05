@@ -9,6 +9,7 @@ import { ChatInput } from './ChatInput';
 import { ChatHeader } from './ChatHeader';
 import { ProviderSetup } from './ProviderSetup';
 import { ChatSkeleton } from '@/src/components/ui/Skeleton';
+import { Turnstile } from '@/src/components/Turnstile';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
@@ -91,6 +92,9 @@ export function ChatContainer({
   // Follow-up questions state (keyed by message ID, but we only need the latest)
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
 
+  // Turnstile token state (for bot protection)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
   // Get external Chutes API key if available
   const chutesExternalApiKey = useMemo(() => {
     if (providerId !== 'chutes') return null;
@@ -126,6 +130,21 @@ export function ChatContainer({
     });
   }, []);
 
+  // Turnstile callbacks (for bot protection)
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
+
+  // Rate limit state
+  const [rateLimitError, setRateLimitError] = useState<{
+    message: string;
+    retryAfter: number;
+  } | null>(null);
+
   // Create transport with API endpoint and body parameters
   // Memoize to prevent recreating on every render
   // Uses prepareSendMessagesRequest to extract priority doc IDs from the current message state
@@ -143,11 +162,31 @@ export function ChatContainer({
               embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
               chutesApiKey: chutesExternalApiKey || undefined,
               priorityDocIds: extractPriorityDocIds(reqMessages),
+              turnstileToken: turnstileToken || undefined,
             },
           };
         },
+        // Custom fetch to handle rate limiting
+        fetch: async (url, options) => {
+          // Clear any previous rate limit error when making a new request
+          setRateLimitError(null);
+
+          const response = await fetch(url, options);
+
+          if (response.status === 429) {
+            const data = await response.json().catch(() => ({}));
+            setRateLimitError({
+              message: data.message || 'Too many requests. Please slow down.',
+              retryAfter: data.retryAfter || 60,
+            });
+            // Throw to prevent useChat from processing further
+            throw new Error(data.message || 'Rate limited');
+          }
+
+          return response;
+        },
       }),
-    [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
+    [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey, turnstileToken]
   );
 
   // Handle data parts from the stream (status updates and follow-up questions)
@@ -367,11 +406,18 @@ export function ChatContainer({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Turnstile widget (invisible, runs in background) */}
+      <Turnstile
+        onVerify={handleTurnstileVerify}
+        onExpire={handleTurnstileExpire}
+      />
+
       {conversationId && <ChatHeader conversationId={conversationId} />}
       <MessageList
         messages={messages}
         status={status}
         error={error || null}
+        rateLimitError={rateLimitError}
         onQuickAction={handleSubmit}
         thinkingSteps={thinkingSteps}
         followUpQuestions={followUpQuestions}

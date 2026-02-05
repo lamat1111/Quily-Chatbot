@@ -10,10 +10,16 @@ import { Logo } from '@/src/components/ui/Logo';
 
 type ChatStatus = 'submitted' | 'streaming' | 'ready' | 'error';
 
+interface RateLimitError {
+  message: string;
+  retryAfter: number;
+}
+
 interface MessageListProps {
   messages: UIMessage[];
   status: ChatStatus;
   error: Error | null;
+  rateLimitError?: RateLimitError | null;
   onQuickAction?: (command: string) => void;
   thinkingSteps?: ThinkingStep[];
   followUpQuestions?: string[];
@@ -49,7 +55,7 @@ const QUICK_ACTIONS = [
  * - Empty state for new conversations
  * - Throttled scroll updates during streaming to reduce layout thrashing
  */
-export function MessageList({ messages, status, error, onQuickAction, thinkingSteps = [], followUpQuestions = [], inputProps }: MessageListProps) {
+export function MessageList({ messages, status, error, rateLimitError, onQuickAction, thinkingSteps = [], followUpQuestions = [], inputProps }: MessageListProps) {
   const {
     scrollRef,
     anchorRef,
@@ -203,12 +209,30 @@ export function MessageList({ messages, status, error, onQuickAction, thinkingSt
           <ThinkingProcess steps={thinkingSteps} isVisible={true} />
         )}
 
+        {/* Rate limit warning */}
+        {rateLimitError && (
+          <div className="flex justify-center mb-4">
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 rounded-lg px-4 py-3 max-w-md">
+              <p className="font-medium flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Slow down
+              </p>
+              <p className="text-sm sm:text-xs mt-1">{rateLimitError.message}</p>
+              <p className="text-sm sm:text-xs text-amber-600 dark:text-amber-400 mt-1">
+                Try again in {rateLimitError.retryAfter} seconds
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Error message */}
-        {error && (
+        {error && !rateLimitError && (
           <div className="flex justify-center mb-4">
             <div className="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg px-4 py-3 max-w-md">
               <p className="font-medium">Error</p>
-              <p className="text-sm mt-1">{error.message || 'An error occurred'}</p>
+              <p className="text-sm sm:text-xs mt-1">{error.message || 'An error occurred'}</p>
             </div>
           </div>
         )}

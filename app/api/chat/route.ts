@@ -23,6 +23,7 @@ import {
   getServerAccessToken,
   getServerRefreshToken,
 } from '@/src/lib/serverAuth';
+import { verifyTurnstileToken } from '@/src/lib/turnstile';
 
 /**
  * Models known to follow system prompt instructions reliably
@@ -319,6 +320,40 @@ export async function POST(request: Request) {
         JSON.stringify({ error: 'messages array required' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Verify Turnstile token (bot protection)
+    // Required in production, optional in development
+    const turnstileToken = body.turnstileToken;
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction && !turnstileToken) {
+      console.warn('[Chat] Missing Turnstile token in production');
+      return new Response(
+        JSON.stringify({
+          error: 'Bot verification required',
+          message: 'Please refresh the page and try again.',
+        }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (turnstileToken) {
+      // Get client IP for additional validation
+      const forwarded = request.headers.get('x-forwarded-for');
+      const clientIp = forwarded ? forwarded.split(',')[0].trim() : undefined;
+
+      const turnstileResult = await verifyTurnstileToken(turnstileToken, clientIp);
+      if (!turnstileResult.success) {
+        console.warn('[Chat] Turnstile verification failed:', turnstileResult.error);
+        return new Response(
+          JSON.stringify({
+            error: 'Bot verification failed',
+            message: 'Please refresh the page and try again.',
+          }),
+          { status: 403, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     const provider = body.provider || 'openrouter';
