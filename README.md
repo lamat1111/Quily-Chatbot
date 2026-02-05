@@ -12,7 +12,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 - **Streaming responses** via Chutes (recommended) or OpenRouter
 - **Chutes OAuth** for easy sign-in without API keys
 - **OpenRouter support** as an alternative provider (requires API key)
-- **Two-stage retrieval** with optional Cohere reranking for improved accuracy
+- **Two-stage retrieval** with Cohere or Cloudflare reranking (free tier available)
 - **Auto-sync** documentation from GitHub with incremental updates
 - **Conversation history** persisted in browser localStorage
 - **Dark mode** support
@@ -281,7 +281,9 @@ yarn ingest:status
 | `NEXT_PUBLIC_CHUTES_DEFAULT_MODEL` | No | Client default Chutes model |
 | `CHUTES_EMBEDDING_MODEL` | No | Chutes embedding chute URL |
 | `OPENROUTER_API_KEY` | No* | Alternative to Chutes (*required if not using Chutes) |
-| `COHERE_API_KEY` | No | Enables reranking for better retrieval |
+| `COHERE_API_KEY` | No | Enables reranking (paid, highest quality) |
+| `CLOUDFLARE_ACCOUNT_ID` | No | Free reranking via Workers AI |
+| `CLOUDFLARE_API_TOKEN` | No | Free reranking via Workers AI |
 
 ---
 
@@ -293,7 +295,7 @@ yarn ingest:status
 - **AI**: Vercel AI SDK + Chutes (recommended) or OpenRouter
 - **Embeddings**: BGE-M3 (1024 dimensions)
 - **Vector DB**: Supabase pgvector
-- **Reranking**: Cohere (optional)
+- **Reranking**: Cohere (paid) or Cloudflare Workers AI (free)
 
 ---
 

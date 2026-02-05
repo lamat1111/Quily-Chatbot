@@ -3,6 +3,7 @@ import { createCohere } from '@ai-sdk/cohere';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { supabase } from '../supabase';
 import type { RetrievedChunk, RetrievalOptions } from './types';
+import { rerankWithCloudflare } from './cloudflare-reranker';
 
 // Unified embedding model - BGE-M3 (1024 dims)
 // Both OpenRouter and Chutes produce identical vectors for this model,
@@ -332,8 +333,31 @@ export async function retrieveWithReranking(
       });
       return mapRankedToChunks(ranking);
     } catch (cohereError) {
-      console.warn('Cohere reranking failed, falling back to similarity:', cohereError);
-      // Fall through to similarity
+      console.warn('Cohere reranking failed, trying Cloudflare:', cohereError);
+      // Fall through to Cloudflare
+    }
+  }
+
+  // Try Cloudflare reranking (free tier)
+  const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN;
+
+  if (cloudflareAccountId && cloudflareApiToken) {
+    try {
+      const ranking = await rerankWithCloudflare(
+        query,
+        candidates.map((c: { content: string }) => c.content),
+        finalCount,
+        cloudflareAccountId,
+        cloudflareApiToken
+      );
+      if (ranking.length > 0) {
+        return mapRankedToChunks(
+          ranking.map((r) => ({ originalIndex: r.index, score: r.score }))
+        );
+      }
+    } catch (cloudflareError) {
+      console.warn('Cloudflare reranking failed, falling back to similarity:', cloudflareError);
     }
   }
 
