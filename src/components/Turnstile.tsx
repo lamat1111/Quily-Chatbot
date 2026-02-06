@@ -147,11 +147,11 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
   // With 'interaction-only' appearance, the widget is hidden by default
   // and only shows a checkbox when Cloudflare requires user interaction
   // (e.g., VPN users, suspicious traffic patterns)
-  // Position it fixed at bottom-right so it doesn't disrupt layout when visible
+  // Centered at bottom, above the chat input area
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-4 right-4 z-50"
+      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50"
       aria-label="Security verification"
     />
   );

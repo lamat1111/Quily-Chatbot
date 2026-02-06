@@ -390,14 +390,19 @@ export function ChatContainer({
   // Check if in empty state (no messages and not streaming)
   const isEmpty = messages.length === 0 && !isStreaming;
 
+  // Turnstile verification required in production (skip in dev for easier testing)
+  const isProduction = process.env.NODE_ENV === 'production';
+  const needsTurnstileVerification = isProduction && !turnstileToken;
+
   // Common input props used in both embedded and bottom positions
   const inputProps = {
     onSubmit: handleSubmit,
     onStop: handleStop,
     isStreaming,
-    disabled: !hasAccess || chutesLoading,
-    disabledMessage:
-      providerId === 'chutes'
+    disabled: !hasAccess || chutesLoading || needsTurnstileVerification,
+    disabledMessage: needsTurnstileVerification
+      ? 'Verifying you are human...'
+      : providerId === 'chutes'
         ? isChutesSignedIn
           ? 'Select a Chutes model to start chatting...'
           : 'Sign in with Chutes to start chatting...'
