@@ -82,7 +82,10 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
           onExpire?.();
         },
         theme: 'auto',
-        size: 'flexible',
+        size: 'normal',
+        // 'interaction-only' shows the widget only when user interaction is required
+        // (e.g., VPN users, suspicious traffic). Most users won't see anything.
+        // Requires "Managed" widget type in Cloudflare dashboard.
         appearance: 'interaction-only',
       });
       if (isDev) console.log('[Turnstile] Widget rendered with ID:', widgetIdRef.current);
@@ -140,7 +143,16 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
     return cleanupWidget;
   }, [siteKey, renderWidget, cleanupWidget]);
 
-  // Container for the invisible widget - must not use display:none
-  // Using sr-only (screen-reader only) keeps it in the DOM but visually hidden
-  return <div ref={containerRef} className="sr-only" />;
+  // Container for the Turnstile widget
+  // With 'interaction-only' appearance, the widget is hidden by default
+  // and only shows a checkbox when Cloudflare requires user interaction
+  // (e.g., VPN users, suspicious traffic patterns)
+  // Position it fixed at bottom-right so it doesn't disrupt layout when visible
+  return (
+    <div
+      ref={containerRef}
+      className="fixed bottom-4 right-4 z-50"
+      aria-label="Security verification"
+    />
+  );
 }
