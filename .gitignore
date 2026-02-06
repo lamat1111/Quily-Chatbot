@@ -110,6 +110,9 @@ docs/quilibrium-official/
 .claude/get-shit-done/
 .claude/hooks/
 
+# MCP config (local dev tool)
+.mcp.json
+
 # GSD planning folder (development scaffolding)
 .planning/
 

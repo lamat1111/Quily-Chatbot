@@ -114,6 +114,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Skip rate limiting in development (React Strict Mode double-invokes effects)
+  if (process.env.NODE_ENV === 'development') {
+    return NextResponse.next();
+  }
+
   // Skip rate limiting for certain endpoints if needed
   // e.g., health checks, webhooks with signatures
   if (pathname === '/api/health') {

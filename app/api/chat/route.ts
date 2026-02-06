@@ -25,6 +25,61 @@ import {
 } from '@/src/lib/serverAuth';
 import { verifyTurnstileToken } from '@/src/lib/turnstile';
 
+/** Development mode flag for verbose logging */
+const isDev = process.env.NODE_ENV === 'development';
+
+/**
+ * Fallback models for Chutes when primary model is unavailable (503 errors).
+ * Ordered by preference - cost-effective and reliable options.
+ */
+const CHUTES_FALLBACK_MODELS = [
+  {
+    slug: 'chutes-qwen-qwen2-5-72b-instruct',
+    displayName: 'Qwen 2.5 72B',
+    url: 'https://chutes-qwen-qwen2-5-72b-instruct.chutes.ai',
+  },
+  {
+    slug: 'chutes-qwen-qwen3-32b',
+    displayName: 'Qwen 3 32B',
+    url: 'https://chutes-qwen-qwen3-32b.chutes.ai',
+  },
+];
+
+type FallbackModel = typeof CHUTES_FALLBACK_MODELS[number];
+
+/**
+ * Get fallback models for Chutes, excluding the current model and any already tried
+ */
+function getChutesFallbackModels(currentModel: string, triedModels: string[] = []): FallbackModel[] {
+  return CHUTES_FALLBACK_MODELS.filter(m =>
+    !currentModel.includes(m.slug) && !triedModels.some(tried => tried.includes(m.slug))
+  );
+}
+
+/**
+ * Check if an error indicates the model is temporarily unavailable (can retry with fallback)
+ */
+function isModelUnavailableError(errorMsg: string): boolean {
+  return (
+    errorMsg.includes('503') ||
+    errorMsg.toLowerCase().includes('no instances available') ||
+    errorMsg.toLowerCase().includes('service unavailable')
+  );
+}
+
+/**
+ * Check if an error indicates insufficient credits (should NOT retry)
+ */
+function isCreditsError(errorMsg: string): boolean {
+  return (
+    errorMsg.includes('402') ||
+    errorMsg.toLowerCase().includes('insufficient') ||
+    errorMsg.toLowerCase().includes('credit') ||
+    errorMsg.toLowerCase().includes('balance') ||
+    errorMsg.toLowerCase().includes('payment required')
+  );
+}
+
 /**
  * Models known to follow system prompt instructions reliably
  * These models can be trusted to say "I don't know" when RAG quality is low
@@ -195,7 +250,7 @@ async function ensureChutesAccessToken(): Promise<{
   // Dev bypass: use CHUTES_DEV_API_KEY if set (for testing without OAuth)
   const devApiKey = process.env.CHUTES_DEV_API_KEY;
   if (devApiKey) {
-    console.log('[Chutes] Using dev API key bypass');
+    if (isDev) console.log('[Chutes] Using dev API key bypass');
     return { accessToken: devApiKey, refreshed: false };
   }
 
@@ -455,7 +510,7 @@ export async function POST(request: Request) {
     if (provider === 'chutes' || useChutesEmbeddings) {
       // Priority: external API key > dev bypass > OAuth cookies
       if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
-        console.log('[Chutes] Using external API key');
+        if (isDev) console.log('[Chutes] Using external API key');
         chutesAccessToken = chutesExternalApiKey;
       } else {
         const ensured = await ensureChutesAccessToken();
@@ -596,69 +651,128 @@ export async function POST(request: Request) {
         }));
 
         const sources = formatSourcesForClient(chunks);
-        const result = streamText({
-          model: modelProvider(model) as Parameters<typeof streamText>[0]['model'],
-          system: systemPrompt,
-          messages: llmMessages,
-          onError: (error) => {
-            console.error('LLM streaming error:', error);
-          },
-        });
 
-      // Chutes provider uses older @ai-sdk/provider versions incompatible with AI SDK v6's
+        // Chutes provider uses older @ai-sdk/provider versions incompatible with AI SDK v6's
       // toUIMessageStream(). Manually stream text to maintain proper text-start/delta/end protocol.
       if (provider === 'chutes') {
+        if (isDev) console.log('[Chutes] Starting stream with model:', model, 'hasToken:', !!chutesAccessToken);
         const textId = `text-${Date.now()}`;
         writer.write({ type: 'text-start', id: textId });
         let receivedAnyContent = false;
         let hadError = false;
         let fullResponseText = ''; // Collect for follow-up parsing
-        try {
-          let isFirstChunk = true;
-          for await (const chunk of result.textStream) {
-            if (chunk) {
-              receivedAnyContent = true;
-              fullResponseText += chunk;
-              // Strip leading whitespace from first chunk to prevent markdown
-              // interpreting indentation as code blocks (some models like DeepSeek
-              // add heavy leading indentation)
-              const processedChunk = isFirstChunk ? chunk.trimStart() : chunk;
-              isFirstChunk = false;
-              if (processedChunk) {
-                writer.write({ type: 'text-delta', id: textId, delta: processedChunk });
+        const currentModelUrl = model;
+
+        // Helper to attempt streaming from a model
+        const tryStreamModel = async (modelUrl: string): Promise<{ success: boolean; error?: string }> => {
+          let capturedError: string | undefined;
+          let localReceivedContent = false;
+
+          try {
+            const streamResult = streamText({
+              model: modelProvider(modelUrl) as Parameters<typeof streamText>[0]['model'],
+              system: systemPrompt,
+              messages: llmMessages,
+              onError: (error) => {
+                // Capture error from onError callback (may not throw)
+                const errObj = error.error;
+                capturedError = errObj instanceof Error ? errObj.message : String(errObj);
+                console.error('LLM streaming error:', capturedError);
+              },
+            });
+
+            let isFirstChunk = true;
+            for await (const chunk of streamResult.textStream) {
+              if (chunk) {
+                localReceivedContent = true;
+                receivedAnyContent = true;
+                fullResponseText += chunk;
+                // Strip leading whitespace from first chunk to prevent markdown
+                // interpreting indentation as code blocks (some models like DeepSeek
+                // add heavy leading indentation)
+                const processedChunk = isFirstChunk ? chunk.trimStart() : chunk;
+                isFirstChunk = false;
+                if (processedChunk) {
+                  writer.write({ type: 'text-delta', id: textId, delta: processedChunk });
+                }
               }
             }
+
+            // If we got no content but captured an error, return the error
+            if (!localReceivedContent && capturedError) {
+              return { success: false, error: capturedError };
+            }
+            return { success: localReceivedContent };
+          } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : 'Streaming failed';
+            return { success: false, error: capturedError || errorMsg };
           }
-          // If we got no content at all, something went wrong (likely auth/credits issue)
-          if (!receivedAnyContent) {
+        };
+
+        // Try primary model first
+        const triedModels: string[] = [];
+        let lastResult = await tryStreamModel(currentModelUrl);
+        triedModels.push(currentModelUrl);
+
+        // If primary failed with model unavailability, try fallback models
+        while (!lastResult.success && lastResult.error && isModelUnavailableError(lastResult.error)) {
+          const fallbacks = getChutesFallbackModels(model, triedModels);
+          if (fallbacks.length === 0) {
+            // No more fallbacks available
             hadError = true;
             writer.write({
               type: 'text-delta',
               id: textId,
-              delta: '**Unable to get a response.** This may be due to insufficient credits or an authentication issue. Please check your [Chutes account](https://chutes.ai) balance, or switch to OpenRouter in Settings.',
+              delta: '**All available models are temporarily unavailable.** The Chutes servers may be overloaded. Please try again later or switch to OpenRouter in [Settings](/settings).',
             });
+            break;
           }
-        } catch (streamError) {
+
+          const fallback = fallbacks[0];
+          console.log(`[Chutes] Model unavailable, trying fallback: ${fallback.displayName}`);
+          // Notify user about fallback
+          writer.write({
+            type: 'text-delta',
+            id: textId,
+            delta: `*The selected model is temporarily unavailable. Switching to ${fallback.displayName}...*\n\n`,
+          });
+
+          lastResult = await tryStreamModel(fallback.url);
+          triedModels.push(fallback.url);
+
+          if (lastResult.success) {
+            // Fallback succeeded
+            break;
+          } else if (lastResult.error && !isModelUnavailableError(lastResult.error)) {
+            // Non-503 error, stop trying fallbacks
+            break;
+          }
+          // Otherwise loop continues to try next fallback
+        }
+
+        // Handle final failure (non-503 errors or after all fallbacks exhausted)
+        if (!lastResult.success && !hadError) {
           hadError = true;
-          console.error('Chutes streaming error:', streamError);
-          const errorMsg = streamError instanceof Error ? streamError.message : 'Streaming failed';
-          // Check for insufficient credits error
-          const isCreditsError =
-            errorMsg.includes('402') ||
-            errorMsg.toLowerCase().includes('insufficient') ||
-            errorMsg.toLowerCase().includes('credit') ||
-            errorMsg.toLowerCase().includes('balance') ||
-            errorMsg.toLowerCase().includes('payment required');
-          if (isCreditsError) {
+          const errorMsg = lastResult.error || 'Unknown error';
+          console.error('Chutes streaming error:', errorMsg);
+
+          if (isCreditsError(errorMsg)) {
             writer.write({
               type: 'text-delta',
               id: textId,
-              delta: '\n\n**Your Chutes account has run out of credits.** Please add more credits at [chutes.ai](https://chutes.ai) to continue chatting.',
+              delta: '**Your Chutes account has run out of credits.** Please add more credits at [chutes.ai](https://chutes.ai) to continue chatting.',
+            });
+          } else if (!receivedAnyContent) {
+            writer.write({
+              type: 'text-delta',
+              id: textId,
+              delta: '**Unable to get a response.** This may be due to insufficient credits, an authentication issue, or the model being temporarily unavailable. Please try a different model in [Settings](/settings), check your [Chutes account](https://chutes.ai) balance, or switch to OpenRouter.',
             });
           } else {
             writer.write({ type: 'text-delta', id: textId, delta: `\n\nError: ${errorMsg}` });
           }
         }
+
         writer.write({ type: 'text-end', id: textId });
 
         // Only write sources and follow-ups if we got actual content (not on error/empty response)
@@ -690,8 +804,17 @@ export async function POST(request: Request) {
         }
       } else {
         // OpenRouter and other providers: use standard toUIMessageStream()
-        writer.merge(result.toUIMessageStream({
+        const result = streamText({
+          model: modelProvider(model) as Parameters<typeof streamText>[0]['model'],
+          system: systemPrompt,
+          messages: llmMessages,
           onError: (error) => {
+            console.error('LLM streaming error:', error);
+          },
+        });
+
+        writer.merge(result.toUIMessageStream({
+          onError: (error: unknown) => {
             console.error('UI message stream error:', error);
             return error instanceof Error ? error.message : 'An error occurred while streaming the response.';
           },
