@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-02-06
+
+### Features
+
+- add rate limiting and Cloudflare Turnstile bot protection ([d3d5429](https://github.com/lamat1111/Quily-Chatbot/commit/d3d54290290dc08e83d9f2c345a09649c2666952))
+- add modular cypherpunk personality for Quily chatbot ([432bdcb](https://github.com/lamat1111/Quily-Chatbot/commit/432bdcb2d0c22898b46cb16f85456508456da01c))
+- add Chutes model fallback and fix Turnstile widget ([ee93bee](https://github.com/lamat1111/Quily-Chatbot/commit/ee93beec45d97c0bb3efcd7a06394ba378cf1b4f))
+
+### Bug Fixes
+
+- show Turnstile widget when user interaction required ([31b614e](https://github.com/lamat1111/Quily-Chatbot/commit/31b614e0def5cc9250aa9f5539c95bfc90096deb))
+- disable chat input until Turnstile verification completes ([2c034d8](https://github.com/lamat1111/Quily-Chatbot/commit/2c034d808fcc0d225889d8b23df1d6b79284c477))
+- hide Turnstile widget after successful verification ([577b6ae](https://github.com/lamat1111/Quily-Chatbot/commit/577b6ae7d0a4ca990dcb028ce149fa4e190a54fb))
+- persist Turnstile verification across chat switches ([3757ee1](https://github.com/lamat1111/Quily-Chatbot/commit/3757ee1e7e7a25c5924d0d56e655d8f1c82f9cb6))
+
 ## [0.9.0] - 2026-02-05
 
 ### Features
