@@ -9,7 +9,6 @@ import { ChatInput } from './ChatInput';
 import { ChatHeader } from './ChatHeader';
 import { ProviderSetup } from './ProviderSetup';
 import { ChatSkeleton } from '@/src/components/ui/Skeleton';
-import { Turnstile } from '@/src/components/Turnstile';
 import { useConversationStore, Message } from '@/src/stores/conversationStore';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
@@ -23,6 +22,8 @@ interface ChatContainerProps {
   onApiKeyChange: (key: string) => void;
   model: string;
   conversationId: string | null;
+  /** Turnstile token from parent (null = not yet verified, string = verified) */
+  turnstileToken: string | null;
 }
 
 /** Debounce delay for store updates during streaming (ms) */
@@ -79,6 +80,7 @@ export function ChatContainer({
   onApiKeyChange,
   model,
   conversationId,
+  turnstileToken,
 }: ChatContainerProps) {
   const updateMessages = useConversationStore((state) => state.updateMessages);
   const conversations = useConversationStore((state) => state.conversations);
@@ -92,8 +94,13 @@ export function ChatContainer({
   // Follow-up questions state (keyed by message ID, but we only need the latest)
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
 
-  // Turnstile token state (for bot protection)
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // Turnstile token comes from parent (page.tsx) so it persists across chat switches.
+  // Use a ref so the transport closure always reads the latest value.
+  const turnstileTokenRef = useRef<string | null>(turnstileToken);
+  turnstileTokenRef.current = turnstileToken;
+
+  // Has user been verified by Turnstile?
+  const isVerified = turnstileToken !== null;
 
   // Get external Chutes API key if available
   const chutesExternalApiKey = useMemo(() => {
@@ -130,15 +137,6 @@ export function ChatContainer({
     });
   }, []);
 
-  // Turnstile callbacks (for bot protection)
-  const handleTurnstileVerify = useCallback((token: string) => {
-    setTurnstileToken(token);
-  }, []);
-
-  const handleTurnstileExpire = useCallback(() => {
-    setTurnstileToken(null);
-  }, []);
-
   // Rate limit state
   const [rateLimitError, setRateLimitError] = useState<{
     message: string;
@@ -162,7 +160,8 @@ export function ChatContainer({
               embeddingModel: providerId === 'chutes' ? chutesEmbeddingModel : undefined,
               chutesApiKey: chutesExternalApiKey || undefined,
               priorityDocIds: extractPriorityDocIds(reqMessages),
-              turnstileToken: turnstileToken || undefined,
+              // Use ref to get current token (avoids stale closure issue)
+              turnstileToken: turnstileTokenRef.current || undefined,
             },
           };
         },
@@ -186,7 +185,7 @@ export function ChatContainer({
           return response;
         },
       }),
-    [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey, turnstileToken]
+    [apiKey, model, providerId, chutesEmbeddingModel, chutesExternalApiKey]
   );
 
   // Handle data parts from the stream (status updates and follow-up questions)
@@ -390,17 +389,18 @@ export function ChatContainer({
   // Check if in empty state (no messages and not streaming)
   const isEmpty = messages.length === 0 && !isStreaming;
 
-  // Turnstile verification required in production (skip in dev for easier testing)
-  const isProduction = process.env.NODE_ENV === 'production';
-  const needsTurnstileVerification = isProduction && !turnstileToken;
+  // Disable input until Turnstile verification completes
+  // For normal users: happens automatically in background (instant)
+  // For suspicious users: need to complete checkbox challenge first
+  const needsVerification = !isVerified;
 
   // Common input props used in both embedded and bottom positions
   const inputProps = {
     onSubmit: handleSubmit,
     onStop: handleStop,
     isStreaming,
-    disabled: !hasAccess || chutesLoading || needsTurnstileVerification,
-    disabledMessage: needsTurnstileVerification
+    disabled: !hasAccess || chutesLoading || needsVerification,
+    disabledMessage: needsVerification
       ? 'Verifying you are human...'
       : providerId === 'chutes'
         ? isChutesSignedIn
@@ -410,13 +410,7 @@ export function ChatContainer({
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Turnstile widget (invisible, runs in background) */}
-      <Turnstile
-        onVerify={handleTurnstileVerify}
-        onExpire={handleTurnstileExpire}
-      />
-
+    <div className="flex flex-col h-full relative">
       {conversationId && <ChatHeader conversationId={conversationId} />}
       <MessageList
         messages={messages}

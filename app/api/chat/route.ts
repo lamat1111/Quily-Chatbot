@@ -295,6 +295,28 @@ function buildSetCookieHeader(name: string, value: string, maxAge?: number): str
 }
 
 /**
+ * Build a session cookie for Turnstile verification.
+ * This cookie marks the session as verified so subsequent requests
+ * don't need to provide/verify a Turnstile token.
+ *
+ * - No Max-Age = session cookie (deleted when browser closes)
+ * - HttpOnly = not accessible via JavaScript (security)
+ * - SameSite=Lax = sent with same-site requests and top-level navigations
+ */
+function buildTurnstileSessionCookie(): string {
+  const parts = [
+    'turnstile_verified=true',
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+  ];
+  if (cookieOptions.secure) {
+    parts.push('Secure');
+  }
+  return parts.join('; ');
+}
+
+/**
  * Status update structure sent to client via data-status parts.
  * Currently only 'search' step is shown - other steps flash too quickly to be visible.
  */
@@ -378,12 +400,21 @@ export async function POST(request: Request) {
     }
 
     // Verify Turnstile token (bot protection)
-    // Required in production, optional in development
+    // Uses session cookie to avoid re-verifying on every request
+    // Tokens are SINGLE-USE - once verified, we set a session cookie
     const turnstileToken = body.turnstileToken;
     const isProduction = process.env.NODE_ENV === 'production';
 
-    if (isProduction && !turnstileToken) {
-      console.warn('[Chat] Missing Turnstile token in production');
+    // Check for existing verified session (cookie set after first successful verification)
+    const cookies = request.headers.get('cookie') || '';
+    const hasVerifiedSession = cookies.includes('turnstile_verified=true');
+
+    // Track if we need to set the session cookie in the response
+    let shouldSetVerifiedCookie = false;
+
+    if (isProduction && !hasVerifiedSession && !turnstileToken) {
+      // No session and no token - need verification
+      console.warn('[Chat] Missing Turnstile token and no verified session');
       return new Response(
         JSON.stringify({
           error: 'Bot verification required',
@@ -393,7 +424,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (turnstileToken) {
+    if (turnstileToken && !hasVerifiedSession) {
+      // Fresh token provided and no session yet - verify it
       // Get client IP for additional validation
       const forwarded = request.headers.get('x-forwarded-for');
       const clientIp = forwarded ? forwarded.split(',')[0].trim() : undefined;
@@ -409,6 +441,12 @@ export async function POST(request: Request) {
           { status: 403, headers: { 'Content-Type': 'application/json' } }
         );
       }
+
+      // Token verified successfully - mark to set session cookie
+      shouldSetVerifiedCookie = true;
+      if (isDev) console.log('[Chat] Turnstile token verified, will set session cookie');
+    } else if (hasVerifiedSession) {
+      if (isDev) console.log('[Chat] Using existing verified session');
     }
 
     const provider = body.provider || 'openrouter';
@@ -859,6 +897,15 @@ export async function POST(request: Request) {
   });
 
     const response = createUIMessageStreamResponse({ stream });
+
+    // Set Turnstile verified session cookie (browser session duration - no maxAge)
+    // This allows subsequent requests to skip token verification
+    if (shouldSetVerifiedCookie) {
+      response.headers.append(
+        'Set-Cookie',
+        buildTurnstileSessionCookie()
+      );
+    }
 
     // If we refreshed Chutes token, update cookies on response
     if (provider === 'chutes' && refreshedTokenInfo?.expiresIn && chutesAccessToken) {

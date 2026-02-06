@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 
-/** Development mode flag for verbose logging */
-const isDev = process.env.NODE_ENV === 'development';
-
 declare global {
   interface Window {
     turnstile?: {
@@ -18,13 +15,14 @@ declare global {
           theme?: 'light' | 'dark' | 'auto';
           size?: 'normal' | 'compact' | 'flexible';
           appearance?: 'always' | 'execute' | 'interaction-only';
+          'refresh-expired'?: 'auto' | 'manual' | 'never';
         }
       ) => string;
       reset: (widgetId: string) => void;
       remove: (widgetId: string) => void;
       getResponse: (widgetId: string) => string | undefined;
     };
-    __turnstileScriptLoaded?: boolean;
+    __turnstileLoaded?: boolean;
   }
 }
 
@@ -36,130 +34,120 @@ interface TurnstileProps {
 
 /**
  * Cloudflare Turnstile widget component.
- * Renders invisibly and calls onVerify with the token when verification succeeds.
- * Token expires after 300 seconds (5 minutes).
+ *
+ * Uses 'interaction-only' appearance:
+ * - Normal users: Verification happens automatically in background, callback fires immediately
+ * - Suspicious users (VPN, etc): Checkbox appears, callback fires after they complete it
+ *
+ * The widget is positioned at the bottom of the chat area and only visible when
+ * Cloudflare requires user interaction.
  */
 export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
-  const cleanupWidget = useCallback(() => {
-    if (widgetIdRef.current && window.turnstile) {
-      try {
-        window.turnstile.remove(widgetIdRef.current);
-      } catch {
-        // Widget may already be removed
-      }
-      widgetIdRef.current = null;
-    }
-    // Also clear any existing children in container (for HMR)
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-    }
-  }, []);
-
   const renderWidget = useCallback(() => {
     if (!containerRef.current || !window.turnstile || !siteKey) return;
-
-    // Clean up any existing widget first (handles HMR and re-renders)
-    cleanupWidget();
+    if (widgetIdRef.current) return; // Already rendered
 
     try {
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
         callback: (token: string) => {
-          if (isDev) console.log('[Turnstile] Verification successful');
-          setIsVerified(true);
+          console.log('[Turnstile] Verification successful');
+          setIsVisible(false); // Hide widget after success
           onVerify(token);
         },
         'error-callback': () => {
-          console.error('[Turnstile] Widget error occurred');
+          console.error('[Turnstile] Widget error');
           onError?.();
         },
         'expired-callback': () => {
-          if (isDev) console.log('[Turnstile] Token expired');
-          setIsVerified(false);
+          console.log('[Turnstile] Token expired');
+          setIsVisible(true); // Show widget again if token expires
           onExpire?.();
         },
         theme: 'auto',
         size: 'normal',
-        // 'interaction-only' shows the widget only when user interaction is required
-        // (e.g., VPN users, suspicious traffic). Most users won't see anything.
-        // Requires "Managed" widget type in Cloudflare dashboard.
         appearance: 'interaction-only',
+        'refresh-expired': 'auto',
       });
-      if (isDev) console.log('[Turnstile] Widget rendered with ID:', widgetIdRef.current);
+      console.log('[Turnstile] Widget rendered:', widgetIdRef.current);
     } catch (err) {
-      console.error('[Turnstile] Failed to render widget:', err);
+      console.error('[Turnstile] Render failed:', err);
     }
-  }, [siteKey, onVerify, onError, onExpire, cleanupWidget]);
+  }, [siteKey, onVerify, onError, onExpire]);
 
   useEffect(() => {
     if (!siteKey) {
-      console.warn('[Turnstile] Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY');
+      console.warn('[Turnstile] No site key configured');
+      // No site key = no protection needed, call onVerify with empty token
+      // Server will skip verification if TURNSTILE_SECRET_KEY is also missing
+      onVerify('');
+      setIsVisible(false);
       return;
     }
 
-    // Check if script already loaded (globally tracked to survive HMR)
-    if (window.turnstile && window.__turnstileScriptLoaded) {
+    // Script already loaded
+    if (window.turnstile && window.__turnstileLoaded) {
       renderWidget();
-      return cleanupWidget;
+      return;
     }
 
-    // Check if script element already exists
-    const existingScript = document.querySelector(
-      'script[src*="challenges.cloudflare.com/turnstile"]'
-    );
+    // Script element already exists (e.g., from previous mount)
+    const existingScript = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
     if (existingScript) {
-      // Script exists, wait for it to load
-      const checkLoaded = setInterval(() => {
+      const checkReady = setInterval(() => {
         if (window.turnstile) {
-          clearInterval(checkLoaded);
-          window.__turnstileScriptLoaded = true;
+          clearInterval(checkReady);
+          window.__turnstileLoaded = true;
           renderWidget();
         }
-      }, 100);
-      return () => {
-        clearInterval(checkLoaded);
-        cleanupWidget();
-      };
+      }, 50);
+      return () => clearInterval(checkReady);
     }
 
-    // Load the Turnstile script
+    // Load script
     const script = document.createElement('script');
     script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
     script.async = true;
     script.onload = () => {
-      if (isDev) console.log('[Turnstile] Script loaded');
-      window.__turnstileScriptLoaded = true;
-      // Small delay to ensure turnstile object is available
-      setTimeout(renderWidget, 100);
+      window.__turnstileLoaded = true;
+      setTimeout(renderWidget, 50);
     };
     script.onerror = () => {
       console.error('[Turnstile] Failed to load script');
+      // On script load failure, allow through (fail open for UX)
+      onVerify('');
+      setIsVisible(false);
     };
     document.head.appendChild(script);
 
-    return cleanupWidget;
-  }, [siteKey, renderWidget, cleanupWidget]);
+    return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        try {
+          window.turnstile.remove(widgetIdRef.current);
+        } catch {
+          // Ignore cleanup errors
+        }
+        widgetIdRef.current = null;
+      }
+    };
+  }, [siteKey, renderWidget, onVerify]);
 
-  // Container for the Turnstile widget
-  // With 'interaction-only' appearance, the widget is hidden by default
-  // and only shows a checkbox when Cloudflare requires user interaction
-  // (e.g., VPN users, suspicious traffic patterns)
-  // Centered at bottom, above the chat input area
-  // Hide completely after successful verification
-  if (isVerified) {
+  // Don't render anything if not visible or no site key
+  if (!isVisible || !siteKey) {
     return null;
   }
 
+  // Position at bottom center of chat area
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50"
+      className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50"
       aria-label="Security verification"
     />
   );

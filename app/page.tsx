@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ChatContainer } from '@/src/components/chat/ChatContainer';
+import { Turnstile } from '@/src/components/Turnstile';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useConversationStore } from '@/src/stores/conversationStore';
 import { RECOMMENDED_MODELS } from '@/src/lib/openrouter';
@@ -22,6 +23,11 @@ import { useChutesSession } from '@/src/hooks/useChutesSession';
  * Hydration:
  * - Shows loading skeleton until both stores hydrated
  * - Prevents hydration mismatch from localStorage values
+ *
+ * Turnstile bot protection:
+ * - Turnstile state lives HERE (not in ChatContainer) so it persists
+ *   across chat switches. ChatContainer remounts via key={activeId},
+ *   but this page component does not.
  */
 export default function HomePage() {
   // API key and model from localStorage
@@ -48,6 +54,19 @@ export default function HomePage() {
   // Active conversation from Zustand store
   const activeId = useConversationStore((state) => state.activeId);
   const hasHydrated = useConversationStore((state) => state._hasHydrated);
+
+  // Turnstile bot protection state (lives here to persist across chat switches)
+  // - null = waiting for verification (input disabled)
+  // - string (even empty) = verified (input enabled)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   // Wait for all stores to hydrate before rendering
   const isHydrated =
@@ -93,14 +112,26 @@ export default function HomePage() {
   }
 
   return (
-    <ChatContainer
-      key={activeId || 'new-chat'}
-      providerId={providerId}
-      onProviderChange={setProviderId}
-      apiKey={apiKey}
-      onApiKeyChange={setApiKey}
-      model={activeModel}
-      conversationId={activeId}
-    />
+    <div className="h-full relative">
+      {/* Turnstile widget lives here (outside keyed ChatContainer) so it
+          persists across chat switches. Uses 'interaction-only' appearance:
+          most users never see it. Server sets session cookie after first
+          successful verification. */}
+      <Turnstile
+        onVerify={handleTurnstileVerify}
+        onExpire={handleTurnstileExpire}
+      />
+
+      <ChatContainer
+        key={activeId || 'new-chat'}
+        providerId={providerId}
+        onProviderChange={setProviderId}
+        apiKey={apiKey}
+        onApiKeyChange={setApiKey}
+        model={activeModel}
+        conversationId={activeId}
+        turnstileToken={turnstileToken}
+      />
+    </div>
   );
 }
