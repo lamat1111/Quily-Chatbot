@@ -93,6 +93,17 @@ export function useChutesSession(): UseChutesSessionReturn {
    */
   const refresh = useCallback(async () => {
     setLoading(true);
+
+    // Free mode: skip all auth checks, report as signed in immediately
+    if (process.env.NEXT_PUBLIC_FREE_MODE === 'true') {
+      setSession({ signedIn: true });
+      setAuthMethod(null);
+      setHasApiKey(false);
+      setHasOAuthSession(false);
+      setLoading(false);
+      return;
+    }
+
     try {
       const externalApiKey = getChutesExternalApiKey();
       setHasApiKey(Boolean(externalApiKey));

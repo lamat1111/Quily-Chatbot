@@ -26,6 +26,9 @@ interface ChatContainerProps {
   turnstileToken: string | null;
 }
 
+/** Whether free mode is enabled (server pays for all users) */
+const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
+
 /** Debounce delay for store updates during streaming (ms) */
 const STORE_UPDATE_DEBOUNCE_MS = 300;
 
@@ -87,6 +90,9 @@ export function ChatContainer({
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
   const { isSignedIn: isChutesSignedIn, loading: chutesLoading, authMethod } = useChutesSession();
   const [chutesEmbeddingModel] = useLocalStorage<string>('chutes-embedding-model', '');
+
+  // Free mode: track if server credits are exhausted (triggers fallback to ProviderSetup)
+  const [freeCreditsExhausted, setFreeCreditsExhausted] = useState(false);
 
   // Thinking process steps state
   const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([]);
@@ -165,7 +171,7 @@ export function ChatContainer({
             },
           };
         },
-        // Custom fetch to handle rate limiting
+        // Custom fetch to handle rate limiting and free mode credit exhaustion
         fetch: async (url, options) => {
           // Clear any previous rate limit error when making a new request
           setRateLimitError(null);
@@ -180,6 +186,15 @@ export function ChatContainer({
             });
             // Throw to prevent useChat from processing further
             throw new Error(data.message || 'Rate limited');
+          }
+
+          // Free mode: detect credit exhaustion and fall back to ProviderSetup
+          if (response.status === 402 && isFreeMode) {
+            const data = await response.json().catch(() => ({}));
+            if (data.code === 'free_credits_exhausted') {
+              setFreeCreditsExhausted(true);
+              throw new Error(data.message || 'Free credits exhausted');
+            }
           }
 
           return response;
@@ -255,8 +270,11 @@ export function ChatContainer({
   // Determine if currently streaming
   const isStreaming = status === 'streaming' || status === 'submitted';
 
-  const hasAccess =
-    providerId === 'openrouter'
+  // In free mode, access depends solely on whether credits are exhausted.
+  // Don't fall through to the normal Chutes check (isChutesSignedIn is artificially true in free mode).
+  const hasAccess = isFreeMode
+    ? !freeCreditsExhausted
+    : providerId === 'openrouter'
       ? apiKey.length > 0
       : isChutesSignedIn && Boolean(model);
 
@@ -375,12 +393,12 @@ export function ChatContainer({
     return <ChatSkeleton />;
   }
 
-  // Show provider setup when no API key
+  // Show provider setup when no API key (or free credits exhausted)
   if (!hasAccess) {
     return (
       <div className="flex flex-col h-full">
         <div className="flex-1 flex items-center justify-center overflow-auto">
-          <ProviderSetup onConnect={handleProviderConnect} />
+          <ProviderSetup onConnect={handleProviderConnect} freeCreditsExhausted={freeCreditsExhausted} />
         </div>
       </div>
     );

@@ -16,9 +16,11 @@ import {
 
 export async function GET(request: Request) {
   try {
+    // Free mode: use server CHUTES_API_KEY for all users
     // Dev bypass: use CHUTES_DEV_API_KEY if set
+    const freeModeKey = process.env.NEXT_PUBLIC_FREE_MODE === 'true' ? process.env.CHUTES_API_KEY : null;
     const devApiKey = process.env.CHUTES_DEV_API_KEY;
-    let accessToken: string | null = devApiKey || null;
+    let accessToken: string | null = freeModeKey || devApiKey || null;
     let refreshedTokenInfo: { refreshToken?: string; expiresIn?: number } | null = null;
 
     if (!accessToken) {

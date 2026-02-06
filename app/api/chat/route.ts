@@ -247,6 +247,16 @@ async function ensureChutesAccessToken(): Promise<{
   refreshToken?: string;
   expiresIn?: number;
 }> {
+  // Free mode: use server CHUTES_API_KEY for all users
+  if (process.env.NEXT_PUBLIC_FREE_MODE === 'true') {
+    const serverKey = process.env.CHUTES_API_KEY;
+    if (serverKey) {
+      if (isDev) console.log('[Chutes] Using server API key (free mode)');
+      return { accessToken: serverKey, refreshed: false };
+    }
+    console.warn('[Chutes] Free mode enabled but CHUTES_API_KEY not set — falling back to OAuth');
+  }
+
   // Dev bypass: use CHUTES_DEV_API_KEY if set (for testing without OAuth)
   const devApiKey = process.env.CHUTES_DEV_API_KEY;
   if (devApiKey) {
@@ -585,12 +595,16 @@ export async function POST(request: Request) {
         const balanceResult = await balanceCheckPromise;
         if (!balanceResult.hasCredits) {
           const isChutes = provider === 'chutes';
+          const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
           return new Response(
             JSON.stringify({
               error: 'Insufficient credits',
-              message: isChutes
-                ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
-                : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
+              code: isFreeMode && isChutes ? 'free_credits_exhausted' : undefined,
+              message: isFreeMode && isChutes
+                ? 'Free credits have been used up. Please connect your own AI provider to continue chatting.'
+                : isChutes
+                  ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
+                  : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
             }),
             { status: 402, headers: { 'Content-Type': 'application/json' } }
           );
@@ -944,12 +958,16 @@ export async function POST(request: Request) {
       const isChutesError =
         errorMessage.toLowerCase().includes('chutes') ||
         errorMessage.includes('api.chutes.ai');
+      const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
       return new Response(
         JSON.stringify({
           error: 'Insufficient credits',
-          message: isChutesError
-            ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
-            : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
+          code: isFreeMode && isChutesError ? 'free_credits_exhausted' : undefined,
+          message: isFreeMode && isChutesError
+            ? 'Free credits have been used up. Please connect your own AI provider to continue chatting.'
+            : isChutesError
+              ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
+              : 'Your OpenRouter account has run out of credits. Please add more credits at openrouter.ai/settings/billing to continue chatting.',
         }),
         {
           status: 402,

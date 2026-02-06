@@ -14,13 +14,15 @@ import {
 
 interface ProviderSetupProps {
   onConnect: (providerId: string, apiKey: string) => void;
+  /** When true, free mode credits are exhausted — show fallback message */
+  freeCreditsExhausted?: boolean;
 }
 
 /**
  * Provider selection and setup flow component.
  * Shows available providers as cards, then expands to setup steps when selected.
  */
-export function ProviderSetup({ onConnect }: ProviderSetupProps) {
+export function ProviderSetup({ onConnect, freeCreditsExhausted }: ProviderSetupProps) {
   const [selectedProvider, setSelectedProvider] = useState<AIProvider | null>(null);
   const [apiKey, setApiKey] = useState('');
   const [isValidating, setIsValidating] = useState(false);
@@ -183,6 +185,19 @@ export function ProviderSetup({ onConnect }: ProviderSetupProps) {
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Quily Chat connects to AI providers to answer your questions. Choose how you&apos;d like to pay for AI usage:
           </p>
+
+          {freeCreditsExhausted && (
+            <div className="mb-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                Free credits have been used up. Connect your own AI provider to continue chatting,
+                or go to{' '}
+                <a href="/settings" className="font-medium underline hover:no-underline">
+                  Settings
+                </a>{' '}
+                to configure your account.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PROVIDERS.map((provider) => {

@@ -29,6 +29,8 @@ import { useChutesSession } from '@/src/hooks/useChutesSession';
  *   across chat switches. ChatContainer remounts via key={activeId},
  *   but this page component does not.
  */
+const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
+
 export default function HomePage() {
   // API key and model from localStorage
   const [providerId, setProviderId, providerHydrated] = useLocalStorage<string>(
@@ -76,9 +78,16 @@ export default function HomePage() {
     chutesModelHydrated &&
     hasHydrated;
 
+  // In free mode, auto-set provider to chutes
+  useEffect(() => {
+    if (isFreeMode && isHydrated && providerId !== 'chutes') {
+      setProviderId('chutes');
+    }
+  }, [isHydrated, providerId, setProviderId]);
+
   // Check which providers have valid credentials
   const hasOpenRouterAccess = apiKey.length > 0;
-  const hasChutesAccess = isChutesSignedIn && Boolean(chutesModel);
+  const hasChutesAccess = isFreeMode || (isChutesSignedIn && Boolean(chutesModel));
 
   // Auto-fallback: if selected provider has no access but the other does, switch
   useEffect(() => {
@@ -107,7 +116,8 @@ export default function HomePage() {
 
   // Show skeleton until localStorage is hydrated AND Chutes session check completes
   // This prevents flash of ProviderSetup when returning from OAuth
-  if (!isHydrated || (providerId === 'chutes' && chutesLoading)) {
+  // In free mode, skip waiting for chutesLoading (no OAuth check needed)
+  if (!isHydrated || (!isFreeMode && providerId === 'chutes' && chutesLoading)) {
     return <ChatSkeleton />;
   }
 
