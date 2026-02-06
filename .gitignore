@@ -102,6 +102,9 @@ docs/quilibrium-official/
 .vercel
 .env*.local
 
+# Claude Code - local instructions (not tracked)
+CLAUDE.md
+
 # Claude Code - include .claude folder but exclude specific items
 !.claude/
 .claude/settings.local.json

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 /** Development mode flag for verbose logging */
 const isDev = process.env.NODE_ENV === 'development';
@@ -42,6 +42,7 @@ interface TurnstileProps {
 export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -71,6 +72,7 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
         sitekey: siteKey,
         callback: (token: string) => {
           if (isDev) console.log('[Turnstile] Verification successful');
+          setIsVerified(true);
           onVerify(token);
         },
         'error-callback': () => {
@@ -79,6 +81,7 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
         },
         'expired-callback': () => {
           if (isDev) console.log('[Turnstile] Token expired');
+          setIsVerified(false);
           onExpire?.();
         },
         theme: 'auto',
@@ -148,6 +151,11 @@ export function Turnstile({ onVerify, onError, onExpire }: TurnstileProps) {
   // and only shows a checkbox when Cloudflare requires user interaction
   // (e.g., VPN users, suspicious traffic patterns)
   // Centered at bottom, above the chat input area
+  // Hide completely after successful verification
+  if (isVerified) {
+    return null;
+  }
+
   return (
     <div
       ref={containerRef}
