@@ -257,6 +257,17 @@ export default function SettingsPage() {
             Configure your AI provider, API key, and preferred model.
           </p>
 
+          {/* Free mode callout */}
+          {process.env.NEXT_PUBLIC_FREE_MODE === 'true' && (
+            <div className="callout-success mb-8">
+              <p className="text-sm">
+                <strong>Free mode is active.</strong> All chats are free right now — the server
+                covers AI costs for everyone. Even if you set up your own API key or sign in
+                with Chutes, your credits won&apos;t be used.
+              </p>
+            </div>
+          )}
+
           {/* Profile Settings Card */}
           <section className="mb-8">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">

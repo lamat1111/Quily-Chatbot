@@ -556,8 +556,10 @@ export async function POST(request: Request) {
 
     // Handle Chutes authentication (must happen before streaming)
     if (provider === 'chutes' || useChutesEmbeddings) {
-      // Priority: external API key > dev bypass > OAuth cookies
-      if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
+      const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
+      // In free mode, always use server key (skip user's external key so they don't spend their own credits).
+      // Normal mode priority: external API key > dev bypass > OAuth cookies
+      if (!isFreeMode && chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
         if (isDev) console.log('[Chutes] Using external API key');
         chutesAccessToken = chutesExternalApiKey;
       } else {

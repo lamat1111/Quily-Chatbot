@@ -122,6 +122,10 @@
   --color-callout-info-bg: #eff6ff;   /* blue-50 */
   --color-callout-info-border: #93c5fd; /* blue-300 */
   --color-callout-info-text: #1e40af; /* blue-800 */
+
+  --color-callout-success-bg: #f0fdf4;   /* green-50 */
+  --color-callout-success-border: #86efac; /* green-300 */
+  --color-callout-success-text: #166534; /* green-800 */
 }
 
 /* Dark theme - same semantic tokens, different values */
@@ -233,6 +237,10 @@
   --color-callout-info-bg: rgba(30, 58, 138, 0.15);
   --color-callout-info-border: rgba(96, 165, 250, 0.3);
   --color-callout-info-text: #93c5fd; /* blue-300 */
+
+  --color-callout-success-bg: rgba(22, 101, 52, 0.15);
+  --color-callout-success-border: rgba(74, 222, 128, 0.3);
+  --color-callout-success-text: #86efac; /* green-300 */
 }
 
 /* Register semantic colors with Tailwind */
@@ -313,6 +321,9 @@
   --color-callout-info-bg: var(--color-callout-info-bg);
   --color-callout-info-border: var(--color-callout-info-border);
   --color-callout-info-text: var(--color-callout-info-text);
+  --color-callout-success-bg: var(--color-callout-success-bg);
+  --color-callout-success-border: var(--color-callout-success-border);
+  --color-callout-success-text: var(--color-callout-success-text);
 
   /* Legacy aliases for backwards compatibility */
   --color-text-primary: var(--color-text-brand);
@@ -387,6 +398,23 @@ a.link-muted:hover {
 }
 
 .callout-info a:hover {
+  opacity: 0.8;
+}
+
+.callout-success {
+  background-color: var(--color-callout-success-bg);
+  border: 1px solid var(--color-callout-success-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: var(--color-callout-success-text);
+}
+
+.callout-success a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.callout-success a:hover {
   opacity: 0.8;
 }
 
