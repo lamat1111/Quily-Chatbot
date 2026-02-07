@@ -59,7 +59,7 @@ The goal of Quilibrium, other than the mission itself, is to essentially take th
 
 **MPC Machine Learning Library** - This is where things get exciting.
 
-## Claru: MPC Machine Learning Performance Breakthrough
+## Klearu: MPC Machine Learning Performance Breakthrough
 
 We are relying on an entirely different form of machine learning. The way we're conducting machine learning to fulfill functions like your traditional softmax is done in a way that is actually functional on CPUs. There's a lot of research behind it.
 
@@ -69,7 +69,7 @@ But our implementation is actively competitive against an A100 using traditional
 
 What is most important for Quilibrium is that it can also be encrypted. These operations can work on encrypted data without revealing the private inputs of that data. It works well in an MPC scheme and still retains the performance. That is the absolute killer element.
 
-That's how we're going to be operating in a machine learning world when machine learning is very slow for multi-party computation (which is why a lot of MPC-oriented projects end up just shoving it in a TEE). I can't wait to publish the full paper on what is being called Claru. It is insanely fast and very exciting.
+That's how we're going to be operating in a machine learning world when machine learning is very slow for multi-party computation (which is why a lot of MPC-oriented projects end up just shoving it in a TEE). I can't wait to publish the full paper on what is being called Klearu. It is insanely fast and very exciting.
 
 ## S3 API Technical Deep Dive
 

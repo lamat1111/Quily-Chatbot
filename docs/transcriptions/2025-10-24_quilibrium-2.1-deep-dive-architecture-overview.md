@@ -43,7 +43,7 @@ Further down the road:
 - Relational (equivalent to RDS, Amazon Keyspaces, DynamoDB, and Redis)
 
 With subsequent protocol upgrades, we'll bring out:
-- Claru for machine learning
+- Klearu for machine learning (**not yet available** — planned for future protocol upgrades; still in research/testing phase as of this stream)
 - Streaming data primitives for phone video and streaming content calls
 
 ## The Mission of Quilibrium
@@ -232,4 +232,4 @@ Presently has checks to prevent use as exit relay for external traffic. Public e
 
 ---
 
-*Updated: 2025-10-24*
+*Updated: 2026-02-07*
