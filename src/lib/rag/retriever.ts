@@ -48,6 +48,22 @@ function isTemporalQuery(query: string): boolean {
   return TEMPORAL_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
 }
 
+// Keywords that indicate the user is asking about multiple topics / wants a broad overview
+const BROAD_QUERY_KEYWORDS = [
+  'all', 'every', 'list', 'overview', 'summary', 'summarize',
+  'products', 'services', 'features', 'tools', 'offerings',
+  'what can', 'what does quilibrium offer', 'tell me about quilibrium',
+  'everything', 'ecosystem', 'compare',
+];
+
+/**
+ * Check if query is broad/multi-topic, warranting more retrieved chunks
+ */
+function isBroadQuery(query: string): boolean {
+  const lowerQuery = query.toLowerCase();
+  return BROAD_QUERY_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
+}
+
 /**
  * Fetch the most recent document chunks by publication date
  * Used to augment vector search for temporal queries
@@ -183,11 +199,16 @@ export async function retrieveWithReranking(
     chutesAccessToken,
     embeddingModel,
     cohereApiKey,
-    initialCount = 15,
-    finalCount = 5,
+    initialCount: requestedInitialCount,
+    finalCount: requestedFinalCount,
     similarityThreshold = 0.35, // Lower threshold - text-embedding-3-small typically produces 0.3-0.6 similarity scores
     priorityDocIds = [],
   } = options;
+
+  // Dynamic retrieval: broad/multi-topic queries get more chunks for better coverage
+  const broad = isBroadQuery(query);
+  const initialCount = requestedInitialCount ?? (broad ? 25 : 15);
+  const finalCount = requestedFinalCount ?? (broad ? 10 : 5);
 
   // Fetch priority docs in parallel with vector search for better latency
   const priorityChunksPromise =
