@@ -16,6 +16,7 @@ import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
 import { getOAuthConfig, refreshTokens, checkChutesBalance } from '@/src/lib/chutesAuth';
 import { validateApiKeyWithCredits } from '@/src/lib/openrouter';
 import { getProvider } from '@/src/lib/providers';
+import { getCuratedModels, getChuteUrl } from '@/src/lib/chutes/chuteDiscovery';
 import {
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
@@ -27,6 +28,14 @@ import { verifyTurnstileToken } from '@/src/lib/turnstile';
 
 /** Development mode flag for verbose logging */
 const isDev = process.env.NODE_ENV === 'development';
+
+/** Default model URL for free mode when no model is specified by client. */
+function getDefaultChutesFreeModel(): string {
+  if (process.env.NEXT_PUBLIC_FREE_MODE !== 'true') return '';
+  const curated = getCuratedModels('llm');
+  if (curated.length === 0) return '';
+  return getChuteUrl(curated[0].slug);
+}
 
 /**
  * Fallback models for Chutes when primary model is unavailable (503 errors).
@@ -480,7 +489,7 @@ export async function POST(request: Request) {
     const model =
       body.model ||
       (provider === 'chutes'
-        ? process.env.CHUTES_DEFAULT_MODEL || ''
+        ? process.env.CHUTES_DEFAULT_MODEL || getDefaultChutesFreeModel()
         : 'anthropic/claude-3.5-sonnet');
 
     if (provider === 'openrouter') {
