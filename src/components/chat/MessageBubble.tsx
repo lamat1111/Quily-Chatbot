@@ -121,6 +121,26 @@ export const MessageBubble = memo(function MessageBubble({
         />
       )}
 
+      {/* Beta warning callout - only show after streaming completes */}
+      {!isStreaming && (
+        <div className="callout-info mt-4 text-base sm:text-sm">
+          <p>
+            <strong>Beta Notice:</strong> Quily is in beta and may occasionally
+            produce inaccurate information. Do not use these replies to post public
+            information about Quilibrium without verifying it first in the{' '}
+            <a
+              href="https://docs.quilibrium.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-unstyled"
+            >
+              official docs
+            </a>{' '}
+            or with the community.
+          </p>
+        </div>
+      )}
+
       {/* Footer with copy button and disclaimer - only show after streaming completes */}
       {!isStreaming && (
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
