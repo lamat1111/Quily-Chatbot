@@ -9,6 +9,7 @@ import { RECOMMENDED_MODELS } from '@/src/lib/openrouter';
 import { getDefaultProvider } from '@/src/lib/providers';
 import { ChatSkeleton } from '@/src/components/ui/Skeleton';
 import { useChutesSession } from '@/src/hooks/useChutesSession';
+import { useTurnstileSession } from '@/src/hooks/useTurnstileSession';
 
 /**
  * Main chat page integrating sidebar and chat components.
@@ -57,10 +58,21 @@ export default function HomePage() {
   const activeId = useConversationStore((state) => state.activeId);
   const hasHydrated = useConversationStore((state) => state._hasHydrated);
 
+  // Check if user already has a verified Turnstile session cookie.
+  // The cookie is HttpOnly so the client can't read it directly.
+  const { verified: hasExistingSession, loading: turnstileLoading } = useTurnstileSession();
+
   // Turnstile bot protection state (lives here to persist across chat switches)
   // - null = waiting for verification (input disabled)
   // - string (even empty) = verified (input enabled)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  // When session check confirms existing cookie, skip the widget entirely
+  useEffect(() => {
+    if (!turnstileLoading && hasExistingSession) {
+      setTurnstileToken(''); // empty string = verified (no fresh token needed)
+    }
+  }, [turnstileLoading, hasExistingSession]);
 
   const handleTurnstileVerify = useCallback((token: string) => {
     setTurnstileToken(token);
@@ -114,10 +126,11 @@ export default function HomePage() {
 
   const activeModel = providerId === 'chutes' ? chutesModel : openrouterModel;
 
-  // Show skeleton until localStorage is hydrated AND Chutes session check completes
-  // This prevents flash of ProviderSetup when returning from OAuth
+  // Show skeleton until localStorage is hydrated, Turnstile session check completes,
+  // AND Chutes session check completes. This prevents flash of "Verifying..." or
+  // ProviderSetup when returning from OAuth.
   // In free mode, skip waiting for chutesLoading (no OAuth check needed)
-  if (!isHydrated || (!isFreeMode && providerId === 'chutes' && chutesLoading)) {
+  if (!isHydrated || turnstileLoading || (!isFreeMode && providerId === 'chutes' && chutesLoading)) {
     return <ChatSkeleton />;
   }
 
@@ -126,11 +139,13 @@ export default function HomePage() {
       {/* Turnstile widget lives here (outside keyed ChatContainer) so it
           persists across chat switches. Uses 'interaction-only' appearance:
           most users never see it. Server sets session cookie after first
-          successful verification. */}
-      <Turnstile
-        onVerify={handleTurnstileVerify}
-        onExpire={handleTurnstileExpire}
-      />
+          successful verification. Skip entirely if session cookie exists. */}
+      {!hasExistingSession && (
+        <Turnstile
+          onVerify={handleTurnstileVerify}
+          onExpire={handleTurnstileExpire}
+        />
+      )}
 
       <ChatContainer
         key={activeId || 'new-chat'}
