@@ -148,20 +148,29 @@ docs/
 
 ## Keeping the Knowledge Base Updated
 
-### Regular update workflow
+### Automated (recommended)
+
+A GitHub Actions workflow checks for new documentation daily at 06:00 UTC. If changes are detected, it automatically syncs docs and re-ingests embeddings into Supabase.
+
+To enable, add these **GitHub Secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Value from `.env` |
+|--------|-------------------|
+| `SUPABASE_URL` | `NEXT_PUBLIC_SUPABASE_URL` |
+| `SUPABASE_SERVICE_KEY` | `SUPABASE_SERVICE_ROLE_KEY` |
+| `CHUTES_API_KEY` | `CHUTES_API_KEY` |
+
+You can also trigger it manually from the Actions tab → "Daily Docs Sync & RAG Ingestion" → "Run workflow".
+
+### Manual update
 
 ```bash
-# 1. Sync latest from GitHub
-yarn sync-docs:run
-
-# 2. Update the RAG database
-yarn ingest:run
-```
-
-### One-command update
-
-```bash
+# One-command: sync + ingest
 yarn sync-docs:ingest
+
+# Or step by step:
+yarn sync-docs:run    # Sync latest from GitHub
+yarn ingest:run       # Update the RAG database (via Chutes)
 ```
 
 ### After deleting files
@@ -209,7 +218,8 @@ yarn ingest:status
 
 | Command | Description |
 |---------|-------------|
-| `yarn ingest:run` | Run ingestion pipeline |
+| `yarn ingest:run` | Run ingestion pipeline (Chutes, default) |
+| `yarn ingest:run-openrouter` | Run ingestion via OpenRouter |
 | `yarn ingest:clean` | Ingest + remove orphaned chunks |
 | `yarn ingest:dry` | Preview without uploading |
 | `yarn ingest:status` | Show local vs database sync |
@@ -314,10 +324,12 @@ The free tier is sufficient for most use cases.
 
 ## Maintenance Guide
 
-### Daily/Weekly tasks
+### Daily sync (automated)
+
+Documentation sync runs automatically via GitHub Actions. Check the Actions tab for run history and status. To trigger manually:
 
 ```bash
-# Check for doc updates and sync
+# Or run locally:
 yarn sync-docs:ingest
 ```
 
@@ -346,7 +358,7 @@ yarn ingest:clean
 |-------|----------|
 | Sync rate limited | Add `GITHUB_TOKEN` to `.env` |
 | Deleted files still in search | Run `yarn ingest:clean` |
-| Embeddings failing | Check Chutes session or `OPENROUTER_API_KEY` |
+| Embeddings failing | Check `CHUTES_API_KEY` (or `OPENROUTER_API_KEY` if using OpenRouter) |
 | Poor search results | Add `COHERE_API_KEY` for reranking |
 
 For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.agents/docs/rag-knowledge-base-workflow.md).

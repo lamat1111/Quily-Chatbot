@@ -8,6 +8,7 @@
     "start": "next start",
     "ingest": "tsx scripts/ingest/index.ts",
     "ingest:run": "tsx scripts/ingest/index.ts run",
+    "ingest:run-openrouter": "tsx scripts/ingest/index.ts run-openrouter",
     "ingest:dry": "tsx scripts/ingest/index.ts run --dry-run",
     "ingest:clean": "tsx scripts/ingest/index.ts run --clean",
     "ingest:status": "tsx scripts/ingest/index.ts status",

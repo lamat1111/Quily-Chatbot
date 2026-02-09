@@ -5,7 +5,7 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-01-25
-updated: 2026-01-29
+updated: 2026-02-09
 related_docs:
   - "model-specific-instruction-handling.md"
 related_tasks: []
@@ -27,11 +27,12 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 |-----------|----------|---------|
 | Document Loader | `scripts/ingest/loader.ts` | Reads `.md` and `.txt` files from `./docs` |
 | Semantic Chunker | `scripts/ingest/chunker.ts` | Splits documents into 800-token chunks |
-| Embedder | `scripts/ingest/embedder.ts` | Generates 1024-dim vectors via OpenRouter (BGE-M3) |
-| Embedder (Chutes) | `scripts/ingest/embedder-chutes.ts` | Generates 1024-dim vectors via Chutes (BGE-M3) |
+| Embedder (Chutes) | `scripts/ingest/embedder-chutes.ts` | Generates 1024-dim vectors via Chutes (BGE-M3) — default |
+| Embedder (OpenRouter) | `scripts/ingest/embedder.ts` | Generates 1024-dim vectors via OpenRouter (BGE-M3) — alternative |
 | Uploader | `scripts/ingest/uploader.ts` | Batch inserts to Supabase pgvector |
 | CLI Orchestrator | `scripts/ingest/index.ts` | Coordinates the ingestion pipeline |
 | Docs Sync | `scripts/sync-docs/` | Syncs docs from GitHub repository |
+| Daily Automation | `.github/workflows/sync-docs.yml` | GitHub Actions cron: daily sync + ingest |
 | Retriever | `src/lib/rag/retriever.ts` | Two-stage retrieval with optional reranking |
 | Prompt Builder | `src/lib/rag/prompt.ts` | Formats context and builds system prompts |
 | Chat API | `app/api/chat/route.ts` | Handles user queries with RAG pipeline |
@@ -251,7 +252,10 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
-# OpenRouter API Key (required for ingestion, optional for chat if using Chutes)
+# Chutes API Key (required for ingestion and chat)
+CHUTES_API_KEY=your_chutes_key
+
+# OpenRouter API Key (alternative embedder, optional)
 OPENROUTER_API_KEY=your_openrouter_key
 
 # Cohere API Key (optional but recommended for better search)
@@ -267,7 +271,8 @@ GITHUB_TOKEN=ghp_your_token_here
 |-----|--------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase Dashboard → Settings → API → Project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → Service Role Key |
-| `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) (required for ingestion; chat can also use Chutes) |
+| `CHUTES_API_KEY` | [Chutes](https://chutes.ai/app/api) (required for ingestion and chat) |
+| `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) (alternative embedder, optional) |
 | `COHERE_API_KEY` | [Cohere Dashboard](https://dashboard.cohere.com/api-keys) |
 | `GITHUB_TOKEN` | [GitHub Settings](https://github.com/settings/tokens) (no scopes needed) |
 
@@ -320,8 +325,11 @@ Files in `docs/transcriptions/` and `docs/custom/` are:
 ### Ingestion Commands
 
 ```bash
-# Full ingestion (add/update chunks)
+# Full ingestion via Chutes (default)
 yarn ingest:run
+
+# Full ingestion via OpenRouter (alternative)
+yarn ingest:run-openrouter
 
 # Full ingestion with cleanup of deleted files
 yarn ingest:clean
@@ -354,7 +362,7 @@ yarn ingest -- clean --dry-run
 1. **Loading**: Reads all `.md` and `.txt` files from `./docs` recursively
 2. **Cleaning** (if `--clean`): Removes chunks for files that no longer exist
 3. **Chunking**: Splits into ~800-token chunks with 100-token overlap
-4. **Embedding**: Generates 1024-dimensional vectors using BGE-M3 (via OpenRouter or Chutes)
+4. **Embedding**: Generates 1024-dimensional vectors using BGE-M3 (via Chutes by default, or OpenRouter)
 5. **Uploading**: Upserts chunks to Supabase (updates on re-ingestion)
 
 ### Expected Output
@@ -426,6 +434,30 @@ yarn ingest:clean
 yarn sync-docs:ingest
 ```
 
+### Automated Daily Sync (GitHub Actions)
+
+A GitHub Actions workflow runs daily at 06:00 UTC to keep the knowledge base current without manual intervention.
+
+**How it works:**
+1. Checks the QuilibriumNetwork/docs repo for changes via `yarn sync-docs status`
+2. If changes are detected, runs `yarn sync-docs sync --ingest` (sync + embed via Chutes + upload to Supabase)
+3. Commits the updated `.sync-manifest.json` and docs back to the repo
+4. If no changes, exits in ~15 seconds with no side effects
+
+**Workflow file:** `.github/workflows/sync-docs.yml`
+
+**Required GitHub Secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Value from `.env` |
+|--------|-------------------|
+| `SUPABASE_URL` | `NEXT_PUBLIC_SUPABASE_URL` |
+| `SUPABASE_SERVICE_KEY` | `SUPABASE_SERVICE_ROLE_KEY` |
+| `CHUTES_API_KEY` | `CHUTES_API_KEY` |
+
+**Manual trigger:** Go to the repo's Actions tab → "Daily Docs Sync & RAG Ingestion" → "Run workflow"
+
+**Cost:** Negligible — ~15 minutes/month of GitHub Actions time (free tier is 2,000 minutes/month).
+
 ---
 
 ## Step 7: How RAG Works at Runtime
@@ -495,7 +527,8 @@ interface RetrievalOptions {
 | `yarn sync-docs:force` | Force re-download all |
 | `yarn sync-docs:ingest` | Sync + auto-ingest |
 | `yarn sync-docs:dry` | Preview without downloading |
-| `yarn ingest:run` | Run ingestion pipeline |
+| `yarn ingest:run` | Run ingestion pipeline (Chutes, default) |
+| `yarn ingest:run-openrouter` | Run ingestion via OpenRouter |
 | `yarn ingest:clean` | Ingest + remove orphans |
 | `yarn ingest:dry` | Preview without uploading |
 | `yarn ingest:status` | Show local vs DB sync status |
@@ -532,10 +565,10 @@ interface RetrievalOptions {
 
 ### "Embedding failed" errors
 
-- Verify `OPENROUTER_API_KEY` is valid (or Chutes session is active)
-- Check OpenRouter account has credits
+- Verify `CHUTES_API_KEY` is valid (default embedder)
+- Check Chutes account has credits
 - Review rate limiting (100ms delay between batches)
-- If using Chutes, verify OAuth session hasn't expired
+- If using OpenRouter (`yarn ingest:run-openrouter`), verify `OPENROUTER_API_KEY` and credits
 
 ### Deleted files still appearing in results
 
@@ -594,4 +627,4 @@ The chat API implements differentiated behavior based on model capabilities. See
 
 ---
 
-_Updated: 2026-01-29_
+_Updated: 2026-02-09_

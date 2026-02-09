@@ -22,8 +22,8 @@ program
   .version('1.0.0');
 
 program
-  .command('run')
-  .description('Run full ingestion pipeline using BGE-M3 embeddings (1024 dims, via OpenRouter)')
+  .command('run-openrouter')
+  .description('Run ingestion pipeline using OpenRouter embeddings (BGE-M3, 1024 dims)')
   .option('-d, --docs <path>', 'Path to documentation directory', './docs')
   .option('-v, --version <tag>', 'Version tag for chunks', new Date().toISOString().split('T')[0])
   .option('--dry-run', 'Preview without uploading to database', false)
@@ -160,8 +160,8 @@ program
   });
 
 program
-  .command('run-chutes')
-  .description('Run ingestion pipeline using Chutes embeddings (BGE-M3, 1024 dimensions)')
+  .command('run')
+  .description('Run full ingestion pipeline using BGE-M3 embeddings (1024 dims, via Chutes)')
   .option('-d, --docs <path>', 'Path to documentation directory', './docs')
   .option('-v, --version <tag>', 'Version tag for chunks', new Date().toISOString().split('T')[0])
   .option('--dry-run', 'Preview without uploading to database', false)
