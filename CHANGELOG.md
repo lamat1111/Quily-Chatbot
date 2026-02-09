@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-02-09
+
+### Features
+
+- add free mode with graceful credit exhaustion fallback ([f94aaa0](https://github.com/lamat1111/Quily-Chatbot/commit/f94aaa071493fa77e2743e0bf71a0ffd1ca7832a))
+- free mode skips user API keys and shows settings callout ([58d046f](https://github.com/lamat1111/Quily-Chatbot/commit/58d046f90bd0dea3c12a98b63d1f8354768dc0c5))
+- add daily GitHub Actions workflow for docs sync and RAG ingestion ([2388ead](https://github.com/lamat1111/Quily-Chatbot/commit/2388ead2cb4d6b453278e5c5ddaca1ea482cff3b))
+- hide provider controls in free mode settings ([12803c9](https://github.com/lamat1111/Quily-Chatbot/commit/12803c9311a332493856192a25e3e30858455fc1))
+- add 4,000 character limit to chat input ([ba93d90](https://github.com/lamat1111/Quily-Chatbot/commit/ba93d9017d0b72246929267a63dea8a085b3830e))
+- add Kimi K2.5 and upgrade to DeepSeek V3.1-TEE ([f5d55c8](https://github.com/lamat1111/Quily-Chatbot/commit/f5d55c831fb037396ef207bc60cc300be89821bb))
+
+### Bug Fixes
+
+- add Klearu status clarifications and planned feature detection ([5488713](https://github.com/lamat1111/Quily-Chatbot/commit/5488713e273388d2f65c5b30e95c9b0eb30e6cfc))
+
 ## [0.10.0] - 2026-02-06
 
 ### Features
