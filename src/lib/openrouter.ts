@@ -36,6 +36,13 @@ const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
     isRecommended: false,
   },
   {
+    id: 'moonshotai/kimi-k2.5',
+    name: 'Kimi K2.5',
+    description: 'Near DeepSeek V3 level. Strong reasoning and accuracy.',
+    isOpenSource: true,
+    isRecommended: false,
+  },
+  {
     id: 'qwen/qwen-2.5-72b-instruct',
     name: 'Qwen 2.5 72B',
     description: 'High quality. Strong multilingual support.',

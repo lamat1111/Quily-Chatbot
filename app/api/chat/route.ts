@@ -43,6 +43,11 @@ function getDefaultChutesFreeModel(): string {
  */
 const CHUTES_FALLBACK_MODELS = [
   {
+    slug: 'chutes-moonshotai-kimi-k2-5-tee',
+    displayName: 'Kimi K2.5',
+    url: 'https://chutes-moonshotai-kimi-k2-5-tee.chutes.ai',
+  },
+  {
     slug: 'chutes-qwen-qwen2-5-72b-instruct',
     displayName: 'Qwen 2.5 72B',
     url: 'https://chutes-qwen-qwen2-5-72b-instruct.chutes.ai',

@@ -31,11 +31,11 @@ export interface CuratedModelMetadata {
  * Power users can still use any model via the manual URL input.
  */
 const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
-  // DeepSeek - Top recommendation (matches OpenRouter)
+  // DeepSeek - Top recommendation (TEE for privacy)
   {
-    slug: 'chutes-deepseek-ai-deepseek-v3',
-    displayName: 'DeepSeek V3',
-    description: 'Best open-source. Excellent reasoning and accuracy.',
+    slug: 'chutes-deepseek-ai-deepseek-v3-1-tee',
+    displayName: 'DeepSeek V3.1',
+    description: 'Best open-source. Excellent reasoning with TEE privacy.',
     isOpenSource: true,
     isRecommended: true,
     order: 1,
@@ -48,6 +48,15 @@ const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
     isRecommended: false,
     order: 2,
   },
+  // Kimi K2.5 - Strong reasoning, near DeepSeek V3 level
+  {
+    slug: 'chutes-moonshotai-kimi-k2-5-tee',
+    displayName: 'Kimi K2.5',
+    description: 'Near DeepSeek V3 level. Strong reasoning and accuracy.',
+    isOpenSource: true,
+    isRecommended: false,
+    order: 3,
+  },
   // Qwen - Strong multilingual (matches OpenRouter)
   {
     slug: 'chutes-qwen-qwen2-5-72b-instruct',
@@ -55,7 +64,7 @@ const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
     description: 'High quality. Strong multilingual support.',
     isOpenSource: true,
     isRecommended: false,
-    order: 3,
+    order: 4,
   },
   // Additional Chutes-exclusive options
   {
@@ -64,7 +73,7 @@ const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
     description: 'Fast and capable. Good instruction following.',
     isOpenSource: true,
     isRecommended: false,
-    order: 4,
+    order: 5,
   },
   {
     slug: 'chutes-chutesai-mistral-small-3-2-24b-instruct-2506',
@@ -72,7 +81,7 @@ const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
     description: 'Good balance of speed and quality.',
     isOpenSource: true,
     isRecommended: false,
-    order: 5,
+    order: 6,
   },
   {
     slug: 'chutes-nousresearch-hermes-4-70b',
@@ -80,7 +89,7 @@ const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
     description: 'Excellent for Q&A and reasoning tasks.',
     isOpenSource: true,
     isRecommended: false,
-    order: 6,
+    order: 7,
   },
 ];
 

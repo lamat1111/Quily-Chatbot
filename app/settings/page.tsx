@@ -303,11 +303,36 @@ export default function SettingsPage() {
               </h2>
 
               {isFreeMode ? (
-                <div className="callout-success">
-                  <p className="text-sm">
-                    <strong>Free mode is active.</strong> We&apos;re covering AI costs for
-                    everyone right now. No setup needed.
-                  </p>
+                <div className="space-y-3">
+                  <div className="callout-success">
+                    <p className="text-sm">
+                      <strong>Free mode is active.</strong> We&apos;re covering AI costs for
+                      everyone right now. No setup needed.
+                    </p>
+                  </div>
+                  <div className="text-base sm:text-sm text-text-secondary space-y-2">
+                    <p className="font-medium text-text-primary">Models</p>
+                    <ul className="space-y-1 text-base sm:text-sm text-gray-600 dark:text-gray-400">
+                      <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                        <span><strong>DeepSeek V3.1</strong> — default model</span>
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">TEE</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+                        <span><strong>Kimi K2.5</strong> — 1st fallback</span>
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">TEE</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+                        <span><strong>Qwen 2.5 72B</strong> — 2nd fallback</span>
+                      </li>
+                    </ul>
+                    <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400">
+                      <strong>TEE</strong> (Trusted Execution Environment) models run inside secure hardware enclaves — your conversations are encrypted and private, even from the infrastructure provider.
+                      Fallback models activate automatically if the default is temporarily unavailable.
+                    </p>
+                  </div>
                 </div>
               ) : (
               <>
