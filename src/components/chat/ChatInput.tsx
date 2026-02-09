@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from 'react';
 
+/** Maximum characters allowed in a single message (~1,000 tokens) */
+const MAX_LENGTH = 4000;
+
 interface ChatInputProps {
   onSubmit: (text: string) => void;
   onStop: () => void;
@@ -58,7 +61,7 @@ export function ChatInput({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const trimmedInput = input.trim();
-    if (trimmedInput && !disabled && !isStreaming) {
+    if (trimmedInput && !disabled && !isStreaming && !isOverLimit) {
       onSubmit(trimmedInput);
       setInput('');
     }
@@ -82,6 +85,10 @@ export function ChatInput({
       : 'Ask a question about Quilibrium...';
 
   const hasText = input.trim().length > 0;
+  const charCount = input.length;
+  const isOverLimit = charCount > MAX_LENGTH;
+  const showCounter = charCount >= MAX_LENGTH * 0.8;
+  const isWarning = charCount >= MAX_LENGTH * 0.9;
 
   // Sizes - larger when embedded in welcome screen, original size in normal chat
   const buttonSize = embedded ? 'h-10 w-10 p-2.5' : 'h-8 w-8 p-2';
@@ -98,6 +105,7 @@ export function ChatInput({
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
         placeholder={placeholderText}
+        maxLength={MAX_LENGTH}
         disabled={disabled || isStreaming}
         rows={1}
         className={`flex-1 resize-none bg-transparent pl-3 sm:pl-4 pr-2 text-text-base
@@ -132,11 +140,11 @@ export function ChatInput({
         ) : (
           <button
             type="submit"
-            disabled={disabled || !hasText}
+            disabled={disabled || !hasText || isOverLimit}
             className={`${buttonSize} rounded-lg transition-all
                        focus:outline-none focus:ring-2 focus:ring-input-focus focus:ring-offset-2 focus:ring-offset-bg-muted
                        flex items-center justify-center
-                       ${hasText && !disabled
+                       ${hasText && !disabled && !isOverLimit
                          ? 'bg-gradient-to-br from-gradient-from to-gradient-to hover:from-gradient-from-hover hover:to-gradient-to-hover text-white cursor-pointer'
                          : 'bg-btn-secondary text-text-subtle cursor-not-allowed'
                        }`}
@@ -161,11 +169,18 @@ export function ChatInput({
     </div>
   );
 
+  const charCounter = showCounter ? (
+    <div className={`text-right text-xs mt-1 mr-1 tabular-nums ${isWarning ? 'text-error' : 'text-text-subtle'}`}>
+      {charCount.toLocaleString()} / {MAX_LENGTH.toLocaleString()}
+    </div>
+  ) : null;
+
   // When embedded in empty state, render just the input (no disclaimers)
   if (embedded) {
     return (
       <form onSubmit={handleSubmit} className="w-full max-w-xl">
         {inputField}
+        {charCounter}
       </form>
     );
   }
@@ -174,6 +189,7 @@ export function ChatInput({
     <div className="bg-bg-base p-2 sm:p-4">
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
         {inputField}
+        {charCounter}
       </form>
     </div>
   );
