@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Minimal config - Next.js 16 defaults work well for streaming
+  async redirects() {
+    return [
+      {
+        source: '/2',
+        destination: '/',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
