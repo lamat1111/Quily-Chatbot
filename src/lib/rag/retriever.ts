@@ -64,6 +64,66 @@ function isBroadQuery(query: string): boolean {
   return BROAD_QUERY_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
 }
 
+// Known Quilibrium products/entities for query decomposition.
+// When a broad or multi-entity query is detected, sub-queries are generated
+// for matched entities so each product gets its own retrieval pass.
+// Update this list when adding new product docs to the RAG knowledge base.
+const KNOWN_ENTITIES = [
+  // Well-documented (dedicated docs exist in RAG knowledge base)
+  { name: 'QStorage', query: 'QStorage S3-compatible decentralized object storage',
+    keywords: ['qstorage', 'storage', 'store', 'object storage', 's3', 'data storage'] },
+  { name: 'QKMS', query: 'QKMS multi-party computation key management MPC',
+    keywords: ['qkms', 'key management', 'keys', 'encrypt', 'encryption', 'kms', 'mpc'] },
+  { name: 'QNS', query: 'QNS name service naming identity',
+    keywords: ['qns', 'name service', 'naming', 'domain', '.q'] },
+  { name: 'Quorum', query: 'Quorum peer-to-peer encrypted messenger',
+    keywords: ['quorum', 'messenger', 'messaging', 'chat', 'wallet'] },
+  { name: 'Hypersnap', query: 'Hypersnap Snapchain Farcaster Rust implementation',
+    keywords: ['hypersnap', 'snapchain', 'farcaster', 'snap'] },
+
+  // Lightly documented (mentioned in talks/overviews, no dedicated docs yet)
+  { name: 'Quark', query: 'Quark 3D game asset library SDK',
+    keywords: ['quark', 'game', 'gaming', '3d', 'asset', 'game engine'] },
+  { name: 'QPing', query: 'QPing dispatch notification mechanism',
+    keywords: ['qping', 'ping', 'dispatch', 'notification'] },
+  { name: 'Bridge', query: 'Bridge Ethereum cross-chain QUIL wQUIL',
+    keywords: ['bridge', 'cross-chain', 'wquil', 'bridging'] },
+  { name: 'QQ', query: 'QQ SQS-compatible message queue service',
+    keywords: ['qq', 'message queue', 'sqs', 'queue'] },
+] as const;
+
+type KnownEntity = (typeof KNOWN_ENTITIES)[number];
+
+/**
+ * Find entities mentioned in the query by scanning keyword mappings.
+ * Returns matched entities (empty array if none matched).
+ */
+function findMatchedEntities(query: string): KnownEntity[] {
+  const lowerQuery = query.toLowerCase();
+  return KNOWN_ENTITIES.filter(entity =>
+    entity.keywords.some(kw => lowerQuery.includes(kw))
+  );
+}
+
+/**
+ * Reciprocal Rank Fusion — merges multiple ranked result lists into a single score.
+ * Formula: score(doc) = Σ 1/(k + rank) where k=60 (standard constant from RAG-Fusion paper).
+ * Ranks are 0-indexed positions within each result list.
+ */
+function reciprocalRankFusion(
+  rankedLists: { id: number }[][],
+  k: number = 60
+): Map<number, number> {
+  const scores = new Map<number, number>();
+  for (const list of rankedLists) {
+    for (let rank = 0; rank < list.length; rank++) {
+      const { id } = list[rank];
+      scores.set(id, (scores.get(id) || 0) + 1 / (k + rank));
+    }
+  }
+  return scores;
+}
+
 /**
  * Fetch the most recent document chunks by publication date
  * Used to augment vector search for temporal queries
@@ -178,9 +238,37 @@ async function getChutesEmbedding(text: string, apiKey: string): Promise<number[
 }
 
 /**
- * Two-stage retrieval with optional Cohere reranking
+ * Generate an embedding for the given text using the configured provider.
+ * Extracted as a helper so it can be called for both the original query and sub-queries.
+ */
+async function generateEmbedding(
+  text: string,
+  provider: 'openrouter' | 'chutes',
+  apiKey?: string,
+  accessToken?: string,
+  model?: string
+): Promise<number[]> {
+  if (provider === 'chutes') {
+    if (!accessToken) throw new Error('Chutes access token is required for embeddings');
+    return getChutesEmbedding(text, accessToken);
+  }
+  if (!apiKey) throw new Error('OpenRouter API key is required for embeddings');
+  const openrouter = createOpenRouter({ apiKey });
+  const result = await embed({
+    model: openrouter.textEmbeddingModel(
+      model || process.env.OPENROUTER_EMBEDDING_MODEL || UNIFIED_EMBEDDING_MODEL
+    ),
+    value: text,
+  });
+  return result.embedding;
+}
+
+/**
+ * Two-stage retrieval with optional Cohere reranking, with query decomposition
+ * for broad/multi-entity queries.
  *
- * Stage 1: Vector search via Supabase RPC
+ * Stage 0 (conditional): Decompose broad/multi-entity queries into sub-queries
+ * Stage 1: Vector search via Supabase RPC (parallel for decomposed queries)
  * Stage 2: Rerank with Cohere if API key available
  *
  * Graceful degradation: If reranking fails, falls back to similarity-based selection
@@ -214,47 +302,126 @@ export async function retrieveWithReranking(
   const priorityChunksPromise =
     priorityDocIds.length > 0 ? fetchPriorityChunks(priorityDocIds) : Promise.resolve([]);
 
-  // Stage 1: Vector search using unified BGE-M3 model
-  // Both providers produce identical vectors, so we use the same table for all queries
-  let embedding: number[];
-
-  if (embeddingProvider === 'chutes') {
-    if (!chutesAccessToken) {
-      throw new Error('Chutes access token is required for embeddings');
-    }
-    // Use direct API call (Chutes AI SDK has a routing bug)
-    embedding = await getChutesEmbedding(query, chutesAccessToken);
-  } else {
-    if (!embeddingApiKey) {
-      throw new Error('OpenRouter API key is required for embeddings');
-    }
-    const openrouter = createOpenRouter({ apiKey: embeddingApiKey });
-
-    const embeddingResult = await embed({
-      model: openrouter.textEmbeddingModel(
-        embeddingModel || process.env.OPENROUTER_EMBEDDING_MODEL || UNIFIED_EMBEDDING_MODEL
-      ),
-      value: query,
-    });
-    embedding = embeddingResult.embedding;
-  }
-
   // Use unified BGE-M3 table (1024-dim) for all providers
-  // OpenRouter and Chutes BGE-M3 produce identical vectors, verified by compatibility testing
   const rpcFunction = 'match_document_chunks_chutes';
 
-  // Call Supabase RPC for similarity search
-  const { data: vectorCandidates, error } = await supabase.rpc(rpcFunction, {
-    query_embedding: embedding,
-    match_threshold: similarityThreshold,
-    match_count: initialCount,
-  });
+  // --- Query Decomposition (Stage 0) ---
+  // Trigger A: broad query → sub-queries for ALL entities
+  // Trigger B: 2+ entities matched by keywords → sub-queries for matched entities only
+  const matchedEntities = findMatchedEntities(query);
+  const shouldDecompose = broad || matchedEntities.length >= 2;
+  const decomposedEntities = broad ? [...KNOWN_ENTITIES] : matchedEntities;
 
-  if (error) {
-    throw new Error(`Supabase RPC error: ${error.message}`);
+  let candidates: {
+    id: number;
+    content: string;
+    source_file: string;
+    heading_path: string | null;
+    source_url: string | null;
+    published_date: string | null;
+    title: string | null;
+    doc_type: string | null;
+    similarity: number;
+  }[];
+
+  if (shouldDecompose) {
+    // Build sub-query list: original query + one per matched entity
+    const allQueries = [query, ...decomposedEntities.map(e => e.query)];
+
+    console.log('[RAG] Query decomposition triggered:', {
+      trigger: broad ? 'broad' : 'multi-entity',
+      matchedEntities: decomposedEntities.map(e => e.name),
+      totalSubQueries: allQueries.length,
+    });
+
+    // Generate embeddings for all queries in parallel — tolerate partial failures
+    const embeddingResults = await Promise.allSettled(
+      allQueries.map(q => generateEmbedding(q, embeddingProvider, embeddingApiKey, chutesAccessToken, embeddingModel))
+    );
+
+    const successfulEmbeddings = embeddingResults
+      .map((r, i) => r.status === 'fulfilled' ? { query: allQueries[i], embedding: r.value } : null)
+      .filter((r): r is { query: string; embedding: number[] } => r !== null);
+
+    const failedCount = allQueries.length - successfulEmbeddings.length;
+    if (failedCount > 0) {
+      console.warn(`[RAG] ${failedCount}/${allQueries.length} sub-query embeddings failed`);
+    }
+
+    if (successfulEmbeddings.length === 0) {
+      // All embeddings failed — this shouldn't happen, but throw so the caller knows
+      throw new Error('All sub-query embeddings failed during query decomposition');
+    }
+
+    // Run vector searches in parallel for each successful embedding
+    const searchResults = await Promise.allSettled(
+      successfulEmbeddings.map(({ embedding }) =>
+        supabase.rpc(rpcFunction, {
+          query_embedding: embedding,
+          match_threshold: similarityThreshold,
+          match_count: initialCount,
+        })
+      )
+    );
+
+    // Collect successful search result lists for RRF
+    const rankedLists: { id: number; content: string; source_file: string; heading_path: string | null; source_url: string | null; published_date: string | null; title: string | null; doc_type: string | null; similarity: number }[][] = [];
+    for (let i = 0; i < searchResults.length; i++) {
+      const result = searchResults[i];
+      if (result.status === 'fulfilled' && !result.value.error && result.value.data) {
+        rankedLists.push(result.value.data);
+      } else {
+        const errMsg = result.status === 'rejected' ? result.reason : result.value.error?.message;
+        console.warn(`[RAG] Sub-query vector search failed for "${successfulEmbeddings[i].query}":`, errMsg);
+      }
+    }
+
+    console.log('[RAG] Query decomposition results:', {
+      successfulEmbeddings: successfulEmbeddings.length,
+      successfulSearches: rankedLists.length,
+    });
+
+    if (rankedLists.length === 0) {
+      // All searches failed — throw so caller knows
+      throw new Error('All sub-query vector searches failed during query decomposition');
+    }
+
+    // Merge via Reciprocal Rank Fusion
+    const rrfScores = reciprocalRankFusion(rankedLists);
+
+    // Build a deduplicated chunk map (keep highest similarity from any list)
+    const chunkMap = new Map<number, typeof candidates[number]>();
+    for (const list of rankedLists) {
+      for (const chunk of list) {
+        const existing = chunkMap.get(chunk.id);
+        if (!existing || chunk.similarity > existing.similarity) {
+          chunkMap.set(chunk.id, chunk);
+        }
+      }
+    }
+
+    // Sort by RRF score (descending), use similarity as tiebreaker
+    candidates = Array.from(chunkMap.values()).sort((a, b) => {
+      const scoreA = rrfScores.get(a.id) || 0;
+      const scoreB = rrfScores.get(b.id) || 0;
+      return scoreB - scoreA || b.similarity - a.similarity;
+    });
+  } else {
+    // Standard single-query retrieval (no decomposition)
+    const embedding = await generateEmbedding(query, embeddingProvider, embeddingApiKey, chutesAccessToken, embeddingModel);
+
+    const { data: vectorCandidates, error } = await supabase.rpc(rpcFunction, {
+      query_embedding: embedding,
+      match_threshold: similarityThreshold,
+      match_count: initialCount,
+    });
+
+    if (error) {
+      throw new Error(`Supabase RPC error: ${error.message}`);
+    }
+
+    candidates = vectorCandidates || [];
   }
-
-  let candidates = vectorCandidates || [];
 
   // Merge priority docs (previously cited) - await parallel fetch
   const priorityChunks = await priorityChunksPromise;

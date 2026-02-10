@@ -89,10 +89,10 @@ The hallucination incident that prompted these changes was a user asking about a
 
 ## Future Improvements to Consider
 
-- **Query decomposition**: For multi-topic queries, decompose into sub-queries and retrieve separately for each, then merge results. Higher impact than dynamic count but more complex.
+- ~~**Query decomposition**~~ — **Implemented.** See [RAG Query Decomposition](rag-query-decomposition.md). Broad and multi-entity queries are now decomposed into sub-queries per product, retrieved in parallel, and merged via Reciprocal Rank Fusion before reranking.
 - **Mixed quality level**: Track similarity score spread (max vs min) and add a 'mixed' quality warning when top chunks are high but bottom chunks are low.
 - **Coverage metadata**: Inject the count of unique source files into the context so the LLM can gauge breadth of coverage.
 
 ---
 
-*Updated: 2026-02-09*
+*Updated: 2026-02-10*

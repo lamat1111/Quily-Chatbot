@@ -611,9 +611,10 @@ interface RetrievalOptions {
 
 ### Why two-stage retrieval?
 
-- **Recall**: Vector search casts a wide net (15 candidates)
-- **Precision**: Reranking focuses on the most relevant (5 results)
+- **Recall**: Vector search casts a wide net (15 candidates, or 25 for broad queries)
+- **Precision**: Reranking focuses on the most relevant (5 results, or 10 for broad queries)
 - **Quality**: Cohere reranking provides semantic understanding beyond vector similarity
+- **Multi-topic coverage**: Query decomposition generates sub-queries per product for broad/multi-entity queries, merged via Reciprocal Rank Fusion. See [RAG Query Decomposition](rag-query-decomposition.md).
 
 ### Why support .txt files?
 
@@ -627,4 +628,4 @@ The chat API implements differentiated behavior based on model capabilities. See
 
 ---
 
-_Updated: 2026-02-09_
+_Updated: 2026-02-10_
