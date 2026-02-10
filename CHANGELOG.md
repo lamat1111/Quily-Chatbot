@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-02-10
+
+### Features
+
+- skip Turnstile re-verification on page reload ([5832824](https://github.com/lamat1111/Quily-Chatbot/commit/583282464bcce53f512ccce46466c8efe2a919ef))
+- add beta warning callout to bot replies ([23852a1](https://github.com/lamat1111/Quily-Chatbot/commit/23852a16474496f26587abf50f06b917704944b9))
+- strengthen anti-hallucination guardrails in RAG ([4af8f5f](https://github.com/lamat1111/Quily-Chatbot/commit/4af8f5fe19ad3ac32bad47b8c27320e2cf86cc06))
+- add /2 to / redirect in next.config ([9e09d3e](https://github.com/lamat1111/Quily-Chatbot/commit/9e09d3e2cfef11bee99ef18487ba627e9b6d78c6))
+- add query decomposition with RRF to RAG retriever ([9252e27](https://github.com/lamat1111/Quily-Chatbot/commit/9252e279dbb01f5484013dbce3c5662b6764530b))
+
+### Bug Fixes
+
+- correct env var names in sync-docs workflow ([33a8959](https://github.com/lamat1111/Quily-Chatbot/commit/33a895968717cdace9e735f046f84226e15e86e3))
+
+### Documentation
+
+- add Hypersnap custom documentation for RAG ([bab7cec](https://github.com/lamat1111/Quily-Chatbot/commit/bab7cecfbf46a28a3c3acc27e892da80791db150))
+
 ## [0.11.0] - 2026-02-09
 
 ### Features
