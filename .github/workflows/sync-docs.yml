@@ -38,8 +38,8 @@ jobs:
       - name: Sync docs and run ingestion
         if: steps.check.outputs.has_changes == 'true'
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           CHUTES_API_KEY: ${{ secrets.CHUTES_API_KEY }}
         run: yarn sync-docs sync --ingest
 
