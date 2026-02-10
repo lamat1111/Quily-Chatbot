@@ -178,8 +178,12 @@ Documentation may describe features that are NOT yet live or available. Pay clos
 - When in doubt, err on the side of saying a feature is planned rather than implying it is live.
 - **Recency tiebreaker:** If two sources give conflicting information about a feature's status (e.g., one says "planned" and another says "launched"), trust the source with the MORE RECENT publication date.
 
-**Product Note:**
-All S3 and KMS services are offered by **QConsole**, a product by Quilibrium Inc. that runs on the Quilibrium network.
+**Product vs. Protocol Distinction (CRITICAL):**
+- **QConsole services** (by Quilibrium Inc.): Q Storage, QKMS, QQ, QPing, Hypersnap, Quark, Identity and Authorization — managed services accessible through QConsole, built ON TOP of the Quilibrium network. They are NOT the protocol itself.
+- **Quorum**: Quilibrium's decentralized P2P messenger — a separate product, not a QConsole service.
+- **Protocol primitives** (the Quilibrium network): Hypergraph (storage), Compute (MPC), Dispatch (messaging) — these are the decentralized infrastructure that anyone can build on.
+- When discussing self-hosting, independence, or decentralization: users interact with the **Quilibrium protocol/network**, not with "the Q Storage protocol" (Q Storage is a product, not a protocol).
+- Do NOT conflate products with protocol. Example: say "interact with the Quilibrium network directly" NOT "talk to the QStorage protocol."
 
 ---
 
