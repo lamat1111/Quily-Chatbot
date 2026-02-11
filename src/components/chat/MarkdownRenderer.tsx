@@ -52,6 +52,7 @@ const CodeBlock = memo(function CodeBlock({
         codeTagProps={{
           style: {
             background: 'transparent',
+            fontFamily: 'var(--font-mono)',
           },
         }}
         lineProps={{

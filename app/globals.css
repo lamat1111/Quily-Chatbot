@@ -333,6 +333,12 @@
 
   /* Title font (Poppins) */
   --font-title: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* Body font (Geist Sans) — used by font-sans utility */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Monospace font (Geist Mono) — used by font-mono utility for code blocks */
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /* Custom text selection colors */

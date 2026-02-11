@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
+import localFont from 'next/font/local';
 import { ThemeProvider } from '@/src/components/providers/ThemeProvider';
 import { AppLayout } from '@/src/components/layout/AppLayout';
 import './globals.css';
@@ -9,6 +10,18 @@ const poppins = Poppins({
   display: 'swap',
   weight: ['600', '700'],
   variable: '--font-poppins',
+});
+
+const geistSans = localFont({
+  src: './fonts/Geist[wght].woff2',
+  display: 'swap',
+  variable: '--font-geist-sans',
+});
+
+const geistMono = localFont({
+  src: './fonts/GeistMono[wght].woff2',
+  display: 'swap',
+  variable: '--font-geist-mono',
 });
 
 export const metadata: Metadata = {
@@ -52,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable} suppressHydrationWarning>
+    <html lang="en" className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <ThemeProvider>
           <AppLayout>{children}</AppLayout>
