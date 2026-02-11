@@ -1,0 +1,1300 @@
+{
+  "last_full_scan": "2026-02-11",
+  "files": {
+    "discover/01-what-is-quilibrium.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["no_frontmatter"],
+      "notes": "Solid overview of Quilibrium, missing frontmatter only",
+      "custom_doc": null
+    },
+    "discover/02-FAQ.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 64,
+      "issues": ["no_frontmatter", "many_small_sections", "oversized_file"],
+      "notes": "Large FAQ file with many small sections, otherwise adequate",
+      "custom_doc": null
+    },
+    "discover/03-q-story.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 56,
+      "issues": ["no_frontmatter", "no_h2_headings", "many_small_sections"],
+      "notes": "Covered by Q-Story-Vision-Deployment custom doc",
+      "custom_doc": "docs/custom/Q-Story-Vision-Deployment.md"
+    },
+    "discover/04-quilibrium-tokenomics.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 73,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Good tokenomics content, contains Docusaurus-specific syntax",
+      "custom_doc": null
+    },
+    "discover/05-core-technologies-in-quilibrium.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 61,
+      "issues": ["docusaurus_syntax", "no_frontmatter", "no_h2_headings"],
+      "notes": "Core tech overview, lacks H2 headings for structure",
+      "custom_doc": null
+    },
+    "discover/06-gas-fees-and-dynamic-fee-market-on-quilibrium.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 72,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Gas fees explanation with Docusaurus syntax",
+      "custom_doc": null
+    },
+    "discover/07-how-does-quilibrium-maintain-decentralization.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 79,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Strong decentralization content",
+      "custom_doc": null
+    },
+    "discover/08-how-quilibrium-protects-privacy-without-enabling-crime.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 78,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Privacy approach explanation, well-written",
+      "custom_doc": null
+    },
+    "discover/09-quilibrium-kms.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 75,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "KMS overview content",
+      "custom_doc": null
+    },
+    "discover/10-quilibriums-innovative-use-of-passkeys.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 72,
+      "issues": ["no_frontmatter"],
+      "notes": "Passkeys innovation content",
+      "custom_doc": null
+    },
+    "discover/11-security-audits-of-quilibriums-cryptographic-protocols.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 70,
+      "issues": ["no_frontmatter"],
+      "notes": "Security audit information",
+      "custom_doc": null
+    },
+    "discover/12-the-alternative-thesis-for-consumer-crypto.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Consumer crypto thesis article",
+      "custom_doc": null
+    },
+    "discover/13-the-illusion-of-decentralization-in-crypto-and-quilibriums-radical-alternative..md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 77,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Decentralization critique and alternative approach",
+      "custom_doc": null
+    },
+    "discover/14-programmable-mpc-vs-zkp.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["no_frontmatter"],
+      "notes": "MPC vs ZKP comparison",
+      "custom_doc": null
+    },
+    "learn/01-block-storage/bloom-clock.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by Block-Storage-VDFs-Bloom-Clocks custom doc",
+      "custom_doc": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md"
+    },
+    "learn/01-block-storage/vdfs.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by Block-Storage-VDFs-Bloom-Clocks custom doc",
+      "custom_doc": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md"
+    },
+    "learn/02-communication/addressing.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 47,
+      "issues": ["missing_title", "missing_description"],
+      "notes": "Partial content on addressing; covered by PCAS doc and Communication Layer companion doc",
+      "custom_doc": "docs/custom/Planted-Clique-Addressing-Scheme.md"
+    },
+    "learn/02-communication/e2ee.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub placeholder; covered by Communication Layer companion doc",
+      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+    },
+    "learn/02-communication/mixnet-routing.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub placeholder; covered by Communication Layer companion doc",
+      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+    },
+    "learn/02-communication/p2p-communication.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub placeholder; covered by Communication Layer companion doc",
+      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+    },
+    "learn/03-oblivious-hypergraph/hypergraph-construction.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by RDF-Hypergraph-Query-System custom doc",
+      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+    },
+    "learn/03-oblivious-hypergraph/oblivious-transfer.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by Oblivious-Transfer-Protocols custom doc",
+      "custom_doc": "docs/custom/Oblivious-Transfer-Protocols.md"
+    },
+    "learn/03-oblivious-hypergraph/query-evaluator.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by RDF-Hypergraph-Query-System custom doc",
+      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+    },
+    "learn/03-oblivious-hypergraph/query-planner.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by RDF-Hypergraph-Query-System custom doc",
+      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+    },
+    "learn/03-oblivious-hypergraph/rdf-storage.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by RDF-Hypergraph-Query-System custom doc",
+      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+    },
+    "learn/04-operating-system/accounts.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/dbos.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Layer-RDF-Schemas custom doc",
+      "custom_doc": "docs/custom/OS-Layer-RDF-Schemas.md"
+    },
+    "learn/04-operating-system/file-system.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/ipc.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/key-management.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/message-queues.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/scheduler.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "learn/04-operating-system/universal-resources.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 12,
+      "issues": ["react_stub", "missing_title", "missing_description"],
+      "notes": "React stub; topic covered by OS-Subsystems-Accounts-Scheduler-IPC custom doc",
+      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+    },
+    "build/01-applications/compiling-to-ot-circuits.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 72,
+      "issues": [],
+      "notes": "Good content on compiling to OT circuits",
+      "custom_doc": null
+    },
+    "build/01-applications/deploying-to-the-network.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 50,
+      "issues": [],
+      "notes": "Covered by Q-Story-Vision-Deployment custom doc",
+      "custom_doc": "docs/custom/Q-Story-Vision-Deployment.md"
+    },
+    "build/01-applications/running-applications.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 63,
+      "issues": [],
+      "notes": "Running applications guide",
+      "custom_doc": null
+    },
+    "build/02-tokens/creating-tokens.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 73,
+      "issues": ["many_tiny_sections"],
+      "notes": "Token creation guide with many small sections",
+      "custom_doc": null
+    },
+    "build/q-service-apis.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 66,
+      "issues": ["missing_description"],
+      "notes": "Q service APIs reference, missing description frontmatter",
+      "custom_doc": null
+    },
+    "protocol/consensus.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 76,
+      "issues": ["many_tiny_sections"],
+      "notes": "Consensus protocol documentation with many small sections",
+      "custom_doc": null
+    },
+    "protocol/data-structures.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 76,
+      "issues": ["large_file_needs_splitting"],
+      "notes": "Comprehensive data structures doc, could benefit from splitting",
+      "custom_doc": null
+    },
+    "protocol/overview.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 75,
+      "issues": [],
+      "notes": "Clean protocol overview",
+      "custom_doc": null
+    },
+    "run-node/RPC.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 79,
+      "issues": ["docusaurus_syntax"],
+      "notes": "RPC documentation with Docusaurus syntax",
+      "custom_doc": null
+    },
+    "run-node/account-aliases.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 35,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/advanced-configuration.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 77,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Good advanced configuration guide",
+      "custom_doc": null
+    },
+    "run-node/advanced-node-management.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 53,
+      "issues": [],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/linux_configuration.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 64,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Linux-specific configuration guide",
+      "custom_doc": null
+    },
+    "run-node/qclient/checksum.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 30,
+      "issues": ["no_frontmatter", "no_headings"],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/qclient/commands/alias.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 57,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Covered by QClient-Configuration-Commands custom doc",
+      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+    },
+    "run-node/qclient/commands/bridging.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 71,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Bridging commands documentation",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/command-list.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 68,
+      "issues": ["docusaurus_syntax", "large_table"],
+      "notes": "Command list with large table",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/compute.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Compute commands documentation",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/deploy.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "A",
+      "composite_pct": 80,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Well-documented deploy commands",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/global-flags.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Global flags reference",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/hypergraph.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Hypergraph commands documentation",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/key.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 73,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Key commands reference",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/messaging.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 76,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Messaging commands documentation",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/node.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 67,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Node commands reference",
+      "custom_doc": null
+    },
+    "run-node/qclient/commands/qclient-config.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 50,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QClient-Configuration-Commands custom doc",
+      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+    },
+    "run-node/qclient/commands/qclient.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 50,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QClient-Configuration-Commands custom doc",
+      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+    },
+    "run-node/qclient/commands/token.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 71,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Token commands documentation",
+      "custom_doc": null
+    },
+    "run-node/qclient/managing-configs.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 9,
+      "issues": ["react_stub", "no_frontmatter", "no_headings"],
+      "notes": "Covered by QClient-Configuration-Commands custom doc",
+      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+    },
+    "run-node/qclient/node/auto-update.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 36,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/qclient/node/clean.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 39,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/qclient/node/install.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 63,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Node installation guide",
+      "custom_doc": null
+    },
+    "run-node/qclient/node/key-management/create-new-keyset.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 33,
+      "issues": ["docusaurus_syntax", "no_frontmatter"],
+      "notes": "Covered by Node-Key-Management-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+    },
+    "run-node/qclient/node/key-management/import-keysets.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 50,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by Node-Key-Management-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+    },
+    "run-node/qclient/node/key-management/initial-keyset.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 36,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by Node-Key-Management-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+    },
+    "run-node/qclient/node/key-management/keys.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 44,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by Node-Key-Management-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+    },
+    "run-node/qclient/node/key-management/multiple-keysets.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 48,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by Node-Key-Management-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+    },
+    "run-node/qclient/node/node-service/commands.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 53,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by Node-Service-Setup-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/node/node-service/environment-variables.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 37,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by Node-Service-Setup-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/node/node-service/installing-node-service.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 35,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by Node-Service-Setup-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/node/node-service/overview.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 39,
+      "issues": [],
+      "notes": "Covered by Node-Service-Setup-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/node/run-node-via-node-service.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 55,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by Node-Service-Setup-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/node/update.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 49,
+      "issues": [],
+      "notes": "Covered by Node-Maintenance-Updates-Guide custom doc",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/qclient/qclient-101.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 67,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Qclient 101 introductory guide",
+      "custom_doc": null
+    },
+    "run-node/qclient/setup.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 77,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Qclient setup guide",
+      "custom_doc": null
+    },
+    "run-node/quick-start.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 72,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Quick start guide for running a node",
+      "custom_doc": null
+    },
+    "run-node/shard-enrollment-process.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 67,
+      "issues": ["no_frontmatter"],
+      "notes": "Shard enrollment process documentation",
+      "custom_doc": null
+    },
+    "run-node/system-requirements.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 78,
+      "issues": [],
+      "notes": "Clean system requirements documentation",
+      "custom_doc": null
+    },
+    "run-node/upgrade-2.1.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 74,
+      "issues": [],
+      "notes": "Upgrade to 2.1 guide",
+      "custom_doc": null
+    },
+    "api/01-overview.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 63,
+      "issues": ["no_frontmatter", "docusaurus_links"],
+      "notes": "API overview with Docusaurus-specific links",
+      "custom_doc": null
+    },
+    "api/02-credentials.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 55,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Covered by API-Credentials-Authentication custom doc",
+      "custom_doc": "docs/custom/API-Credentials-Authentication.md"
+    },
+    "api/03-q-storage/01-overview.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 44,
+      "issues": ["thin_content"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/02-api-reference/01-getting-started.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 68,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "API reference getting started guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/02-api-reference/01-index.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 53,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QStorage-API-Reference custom doc",
+      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+    },
+    "api/04-q-kms/01-overview.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 34,
+      "issues": ["no_frontmatter", "thin_content"],
+      "notes": "Covered by QKMS-Key-Management-Service custom doc",
+      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+    },
+    "api/03-q-storage/01-user-manual/01-getting-started.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 47,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-credentials.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 52,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-pricing.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 58,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-privacy.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 56,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/00-what-is-a-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 38,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/01-bucket-names.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 64,
+      "issues": ["no_frontmatter"],
+      "notes": "Bucket naming conventions documentation",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/02-creating-a-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 53,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/03-edit-bucket-visibility.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 59,
+      "issues": ["no_frontmatter"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/03-list-buckets.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 50,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/04-delete-a-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 54,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/05-empty-a-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 44,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/02-working-with-buckets/07-using-bucket-tags.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "A",
+      "composite_pct": 85,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Well-documented bucket tagging guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/01-what-is-an-object.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 61,
+      "issues": ["no_frontmatter"],
+      "notes": "Object concept explanation",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/02-upload-an-object.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 63,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object upload guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/03-working-with-metadata.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 69,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object metadata guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/04-change-object-visibility.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 61,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object visibility change guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/04-list-bucket-contents.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 63,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "List bucket contents guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/05-copying-moving-renaming-objects.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 66,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object copy/move/rename guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/06-downloading-an-object.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 60,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object download guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/07-delete-an-object.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 66,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object deletion guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/08-organizing-and-listing-objects/01-organizing-objects-using-folders.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 73,
+      "issues": ["no_frontmatter", "docusaurus_syntax"],
+      "notes": "Object folder organization guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/08-organizing-and-listing-objects/02-listing-objects.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 79,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Object listing guide, well-documented",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/08-organizing-and-listing-objects/03-viewing-object-properties.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "A",
+      "composite_pct": 81,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Well-documented object properties viewing guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/03-working-with-objects/08-organizing-and-listing-objects/04-using-tags.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "A",
+      "composite_pct": 80,
+      "issues": ["docusaurus_syntax"],
+      "notes": "Well-documented object tagging guide",
+      "custom_doc": null
+    },
+    "api/03-q-storage/01-user-manual/04-access-control.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 2,
+      "issues": ["stub"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/05-regions.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "D",
+      "composite_pct": 29,
+      "issues": ["near_stub", "no_frontmatter"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/01-user-manual/object-versioning.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 42,
+      "issues": ["placeholder_content"],
+      "notes": "Covered by QStorage-User-Guide custom doc",
+      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+    },
+    "api/03-q-storage/02-api-reference/01-bucket-operations/create-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 59,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Covered by QStorage-API-Reference custom doc",
+      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+    },
+    "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 59,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Covered by QStorage-API-Reference custom doc",
+      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+    },
+    "api/03-q-storage/02-api-reference/02-object-operations/put-object.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 61,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Put object API reference",
+      "custom_doc": null
+    },
+    "api/03-q-storage/02-api-reference/02-object-operations/get-object.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 58,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Covered by QStorage-API-Reference custom doc",
+      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+    },
+    "api/03-q-storage/02-api-reference/03-multipart-operations/create-multipart-upload.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 62,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Multipart upload API reference",
+      "custom_doc": null
+    },
+    "api/03-q-storage/02-api-reference/09-data-types/bucket.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "C",
+      "composite_pct": 45,
+      "issues": ["thin_content"],
+      "notes": "Covered by QStorage-API-Reference custom doc",
+      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+    },
+    "api/04-q-kms/01-user-manual/getting-started.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 2,
+      "issues": ["stub"],
+      "notes": "Covered by QKMS-Key-Management-Service custom doc",
+      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+    },
+    "api/04-q-kms/01-user-manual/creating-keys.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 2,
+      "issues": ["stub"],
+      "notes": "Covered by QKMS-Key-Management-Service custom doc",
+      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+    },
+    "api/04-q-kms/02-api-reference/getting-started.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 2,
+      "issues": ["stub"],
+      "notes": "Covered by QKMS-Key-Management-Service custom doc",
+      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+    },
+    "api/04-q-kms/02-api-reference/01-key-operations/create-key.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 62,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Create key API reference",
+      "custom_doc": null
+    },
+    "api/04-q-kms/02-api-reference/01-key-operations/encrypt.md": {
+      "status": "adequate",
+      "last_analyzed": "2026-02-11",
+      "score": "B",
+      "composite_pct": 62,
+      "issues": ["docusaurus_syntax", "jsx_params"],
+      "notes": "Encrypt API reference",
+      "custom_doc": null
+    },
+    "api/04-q-kms/02-api-reference/_02-data-types/01-general.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-11",
+      "score": "F",
+      "composite_pct": 2,
+      "issues": ["empty_file"],
+      "notes": "Covered by QKMS-Key-Management-Service custom doc",
+      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+    }
+  },
+  "custom_docs_created": [
+    {
+      "path": "docs/custom/Hypersnap.md",
+      "created": "2026-02-03",
+      "covers_entities": ["Hypersnap"],
+      "covers_topics": ["snapchain", "farcaster", "dual pipeline"]
+    },
+    {
+      "path": "docs/custom/Oblivious-Transfer-Protocols.md",
+      "created": "2026-02-03",
+      "covers_entities": [],
+      "covers_topics": ["oblivious transfer", "MPC", "garbled circuits"]
+    },
+    {
+      "path": "docs/custom/OS-Layer-RDF-Schemas.md",
+      "created": "2026-02-03",
+      "covers_entities": [],
+      "covers_topics": ["RDF schemas", "DBOS", "operating system layer"]
+    },
+    {
+      "path": "docs/custom/Planted-Clique-Addressing-Scheme.md",
+      "created": "2026-02-03",
+      "covers_entities": [],
+      "covers_topics": ["planted clique", "addressing", "sybil resistance"]
+    },
+    {
+      "path": "docs/custom/QCL-Quilibrium-Compute-Language.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["QCL", "compute language", "garbled circuits", "Bedlam compiler"]
+    },
+    {
+      "path": "docs/custom/Quilibrium Architecture.md",
+      "created": "2026-02-03",
+      "covers_entities": [],
+      "covers_topics": ["architecture", "consensus", "execution", "P2P", "hypergraph"]
+    },
+    {
+      "path": "docs/custom/Quorum-Notifications-Privacy.md",
+      "created": "2026-02-03",
+      "covers_entities": ["Quorum"],
+      "covers_topics": ["notifications", "privacy", "messenger"]
+    },
+    {
+      "path": "docs/custom/RDF-Hypergraph-Query-System.md",
+      "created": "2026-02-03",
+      "covers_entities": [],
+      "covers_topics": ["RDF", "hypergraph", "query system", "SPARQL-like"]
+    },
+    {
+      "path": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["VDF", "verifiable delay function", "bloom clock", "time reel", "block storage", "frame production", "difficulty adjustment", "Wesolowski"]
+    },
+    {
+      "path": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md",
+      "created": "2026-02-11",
+      "covers_entities": ["Quorum"],
+      "covers_topics": ["E2EE", "end-to-end encryption", "double ratchet", "triple ratchet", "forward secrecy", "mixnet", "RPM", "Random Permutation Matrix", "BlossomSub", "GossipSub", "libp2p", "P2P", "peer discovery", "DHT", "addressing", "PCAS", "SLRP", "ephemeral messaging"]
+    },
+    {
+      "path": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md",
+      "created": "2026-02-11",
+      "covers_entities": ["QQ"],
+      "covers_topics": ["operating system", "DBOS", "accounts", "coins", "scheduler", "IPC", "inter-process communication", "file system", "message queues", "QQ", "key management", "QKMS", "universal resources", "RDF schemas", "passkeys", "WebAuthn", "bloom filter lineage", "pending transactions", "cold custody", "warm custody"]
+    },
+    {
+      "path": "docs/custom/QKMS-Key-Management-Service.md",
+      "created": "2026-02-11",
+      "covers_entities": ["QKMS"],
+      "covers_topics": ["QKMS", "key management", "MPC", "threshold signing", "DKL-S18", "FROST", "secp256k1", "Ed25519", "oblivious transfer"]
+    },
+    {
+      "path": "docs/custom/QStorage-User-Guide.md",
+      "created": "2026-02-11",
+      "covers_entities": ["QStorage"],
+      "covers_topics": ["QStorage", "S3 compatible", "buckets", "objects", "access control", "regions", "versioning", "pricing", "privacy", "encryption"]
+    },
+    {
+      "path": "docs/custom/QStorage-API-Reference.md",
+      "created": "2026-02-11",
+      "covers_entities": ["QStorage"],
+      "covers_topics": ["QStorage API", "S3 API", "bucket operations", "object operations", "multipart upload", "REST API", "credentials", "HMAC"]
+    },
+    {
+      "path": "docs/custom/Node-Key-Management-Guide.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["key management", "qclient", "keysets", "import keys", "export keys", "Ed448", "BLS-48-581"]
+    },
+    {
+      "path": "docs/custom/Node-Service-Setup-Guide.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["node service", "systemd", "installation", "environment variables", "service commands"]
+    },
+    {
+      "path": "docs/custom/Node-Maintenance-Updates-Guide.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["node maintenance", "auto-update", "manual update", "clean command", "checksum", "account aliases"]
+    },
+    {
+      "path": "docs/custom/QClient-Configuration-Commands.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["qclient", "configuration", "commands", "aliases", "global flags", "config management"]
+    },
+    {
+      "path": "docs/custom/API-Credentials-Authentication.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["API credentials", "authentication", "HMAC", "access keys", "Q Console"]
+    },
+    {
+      "path": "docs/custom/Q-Story-Vision-Deployment.md",
+      "created": "2026-02-11",
+      "covers_entities": [],
+      "covers_topics": ["Q story", "vision", "deployment", "OT circuits", "consumer crypto"]
+    },
+    {
+      "path": "docs/custom/Bridge-QPing-QQ-Services.md",
+      "created": "2026-02-11",
+      "covers_entities": ["Bridge", "QPing", "QQ"],
+      "covers_topics": ["Bridge", "wQUIL", "QUIL", "cross-chain", "QPing", "notifications", "QQ", "message queue", "SQS"]
+    }
+  ],
+  "categories_scanned": {
+    "discover": {
+      "scanned": "2026-02-11",
+      "files_count": 14,
+      "files_analyzed": 14
+    },
+    "learn": {
+      "scanned": "2026-02-11",
+      "files_count": 19,
+      "files_analyzed": 19
+    },
+    "build": {
+      "scanned": "2026-02-11",
+      "files_count": 5,
+      "files_analyzed": 5
+    },
+    "protocol": {
+      "scanned": "2026-02-11",
+      "files_count": 3,
+      "files_analyzed": 3
+    },
+    "run-node": {
+      "scanned": "2026-02-11",
+      "files_count": 40,
+      "files_analyzed": 40
+    },
+    "api": {
+      "scanned": "2026-02-11",
+      "files_count": 178,
+      "files_analyzed": 43,
+      "sampling_note": "Representative sampling: all overviews, all user-manual, sampled API ref"
+    }
+  }
+}
