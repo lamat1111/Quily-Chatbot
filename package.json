@@ -28,7 +28,12 @@
     "icons": "tsx .claude/skills/seo-audit/scripts/icons.ts",
     "icons:audit": "tsx .claude/skills/seo-audit/scripts/icons.ts audit",
     "icons:generate": "tsx .claude/skills/seo-audit/scripts/icons.ts generate",
-    "icons:help": "tsx .claude/skills/seo-audit/scripts/icons.ts help"
+    "icons:help": "tsx .claude/skills/seo-audit/scripts/icons.ts help",
+    "eval": "tsx scripts/eval/index.ts",
+    "eval:run": "tsx scripts/eval/index.ts run",
+    "eval:smoke": "tsx scripts/eval/index.ts run --tag smoke",
+    "eval:list": "tsx scripts/eval/index.ts list",
+    "eval:report": "tsx scripts/eval/index.ts report"
   },
   "keywords": [],
   "author": "",
@@ -62,6 +67,7 @@
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^16.1.0",
     "remark-gfm": "^4.0.1",
+    "yaml": "^2.8.2",
     "zod": "^4.3.6",
     "zustand": "^5.0.10"
   },

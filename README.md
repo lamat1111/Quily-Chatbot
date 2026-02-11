@@ -17,6 +17,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 - **Conversation history** persisted in browser localStorage
 - **Dark mode** support
 - **Mobile responsive** design
+- **QA evaluation harness** for stress-testing response quality with LLM-as-judge
 
 ---
 
@@ -226,6 +227,18 @@ yarn ingest:status
 | `yarn ingest:count` | Count chunks in database |
 | `yarn ingest clean` | Remove orphaned chunks only |
 
+### QA Evaluation
+
+| Command | Description |
+|---------|-------------|
+| `yarn eval:list` | List all test cases |
+| `yarn eval:run` | Run full evaluation suite (requires `OPENROUTER_API_KEY`) |
+| `yarn eval:smoke` | Run smoke tests only (4 quick tests) |
+| `yarn eval:run --no-judge` | Deterministic checks only (free) |
+| `yarn eval:report <path>` | Re-display a saved JSON report |
+
+The eval harness sends queries to the chat API, parses streaming responses, and evaluates quality using deterministic checks and an LLM judge (Claude Sonnet via OpenRouter). Requires a running dev server (`yarn dev`). See [.agents/docs/qa-evaluation-harness.md](.agents/docs/qa-evaluation-harness.md) for full documentation.
+
 ---
 
 ## Project Structure
@@ -253,6 +266,13 @@ yarn ingest:status
 │   │   ├── manifest.ts         # Sync state tracking
 │   │   ├── diff.ts             # Change detection
 │   │   └── sync.ts             # File sync execution
+│   ├── eval/                   # QA evaluation harness
+│   │   ├── index.ts            # CLI entry point
+│   │   ├── test-suite.yaml     # 34 curated test cases
+│   │   ├── runner.ts           # Test execution engine
+│   │   ├── judge.ts            # LLM-as-judge (OpenRouter)
+│   │   ├── stream-parser.ts    # AI SDK stream parser
+│   │   └── reporter.ts         # Terminal + JSON reports
 │   └── db/
 │       └── schema.sql          # Supabase schema
 ├── src/

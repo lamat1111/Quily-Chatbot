@@ -119,6 +119,9 @@ CLAUDE.md
 # GSD planning folder (development scaffolding)
 .planning/
 
+# Eval reports (generated output)
+results/
+
 # .agents folder - only commit docs/
 .agents/*
 !.agents/docs/
