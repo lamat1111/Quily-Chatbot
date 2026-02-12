@@ -33,7 +33,9 @@
     "eval:run": "tsx scripts/eval/index.ts run",
     "eval:smoke": "tsx scripts/eval/index.ts run --tag smoke",
     "eval:list": "tsx scripts/eval/index.ts list",
-    "eval:report": "tsx scripts/eval/index.ts report"
+    "eval:report": "tsx scripts/eval/index.ts report",
+    "eval:judge": "tsx scripts/eval/index.ts judge",
+    "eval:collect": "tsx scripts/eval/index.ts run --collect"
   },
   "keywords": [],
   "author": "",

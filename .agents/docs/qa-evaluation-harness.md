@@ -5,7 +5,7 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-02-11
-updated: 2026-02-11
+updated: 2026-02-12
 related_docs:
   - .agents/docs/rag-knowledge-base-workflow.md
   - .agents/docs/system-prompt-anti-hallucination.md
@@ -18,7 +18,15 @@ related_tasks: []
 
 ## Overview
 
-The QA evaluation harness is a CLI-based testing system that stress-tests the Quily chatbot's response quality. It sends real user queries to the chat API, parses streaming responses, and evaluates them against curated criteria using a combination of deterministic checks and an LLM-as-judge (Claude Sonnet via OpenRouter). The test suite contains 34 test cases across 10 categories covering factual accuracy, hallucination detection, citation quality, personality tone, adversarial robustness, and more.
+The QA evaluation harness is a CLI-based testing system that stress-tests the Quily chatbot's response quality. It sends real user queries to the chat API, parses streaming responses, and evaluates them against curated criteria using a combination of deterministic checks and an LLM-as-judge. The test suite contains 34 test cases across 10 categories covering factual accuracy, hallucination detection, citation quality, personality tone, adversarial robustness, and more.
+
+### Evaluation Modes
+
+| Mode | Command | API Key? | Cost |
+|------|---------|----------|------|
+| **Automated** | `yarn eval:run` | Yes (`OPENROUTER_API_KEY`) | ~$0.14/run |
+| **Manual (collect + judge)** | `yarn eval:collect` then `yarn eval:judge <file>` | No | $0 |
+| **Deterministic only** | `yarn eval:run --no-judge` | No | $0 |
 
 ## Architecture
 
@@ -31,6 +39,7 @@ scripts/eval/
 ├── stream-parser.ts    # AI SDK v6 UI Message Stream parser
 ├── runner.ts           # HTTP client, concurrency limiter, deterministic checks
 ├── judge.ts            # LLM-as-judge via OpenRouter (generateObject + Zod)
+├── collector.ts        # Manual judgment file generator, parser, and merger
 ├── reporter.ts         # Terminal output (chalk) + JSON report files
 └── test-suite.yaml     # 34 curated test cases across 10 categories
 results/                # JSON report output (gitignored)
@@ -48,9 +57,11 @@ test-suite.yaml
     → For each criterion:
         → Deterministic fast-path check (~40% of criteria)
         → OR LLM judge call via OpenRouter (judge.ts)
+        → OR mark as "Pending manual judgment" (--collect mode)
     → Aggregate into TestResult
   → Build report (reporter.ts)
   → Print terminal summary + save JSON to results/
+  → (collect mode) Save Markdown judgment file for manual evaluation
 ```
 
 ### Stream Parser
@@ -115,7 +126,7 @@ Four tests are tagged `smoke` for quick iteration runs.
 # List all test cases
 yarn eval:list
 
-# Run the full 34-test suite
+# Run the full 34-test suite (automated judge, needs OPENROUTER_API_KEY)
 yarn eval:run
 
 # Run only smoke tests (4 quick tests)
@@ -129,6 +140,12 @@ yarn eval:run --category hallucination
 
 # Run without LLM judge (deterministic checks only, free)
 yarn eval:run --no-judge
+
+# Collect mode: save responses for manual judgment (free, no API key)
+yarn eval:collect
+
+# Import manual judgments into a final report
+yarn eval:judge results/judgment-2026-02-12T14-30-00.md
 
 # Use a different judge model
 yarn eval:run --judge-model anthropic/claude-sonnet-4-5-20250929
@@ -153,6 +170,27 @@ yarn eval:report results/eval-2026-02-11T14-30-00.json
 | `--id` | — | Run a single test by ID |
 | `--output` | `./results` | Output directory for JSON reports |
 | `--no-judge` | — | Skip LLM judge (deterministic only) |
+| `--collect` | — | Collect responses for manual judgment (no API key) |
+
+### Manual Judgment Workflow
+
+The collect-and-judge workflow lets you evaluate responses using your existing Claude subscription (claude.ai, Claude Code, etc.) instead of paying for API calls:
+
+1. **Collect** — Run tests and save a Markdown judgment file:
+   ```bash
+   yarn eval:collect
+   ```
+   This produces two files in `results/`:
+   - `eval-<timestamp>.json` — partial results (deterministic scores filled in)
+   - `judgment-<timestamp>.md` — Markdown file with all context + empty judgment blocks
+
+2. **Judge** — Give the `.md` file to Claude (via claude.ai or Claude Code). Claude fills in the `passed`, `score`, and `reasoning` fields in each judgment block.
+
+3. **Import** — Feed the completed file back:
+   ```bash
+   yarn eval:judge results/judgment-<timestamp>.md
+   ```
+   This merges the manual judgments into the partial results and produces the final scored report.
 
 ### Adding a Test Case
 
@@ -190,11 +228,31 @@ Use `context_messages` for conversation history:
       concepts: ["consensus", "proof of meaningful work"]
 ```
 
+## Cost Breakdown
+
+The automated mode displays an estimated cost before each run. Here is the breakdown for the current 34-test suite:
+
+| Criterion Type | Count | Evaluation | Cost |
+|----------------|-------|------------|------|
+| `must_mention` | 16 | LLM judge | ~$0.004/call |
+| `must_not_mention` | 7 | LLM judge | ~$0.004/call |
+| `must_decline` | 7 | LLM judge | ~$0.004/call |
+| `tone` | 4 | LLM judge | ~$0.004/call |
+| `must_cite` | 14 | Deterministic | $0 |
+| `must_have_follow_ups` | 2 | Deterministic | $0 |
+| `must_contain_command_response` | 3 | Deterministic | $0 |
+
+**Total: ~$0.14 per full automated run** (34 LLM calls at ~$0.004 each via OpenRouter Claude Sonnet).
+
+To avoid API costs entirely, use `--collect` mode or `--no-judge`.
+
 ## Technical Decisions
 
 - **Real HTTP endpoint over direct handler import** — Tests the full stack including middleware, streaming, auth fallback chain, and rate limiting. The trade-off is requiring a running dev server, but this ensures the tests match real user experience.
 
-- **LLM judge via OpenRouter** — Provides access to Claude Sonnet for high-quality subjective evaluation at ~$0.15 per full run. OpenRouter was chosen over direct Anthropic API because the project already uses `@openrouter/ai-sdk-provider` as a dependency and the user has an existing API key configured.
+- **LLM judge via OpenRouter** — Provides access to Claude Sonnet for high-quality subjective evaluation at ~$0.14 per full run. OpenRouter was chosen over direct Anthropic API because the project already uses `@openrouter/ai-sdk-provider` as a dependency and the user has an existing API key configured.
+
+- **Manual judgment via collect + judge** — Allows evaluation using any Claude interface (claude.ai, Claude Code) with zero API cost. The Markdown format is designed to be both human-readable and machine-parseable, using fenced `judgment` code blocks that are easy to fill in and trivial to parse back.
 
 - **Deterministic fast-paths** — ~40% of criteria (citations, follow-ups, command sections) use regex or string matching instead of the LLM judge. This saves cost, improves speed, and enables the `--no-judge` mode for completely free runs.
 
@@ -207,8 +265,9 @@ Use `context_messages` for conversation history:
 ## Environment Requirements
 
 - **Dev server running**: `yarn dev` with `NEXT_PUBLIC_FREE_MODE=true`
-- **`OPENROUTER_API_KEY`** in `.env` for the LLM judge (from openrouter.ai/keys)
-- **Cost**: ~$0.15 per full 34-test run via OpenRouter Claude Sonnet
+- **`OPENROUTER_API_KEY`** in `.env` for the automated LLM judge (from openrouter.ai/keys)
+- **Cost**: ~$0.14 per full 34-test run via OpenRouter Claude Sonnet
+- Use `--collect` for free manual judgment mode (no API key needed)
 - Use `--no-judge` for free deterministic-only checks
 
 ## Known Limitations
@@ -226,4 +285,4 @@ Use `context_messages` for conversation history:
 
 ---
 
-_Updated: 2026-02-11_
+_Updated: 2026-02-12_

@@ -47,7 +47,7 @@ export async function evaluateCriterion(
   };
 }
 
-function buildJudgePrompt(
+export function buildJudgePrompt(
   criterion: Criterion,
   testCase: TestCase,
   response: ParsedResponse

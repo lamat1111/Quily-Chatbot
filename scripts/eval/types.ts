@@ -167,4 +167,5 @@ export interface RunnerConfig {
   concurrency: number;
   timeout: number;
   skipJudge: boolean;
+  collectMode: boolean;
 }

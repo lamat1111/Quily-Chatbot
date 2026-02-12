@@ -154,6 +154,17 @@ export async function runTest(
       continue;
     }
 
+    // Collect mode: mark for manual judgment
+    if (config.collectMode) {
+      criterionResults.push({
+        criterion,
+        passed: false,
+        score: 0,
+        reasoning: 'Pending manual judgment',
+      });
+      continue;
+    }
+
     // Skip LLM judge if --no-judge flag
     if (config.skipJudge) {
       criterionResults.push({
