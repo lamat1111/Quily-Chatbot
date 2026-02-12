@@ -25,7 +25,7 @@ QStorage is Quilibrium's S3-compatible object storage service built on top of th
 
 ## S3 API Compatibility
 
-QStorage's API is 100% compatible with the Amazon S3 API. Any existing AWS CLI commands, SDKs (boto3 for Python, AWS SDK for JavaScript, etc.), and third-party S3-compatible tools work with QStorage by simply changing the endpoint URL to `https://qstorage.quilibrium.com`. No code changes are required beyond the endpoint configuration.
+QStorage's API is highly compatible with the Amazon S3 API. Any existing AWS CLI commands, SDKs (boto3 for Python, AWS SDK for JavaScript, etc.), and third-party S3-compatible tools work with QStorage by simply changing the endpoint URL to `https://qstorage.quilibrium.com`. No code changes are required beyond the endpoint configuration. For additional compatibility reference, see [AWS S3 Documentation](https://docs.aws.amazon.com/s3/).
 
 ### Supported S3 Features
 
@@ -116,11 +116,18 @@ A bucket is a container (similar to a top-level folder) that holds your objects.
 
 ### Bucket Naming Rules
 
-Bucket names must be 3-63 characters long, consist only of lowercase letters, numbers, periods, and hyphens, begin and end with a letter or number, and must not be formatted as an IP address.
+Bucket names must be 3-63 characters long, consist only of lowercase letters, numbers, periods, and hyphens, begin and end with a letter or number, must not contain two adjacent periods, and must not be formatted as an IP address (e.g., 123.456.7.8).
+
+**Security and compatibility restrictions:**
+- Must not start with `xn--` (prevents homoglyph attacks on subdomains)
+- Must not start with `sthree-` or `amzn-s3-demo-`
+- Must not end with `-s3alias`, `--ol-s3`, `.mrap`, or `--x-s3`
+
+These additional restrictions maintain compatibility with S3 tooling and prevent security vulnerabilities.
 
 **Public vs. private naming:** Public bucket names must be globally unique across the entire Quilibrium Network because they are routed through the Public Bucket Proxy. Private bucket names only need to be unique within your account namespace. Plan your naming strategy early if you anticipate making a bucket public.
 
-**Best practices:** Avoid periods in bucket names (they complicate virtual-host-style addressing certificates). Never delete a public bucket to reuse the name since another user could claim it. Append GUIDs to bucket names if you need unpredictable names.
+**Best practices:** Avoid periods in bucket names (they complicate virtual-host-style addressing certificates). Never delete a public bucket to reuse the name since another user could claim it, potentially impersonating your content. Append GUIDs to bucket names if you need unpredictable names. Note that bucket names can be edited to resolve uniqueness conflicts when making a private bucket public.
 
 ### Creating a Bucket
 
@@ -217,6 +224,10 @@ Tags enable cost allocation tracking, tag-based access control policies, organiz
 ## Working with Objects
 
 Objects are the fundamental entities in QStorage. Each object consists of a key (path), value (data up to 5 TB), metadata (system-defined and user-defined), access control information, and tags (up to 10 per object).
+
+### Metadata and Billing
+
+User-defined metadata can be up to 2 KB in size per object. While metadata is relatively small compared to object content, it contributes to overall storage costs. QStorage bills based on the aggregate storage used across all objects (data + metadata), not on a per-object basis. System metadata is necessary for object management and included in storage calculations.
 
 ### Uploading Objects
 
@@ -414,7 +425,7 @@ For data beyond the free tier, QStorage offers pay-as-you-go pricing with option
 - GET and other retrieval requests are charged at a separate rate
 - Data transfer (egress) may incur additional charges
 
-Quilibrium targets pricing competitive with Cloudflare R2 (currently the cheapest S3 alternative). The proxy layer and tiered caching architecture significantly reduce egress costs compared to AWS S3.
+Quilibrium targets competitive pricing in the S3-compatible storage market. The proxy layer and tiered caching architecture significantly reduce egress costs compared to traditional cloud providers.
 
 ### Cost Optimization Tips
 
@@ -429,7 +440,7 @@ Quilibrium targets pricing competitive with Cloudflare R2 (currently the cheapes
 |---|---|
 | **$QUIL** | Pay with Quilibrium's native token |
 | **$wQUIL** | Pay with wrapped QUIL tokens |
-| **$USDC** | Pay with USD Coin (converted to $QUIL at billing time) |
+| **$USDC** | Pay with USD Coin stablecoin (converted to $QUIL at billing time) |
 | **Fiat** | Pay in fiat currency through Q Console; Quilibrium Inc. settles to the network in $QUIL |
 
 All pricing is denominated in USD with crypto conversions at the current market rate at billing time.
@@ -465,7 +476,7 @@ Response times target tens of milliseconds through layered caching. Only static 
 ## Frequently Asked Questions
 
 **Is QStorage really 100% S3-compatible?**
-Yes. The API is fully compatible with Amazon's S3 API. Existing AWS tooling, SDKs, and third-party S3 clients work by changing the endpoint to `https://qstorage.quilibrium.com`. Some esoteric S3 Select edge cases may exist, but core functionality is fully supported.
+QStorage is highly compatible with Amazon's S3 API. Existing AWS tooling, SDKs, and third-party S3 clients work by changing the endpoint to `https://qstorage.quilibrium.com`. Core functionality is fully supported, though some differences exist. For complete compatibility details, refer to the [AWS S3 Documentation](https://docs.aws.amazon.com/s3/) and QStorage-specific guides.
 
 **Can I host a website on QStorage?**
 Yes. Create a public bucket, upload your static site, and configure DNS. QStorage supports CNAME redirection and QNS integration. Free-tier (5 GB) may be sufficient for many websites. Response times are designed to be CDN-competitive.
@@ -485,4 +496,4 @@ Yes. Because QStorage is S3-compatible, migration is straightforward: update you
 **What is the difference between free and paid tier replication?**
 Free-tier data is replicated within Quilibrium Inc.'s infrastructure (multiple data centers, multiple regions). Paid-tier data receives full decentralized network replication across 24-32 geographically distributed nodes per shard with Reed-Solomon encoding.
 
-*Last updated: 2026-02-11T15:00:00*
+*Last updated: 2026-02-12*

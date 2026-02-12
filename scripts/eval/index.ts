@@ -159,7 +159,7 @@ program
   .option(
     '--judge-model <model>',
     'Judge model for evaluation (via OpenRouter)',
-    'anthropic/claude-sonnet-4-5-20250929'
+    'anthropic/claude-sonnet-4.5'
   )
   .option('-c, --concurrency <n>', 'Max parallel tests', '3')
   .option('-t, --timeout <ms>', 'Per-test timeout', '60000')

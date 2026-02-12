@@ -10,11 +10,11 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { z } from 'zod';
 import type { Criterion, TestCase, ParsedResponse, CriterionResult } from './types.js';
 
-const DEFAULT_JUDGE_MODEL = 'anthropic/claude-sonnet-4-5-20250929';
+const DEFAULT_JUDGE_MODEL = 'anthropic/claude-sonnet-4.5';
 
 const JudgeResponseSchema = z.object({
   passed: z.boolean(),
-  score: z.number().min(0).max(1),
+  score: z.number().describe('Score between 0.0 and 1.0'),
   reasoning: z.string(),
 });
 
@@ -33,18 +33,25 @@ export async function evaluateCriterion(
 
   const prompt = buildJudgePrompt(criterion, testCase, response);
 
-  const result = await generateObject({
-    model: openrouter(model),
-    schema: JudgeResponseSchema,
-    prompt,
-  });
+  try {
+    const result = await generateObject({
+      model: openrouter(model),
+      schema: JudgeResponseSchema,
+      prompt,
+    });
 
-  return {
-    criterion,
-    passed: result.object.passed,
-    score: result.object.score,
-    reasoning: result.object.reasoning,
-  };
+    return {
+      criterion,
+      passed: result.object.passed,
+      score: result.object.score,
+      reasoning: result.object.reasoning,
+    };
+  } catch (err: any) {
+    // Enhanced error logging
+    const errorDetails = err?.message || String(err);
+    const responseError = err?.responseBody ? JSON.stringify(err.responseBody) : '';
+    throw new Error(`OpenRouter API error: ${errorDetails}${responseError ? ` | Response: ${responseError}` : ''}`);
+  }
 }
 
 export function buildJudgePrompt(
