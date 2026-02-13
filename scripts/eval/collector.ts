@@ -109,7 +109,7 @@ export function generateJudgmentFile(
       `## Test: ${result.testCase.id}`
     );
     lines.push(
-      `**Category:** ${result.testCase.category} | **Query:** "${result.testCase.query}"`
+      `**Category:** ${result.testCase.category} | **Query:** "${result.testCase.query || (result.testCase.turns ? `[${result.testCase.turns.length} turns]` : '(none)')}"`
     );
     lines.push('');
 

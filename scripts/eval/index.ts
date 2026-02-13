@@ -166,7 +166,7 @@ program
   .option(
     '--suite <path>',
     'Path to test suite YAML',
-    path.join(__dirname, 'test-suite.yaml')
+    path.join(__dirname, 'test-suite-focused.yaml')
   )
   .option('--tag <tag>', 'Only run tests with this tag')
   .option('--category <cat>', 'Only run tests in this category')
@@ -249,10 +249,22 @@ program
         'must_contain_command_response',
       ];
       const llmCallCount = activeTests.reduce(
-        (sum, t) =>
-          sum +
-          t.criteria.filter((c) => !DETERMINISTIC_TYPES.includes(c.type))
-            .length,
+        (sum, t) => {
+          // Count LLM calls from single-turn criteria
+          const singleTurnCalls = (t.criteria || []).filter(
+            (c) => !DETERMINISTIC_TYPES.includes(c.type)
+          ).length;
+          // Count LLM calls from multi-turn per-turn criteria
+          const multiTurnCalls = (t.turns || []).reduce(
+            (tSum, turn) =>
+              tSum +
+              (turn.criteria || []).filter(
+                (c) => !DETERMINISTIC_TYPES.includes(c.type)
+              ).length,
+            0
+          );
+          return sum + singleTurnCalls + multiTurnCalls;
+        },
         0
       );
       if (llmCallCount > 0) {
@@ -460,7 +472,7 @@ program
   .option(
     '--suite <path>',
     'Path to test suite YAML',
-    path.join(__dirname, 'test-suite.yaml')
+    path.join(__dirname, 'test-suite-focused.yaml')
   )
   .option('--category <cat>', 'Filter by category')
   .option('--tag <tag>', 'Filter by tag')
@@ -492,8 +504,10 @@ program
     for (const t of tests) {
       const skip = t.skip ? chalk.gray(' [SKIP]') : '';
       const tags = t.tags ? chalk.gray(` [${t.tags.join(', ')}]`) : '';
+      const displayQuery = t.query
+        || (t.turns ? `[${t.turns.length} turns] ${t.turns[0].user}` : '(no query)');
       const queryPreview =
-        t.query.length > 50 ? t.query.slice(0, 50) + '...' : t.query;
+        displayQuery.length > 50 ? displayQuery.slice(0, 50) + '...' : displayQuery;
       console.log(
         `  ${chalk.cyan(t.id.padEnd(32))} ${t.category.padEnd(14)} ${queryPreview}${skip}${tags}`
       );

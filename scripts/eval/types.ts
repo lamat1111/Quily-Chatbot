@@ -64,23 +64,59 @@ export const CriterionSchema = z.discriminatedUnion('type', [
 
 export type Criterion = z.infer<typeof CriterionSchema>;
 
-export const TestCaseSchema = z.object({
-  id: z.string().regex(/^[a-z0-9_-]+$/),
-  category: TestCategory,
-  query: z.string().min(1),
-  criteria: z.array(CriterionSchema).min(1),
+// ─── Multi-Turn Schema ──────────────────────────────────────────────────────
+
+export const TurnSchema = z.object({
+  user: z.string().min(1),
+  criteria: z.array(CriterionSchema).optional(),
   description: z.string().optional(),
-  context_messages: z
-    .array(
-      z.object({
-        role: z.enum(['user', 'assistant']),
-        content: z.string(),
-      })
-    )
-    .optional(),
-  skip: z.boolean().default(false),
-  tags: z.array(z.string()).optional(),
 });
+
+export type Turn = z.infer<typeof TurnSchema>;
+
+// ─── Test Case Schema ───────────────────────────────────────────────────────
+
+export const TestCaseSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9_-]+$/),
+    category: TestCategory,
+    description: z.string().optional(),
+    skip: z.boolean().default(false),
+    tags: z.array(z.string()).optional(),
+
+    // Single-turn mode (existing)
+    query: z.string().min(1).optional(),
+    criteria: z.array(CriterionSchema).min(1).optional(),
+    context_messages: z
+      .array(
+        z.object({
+          role: z.enum(['user', 'assistant']),
+          content: z.string(),
+        })
+      )
+      .optional(),
+
+    // Multi-turn mode
+    turns: z.array(TurnSchema).min(2).optional(),
+  })
+  .refine(
+    (data) => {
+      const hasSingleTurn = !!data.query && !!data.criteria && data.criteria.length > 0;
+      const hasMultiTurn = !!data.turns && data.turns.length >= 2;
+      return hasSingleTurn || hasMultiTurn;
+    },
+    { message: 'Test case must have either (query + criteria) for single-turn or (turns) for multi-turn' }
+  )
+  .refine(
+    (data) => {
+      if (data.turns && data.turns.length >= 2) {
+        const lastTurn = data.turns[data.turns.length - 1];
+        return lastTurn.criteria && lastTurn.criteria.length > 0;
+      }
+      return true;
+    },
+    { message: 'Multi-turn test: the last turn must have criteria' }
+  );
 
 export type TestCase = z.infer<typeof TestCaseSchema>;
 
@@ -117,10 +153,18 @@ export interface CriterionResult {
   reasoning: string;
 }
 
+export interface TurnResult {
+  turnIndex: number;
+  userMessage: string;
+  response: ParsedResponse;
+  criterionResults?: CriterionResult[];
+}
+
 export interface TestResult {
   testCase: TestCase;
   response: ParsedResponse;
   criterionResults: CriterionResult[];
+  turnResults?: TurnResult[];
   overallScore: number;
   passed: boolean;
   judgeModel: string;

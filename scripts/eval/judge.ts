@@ -76,7 +76,7 @@ export function buildJudgePrompt(
 ## Test Context
 - **Test ID**: ${testCase.id}
 - **Category**: ${testCase.category}
-- **User Query**: "${testCase.query}"
+- **User Query**: "${testCase.query || '(multi-turn)'}"
 
 ## Chatbot Response
 ${response.text || '(empty response)'}

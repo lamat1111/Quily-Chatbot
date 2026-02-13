@@ -66,7 +66,24 @@ export function printTerminalReport(report: EvalReport): void {
     console.log(chalk.red(`\n  Failures (${failures.length}):`));
     for (const f of failures) {
       console.log(chalk.red(`\n    ${f.testCase.id}`));
-      console.log(chalk.gray(`    Query: "${f.testCase.query}"`));
+
+      // Multi-turn: show conversation flow
+      if (f.turnResults && f.turnResults.length > 0) {
+        console.log(chalk.gray(`    Conversation (${f.turnResults.length} turns):`));
+        for (const tr of f.turnResults) {
+          const userPreview = tr.userMessage.length > 60
+            ? tr.userMessage.slice(0, 60) + '...' : tr.userMessage;
+          const respPreview = tr.response.text
+            ? (tr.response.text.length > 80
+                ? tr.response.text.slice(0, 80) + '...' : tr.response.text)
+            : '(empty)';
+          console.log(chalk.gray(`      Turn ${tr.turnIndex + 1} [user]: ${userPreview}`));
+          console.log(chalk.gray(`      Turn ${tr.turnIndex + 1} [bot]:  ${respPreview}`));
+        }
+      } else {
+        console.log(chalk.gray(`    Query: "${f.testCase.query}"`));
+      }
+
       console.log(chalk.gray(`    Latency: ${f.response.latencyMs}ms`));
       if (f.response.error) {
         console.log(chalk.red(`    Error: ${f.response.error}`));
@@ -74,8 +91,8 @@ export function printTerminalReport(report: EvalReport): void {
       for (const cr of f.criterionResults.filter((c) => !c.passed)) {
         console.log(chalk.yellow(`    [${cr.criterion.type}] ${cr.reasoning}`));
       }
-      // Show truncated response for context
-      if (f.response.text) {
+      // Show truncated response for context (single-turn only, multi-turn shows it above)
+      if (!f.turnResults && f.response.text) {
         const preview =
           f.response.text.length > 150
             ? f.response.text.slice(0, 150) + '...'

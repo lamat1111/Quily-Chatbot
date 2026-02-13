@@ -3,6 +3,10 @@
  *
  * Sends queries to the real chat API, parses streaming responses,
  * and evaluates criteria via deterministic checks or LLM judge.
+ *
+ * Supports both single-turn (query + criteria) and multi-turn
+ * (turns[]) test cases. Multi-turn tests chain real API calls,
+ * feeding actual bot responses into subsequent turns.
  */
 
 import { parseStreamResponse } from './stream-parser.js';
@@ -10,6 +14,7 @@ import { evaluateCriterion } from './judge.js';
 import type {
   TestCase,
   TestResult,
+  TurnResult,
   ParsedResponse,
   CriterionResult,
   Criterion,
@@ -30,6 +35,52 @@ async function fetchWithTimeout(
     return await fetch(url, { ...init, signal: controller.signal });
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/**
+ * Send a single request to the chat API and parse the streaming response.
+ */
+async function sendChatRequest(
+  messages: { role: string; content: string }[],
+  config: RunnerConfig
+): Promise<ParsedResponse> {
+  try {
+    const httpResponse = await fetchWithTimeout(
+      `${config.baseUrl}/api/chat`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages,
+          provider: config.provider,
+          model: config.model || undefined,
+        }),
+      },
+      config.timeout
+    );
+
+    if (!httpResponse.ok) {
+      const errorBody = await httpResponse.text();
+      return {
+        text: '',
+        sources: [],
+        followUpQuestions: [],
+        statusMessages: [],
+        latencyMs: 0,
+        error: `HTTP ${httpResponse.status}: ${errorBody}`,
+      };
+    }
+    return await parseStreamResponse(httpResponse);
+  } catch (err) {
+    return {
+      text: '',
+      sources: [],
+      followUpQuestions: [],
+      statusMessages: [],
+      latencyMs: 0,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }
 
@@ -87,9 +138,69 @@ function tryDeterministicCheck(
 }
 
 /**
- * Run a single test case against the chat API.
+ * Evaluate a list of criteria against a response.
  */
-export async function runTest(
+async function evaluateCriteria(
+  criteria: Criterion[],
+  testCase: TestCase,
+  response: ParsedResponse,
+  config: RunnerConfig
+): Promise<CriterionResult[]> {
+  const results: CriterionResult[] = [];
+
+  for (const criterion of criteria) {
+    const fastResult = tryDeterministicCheck(criterion, response);
+    if (fastResult) {
+      results.push(fastResult);
+      continue;
+    }
+
+    if (config.collectMode) {
+      results.push({
+        criterion,
+        passed: false,
+        score: 0,
+        reasoning: 'Pending manual judgment',
+      });
+      continue;
+    }
+
+    if (config.skipJudge) {
+      results.push({
+        criterion,
+        passed: true,
+        score: 0.5,
+        reasoning: 'Skipped (--no-judge mode)',
+      });
+      continue;
+    }
+
+    try {
+      const result = await evaluateCriterion(
+        criterion,
+        testCase,
+        response,
+        config.openrouterApiKey,
+        config.judgeModel
+      );
+      results.push(result);
+    } catch (err) {
+      results.push({
+        criterion,
+        passed: false,
+        score: 0,
+        reasoning: `Judge error: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Run a single-turn test case against the chat API.
+ */
+async function runSingleTurnTest(
   testCase: TestCase,
   config: RunnerConfig
 ): Promise<TestResult> {
@@ -100,101 +211,16 @@ export async function runTest(
   if (testCase.context_messages) {
     messages.push(...testCase.context_messages);
   }
-  messages.push({ role: 'user', content: testCase.query });
+  messages.push({ role: 'user', content: testCase.query! });
 
-  // Hit the real chat endpoint
-  let response: ParsedResponse;
-  try {
-    const httpResponse = await fetchWithTimeout(
-      `${config.baseUrl}/api/chat`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages,
-          provider: config.provider,
-          model: config.model || undefined,
-        }),
-      },
-      config.timeout
-    );
+  const response = await sendChatRequest(messages, config);
 
-    if (!httpResponse.ok) {
-      const errorBody = await httpResponse.text();
-      response = {
-        text: '',
-        sources: [],
-        followUpQuestions: [],
-        statusMessages: [],
-        latencyMs: 0,
-        error: `HTTP ${httpResponse.status}: ${errorBody}`,
-      };
-    } else {
-      response = await parseStreamResponse(httpResponse);
-    }
-  } catch (err) {
-    response = {
-      text: '',
-      sources: [],
-      followUpQuestions: [],
-      statusMessages: [],
-      latencyMs: 0,
-      error: err instanceof Error ? err.message : String(err),
-    };
-  }
-
-  // Evaluate each criterion
-  const criterionResults: CriterionResult[] = [];
-
-  for (const criterion of testCase.criteria) {
-    // Fast-path: deterministic checks
-    const fastResult = tryDeterministicCheck(criterion, response);
-    if (fastResult) {
-      criterionResults.push(fastResult);
-      continue;
-    }
-
-    // Collect mode: mark for manual judgment
-    if (config.collectMode) {
-      criterionResults.push({
-        criterion,
-        passed: false,
-        score: 0,
-        reasoning: 'Pending manual judgment',
-      });
-      continue;
-    }
-
-    // Skip LLM judge if --no-judge flag
-    if (config.skipJudge) {
-      criterionResults.push({
-        criterion,
-        passed: true,
-        score: 0.5,
-        reasoning: 'Skipped (--no-judge mode)',
-      });
-      continue;
-    }
-
-    // LLM judge
-    try {
-      const result = await evaluateCriterion(
-        criterion,
-        testCase,
-        response,
-        config.openrouterApiKey,
-        config.judgeModel
-      );
-      criterionResults.push(result);
-    } catch (err) {
-      criterionResults.push({
-        criterion,
-        passed: false,
-        score: 0,
-        reasoning: `Judge error: ${err instanceof Error ? err.message : String(err)}`,
-      });
-    }
-  }
+  const criterionResults = await evaluateCriteria(
+    testCase.criteria!,
+    testCase,
+    response,
+    config
+  );
 
   const overallScore =
     criterionResults.length > 0
@@ -211,6 +237,96 @@ export async function runTest(
     judgeModel: config.judgeModel,
     timestamp,
   };
+}
+
+/**
+ * Run a multi-turn test case. Each turn sends the accumulated
+ * conversation history (with real bot responses) to the chat API.
+ */
+async function runMultiTurnTest(
+  testCase: TestCase,
+  config: RunnerConfig
+): Promise<TestResult> {
+  const timestamp = new Date().toISOString();
+  const turns = testCase.turns!;
+  const conversationHistory: { role: string; content: string }[] = [];
+  const turnResults: TurnResult[] = [];
+  const allCriterionResults: CriterionResult[] = [];
+
+  for (let i = 0; i < turns.length; i++) {
+    const turn = turns[i];
+
+    // Add user message to history
+    conversationHistory.push({ role: 'user', content: turn.user });
+
+    // Send entire conversation to API
+    const response = await sendChatRequest([...conversationHistory], config);
+
+    // Add bot response to history for next turn
+    if (response.text && !response.error) {
+      conversationHistory.push({ role: 'assistant', content: response.text });
+    }
+
+    // Evaluate per-turn criteria (if any)
+    let turnCriterionResults: CriterionResult[] | undefined;
+    if (turn.criteria && turn.criteria.length > 0) {
+      // Build a synthetic single-turn TestCase for the judge prompt context
+      const turnTestCase: TestCase = {
+        ...testCase,
+        query: turn.user,
+        criteria: turn.criteria,
+        description: turn.description || `Turn ${i + 1} of ${testCase.id}`,
+      };
+
+      turnCriterionResults = await evaluateCriteria(
+        turn.criteria,
+        turnTestCase,
+        response,
+        config
+      );
+      allCriterionResults.push(...turnCriterionResults);
+    }
+
+    turnResults.push({
+      turnIndex: i,
+      userMessage: turn.user,
+      response,
+      criterionResults: turnCriterionResults,
+    });
+  }
+
+  // Final response and criteria come from the last turn (backward-compatible)
+  const lastTurnResult = turnResults[turnResults.length - 1];
+
+  const overallScore =
+    allCriterionResults.length > 0
+      ? allCriterionResults.reduce((sum, r) => sum + r.score, 0) /
+        allCriterionResults.length
+      : 0;
+
+  return {
+    testCase,
+    response: lastTurnResult.response,
+    criterionResults: lastTurnResult.criterionResults || [],
+    turnResults,
+    overallScore,
+    passed: allCriterionResults.every((r) => r.passed),
+    judgeModel: config.judgeModel,
+    timestamp,
+  };
+}
+
+/**
+ * Run a test case (dispatches to single-turn or multi-turn).
+ */
+export async function runTest(
+  testCase: TestCase,
+  config: RunnerConfig
+): Promise<TestResult> {
+  if (testCase.turns && testCase.turns.length >= 2) {
+    return runMultiTurnTest(testCase, config);
+  }
+  return runSingleTurnTest(testCase, config);
 }
 
 /**

@@ -35,7 +35,8 @@
     "eval:list": "tsx scripts/eval/index.ts list",
     "eval:report": "tsx scripts/eval/index.ts report",
     "eval:judge": "tsx scripts/eval/index.ts judge",
-    "eval:collect": "tsx scripts/eval/index.ts run --collect"
+    "eval:collect": "tsx scripts/eval/index.ts run --collect",
+    "eval:broad": "tsx scripts/eval/index.ts run --suite scripts/eval/test-suite.yaml"
   },
   "keywords": [],
   "author": "",
@@ -83,5 +84,6 @@
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
