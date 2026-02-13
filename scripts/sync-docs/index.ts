@@ -9,6 +9,7 @@ import { fetchAllMarkdownFiles } from './github.js';
 import { loadManifest, saveManifest, createEmptyManifest } from './manifest.js';
 import { computeDiff, formatDiffSummary, hasChanges } from './diff.js';
 import { executeSync } from './sync.js';
+import { analyzeCompanionImpact, formatCompanionImpactReport } from './companion-impact.js';
 
 // Default configuration for Quilibrium docs
 const DEFAULT_CONFIG: SyncConfig = {
@@ -109,7 +110,17 @@ program
       await saveManifest(DEFAULT_CONFIG.destPath, updatedManifest);
       spinner.succeed('Manifest saved');
 
-      // Step 6: Run ingestion if requested and needed
+      // Step 6: Check companion doc impact
+      if (result.needsReingestion) {
+        const report = await analyzeCompanionImpact(diff, '.');
+        if (report && report.totalCompanionDocs > 0) {
+          console.log(chalk.blue('\n📋 Companion Doc Impact:\n'));
+          console.log(formatCompanionImpactReport(report));
+          console.log();
+        }
+      }
+
+      // Step 7: Run ingestion if requested and needed
       if (options.ingest && result.needsReingestion) {
         console.log(chalk.blue('\n🔄 Running RAG ingestion...\n'));
         await runIngestion();
