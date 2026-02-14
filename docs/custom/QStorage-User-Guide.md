@@ -329,6 +329,32 @@ You can create policies that condition access on bucket tags:
 }
 ```
 
+### IAM Policies vs Bucket Policies
+
+There are two separate ways to control access in QStorage:
+
+| Type | Attached to | Managed via | When to use |
+|------|------------|-------------|-------------|
+| **IAM Policies** | Users or Roles | QConsole (Identity and Authorization) | Control what a specific user or role can do across all buckets |
+| **Bucket Policies** | A specific bucket | QConsole or AWS CLI (`put-bucket-policy`) | Control who can access a specific bucket (e.g., make it public) |
+
+For most use cases, IAM policies attached to users via QConsole are the recommended approach.
+
+### Example: Creating a Scoped Backup User
+
+This walkthrough shows how to create a dedicated user with limited permissions — useful for automated backup tools or any service that should only access a specific bucket.
+
+1. Go to **Identity and Authorization** in QConsole
+2. Create a new **user** called `backup-agent`
+3. Create a new **policy** called `backup-readwrite`:
+   - Effect: **Allow**
+   - Actions: `s3:GetObject`, `s3:PutObject`, `s3:ListBucket`, `s3:DeleteObject`
+   - Resources: `arn:aws:s3:::backup-bucket/*`
+4. Attach the policy to the `backup-agent` user
+5. Use the `backup-agent` access key and secret key in your backup tool
+
+This way, even if those credentials are compromised, the attacker can only access the backup bucket — nothing else.
+
 ### Multi-Account Hierarchy
 
 QStorage supports AWS-style multi-account hierarchical features for cross-account asset sharing. Unlike traditional cloud providers where accounts are siloed, Quilibrium enables composability between assets across different accounts -- useful in decentralized applications where resources need to be shared.
@@ -496,4 +522,4 @@ Yes. Because QStorage is S3-compatible, migration is straightforward: update you
 **What is the difference between free and paid tier replication?**
 Free-tier data is replicated within Quilibrium Inc.'s infrastructure (multiple data centers, multiple regions). Paid-tier data receives full decentralized network replication across 24-32 geographically distributed nodes per shard with Reed-Solomon encoding.
 
-*Last updated: 2026-02-12*
+*Last updated: 2026-02-14*
