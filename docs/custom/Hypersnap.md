@@ -1,7 +1,7 @@
 ---
 title: Hypersnap
 source: GitHub Repository
-date: 2026-02-09
+date: 2026-02-18
 type: technical_reference
 topics: [snapchain, farcaster, hyper-mode, rust, data-availability]
 ---
@@ -9,6 +9,12 @@ topics: [snapchain, farcaster, hyper-mode, rust, data-availability]
 # Hypersnap
 
 Hypersnap is the open-source, canonical Rust implementation of Snapchain -- a decentralized, peer-to-peer data storage layer for the Farcaster social protocol. It is a modified Farcaster Snapchain node with **Hyper Mode** for full historical data retention and enhanced data availability.
+
+## Background
+
+Hypersnap was created in response to concerns about validator centralization on the Farcaster network. Quilibrium proposed adding a Hypersnap validator node through proper channels — providing all historically required information — but the node was not added to the validator set. This experience highlighted a lack of credible neutrality in how validators are selected.
+
+Cassie Heart (CassOnMars), Quilibrium's founder, was one of the original Snapchain developers. That deep familiarity with the protocol informed Hypersnap's core design principle: backward compatibility. Nodes not running Hypersnap simply don't receive Hypersnap-related traffic, meaning the fork can coexist with the broader Farcaster network rather than fragment it.
 
 ## Overview
 
