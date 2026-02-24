@@ -1,5 +1,5 @@
 {
-  "last_full_scan": "2026-02-13",
+  "last_full_scan": "2026-02-24",
   "files": {
     "discover/01-what-is-quilibrium.md": {
       "status": "adequate",
@@ -24,14 +24,14 @@
     },
     "discover/03-q-story.md": {
       "status": "covered",
-      "last_analyzed": "2026-02-13",
+      "last_analyzed": "2026-02-24",
       "score": "B",
-      "composite_pct": 72,
+      "composite_pct": 73,
       "issues": [
         "no_h2_headings",
         "many_small_sections"
       ],
-      "notes": "Timeline format",
+      "notes": "Timeline format; updated with Q1 2026 entries (QNS, mobile apps, QStorage, QKMS, QQ, QPing). Source updated Q1 2026 content, companion doc refreshed",
       "custom_doc": "docs/custom/Q-Story-Vision-Deployment.md"
     },
     "discover/04-quilibrium-tokenomics.md": {
@@ -500,15 +500,16 @@
       "custom_doc": "docs/custom/Quilibrium Architecture.md"
     },
     "run-node/RPC.md": {
-      "status": "adequate",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "A",
       "composite_pct": 82,
       "issues": [
         "docusaurus_syntax",
         "oversized_file"
       ],
-      "notes": "Extensive protobuf RPC docs",
+      "notes": "Extensive protobuf RPC docs; file deleted in restructure",
       "custom_doc": null
     },
     "run-node/account-aliases.md": {
@@ -525,26 +526,24 @@
       "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/advanced-configuration.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
-      "score": "A",
-      "composite_pct": 83,
-      "issues": [
-        "docusaurus_syntax",
-        "oversized_file"
-      ],
-      "notes": "Comprehensive config.yml reference",
-      "custom_doc": null
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 79,
+      "issues": [],
+      "notes": "Comprehensive config.yml reference; updated with new port defaults (25000/32500)",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/advanced-node-management.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 30,
       "issues": [
         "no_content"
       ],
-      "notes": "Thin; covered by Node-Maintenance-Updates-Guide",
+      "notes": "Thin; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/linux_configuration.md": {
@@ -559,15 +558,13 @@
       "custom_doc": null
     },
     "run-node/quick-start.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
-      "score": "A",
-      "composite_pct": 82,
-      "issues": [
-        "docusaurus_syntax"
-      ],
-      "notes": "Well-structured quick start guide",
-      "custom_doc": null
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 71,
+      "issues": [],
+      "notes": "Updated with new port ranges and node-provisioning links",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "run-node/shard-enrollment-process.md": {
       "status": "adequate",
@@ -581,61 +578,154 @@
       "custom_doc": null
     },
     "run-node/system-requirements.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
       "score": "A",
-      "composite_pct": 88,
+      "composite_pct": 81,
+      "issues": [],
+      "notes": "Comprehensive: workers, golden ratio, hardware selection, networking",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/upgrade-2.1.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 77,
+      "issues": [],
+      "notes": "Good upgrade guide covering workers, master config, storage, rewards",
+      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+    },
+    "run-node/node-provisioning/index.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "C",
+      "composite_pct": 57,
+      "issues": [],
+      "notes": "Short landing page (~80 chars) with navigation table to child provisioning docs",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/legacy/index.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "C",
+      "composite_pct": 51,
+      "issues": [],
+      "notes": "Landing page (~70 chars) with table linking to legacy provisioning methods",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/legacy/qone.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "C",
+      "composite_pct": 57,
       "issues": [
         "docusaurus_syntax"
       ],
-      "notes": "Excellent requirements reference",
-      "custom_doc": null
+      "notes": "Short doc about QOne script with one code block and :::warning admonition",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
-    "run-node/upgrade-2.1.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
-      "score": "A",
-      "composite_pct": 80,
+    "run-node/node-provisioning/legacy/release-autorun.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 66,
       "issues": [],
-      "notes": "Clean upgrade guide",
-      "custom_doc": null
+      "notes": "Step-by-step release autorun guide with multiple code blocks",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/manual-install/index.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 68,
+      "issues": [],
+      "notes": "Good landing page with platform tables and node commands overview",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/manual-install/linux.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "A",
+      "composite_pct": 85,
+      "issues": [
+        "docusaurus_syntax",
+        "react_component"
+      ],
+      "notes": "Comprehensive Linux guide: prerequisites, download, symlinks, systemd, updating, cron, useful commands. Has ScriptViewer React import.",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/manual-install/macos.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "A",
+      "composite_pct": 85,
+      "issues": [
+        "docusaurus_syntax",
+        "react_component"
+      ],
+      "notes": "Comprehensive macOS guide: prerequisites, download, launchd, updating. Has ScriptViewer React import.",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/node-provisioning/qtools/index.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "D",
+      "composite_pct": 33,
+      "issues": [
+        "placeholder_content"
+      ],
+      "notes": "Placeholder 'Coming Soon' page (~25 chars). No action needed until content appears.",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/port-range-change.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "A",
+      "composite_pct": 87,
+      "issues": [],
+      "notes": "Excellent guide covering what changed, why, who's affected, how to fix (ufw + iptables), verification",
+      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+    },
+    "run-node/qclient/rpc.md": {
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "A",
+      "composite_pct": 81,
+      "issues": [
+        "oversized_sections"
+      ],
+      "notes": "Comprehensive RPC documentation with protobuf definitions. AccountService, CoinService, TransactionService. Management scenarios (cold/warm/hot/MPC custody).",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/checksum.md": {
       "status": "covered",
-      "last_analyzed": "2026-02-13",
-      "score": "F",
-      "composite_pct": 12,
-      "issues": [
-        "no_frontmatter",
-        "no_content",
-        "no_h2_headings"
-      ],
-      "notes": "Too thin; covered by QClient-Configuration-Commands",
+      "last_analyzed": "2026-02-24",
+      "score": "C",
+      "composite_pct": 46,
+      "issues": [],
+      "notes": "Very short, shows one command with alias; covered by QClient-Configuration-Commands",
       "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/managing-configs.md": {
       "status": "covered",
-      "last_analyzed": "2026-02-13",
+      "last_analyzed": "2026-02-24",
       "score": "F",
-      "composite_pct": 5,
+      "composite_pct": 19,
       "issues": [
-        "no_frontmatter",
-        "no_content",
-        "no_h2_headings",
-        "empty_file"
+        "empty_content"
       ],
-      "notes": "Empty page; covered by QClient-Configuration-Commands",
+      "notes": "Nearly empty, title 'Importing Keys' only; covered by QClient-Configuration-Commands",
       "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/qclient-101.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
       "score": "B",
-      "composite_pct": 65,
+      "composite_pct": 66,
       "issues": [
         "docusaurus_syntax"
       ],
-      "notes": "Good qclient intro",
+      "notes": "Good intro doc, explains how to run commands and symlinks",
       "custom_doc": null
     },
     "run-node/qclient/setup.md": {
@@ -675,14 +765,14 @@
       "custom_doc": null
     },
     "run-node/qclient/commands/command-list.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
       "score": "B",
       "composite_pct": 68,
       "issues": [
-        "large_table"
+        "large_tables"
       ],
-      "notes": "Central command reference",
+      "notes": "Comprehensive command reference; large tables may split during chunking",
       "custom_doc": null
     },
     "run-node/qclient/commands/compute.md": {
@@ -731,15 +821,13 @@
       "custom_doc": null
     },
     "run-node/qclient/commands/key.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
       "score": "A",
-      "composite_pct": 83,
-      "issues": [
-        "docusaurus_syntax"
-      ],
-      "notes": "Thorough key management reference",
-      "custom_doc": null
+      "composite_pct": 85,
+      "issues": [],
+      "notes": "Excellent key management doc; well-structured with examples",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/commands/messaging.md": {
       "status": "adequate",
@@ -753,18 +841,15 @@
       "custom_doc": null
     },
     "run-node/qclient/commands/node.md": {
-      "status": "adequate",
-      "last_analyzed": "2026-02-13",
-      "score": "A",
-      "composite_pct": 82,
+      "status": "covered",
+      "last_analyzed": "2026-02-24",
+      "score": "B",
+      "composite_pct": 74,
       "issues": [
-        "no_frontmatter",
-        "docusaurus_syntax",
-        "oversized_file",
-        "many_small_sections"
+        "no_frontmatter"
       ],
-      "notes": "Large node command reference",
-      "custom_doc": null
+      "notes": "Node commands reference; good structure",
+      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/commands/qclient-config.md": {
       "status": "covered",
@@ -803,8 +888,9 @@
       "custom_doc": null
     },
     "run-node/qclient/node/auto-update.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 25,
       "issues": [
@@ -812,56 +898,61 @@
         "no_content",
         "docusaurus_syntax"
       ],
-      "notes": "Too thin; covered by Node-Maintenance-Updates-Guide",
+      "notes": "Too thin; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/clean.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "C",
       "composite_pct": 40,
       "issues": [
         "no_frontmatter",
         "docusaurus_syntax"
       ],
-      "notes": "Brief; covered by Node-Maintenance-Updates-Guide",
+      "notes": "Brief; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/install.md": {
-      "status": "adequate",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "B",
       "composite_pct": 65,
       "issues": [
         "docusaurus_syntax"
       ],
-      "notes": "Good install guide",
+      "notes": "Good install guide; file deleted in restructure",
       "custom_doc": null
     },
     "run-node/qclient/node/run-node-via-node-service.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "B",
       "composite_pct": 62,
       "issues": [
         "no_frontmatter",
         "many_small_sections"
       ],
-      "notes": "Service commands; covered by Node-Service-Setup-Guide",
+      "notes": "Service commands; covered by Node-Service-Setup-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/update.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "C",
       "composite_pct": 47,
       "issues": [],
-      "notes": "Brief update workflows; covered by Node-Maintenance-Updates-Guide",
+      "notes": "Brief update workflows; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/key-management/create-new-keyset.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 27,
       "issues": [
@@ -869,99 +960,107 @@
         "no_content",
         "docusaurus_syntax"
       ],
-      "notes": "Too thin; covered by Node-Key-Management-Guide",
+      "notes": "Too thin; covered by Node-Key-Management-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/import-keysets.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "C",
       "composite_pct": 50,
       "issues": [
         "no_frontmatter"
       ],
-      "notes": "Practical but thin; covered by Node-Key-Management-Guide",
+      "notes": "Practical but thin; covered by Node-Key-Management-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/initial-keyset.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 32,
       "issues": [
         "no_content",
         "docusaurus_syntax"
       ],
-      "notes": "Too thin; covered by Node-Key-Management-Guide",
+      "notes": "Too thin; covered by Node-Key-Management-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/keys.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "C",
       "composite_pct": 43,
       "issues": [
         "docusaurus_syntax"
       ],
-      "notes": "Brief overview; covered by Node-Key-Management-Guide",
+      "notes": "Brief overview; covered by Node-Key-Management-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/multiple-keysets.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "C",
       "composite_pct": 50,
       "issues": [
         "no_frontmatter"
       ],
-      "notes": "Nearly identical to import-keysets; covered by Node-Key-Management-Guide",
+      "notes": "Nearly identical to import-keysets; covered by Node-Key-Management-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/node-service/commands.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "B",
       "composite_pct": 60,
       "issues": [
         "docusaurus_syntax",
         "many_small_sections"
       ],
-      "notes": "Service commands; covered by Node-Service-Setup-Guide",
+      "notes": "Service commands; covered by Node-Service-Setup-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/environment-variables.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 28,
       "issues": [
         "no_content",
         "docusaurus_syntax"
       ],
-      "notes": "Too thin; covered by Node-Service-Setup-Guide",
+      "notes": "Too thin; covered by Node-Service-Setup-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/installing-node-service.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 27,
       "issues": [
         "no_frontmatter",
         "no_content"
       ],
-      "notes": "Too thin; covered by Node-Service-Setup-Guide",
+      "notes": "Too thin; covered by Node-Service-Setup-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/overview.md": {
-      "status": "covered",
+      "status": "deleted",
       "last_analyzed": "2026-02-13",
+      "deleted_at": "2026-02-24",
       "score": "D",
       "composite_pct": 30,
       "issues": [
         "no_content"
       ],
-      "notes": "Hub page; covered by Node-Service-Setup-Guide",
+      "notes": "Hub page; covered by Node-Service-Setup-Guide; file deleted in restructure",
       "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
     },
     "api/01-overview.md": {
@@ -3138,52 +3237,68 @@
     },
     {
       "path": "docs/custom/Node-Key-Management-Guide.md",
-      "created": "2026-02-11",
+      "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
         "key management",
         "qclient",
-        "keysets"
+        "keysets",
+        "custody models",
+        "RPC key operations"
       ]
     },
     {
       "path": "docs/custom/Node-Service-Setup-Guide.md",
-      "created": "2026-02-11",
+      "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
         "node service",
         "systemd",
-        "installation"
+        "installation",
+        "provisioning",
+        "port configuration",
+        "quick start"
       ]
     },
     {
       "path": "docs/custom/Node-Maintenance-Updates-Guide.md",
-      "created": "2026-02-11",
+      "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
         "node maintenance",
         "auto-update",
-        "manual update"
+        "manual update",
+        "system requirements",
+        "advanced configuration",
+        "upgrade 2.1"
       ]
     },
     {
       "path": "docs/custom/QClient-Configuration-Commands.md",
-      "created": "2026-02-11",
+      "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
         "qclient",
         "configuration",
-        "commands"
+        "commands",
+        "hypergraph commands",
+        "compute commands",
+        "deploy commands",
+        "messaging commands"
       ]
     },
     {
       "path": "docs/custom/Q-Story-Vision-Deployment.md",
-      "created": "2026-02-11",
+      "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
         "Q story",
         "vision",
-        "deployment"
+        "deployment",
+        "QNS",
+        "QQ",
+        "QPing",
+        "QConsole"
       ]
     },
     {
@@ -3205,7 +3320,7 @@
   ],
   "categories_scanned": {
     "discover": {
-      "scanned": "2026-02-13",
+      "scanned": "2026-02-24",
       "files_count": 14,
       "files_analyzed": 14
     },
@@ -3225,9 +3340,9 @@
       "files_analyzed": 3
     },
     "run-node": {
-      "scanned": "2026-02-13",
-      "files_count": 40,
-      "files_analyzed": 40
+      "scanned": "2026-02-24",
+      "files_count": 34,
+      "files_analyzed": 34
     },
     "api": {
       "scanned": "2026-02-13",

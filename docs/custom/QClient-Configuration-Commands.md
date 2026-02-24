@@ -1,7 +1,7 @@
 ---
 title: "qclient Configuration & Commands — Setup, Aliases, and Config Management"
 source: official_docs_synthesis
-date: 2026-02-11
+date: 2026-02-24
 type: technical_reference
 topics:
   - qclient
@@ -12,6 +12,10 @@ topics:
   - config management
   - RPC settings
   - node connection
+  - hypergraph commands
+  - compute commands
+  - deploy commands
+  - messaging commands
 ---
 
 # qclient Configuration and Commands Overview
@@ -379,6 +383,134 @@ chmod 600 ~/.quilibrium/qclient-config.yml
 
 ---
 
+## Hypergraph Commands
+
+qclient provides commands for interacting with the Quilibrium hypergraph data structure, allowing you to store and retrieve vertices and hyperedges.
+
+### Get Vertex
+
+Retrieve vertex data from the hypergraph by its full address, with optional decryption:
+
+```bash
+qclient hypergraph get vertex <FullAddress> [<EncryptionKeyBytes>]
+```
+
+### Put Vertex
+
+Create or update a vertex with property values, optional domain scoping, and optional encryption:
+
+```bash
+qclient hypergraph put [--domain|-d <DomainAddress>] vertex [<PropertyName>=<PropertyValue>] [<EncryptionKeyBytes>]
+```
+
+### Get Hyperedge
+
+Retrieve hyperedge data from the hypergraph by its full address, with optional decryption:
+
+```bash
+qclient hypergraph get hyperedge <FullAddress> [<EncryptionKeyBytes>]
+```
+
+### Put Hyperedge
+
+Create or update a hyperedge that connects vertices, with optional domain scoping and encryption:
+
+```bash
+qclient hypergraph put [--domain|-d <DomainAddress>] hyperedge <FullAddress> [<AtomAddress>, ...] [<EncryptionKeyBytes>]
+```
+
+---
+
+## Compute Commands
+
+qclient supports executing computations on the Quilibrium network with optional multi-party coordination.
+
+### Execute
+
+Run a computation at a given address, optionally specifying a rendezvous point, party ID, and key-value arguments:
+
+```bash
+qclient compute execute <FullAddress> [<Rendezvous>] [<PartyId>] [<ArgumentKey>=<ArgumentValue>]
+```
+
+---
+
+## Deploy Commands
+
+Deploy commands let you publish applications, files, tokens, and hypergraph schemas to the Quilibrium network.
+
+### Deploy Compute
+
+Deploy a QCL (Quilibrium Computation Language) application with an optional RDF schema:
+
+```bash
+qclient deploy compute [--domain|-d <DomainAddress>] <QCLFileName> [<RDFFileName>]
+```
+
+### Deploy File
+
+Deploy a file to the hypergraph, with optional domain scoping and encryption:
+
+```bash
+qclient deploy file [--domain|-d <DomainAddress>] <FileName> [<EncryptionKeyBytes>]
+```
+
+### Deploy Token
+
+Deploy a custom token with configurable properties:
+
+```bash
+qclient deploy token [<ConfigurationKey>=<ConfigurationValue> ...]
+```
+
+### Deploy Hypergraph
+
+Deploy hypergraph schemas and configurations, with an optional RDF file:
+
+```bash
+qclient deploy hypergraph [<ConfigurationKey>=<ConfigurationValue> ...] [<RDFFileName>]
+```
+
+---
+
+## Messaging Commands
+
+qclient includes encrypted messaging capabilities through inbox-based communication.
+
+### Retrieve Messages
+
+Retrieve messages for a specified inbox or all inboxes:
+
+```bash
+qclient message retrieve [<InboxKeyName>]
+```
+
+### Send Message
+
+Send an encrypted message to a recipient's inbox:
+
+```bash
+qclient message send <InboxKeyName> <RecipientInboxKeyAddress> <Message>
+```
+
+### List Messages
+
+Display stored messages for a specified inbox:
+
+```bash
+qclient message list <InboxKeyName>
+```
+
+### Delete Message
+
+Remove a message from local storage:
+
+```bash
+qclient message delete <InboxKeyName> <MessageId>
+```
+
+---
+
 ## Frequently Asked Questions
 
 **Where is my qclient config file?**
@@ -399,4 +531,4 @@ Run `qclient update`. For a specific version, run `qclient update <version>`. Us
 **Can I manage multiple node configurations?**
 Yes. Use `qclient node config create <Name>` to create named configs, and `qclient node config switch <Name>` to switch between them.
 
-*Last updated: 2026-02-11T15:00:00*
+*Last updated: 2026-02-24T12:00:00*

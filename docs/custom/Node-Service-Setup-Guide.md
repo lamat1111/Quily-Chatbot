@@ -1,113 +1,163 @@
 ---
-title: "Quilibrium Node Service — Installation, Configuration & Management Guide"
+title: "Quilibrium Node Provisioning & Service Setup Guide"
 source: official_docs_synthesis
-date: 2026-02-11
+date: 2026-02-24
 type: technical_reference
 topics:
+  - node provisioning
   - node service
   - systemd
   - launchd
   - installation
-  - environment variables
-  - node management
-  - Linux configuration
-  - service commands
-  - auto-start
-  - qclient
-  - troubleshooting
+  - manual install
+  - Linux
+  - macOS
+  - qtools
+  - legacy methods
+  - port configuration
+  - firewall
+  - service management
 ---
 
-# Quilibrium Node Service — Installation, Configuration & Management Guide
+# Quilibrium Node Provisioning & Service Setup Guide
 
-## What Is the Node Service?
+This guide consolidates all information about installing, configuring, and running a Quilibrium node as a persistent service. It covers every provisioning method (QTools, Manual Install, Legacy), platform-specific service setup for Linux (systemd) and macOS (launchd), port and firewall configuration, automatic updates, and key backup procedures.
 
-The Quilibrium node service is a system-level service wrapper that manages the lifecycle of the Quilibrium node application. It uses **systemd** on Linux and **launchd** on macOS to run the node as a persistent background process. All service operations are abstracted behind `qclient node service` commands, which automatically detect the operating system and invoke the appropriate underlying service manager.
+---
 
-Using a node service is not strictly required to run a Quilibrium node, but it is strongly recommended for production deployments. A long-lived process like the Quilibrium node benefits from the supervision, automatic restart, and boot-time startup that a system service provides.
+## Overview of Provisioning Methods
 
-## Why Use the Node Service?
+There are three ways to provision a Quilibrium node. Choose the method that best fits your experience level and operational needs.
 
-Running the node through a service rather than a manual terminal session provides several critical advantages:
+| Method | Description | Maintenance |
+|--------|-------------|-------------|
+| **QTools** (Recommended) | Automated provisioning and management tool for Quilibrium nodes. Handles installation, configuration, updates, and service orchestration. | Managed updates and service orchestration. |
+| **Manual Install** | Download the binary directly, set up a system service (systemd or launchd), and manage updates yourself. Guides available for Linux and macOS. | You handle all updates and configuration. |
+| **Legacy Methods** | Older scripts (release_autorun.sh, QOne) that may still work but are not actively maintained. | Limited or no ongoing maintenance. |
 
-- **Automatic restart on failure** — systemd (or launchd) will restart the node if it crashes, keeping uptime high.
-- **Auto-start on boot** — the service can be enabled to start the node whenever the server reboots, preventing missed proving windows.
-- **Graceful shutdown via SIGINT** — the service sends a proper SIGINT signal on stop, allowing the node to inform the network of its deliberate absence and avoid seniority penalties.
-- **Log management** — service logs integrate with the system journal (`journalctl` on Linux), making diagnostics straightforward.
-- **Standardized management** — a single set of `qclient node service` commands works across both Linux and macOS.
-- **Environment variable support** — runtime configuration can be changed without editing service files directly (Linux).
+**Recommendation:** QTools is the recommended approach for most operators. If QTools is not available or you prefer full control, use the Manual Install method. Legacy methods are only documented for reference.
 
-## Prerequisites and System Requirements
+---
 
-### Supported Operating Systems
+## System Requirements Reminder
 
-| Operating System | Architecture | Service Manager |
-|------------------|--------------|-----------------|
-| Linux            | ARM, x86     | systemd         |
-| macOS            | ARM (Apple Silicon) | launchd   |
-| Windows          | Not supported* | N/A           |
-
-*Windows users may use WSL (Windows Subsystem for Linux) to run a node.
-
-### Minimum Hardware
+Before provisioning a node, verify your server meets the minimum hardware requirements. Under-provisioned nodes will struggle to keep up with the network and may incur penalties.
 
 | Component | Minimum |
 |-----------|---------|
-| CPU       | 4 logical cores |
-| RAM       | 2 GB per core |
-| SSD       | 4 GB free space per core |
+| CPU | 4 logical cores |
+| RAM | 2 GB per core |
+| SSD | 4 GB free space per core |
 
-The general rule is **1 CPU core : 2 GB RAM : 4 GB storage**. For example, an 8-core machine should have at least 16 GB RAM and 32 GB free SSD space.
+The general rule is **1 CPU core : 2 GB RAM : 4 GB storage**. For example, an 8-core machine needs at least 16 GB RAM and 32 GB free SSD space.
 
-### Software Prerequisites
+**Supported platforms:**
 
-On macOS, `launchd` is already present — no additional packages are needed. On Linux, the `systemd` package is required. If it is not already installed, the `qclient node install` process will install it automatically.
+| OS | Architecture | Binary Suffix | Service Manager |
+|----|-------------|---------------|-----------------|
+| Linux | x86_64 | `linux-amd64` | systemd |
+| Linux | ARM64 | `linux-arm64` | systemd |
+| macOS | ARM64 (Apple Silicon) | `darwin-arm64` | launchd |
 
-## Installing the Node Service
+Windows is not natively supported. Windows users should use WSL (Windows Subsystem for Linux).
 
-### Recommended: Install via qclient node install
+For the full system requirements specification, see the Quilibrium system requirements documentation.
 
-The simplest path is to use the integrated node installation command. This installs the node binary, creates the service, sets up log rotation, and creates a symlink — all in one step.
+---
+
+## When Is `sudo` Needed?
+
+Commands that write to system directories or manage system services require `sudo` (root privileges). Read-only commands and queries do not.
+
+| Needs `sudo` | Example | Why |
+|:---:|---------|-----|
+| Yes | `sudo ./qnode-update.sh` | Writes binaries to `/opt/quilibrium/node` |
+| Yes | `sudo systemctl start quilibrium-node` | Manages a system service |
+| Yes | `sudo ln -sf ... /usr/local/bin/quilibrium-node` | Writes to a system `PATH` directory |
+| No | `quilibrium-node -peer-id` | Read-only query, no system changes |
+| No | `quilibrium-node -balance` | Read-only query, no system changes |
+
+As a rule of thumb: **installing, updating, and controlling the service** need `sudo`, while **querying the node** does not.
+
+---
+
+## Linux Manual Install (systemd)
+
+This section covers installing and running the Quilibrium node on Linux (x86_64 or ARM64) using a systemd service.
+
+### Prerequisites (Linux)
+
+- A Linux server meeting the system requirements
+- Firewall ports opened (see the Port Configuration section below)
+- Root or sudo access
+
+### Step 1: Download the Node Binary (Linux)
+
+The recommended approach is to use the provided update script, which automatically detects your platform, downloads the latest binary with all signature files, and sets up the symlink.
 
 ```bash
-sudo qclient node install
+mkdir -p /opt/quilibrium/node && cd /opt/quilibrium/node
+wget -O qnode-update.sh https://docs.quilibrium.com/scripts/qnode-update.sh
+chmod +x qnode-update.sh
+sudo ./qnode-update.sh
 ```
 
-This command requires `sudo` because it writes to system directories. The install process performs the following in order:
+The script detects your architecture, fetches the latest release, and downloads the binary, digest, and all signature files into `/opt/quilibrium/node`.
 
-1. Detects root or sudo privileges
-2. Determines the version to install (defaults to latest)
-3. Checks if the version exists
-4. Creates `/var/quilibrium/bin/node/<version>/` directory
-5. Detects if the version is already installed
-6. **Creates the system service** (systemd unit file on Linux, launchd plist on macOS)
-7. Sets ownership of `/var/quilibrium/` to the current user
-8. Makes the binary executable
-9. Creates a `quilibrium-node` symlink at `/usr/local/bin/quilibrium-node`
-10. Sets up log rotation
+This is the same script used for updating the node and for automatic updates via cron (see the Updating section below).
 
-To install a specific version instead of the latest:
+**Manual download alternative (Linux):**
+
+Check the latest node release filenames at `https://releases.quilibrium.com/release`. Download the binary and signature files for your platform. Most Linux servers use `linux-amd64`:
 
 ```bash
-sudo qclient node install "2.1.0"
+mkdir -p /opt/quilibrium/node && cd /opt/quilibrium/node
+
+# Replace <version> with the current version, e.g. 2.1.0.18
+wget https://releases.quilibrium.com/node-<version>-linux-amd64
+wget https://releases.quilibrium.com/node-<version>-linux-amd64.dgst
+for i in $(seq 1 17); do
+  wget https://releases.quilibrium.com/node-<version>-linux-amd64.dgst.sig.$i 2>/dev/null
+done
 ```
 
-### Manual Service Installation
+The node binary has up to 17 signature files (`.dgst.sig.1` through `.dgst.sig.17`) from different signers. Not all signature numbers may be present for a given release -- missing ones are expected and can be ignored. All downloaded signatures must be in the same directory as the binary for verification to succeed.
 
-If you already have the node binary but need to install only the service component:
+Make the binary executable:
 
 ```bash
-qclient node service install
+chmod +x node-<version>-linux-amd64
 ```
 
-This creates the service file without re-downloading or re-installing the node binary.
+### Step 2: Create Symlinks (Linux)
 
-## The systemd Unit File (Linux)
+If you used the update script in Step 1, the first symlink (`/opt/quilibrium/node/quilibrium-node`) is already created. You only need to create the `/usr/local/bin` symlink below.
 
-On Linux, the node service is managed via a systemd unit file. The `qclient node service install` command creates this file automatically. For reference, a typical Quilibrium systemd unit file looks like this:
+Create a symlink so the service file always points to a consistent name, avoiding edits on every update:
+
+```bash
+ln -sf /opt/quilibrium/node/node-<version>-linux-amd64 /opt/quilibrium/node/quilibrium-node
+```
+
+Create a second symlink in `/usr/local/bin` so you can run `quilibrium-node` from anywhere:
+
+```bash
+sudo ln -sf /opt/quilibrium/node/quilibrium-node /usr/local/bin/quilibrium-node
+```
+
+### Step 3: Set Up the systemd Service
+
+Create the service file:
+
+```bash
+sudo nano /lib/systemd/system/quilibrium-node.service
+```
+
+Paste the following content:
 
 ```ini
 [Unit]
-Description=Quilibrium Node Service
+Description=Quilibrium Node
 StartLimitIntervalSec=0
 StartLimitBurst=0
 
@@ -115,263 +165,577 @@ StartLimitBurst=0
 Type=simple
 Restart=always
 RestartSec=5s
-WorkingDirectory=/var/quilibrium
-ExecStart=/usr/local/bin/quilibrium-node
+WorkingDirectory=/opt/quilibrium/node
+ExecStart=/opt/quilibrium/node/quilibrium-node
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
 FinalKillSignal=SIGKILL
 TimeoutStopSec=30s
-EnvironmentFile=/var/quilibrium/quilibrium.env
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-Key fields to understand:
+**Key fields explained:**
 
 | Field | Purpose |
 |-------|---------|
 | `Restart=always` | Automatically restart the node on any exit |
 | `RestartSec=5s` | Wait 5 seconds before restarting |
-| `KillSignal=SIGINT` | Send SIGINT for graceful shutdown |
+| `KillSignal=SIGINT` | Send SIGINT for graceful shutdown (avoids seniority penalties) |
+| `FinalKillSignal=SIGKILL` | Last-resort kill after timeout |
 | `TimeoutStopSec=30s` | Allow up to 30 seconds for graceful stop |
-| `EnvironmentFile` | Load runtime environment variables from file |
 
-**Important:** The service uses SIGINT as the kill signal so the node can gracefully inform the network of its shutdown. If a node is killed without SIGINT (e.g., via SIGKILL), it will likely be penalized for not informing the network of its deliberate absence. The service file is configured with `FinalKillSignal=SIGKILL` only as a last resort after the timeout.
+**Important:** The service uses SIGINT as the kill signal so the node can gracefully inform the network of its shutdown. If a node is killed without SIGINT (e.g., via SIGKILL), it will likely be penalized for not informing the network of its deliberate absence. Because `ExecStart` points directly at the node binary (via the symlink), systemd can send SIGINT to the node process. This avoids the penalty risk where wrapper scripts like `release_autorun.sh` do not trap SIGINT.
 
-## Service Commands Reference
-
-All commands follow the pattern `qclient node service <command>`. The qclient detects whether the system uses systemd or launchd and runs the appropriate underlying command.
-
-### Start
-
-Start the node service:
+Enable and start the service:
 
 ```bash
-qclient node service start
+sudo systemctl daemon-reload
+sudo systemctl enable quilibrium-node
+sudo systemctl start quilibrium-node
 ```
 
-This initiates the node process and connects it to the Quilibrium network.
+`systemctl enable` ensures the node service starts automatically on system boot.
 
-### Stop
+### Step 4: Verify the Node Is Running (Linux)
 
-Gracefully stop the node:
+Check the service status:
 
 ```bash
-qclient node service stop
+systemctl status quilibrium-node
 ```
 
-**Important:** Wait for this command to finish. It may take up to 2-3 minutes depending on the current node process state. The service sends SIGINT to allow graceful shutdown.
-
-Before stopping, consider using `qclient node prover pause` to manually inform the network of the upcoming downtime and avoid seniority penalties.
-
-### Restart
-
-Stop and then start the node:
+Follow the logs:
 
 ```bash
-qclient node service restart
+journalctl -u quilibrium-node -f --no-hostname -o cat
 ```
 
-Useful for applying configuration changes or recovering from issues.
+### Useful Linux Commands
 
-### Status
+| Action | Command |
+|--------|---------|
+| Start node | `sudo systemctl start quilibrium-node` |
+| Stop node | `sudo systemctl stop quilibrium-node` |
+| Restart node | `sudo systemctl restart quilibrium-node` |
+| Check status | `systemctl status quilibrium-node` |
+| Follow logs | `journalctl -u quilibrium-node -f --no-hostname -o cat` |
+| View recent logs | `journalctl -u quilibrium-node -n 100 --no-hostname -o cat` |
+| Check version in logs | `journalctl -u quilibrium-node -r --no-hostname -n 1 -g "Quilibrium Node" -o cat` |
 
-Check whether the node is running:
+---
+
+## macOS Manual Install (launchd)
+
+This section covers installing and running the Quilibrium node on macOS with Apple Silicon using a launchd service.
+
+### Prerequisites (macOS)
+
+- A Mac with Apple Silicon (M1/M2/M3/M4)
+- macOS meeting the system requirements
+- Administrator access
+
+### Step 1: Download the Node Binary (macOS)
+
+Use the provided update script, which automatically downloads the latest binary with all signature files and sets up the symlink.
 
 ```bash
-qclient node service status
+sudo mkdir -p /opt/quilibrium/node && cd /opt/quilibrium/node
+sudo curl -L -o qnode-update.sh https://docs.quilibrium.com/scripts/qnode-update-macos.sh
+sudo chmod +x qnode-update.sh
+sudo ./qnode-update.sh
 ```
 
-### Reload
+The script verifies you are on macOS, fetches the latest release, and downloads the binary, digest, and all signature files into `/opt/quilibrium/node`.
 
-Reload service configuration without fully stopping the node:
+**Manual download alternative (macOS):**
+
+Check the latest node release filenames at `https://releases.quilibrium.com/release`. Download the binary and all signature files:
 
 ```bash
-qclient node service reload
+sudo mkdir -p /opt/quilibrium/node && cd /opt/quilibrium/node
+
+# Replace <version> with the current version, e.g. 2.1.0.18
+sudo curl -LO https://releases.quilibrium.com/node-<version>-darwin-arm64
+sudo curl -LO https://releases.quilibrium.com/node-<version>-darwin-arm64.dgst
+for i in $(seq 1 17); do
+  sudo curl -LO https://releases.quilibrium.com/node-<version>-darwin-arm64.dgst.sig.$i 2>/dev/null
+done
 ```
 
-This is rarely needed — only required when there have been changes to the service file itself (not `config.yml`).
-
-### Enable (Auto-Start on Boot)
-
-Configure the node to start automatically when the server boots:
+Make the binary executable:
 
 ```bash
-qclient node service enable
+sudo chmod +x node-<version>-darwin-arm64
 ```
 
-This is highly recommended for production nodes to ensure the node resumes operation after system restarts.
+### Step 2: Create Symlinks (macOS)
 
-### Disable (Remove Auto-Start)
+If you used the update script in Step 1, the first symlink is already created. You only need the `/usr/local/bin` symlink.
 
-Prevent the node from starting on boot:
+Create a symlink so the service always points to a consistent name:
 
 ```bash
-qclient node service disable
+sudo ln -sf /opt/quilibrium/node/node-<version>-darwin-arm64 /opt/quilibrium/node/quilibrium-node
 ```
 
-### Update Service File
-
-When new qclient versions are released, the service file template may change for optimization. By default, existing service files are not automatically replaced. To update:
+Create a second symlink in `/usr/local/bin` so you can run `quilibrium-node` from anywhere:
 
 ```bash
-qclient node service update
+sudo ln -sf /opt/quilibrium/node/quilibrium-node /usr/local/bin/quilibrium-node
 ```
 
-### Uninstall
+### Step 3: Set Up the launchd Service
 
-Remove the service entirely:
+macOS uses `launchd` instead of `systemd`. Create a plist file:
 
 ```bash
-qclient node service uninstall
+sudo nano /Library/LaunchDaemons/com.quilibrium.node.plist
 ```
 
-This removes the service file but does not delete the node binary or data.
+Paste the following content:
 
-## Environment Variables
-
-The node service can read environment variables at launch to change runtime settings. On Linux, these are loaded from an environment file rather than being hardcoded in the service file.
-
-### Environment File Location
-
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.quilibrium.node</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/quilibrium/node/quilibrium-node</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/opt/quilibrium/node</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/opt/quilibrium/node/node.log</string>
+  <key>StandardErrorPath</key>
+  <string>/opt/quilibrium/node/node-error.log</string>
+</dict>
+</plist>
 ```
-/var/quilibrium/quilibrium.env
-```
 
-Variables set in this file are read by the systemd service on each start. Edit this file to change runtime behavior without modifying the service unit file itself.
+**Key fields explained:**
 
-### Platform Limitation
+| Field | Purpose |
+|-------|---------|
+| `RunAtLoad` | Starts the node automatically when the system boots |
+| `KeepAlive` | Restarts the node automatically if it exits |
+| `StandardOutPath` | Directs stdout to a log file |
+| `StandardErrorPath` | Directs stderr to a separate error log |
 
-As of current releases, only the Linux version supports dynamic environment variables read from a file. On macOS, environment variables are hardcoded in the launchd plist file and require service file changes to modify. Dynamic environment file support for macOS is planned for a future release.
-
-### Applying Environment Variable Changes
-
-After editing `/var/quilibrium/quilibrium.env`, restart the service to pick up the changes:
+Load and start the service:
 
 ```bash
-qclient node service restart
+sudo launchctl load /Library/LaunchDaemons/com.quilibrium.node.plist
 ```
 
-If you edited the service file itself (not the environment file), you must reload first:
+### Step 4: Verify the Node Is Running (macOS)
 
 ```bash
-qclient node service reload
-qclient node service restart
+sudo launchctl list | grep quilibrium
 ```
 
-## Viewing Logs
-
-### Using journalctl (Linux)
-
-Since the service runs under systemd on Linux, logs are accessible through `journalctl`:
-
-Follow logs in real time:
+Follow the logs:
 
 ```bash
-journalctl -u quilibrium-node.service -f --no-hostname -o cat
+tail -f /opt/quilibrium/node/node.log
 ```
 
-View recent log entries:
+### Useful macOS Commands
+
+| Action | Command |
+|--------|---------|
+| Start node | `sudo launchctl load /Library/LaunchDaemons/com.quilibrium.node.plist` |
+| Stop node | `sudo launchctl unload /Library/LaunchDaemons/com.quilibrium.node.plist` |
+| Check status | `sudo launchctl list \| grep quilibrium` |
+| Follow logs | `tail -f /opt/quilibrium/node/node.log` |
+| Follow error logs | `tail -f /opt/quilibrium/node/node-error.log` |
+
+---
+
+## Updating the Node
+
+### Using the Update Script (Linux)
+
+If you used the update script during initial installation, it is already in `/opt/quilibrium/node/`. Run it whenever you want to check for updates:
 
 ```bash
-journalctl -u quilibrium-node.service -n 100 --no-hostname -o cat
+sudo /opt/quilibrium/node/qnode-update.sh
 ```
 
-Check the node version from logs:
+The script will:
+1. Detect your platform (`linux-amd64` or `linux-arm64`)
+2. Query the release server for the latest version
+3. Compare it against your currently installed version
+4. Download the binary, digest, and all signature files (skipping any already present)
+5. Stop the service, update the symlink, and restart the service
+
+If you are already on the latest version with all files present, the script exits with no changes.
+
+### Using the Update Script (macOS)
 
 ```bash
-journalctl -u quilibrium-node.service -r --no-hostname -n 1 -g "Quilibrium Node" -o cat
+sudo /opt/quilibrium/node/qnode-update.sh
 ```
 
-### Log Rotation
+The macOS script follows the same logic but:
+1. Verifies you are on macOS with Apple Silicon
+2. Unloads the launchd service, updates the symlink, and reloads the service
 
-The `qclient node install` process sets up log rotation automatically. You can also configure in-application log rotation via the `config.yml` logger section:
+### Automatic Updates via Cron
+
+You can schedule the update script to run automatically using cron. This example checks for updates every hour and logs the output.
+
+```bash
+sudo crontab -e
+```
+
+Add the following line:
+
+**Linux:**
+```
+0 * * * * /opt/quilibrium/node/qnode-update.sh >> /var/log/qnode-update.log 2>&1
+```
+
+**macOS:**
+```
+0 * * * * /opt/quilibrium/node/qnode-update.sh >> /opt/quilibrium/node/qnode-update.log 2>&1
+```
+
+This runs the script at the top of every hour. If no update is available, the script exits quietly. If a new version is found, it downloads it, restarts the service, and logs the result.
+
+To check the update log:
+
+```bash
+# Linux
+tail -50 /var/log/qnode-update.log
+
+# macOS
+tail -50 /opt/quilibrium/node/qnode-update.log
+```
+
+You can adjust the cron schedule to your preference. For example, `0 */6 * * *` checks every 6 hours, or `0 3 * * *` checks once daily at 3:00 AM.
+
+### Manual Update (Linux)
+
+When a new version is released and you prefer to update manually:
+
+1. Stop the node:
+```bash
+sudo systemctl stop quilibrium-node
+```
+
+2. Download the new binary (replace `<new-version>` accordingly):
+```bash
+cd /opt/quilibrium/node
+wget https://releases.quilibrium.com/node-<new-version>-linux-amd64
+wget https://releases.quilibrium.com/node-<new-version>-linux-amd64.dgst
+for i in $(seq 1 17); do
+  wget https://releases.quilibrium.com/node-<new-version>-linux-amd64.dgst.sig.$i 2>/dev/null
+done
+chmod +x node-<new-version>-linux-amd64
+```
+
+3. Update the symlink:
+```bash
+ln -sf /opt/quilibrium/node/node-<new-version>-linux-amd64 /opt/quilibrium/node/quilibrium-node
+```
+
+4. Start the node:
+```bash
+sudo systemctl start quilibrium-node
+```
+
+No service file edits are needed because the symlink always points to the active binary.
+
+### Manual Update (macOS)
+
+1. Unload the service:
+```bash
+sudo launchctl unload /Library/LaunchDaemons/com.quilibrium.node.plist
+```
+
+2. Download the new binary:
+```bash
+cd /opt/quilibrium/node
+sudo curl -LO https://releases.quilibrium.com/node-<new-version>-darwin-arm64
+sudo curl -LO https://releases.quilibrium.com/node-<new-version>-darwin-arm64.dgst
+for i in $(seq 1 17); do
+  sudo curl -LO https://releases.quilibrium.com/node-<new-version>-darwin-arm64.dgst.sig.$i 2>/dev/null
+done
+sudo chmod +x node-<new-version>-darwin-arm64
+```
+
+3. Update the symlink:
+```bash
+sudo ln -sf /opt/quilibrium/node/node-<new-version>-darwin-arm64 /opt/quilibrium/node/quilibrium-node
+```
+
+4. Reload the service:
+```bash
+sudo launchctl load /Library/LaunchDaemons/com.quilibrium.node.plist
+```
+
+---
+
+## General Node Commands
+
+These commands work on any platform once the `quilibrium-node` symlink is on your `PATH`:
+
+Print node peer ID:
+```bash
+quilibrium-node -peer-id
+```
+
+Print node info:
+```bash
+quilibrium-node -node-info
+```
+
+Print node balance:
+```bash
+quilibrium-node -balance
+```
+
+---
+
+## Port Configuration and Firewall Rules
+
+### Default Ports to Open
+
+The Quilibrium node requires several ports to be open for network communication.
+
+| Port Range | Protocol | Purpose | Notes |
+|------------|----------|---------|-------|
+| 8336 | QUIC/UDP or TCP | Master process p2p communication | |
+| 8340 | TCP | Master process streaming communication | |
+| 25000-25000+N | QUIC/UDP or TCP | Worker processes p2p communication | One port per worker. E.g., 4 workers = 25000-25003 |
+| 32500-32500+N | TCP | Worker processes streaming communication | One port per worker. E.g., 4 workers = 32500-32503 |
+
+Adjust the port count to match the number of worker processes you are running.
+
+### Worker Port Range Change (version 2.1.0.19+)
+
+As of version 2.1.0.19, the default worker port ranges changed:
+
+| Setting | Old Default | New Default |
+|---------|-------------|-------------|
+| `dataWorkerBaseP2PPort` | 50000 | 25000 |
+| `dataWorkerBaseStreamPort` | 60000 | 32500 |
+
+**Why the change:** The old `50000-60000` range overlaps with the default ephemeral (dynamic) port range on all major operating systems (Linux: 32768-60999, macOS: 49152-65535). This caused intermittent connectivity failures when the OS assigned outbound connections from the same range. The new defaults (`25000`/`32500`) sit below the ephemeral range on all platforms.
+
+**Who is affected:**
+
+- **Config created before 2.1.0 (no explicit port entries):** The node will automatically pick up the new defaults. Your existing firewall rules still reference the old `50000`/`60000` range, so workers will be blocked until you update them.
+- **Config generated at 2.1.0 (explicit port entries):** The explicit values `50000`/`60000` are retained. You may still experience intermittent connectivity failures from ephemeral port overlap.
+
+**Recommended fix -- adopt the new port range:**
+
+1. Update firewall rules (example using `ufw` with 4 workers):
+
+```bash
+# Remove old worker port rules
+sudo ufw delete allow 50000:50003/tcp
+sudo ufw delete allow 50000:50003/udp
+sudo ufw delete allow 60000:60003/tcp
+
+# Add new worker port rules
+sudo ufw allow 25000:25003/tcp
+sudo ufw allow 25000:25003/udp
+sudo ufw allow 32500:32503/tcp
+```
+
+Using `iptables` instead:
+
+```bash
+# Remove old worker port rules
+iptables -D INPUT -p tcp --dport 50000:50003 -j ACCEPT
+iptables -D INPUT -p udp --dport 50000:50003 -j ACCEPT
+iptables -D INPUT -p tcp --dport 60000:60003 -j ACCEPT
+
+# Add new worker port rules
+iptables -A INPUT -p tcp --dport 25000:25003 -j ACCEPT
+iptables -A INPUT -p udp --dport 25000:25003 -j ACCEPT
+iptables -A INPUT -p tcp --dport 32500:32503 -j ACCEPT
+```
+
+To persist `iptables` rules on Debian/Ubuntu: `sudo apt install iptables-persistent && sudo netfilter-persistent save`
+
+2. If your `config.yml` has explicit old port values, update or remove them:
 
 ```yaml
-logger:
-  path: ".logs"
-  maxSize: 50          # MB before rotation
-  maxBackups: 0        # 0 = no backup limit
-  maxAge: 10           # days to retain
-  compress: true       # gzip old logs
+engine:
+  dataWorkerBaseP2PPort: 25000
+  dataWorkerBaseStreamPort: 32500
 ```
 
-## Configuration After Installation
+Or comment them out to use the new defaults:
 
-The node reads its runtime configuration from `config.yml`. After making changes to this file, restart the node service:
+```yaml
+engine:
+  # dataWorkerBaseP2PPort: 50000
+  # dataWorkerBaseStreamPort: 60000
+```
+
+3. Restart the node after making changes.
+
+**Alternative -- keep the old port range:** If you prefer not to change firewall rules, pin the old values in `config.yml` and adjust the OS ephemeral port range to avoid collisions:
 
 ```bash
-qclient node service restart
+sudo sysctl -w net.ipv4.ip_local_port_range="32768 49999"
+echo "net.ipv4.ip_local_port_range = 32768 49999" | sudo tee -a /etc/sysctl.d/99-quilibrium.conf
+sudo sysctl --system
 ```
 
-Key configuration sections relevant to node operators include:
+**Verifying the fix:** After restarting, confirm workers are listening on the expected ports:
 
-- **p2p** — network connectivity, listen addresses (default port 8336), direct peers
-- **engine** — worker counts, memory limits, reward strategy, delegate address
-- **db** — database paths, storage capacity thresholds
-- **logger** — log file paths, rotation settings
+```bash
+ss -tlnp | grep node
+ss -ulnp | grep node
+```
 
-For the full configuration reference, see the Quilibrium advanced configuration documentation.
+### Firewall Rules for Hosted Servers
+
+Hosting providers commonly assign a public IP while expecting all communication to go through public addresses. Misconfigured nodes may broadcast private IP addresses, which providers interpret as a network attack. To prevent connection attempts to private IP ranges, add these rules on Linux with `ufw`:
+
+```bash
+# Block RFC1918 private address ranges
+sudo ufw deny out to 10.0.0.0/8
+sudo ufw deny out to 172.16.0.0/12
+sudo ufw deny out to 192.168.0.0/16
+
+# Block multicast
+sudo ufw deny out to 224.0.0.0/4
+
+# Block broadcast
+sudo ufw deny out to 255.255.255.255
+```
+
+### Port Forwarding for Home/Residential Users
+
+If you are running the node at home on a residential ISP, you must set up port forwarding on your router for the node to be reachable by the network. Forward all required ports (8336, 8340, 25000+, 32500+) to your node's local IP address.
+
+For residential ISP users, it is recommended to use TCP connections. This can be achieved by setting in `config.yml`:
+
+- `listenMultiaddr` to `/ip4/0.0.0.0/tcp/8336`
+- `streamListenMultiaddr` to `/ip4/0.0.0.0/tcp/8340`
+- `dataWorkerBaseListenMultiaddr` to `/ip4/0.0.0.0/tcp/%d` (do not omit the `%d`)
+
+---
+
+## Legacy Provisioning Methods
+
+These methods are older and not actively maintained. They are documented for reference but the Manual Install method (or QTools when available) is recommended for new deployments.
+
+### Release Autorun Script
+
+The release autorun script automatically downloads the latest node binary, runs it, checks for new versions in the background, and triggers updates including node restarts.
+
+```bash
+mkdir -p ceremonyclient/node && cd ceremonyclient/node
+wget https://github.com/QuilibriumNetwork/monorepo/blob/release/node/release_autorun.sh
+chmod +x release_autorun.sh
+./release_autorun.sh
+```
+
+This script is intended to help get started quickly, but for robust deployments a service orchestration solution (e.g., systemd on Linux) is recommended. The autorun script does not trap SIGINT, which means stopping a node running through this script may result in seniority penalties because the node cannot gracefully inform the network of its departure.
+
+### QOne Script
+
+QOne was another provisioning script used in earlier versions of Quilibrium. It is no longer actively maintained. If you are currently using QOne, consider migrating to the Manual Install method or QTools.
+
+---
+
+## QTools (Recommended, Coming Soon)
+
+QTools is the recommended method for provisioning and managing Quilibrium nodes. It automates installation, configuration, updates, and service management.
+
+QTools documentation is currently under development. Check the official Quilibrium documentation for full installation and usage instructions when they become available.
+
+When QTools documentation is published, it will be the simplest and most complete way to provision and manage Quilibrium nodes, handling all the steps described in the Manual Install sections automatically.
+
+---
+
+## Key and Store Backups
+
+To run a node, access rewards, or make token operations for your account, you need the node's **keyset** consisting of the `config.yml` and `keys.yml` files. You are strongly advised to maintain copies of these files in an encrypted backup.
+
+**Worker data** is stored in `worker-store/[worker-id]`. It should also be regularly backed up to make node restoration faster (for example, in case of physical server failure) and to avoid unnecessary penalties.
+
+If worker data is lost, it can be restored by running the node which will fetch the data from its shard peers, but this will result in missed rewards and penalties if the worker data is not restored in time.
+
+Keyset and worker data are stored in your node's `.config` directory:
+
+```text
+.config/keys.yml
+.config/config.yml
+.config/worker-store/[worker-id]/
+```
+
+If you used the `release_autorun.sh` script, your config directory should be `ceremonyclient/node/.config`. If you used the Manual Install method with the recommended paths, it will be `/opt/quilibrium/node/.config`.
+
+---
 
 ## Graceful Shutdown and Penalty Avoidance
 
-One of the most important aspects of running via a service is proper shutdown behavior. If a node process is killed without a SIGINT signal, the network may penalize it for not informing peers of its deliberate absence.
+One of the most important aspects of running a node via a service is proper shutdown behavior. If a node process is killed without a SIGINT signal, the network may penalize it for not informing peers of its deliberate absence.
 
 **Best practice before planned downtime:**
 
-1. Pause the prover to notify the network:
-   ```bash
-   qclient node prover pause
-   ```
-2. Then stop the service:
-   ```bash
-   qclient node service stop
-   ```
-3. Wait for the stop to complete (may take 2-3 minutes).
+1. Stop the service (which sends SIGINT):
+```bash
+# Linux
+sudo systemctl stop quilibrium-node
 
-The `qclient node service stop` command sends SIGINT, which triggers a graceful shutdown. Never force-kill the node process with `kill -9` or `SIGKILL` unless absolutely necessary.
+# macOS
+sudo launchctl unload /Library/LaunchDaemons/com.quilibrium.node.plist
+```
 
-## Troubleshooting
+2. Wait for the stop to complete. The graceful shutdown can take up to 2-3 minutes depending on the current node process state.
 
-### Node service fails to start
+Never force-kill the node process with `kill -9` or `SIGKILL` unless absolutely necessary. The systemd service file is configured with `FinalKillSignal=SIGKILL` only as a last resort after the 30-second timeout.
 
-- Check status: `qclient node service status`
-- Check logs: `journalctl -u quilibrium-node.service -n 50 --no-hostname -o cat`
-- Verify the node binary exists and is executable at `/usr/local/bin/quilibrium-node`
-- Ensure `/var/quilibrium/` is owned by the correct user
-
-### Service file is outdated after qclient update
-
-Run `qclient node service update` to refresh the service file, then `qclient node service reload` to apply.
-
-### Node keeps restarting in a loop
-
-Check logs for the root cause. Common issues include missing configuration files, insufficient disk space (the database section has `terminatePercentage` set at 95% by default), or port conflicts on 8336/8340.
-
-### Environment variable changes not taking effect
-
-On Linux, ensure you edited `/var/quilibrium/quilibrium.env` (not the service file), then restart the service. On macOS, you must modify the launchd plist and reload the service.
-
-### Stop command hangs
-
-The graceful shutdown can take up to 2-3 minutes. If it exceeds this, the service will eventually send SIGKILL after the `TimeoutStopSec` (30 seconds) elapses. If this happens repeatedly, check the logs for issues preventing clean shutdown.
+---
 
 ## Frequently Asked Questions
 
-**Q: Do I have to use the node service to run a Quilibrium node?**
-A: No. You can run the node binary directly in a terminal or screen/tmux session. However, the service approach is recommended for production because it handles restarts, boot-time startup, and graceful shutdown automatically.
+**Q: Which provisioning method should I use?**
+A: QTools is recommended when available. If QTools is not yet documented or you prefer full control, use the Manual Install method with systemd (Linux) or launchd (macOS). Avoid legacy methods for new deployments.
+
+**Q: Do I have to run the node as a service?**
+A: No. You can run the node binary directly in a terminal or screen/tmux session. However, the service approach is strongly recommended for production because it handles automatic restarts on failure, boot-time startup, and graceful shutdown via SIGINT.
 
 **Q: Will my node auto-update through the service?**
-A: The service itself does not auto-update the node binary. You can install new versions with `sudo qclient node install` and update the service file with `qclient node service update`. The qclient may support auto-update features separately.
+A: The service itself does not auto-update the node binary. You can set up automatic updates by adding the update script to cron (see the "Automatic Updates via Cron" section). The cron job runs the update script on a schedule, and the script handles downloading new versions and restarting the service.
 
 **Q: What happens if my server reboots unexpectedly?**
-A: If you have enabled the service with `qclient node service enable`, the node will start automatically on boot. The network is designed to handle unexpected disconnections, but there may be temporary seniority impact.
+A: If you have enabled the service (`systemctl enable` on Linux, or `RunAtLoad` in the launchd plist on macOS), the node will start automatically on boot. The network is designed to handle unexpected disconnections, but there may be temporary seniority impact.
+
+**Q: My workers are not connecting after upgrading to 2.1.0.19. What happened?**
+A: The default worker port range changed from `50000`/`60000` to `25000`/`32500`. Your firewall rules probably still reference the old ports. Update your firewall rules to allow the new port ranges (see the Port Configuration section).
 
 **Q: Can I run multiple nodes on one server?**
-A: The standard service setup manages a single node. Running multiple nodes requires custom service files and separate configuration directories. See the advanced node management documentation for clustering techniques.
+A: The standard service setup manages a single node. Running multiple nodes requires custom service files and separate configuration directories.
 
-**Q: Does the service work on Windows?**
+**Q: Does the node work on Windows?**
 A: Windows is not natively supported. Use WSL (Windows Subsystem for Linux) to run a node with systemd service management.
 
-*Last updated: 2026-02-11T15:00:00*
+**Q: How do I check which ports my node is actually using?**
+A: After starting the node, run `ss -tlnp | grep node` and `ss -ulnp | grep node` to see all listening ports.
+
+**Q: I used the release_autorun.sh script. Should I migrate?**
+A: Yes. The autorun script does not trap SIGINT, which means stopping the node may cause seniority penalties. Migrate to the Manual Install method with a proper systemd service to get graceful shutdown, automatic restarts, and boot-time startup.
+
+**Q: Where are my node keys and config stored?**
+A: In the `.config` directory under your node's working directory. For Manual Install: `/opt/quilibrium/node/.config/`. For legacy autorun: `ceremonyclient/node/.config/`. Always keep encrypted backups of `keys.yml` and `config.yml`.
+
+*Last updated: 2026-02-24T12:00:00*

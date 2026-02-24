@@ -1,7 +1,7 @@
 ---
 title: "Quilibrium Story, Vision & Application Deployment Guide"
 source: official_docs_synthesis
-date: 2026-02-11
+date: 2026-02-24
 type: technical_reference
 topics:
   - Q story
@@ -13,6 +13,12 @@ topics:
   - network deployment
   - consumer crypto
   - alternative thesis
+  - QNS
+  - QQ
+  - QPing
+  - QConsole
+  - QStorage
+  - QKMS
 ---
 
 # Quilibrium Story, Vision & Application Deployment
@@ -41,7 +47,9 @@ Quilibrium's development has followed a deliberate progression from concept to m
 
 **Ethereum Bridge (May 2024):** First version of the bridge allowing early node runners to claim tokens as wrapped $QUIL ($wQUIL).
 
-**Midnight / Mainnet (Q4 2024 - Q1 2025):** Mainnet deployed on a single shard with automatic reward minting. Users can permissionlessly split, consolidate, query, and transfer tokens. Quorum Messenger launched as the first live application. Transactions became fully encrypted. The network transitioned to multi-shard operation. First Q APIs deployed: QStorage, QKMS, and QConsole.
+**Midnight / Mainnet — Q4 2025:** First stage of mainnet deployed on a single shard with automatic reward minting. Users can permissionlessly split, consolidate, query, and transfer tokens. Quorum Messenger desktop app launched as the first live application on Quilibrium.
+
+**Midnight / Mainnet — Q1 2026:** Final phase of Dusk entering full stealth mode. Transactions are fully encrypted between users. The network transitions to multi-shard operation and developers can permissionlessly deploy applications, transmit, and stream data. Launch of Quilibrium Names Service (QNS). Quorum Messenger mobile apps deployed in testing phase. First Q APIs deployed and launched via QConsole: QStorage (S3-compatible decentralized storage), QKMS (key management), QQ (SQS-compatible queues), and QPing (SNS-compatible notifications with webhook and QQ integration).
 
 ## Future Roadmap: Equinox and Event Horizon
 
@@ -197,9 +205,20 @@ Costs are determined by a dynamic fee market. Use `qclient deploy application.qc
 A global entropy gathering event in 2023 that ensured the security of the network's cryptographic proofs. Participants from nearly all non-embargoed countries contributed, with roughly double the contributions Ethereum received for their ceremony.
 
 **What is Quorum Messenger?**
-The first application deployed on Quilibrium. Originally conceived as "Howler" (a private Discord alternative), it evolved into Quorum Messenger and launched on mainnet in Q4 2024. Mobile apps entered testing in Q1 2025.
+The first application deployed on Quilibrium. Originally conceived as "Howler" (a private Discord alternative), it evolved into Quorum Messenger. The desktop app launched on mainnet in Q4 2025. Mobile apps entered testing in Q1 2026.
 
 **What are the current performance metrics?**
 Single slot finality BFT with over 26,000 nodes, approximately 54 MHz compute speed per shard via FERET oblivious transfer circuits, 19 kilobytes for global consensus, and storage addressing capacity exceeding the number of atoms in the universe.
 
-*Last updated: 2026-02-11T15:00:00*
+**What APIs are available on Quilibrium?**
+As of Q1 2026, the following Q APIs are available via QConsole:
+
+- **QStorage** — Decentralized S3-compatible storage built to compete directly with AWS S3, without the egress fees that usually come with it.
+- **QKMS** — Quilibrium Key Management System, a drop-in solution for applications and infrastructure providers to manage multi-party keys securely without introducing single points of failure.
+- **QQ** — Decentralized SQS-compatible queues supporting both standard and FIFO modes.
+- **QPing** — Decentralized SNS-compatible notifications API with support for webhook invocation and QQ integration.
+
+**What is QNS?**
+QNS (Quilibrium Names Service) is a naming system launched in Q1 2026 that provides human-readable names on the Quilibrium network, similar to how DNS maps domain names to IP addresses.
+
+*Last updated: 2026-02-24T15:00:00*
