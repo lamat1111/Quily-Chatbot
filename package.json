@@ -1,6 +1,6 @@
 {
   "name": "workspace",
-  "version": "1.0.0",
+  "version": "0.13.0",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",

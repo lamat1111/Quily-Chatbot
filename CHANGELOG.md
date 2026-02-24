@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-02-24
+
+### Features
+
+- add companion doc impact detection to sync-docs pipeline ([2412fca](https://github.com/lamat1111/Quily-Chatbot/commit/2412fca))
+- add focused eval suite with multi-turn conversation support ([8443cb1](https://github.com/lamat1111/Quily-Chatbot/commit/8443cb1))
+- add manual judgment mode and auto-start to eval harness ([39d705c](https://github.com/lamat1111/Quily-Chatbot/commit/39d705c))
+- add QA evaluation harness for response quality testing ([058867f](https://github.com/lamat1111/Quily-Chatbot/commit/058867f))
+- add Geist font family for body text and code ([cf13fd3](https://github.com/lamat1111/Quily-Chatbot/commit/cf13fd3))
+- add product vs protocol distinction to system prompt ([9226892](https://github.com/lamat1111/Quily-Chatbot/commit/9226892))
+
+### Bug Fixes
+
+- track synced docs in repo so GitHub Actions automation commits persist ([feb4325](https://github.com/lamat1111/Quily-Chatbot/commit/feb4325))
+- correct manifest path and permissions in sync-docs workflow ([63e5755](https://github.com/lamat1111/Quily-Chatbot/commit/63e5755))
+
+### Documentation
+
+- rebuild companion docs after upstream run-node restructure ([564a6cf](https://github.com/lamat1111/Quily-Chatbot/commit/564a6cf))
+- update Hypersnap background and replace Web3 Galaxy Brain transcript ([62edc7d](https://github.com/lamat1111/Quily-Chatbot/commit/62edc7d))
+- add IAM policy guide to QStorage user doc ([9b318f1](https://github.com/lamat1111/Quily-Chatbot/commit/9b318f1))
+- reconcile QStorage companion doc with updated official docs ([250fa83](https://github.com/lamat1111/Quily-Chatbot/commit/250fa83))
+- add 13 RAG companion docs covering all identified gaps ([3884267](https://github.com/lamat1111/Quily-Chatbot/commit/3884267))
+- add standalone QCL reference for RAG knowledge base ([8fd3e03](https://github.com/lamat1111/Quily-Chatbot/commit/8fd3e03))
+
 ## [0.12.0] - 2026-02-10
 
 ### Features
