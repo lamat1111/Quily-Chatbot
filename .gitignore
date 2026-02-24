@@ -93,8 +93,8 @@ env/
 credentials.json
 secrets.json
 
-# Synced documentation (pulled from GitHub, not committed)
-docs/quilibrium-official/
+# Synced documentation manifest is committed for incremental sync
+# docs/quilibrium-official/ is tracked so GitHub Actions commits stay in sync
 
 # Next.js
 .next/

@@ -44,7 +44,7 @@ The Quilibrium Assistant uses a Retrieval Augmented Generation (RAG) system to p
 │                    Documentation Sources                 │
 ├─────────────────────────────────────────────────────────┤
 │  GitHub Repo ──sync-docs──▶ ./docs/quilibrium-official/ │
-│  (QuilibriumNetwork/docs)   (gitignored, not committed) │
+│  (QuilibriumNetwork/docs)   (committed to repo)         │
 │                                                         │
 │  Manual Uploads ──────────▶ ./docs/transcriptions/      │
 │  (transcriptions, etc.)     ./docs/custom/              │
@@ -110,10 +110,10 @@ docs/
 │   │   └── 02-FAQ.md
 │   ├── learn/
 │   └── .sync-manifest.json       ← Tracks GitHub-synced files
-├── transcriptions/               ← Manual uploads (committed)
+├── transcriptions/               ← Manual uploads
 │   ├── x-space-april-2025.txt
 │   └── live-stream-notes.txt
-└── custom/                       ← Manual uploads (committed)
+└── custom/                       ← Manual uploads
     └── Quilibrium Architecture.md
 ```
 
@@ -121,7 +121,7 @@ docs/
 
 | Folder | Source | Git Status | Purpose |
 |--------|--------|------------|---------|
-| `quilibrium-official/` | GitHub sync | Gitignored | Official docs from QuilibriumNetwork/docs repo |
+| `quilibrium-official/` | GitHub sync | Committed (via automation) | Official docs from QuilibriumNetwork/docs repo |
 | `transcriptions/` | Manual upload | Committed | Video/audio transcriptions, AMAs |
 | `custom/` | Manual upload | Committed | Custom docs, architecture notes, etc. |
 
@@ -309,7 +309,7 @@ yarn sync-docs verify
 1. **Fetches file list** from GitHub API (`QuilibriumNetwork/docs` repo)
 2. **Compares** against local `.sync-manifest.json` in `docs/quilibrium-official/`
 3. **Downloads** only new/modified files to `docs/quilibrium-official/`
-4. **Synced files are gitignored** - each deployment pulls fresh from GitHub
+4. **Synced files are committed** — the GitHub Actions workflow pushes updates to the repo daily
 
 ### Manual Files
 

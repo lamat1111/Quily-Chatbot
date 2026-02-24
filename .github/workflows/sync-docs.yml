@@ -46,13 +46,13 @@ jobs:
           CHUTES_API_KEY: ${{ secrets.CHUTES_API_KEY }}
         run: yarn sync-docs sync --ingest
 
-      - name: Commit updated manifest
+      - name: Commit synced docs and manifest
         if: steps.check.outputs.has_changes == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
-          git add docs/
+          git add docs/quilibrium-official/
           git diff --staged --quiet || git commit -m "docs: sync Quilibrium documentation (automated daily)"
           git push
 
