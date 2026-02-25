@@ -29,8 +29,10 @@ jobs:
 
       - name: Check for documentation changes
         id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          OUTPUT=$(yarn sync-docs status 2>&1)
+          OUTPUT=$(yarn sync-docs status 2>&1) || true
           echo "$OUTPUT"
           if echo "$OUTPUT" | grep -q "unchanged"; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -41,6 +43,7 @@ jobs:
       - name: Sync docs and run ingestion
         if: steps.check.outputs.has_changes == 'true'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           CHUTES_API_KEY: ${{ secrets.CHUTES_API_KEY }}
