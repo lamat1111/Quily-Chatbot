@@ -64,70 +64,51 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
+          # Random delay 0–45 minutes so activity doesn't always hit at the same time
+          DELAY=$((RANDOM % 2700))
+          echo "Waiting ${DELAY}s before keepalive (~$((DELAY / 60))m)..."
+          sleep $DELAY
+
           API="${SUPABASE_URL}/rest/v1"
           AUTH=(-H "apikey: ${SUPABASE_SERVICE_KEY}" -H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}")
-
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-          # 1. Read: count RAG chunks
-          curl -sf "${API}/document_chunks_chutes?select=id&limit=1" \
-            "${AUTH[@]}" -H "Prefer: count=exact" -o /dev/null
-          echo "1/10 — RAG chunk count query"
+          # Pool of operations — we'll shuffle and run 10+ each day
+          # Each function does one DB operation
+          op_chunk_count()  { curl -sf "${API}/document_chunks_chutes?select=id&limit=1" "${AUTH[@]}" -H "Prefer: count=exact" -o /dev/null && echo "op — RAG chunk count"; }
+          op_latest()       { curl -sf "${API}/document_chunks_chutes?select=id,source_file,created_at&order=created_at.desc&limit=$((RANDOM % 5 + 1))" "${AUTH[@]}" -o /dev/null && echo "op — latest chunks (random limit)"; }
+          op_doc_types()    { curl -sf "${API}/document_chunks_chutes?select=doc_type&limit=$((RANDOM % 10 + 1))" "${AUTH[@]}" -o /dev/null && echo "op — doc types sample"; }
+          op_sources()      { curl -sf "${API}/document_chunks_chutes?select=source_file&limit=$((RANDOM % 8 + 1))&order=source_file" "${AUTH[@]}" -o /dev/null && echo "op — source files sample"; }
+          op_oldest()       { curl -sf "${API}/document_chunks_chutes?select=id,title&order=created_at.asc&limit=$((RANDOM % 3 + 1))" "${AUTH[@]}" -o /dev/null && echo "op — oldest chunks"; }
+          op_by_heading()   { curl -sf "${API}/document_chunks_chutes?select=id,heading_path&limit=$((RANDOM % 5 + 1))&order=id.desc" "${AUTH[@]}" -o /dev/null && echo "op — heading paths"; }
+          op_token_stats()  { curl -sf "${API}/document_chunks_chutes?select=token_count&order=token_count.desc&limit=$((RANDOM % 3 + 1))" "${AUTH[@]}" -o /dev/null && echo "op — token count stats"; }
+          op_random_offset(){ curl -sf "${API}/document_chunks_chutes?select=id,title&limit=1&offset=$((RANDOM % 50))" "${AUTH[@]}" -o /dev/null && echo "op — random offset read"; }
+          op_write_ping1()  { curl -sf "${API}/keepalive_pings" "${AUTH[@]}" -H "Content-Type: application/json" -H "Prefer: resolution=merge-duplicates" -d "{\"id\": 1, \"pinged_at\": \"${NOW}\", \"source\": \"github-actions\"}" -o /dev/null && echo "op — write ping row 1"; }
+          op_write_ping2()  { curl -sf "${API}/keepalive_pings" "${AUTH[@]}" -H "Content-Type: application/json" -H "Prefer: resolution=merge-duplicates" -d "{\"id\": 2, \"pinged_at\": \"${NOW}\", \"source\": \"streak\"}" -o /dev/null && echo "op — write ping row 2"; }
+          op_read_ping1()   { curl -sf "${API}/keepalive_pings?id=eq.1&select=pinged_at,source" "${AUTH[@]}" -o /dev/null && echo "op — read ping row 1"; }
+          op_read_ping2()   { curl -sf "${API}/keepalive_pings?id=eq.2&select=pinged_at,source" "${AUTH[@]}" -o /dev/null && echo "op — read ping row 2"; }
+          op_read_all_pings(){ curl -sf "${API}/keepalive_pings?select=*&order=id" "${AUTH[@]}" -o /dev/null && echo "op — read all pings"; }
+          op_published()    { curl -sf "${API}/document_chunks_chutes?select=id,published_date&order=published_date.desc.nullslast&limit=$((RANDOM % 4 + 1))" "${AUTH[@]}" -o /dev/null && echo "op — published dates"; }
 
-          # 2. Read: fetch latest chunk metadata
-          curl -sf "${API}/document_chunks_chutes?select=id,source_file,created_at&order=created_at.desc&limit=3" \
-            "${AUTH[@]}" -o /dev/null
-          echo "2/10 — Latest chunks query"
+          # Always run writes first to ensure the table has data
+          op_write_ping1
+          op_write_ping2
 
-          # 3. Read: distinct doc types
-          curl -sf "${API}/document_chunks_chutes?select=doc_type&limit=10" \
-            "${AUTH[@]}" -o /dev/null
-          echo "3/10 — Doc types query"
+          # Shuffle remaining ops and pick 8–12 to run
+          OPS=(op_chunk_count op_latest op_doc_types op_sources op_oldest op_by_heading op_token_stats op_random_offset op_read_ping1 op_read_ping2 op_read_all_pings op_published)
+          SHUFFLED=($(shuf -e "${OPS[@]}"))
+          RUN_COUNT=$((RANDOM % 5 + 8))
 
-          # 4. Read: distinct source files sample
-          curl -sf "${API}/document_chunks_chutes?select=source_file&limit=5&order=source_file" \
-            "${AUTH[@]}" -o /dev/null
-          echo "4/10 — Source files query"
+          COUNT=2  # already ran 2 writes
+          for op in "${SHUFFLED[@]}"; do
+            [ $COUNT -ge $((RUN_COUNT + 2)) ] && break
+            # Random micro-delay between ops (0–3s)
+            sleep $((RANDOM % 4))
+            $op
+            COUNT=$((COUNT + 1))
+          done
 
-          # 5. Write: upsert keepalive row 1 (current ping)
-          curl -sf "${API}/keepalive_pings" \
-            "${AUTH[@]}" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: resolution=merge-duplicates" \
-            -d "{\"id\": 1, \"pinged_at\": \"${NOW}\", \"source\": \"github-actions\"}" \
-            -o /dev/null
-          echo "5/10 — Keepalive row 1 upserted"
-
-          # 6. Write: upsert keepalive row 2 (streak counter)
-          curl -sf "${API}/keepalive_pings" \
-            "${AUTH[@]}" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: resolution=merge-duplicates" \
-            -d "{\"id\": 2, \"pinged_at\": \"${NOW}\", \"source\": \"streak\"}" \
-            -o /dev/null
-          echo "6/10 — Keepalive row 2 upserted"
-
-          # 7. Read: verify row 1
-          curl -sf "${API}/keepalive_pings?id=eq.1&select=pinged_at,source" \
-            "${AUTH[@]}" -o /dev/null
-          echo "7/10 — Row 1 read-back"
-
-          # 8. Read: verify row 2
-          curl -sf "${API}/keepalive_pings?id=eq.2&select=pinged_at,source" \
-            "${AUTH[@]}" -o /dev/null
-          echo "8/10 — Row 2 read-back"
-
-          # 9. Read: fetch all keepalive rows
-          curl -sf "${API}/keepalive_pings?select=*&order=id" \
-            "${AUTH[@]}" -o /dev/null
-          echo "9/10 — Full keepalive table read"
-
-          # 10. Read: search RAG chunks by recent date
-          curl -sf "${API}/document_chunks_chutes?select=id,title&order=created_at.desc&limit=1&offset=0" \
-            "${AUTH[@]}" -o /dev/null
-          echo "10/10 — Recent RAG entry query"
-
-          echo "Keepalive complete: 10 operations at ${NOW}"
+          echo "Keepalive complete: ${COUNT} operations at ${NOW}"
 
       - name: Summary
         run: |
