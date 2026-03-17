@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { registerMentionHandler } from './handlers/mention';
 
-const requiredEnvVars = ['DISCORD_BOT_TOKEN', 'OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+const requiredEnvVars = ['DISCORD_BOT_TOKEN', 'OPENROUTER_API_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
 for (const key of requiredEnvVars) {
   if (!process.env[key]) {
     console.error(`Missing required environment variable: ${key}`);
