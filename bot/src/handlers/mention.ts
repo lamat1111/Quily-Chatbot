@@ -1,7 +1,7 @@
 import type { Client, Message } from 'discord.js';
 import { processQuery } from '../../../src/lib/rag/service';
 import { checkRateLimit, recordRequest } from '../utils/rateLimiter';
-import { getHistory, addExchange } from '../utils/memory';
+import { getHistory, getLastChunkIds, addExchange } from '../utils/memory';
 import { chunkMessage } from '../utils/messageChunker';
 import { formatForDiscord } from '../formatter';
 
@@ -49,10 +49,12 @@ export function registerMentionHandler(client: Client): void {
       const typingPromise = sendTyping();
 
       const history = getHistory(message.author.id, message.channelId);
+      const priorityDocIds = getLastChunkIds(message.author.id, message.channelId);
 
       const queryPromise = processQuery({
         query,
         conversationHistory: history,
+        priorityDocIds,
         llmProvider: 'openrouter',
         llmApiKey: process.env.OPENROUTER_API_KEY,
         embeddingProvider: 'openrouter',
@@ -79,7 +81,8 @@ export function registerMentionHandler(client: Client): void {
         }
       }
 
-      addExchange(message.author.id, message.channelId, query, result.text);
+      const chunkIds = result.sources.map((s) => s.id);
+      addExchange(message.author.id, message.channelId, query, result.text, chunkIds);
 
     } catch (error: unknown) {
       typing = false;
