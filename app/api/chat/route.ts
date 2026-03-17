@@ -5,12 +5,12 @@ import {
 } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createChutes } from '@chutes-ai/ai-sdk-provider';
-import { retrieveWithReranking } from '@/src/lib/rag/retriever';
 import {
-  buildContextBlock,
-  buildSystemPrompt,
-  formatSourcesForClient,
-} from '@/src/lib/rag/prompt';
+  prepareQuery,
+  isInstructionFollowingModel,
+  LOW_RELEVANCE_FALLBACK_RESPONSE,
+} from '@/src/lib/rag/service';
+import type { RetrievedChunk, SourceReference } from '@/src/lib/rag/types';
 import { parseFollowUpQuestions } from '@/src/lib/rag/followUpParser';
 import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
 import { getOAuthConfig, refreshTokens, checkChutesBalance } from '@/src/lib/chutesAuth';
@@ -94,35 +94,6 @@ function isCreditsError(errorMsg: string): boolean {
   );
 }
 
-/**
- * Models known to follow system prompt instructions reliably
- * These models can be trusted to say "I don't know" when RAG quality is low
- */
-const INSTRUCTION_FOLLOWING_MODELS = [
-  'anthropic/', // All Claude models
-  'google/',    // All Gemini models
-  'openai/',    // All GPT models
-];
-
-/**
- * Check if a model is known to follow instructions reliably
- */
-function isInstructionFollowingModel(model: string): boolean {
-  return INSTRUCTION_FOLLOWING_MODELS.some(prefix => model.startsWith(prefix));
-}
-
-/**
- * Canned response for low-relevance queries on models that don't follow instructions well
- */
-const LOW_RELEVANCE_FALLBACK_RESPONSE = `I don't have specific documentation about that topic in my knowledge base.
-
-While Quilibrium supports various capabilities including token operations, compute deployment via QCL, and hypergraph storage, I don't have the detailed instructions for what you're asking about.
-
-For the most accurate and up-to-date information, please check:
-- **Official Documentation**: https://docs.quilibrium.com
-- **Community Channels**: The Quilibrium Discord community can help with specific questions
-
-Is there something else about Quilibrium I can help you with?`;
 
 /**
  * Command responses for Quily assistant
@@ -668,29 +639,31 @@ export async function POST(request: Request) {
           status: 'active',
         });
 
-        let chunks: Awaited<ReturnType<typeof retrieveWithReranking>> = [];
+        let chunks: RetrievedChunk[] = [];
         let systemPrompt = 'You are a helpful assistant that answers questions about Quilibrium.';
         let ragQuality: 'high' | 'low' | 'none' = 'none';
+        let formattedSources: SourceReference[] = [];
 
         try {
           if (embeddingProvider === 'openrouter' && !openrouterKey) {
             console.warn('Skipping RAG retrieval: OpenRouter API key missing for embeddings.');
           } else {
-            chunks = await retrieveWithReranking(userQuery, {
-              embeddingProvider,
+            const prepared = await prepareQuery({
+              query: userQuery,
+              conversationHistory: [],
+              embeddingProvider: embeddingProvider as 'openrouter' | 'chutes',
               embeddingApiKey: embeddingProvider === 'openrouter' ? openrouterKey || undefined : undefined,
               chutesAccessToken: embeddingProvider === 'chutes' ? chutesAccessToken || undefined : undefined,
               embeddingModel,
               cohereApiKey: process.env.COHERE_API_KEY,
               priorityDocIds,
             });
+
+            ({ systemPrompt, retrievedChunks: chunks, ragQuality, sources: formattedSources } = prepared);
+            console.log(
+              `RAG retrieval: ${chunks.length} chunks, quality=${ragQuality}, avgSimilarity=${prepared.avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
+            );
           }
-          const { context, quality, avgSimilarity } = buildContextBlock(chunks);
-          ragQuality = quality;
-          console.log(
-            `RAG retrieval: ${chunks.length} chunks, quality=${quality}, avgSimilarity=${avgSimilarity.toFixed(3)}, model=${model}, provider=${provider}`
-          );
-          systemPrompt = buildSystemPrompt(context, chunks.length);
 
           // Step 1 complete
           writeStatus(writer, {
@@ -724,7 +697,7 @@ export async function POST(request: Request) {
           content: getMessageContent(m),
         }));
 
-        const sources = formatSourcesForClient(chunks);
+        const sources = formattedSources;
 
         // Chutes provider uses older @ai-sdk/provider versions incompatible with AI SDK v6's
       // toUIMessageStream(). Manually stream text to maintain proper text-start/delta/end protocol.
