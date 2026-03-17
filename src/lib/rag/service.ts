@@ -83,11 +83,24 @@ export async function prepareQuery(options: PrepareQueryOptions): Promise<Prepar
   };
 }
 
+// Fallback models to try if the primary model fails.
+// Configurable via BOT_FALLBACK_MODELS env var (comma-separated), or uses these defaults.
+const DEFAULT_FALLBACK_MODELS = [
+  'qwen/qwen3-32b',
+  'mistralai/mistral-small-3.2-24b-instruct',
+];
+
+function getFallbackModels(): string[] {
+  const envModels = process.env.BOT_FALLBACK_MODELS;
+  if (envModels) return envModels.split(',').map((m) => m.trim()).filter(Boolean);
+  return DEFAULT_FALLBACK_MODELS;
+}
+
 export async function processQuery(options: PrepareQueryOptions): Promise<ProcessQueryResult> {
   const prepared = await prepareQuery(options);
-  const model = options.model || process.env.BOT_MODEL || 'deepseek/deepseek-chat-v3-0324';
+  const primaryModel = options.model || process.env.BOT_MODEL || 'deepseek/deepseek-chat-v3-0324';
 
-  if (prepared.ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
+  if (prepared.ragQuality !== 'high' && !isInstructionFollowingModel(primaryModel)) {
     return {
       text: LOW_RELEVANCE_FALLBACK_RESPONSE,
       sources: [],
@@ -102,17 +115,30 @@ export async function processQuery(options: PrepareQueryOptions): Promise<Proces
 
   const provider = createOpenRouter({ apiKey: options.llmApiKey });
 
-  const result = await generateText({
-    model: provider(model),
-    system: prepared.systemPrompt,
-    messages,
-  });
+  // Try primary model, then fallbacks on failure
+  const modelsToTry = [primaryModel, ...getFallbackModels()];
+  let lastError: unknown;
 
-  const { cleanText, questions } = parseFollowUpQuestions(result.text);
+  for (const model of modelsToTry) {
+    try {
+      const result = await generateText({
+        model: provider(model),
+        system: prepared.systemPrompt,
+        messages,
+      });
 
-  return {
-    text: cleanText,
-    sources: prepared.sources,
-    followUpQuestions: questions,
-  };
+      const { cleanText, questions } = parseFollowUpQuestions(result.text);
+
+      return {
+        text: cleanText,
+        sources: prepared.sources,
+        followUpQuestions: questions,
+      };
+    } catch (error) {
+      lastError = error;
+      console.error(`Model ${model} failed, ${modelsToTry.indexOf(model) < modelsToTry.length - 1 ? 'trying next fallback...' : 'no more fallbacks'}`);
+    }
+  }
+
+  throw lastError;
 }
