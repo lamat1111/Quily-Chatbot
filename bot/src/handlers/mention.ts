@@ -1,5 +1,5 @@
 import type { Client, Message } from 'discord.js';
-import { processQuery } from '@/lib/rag/service';
+import { processQuery } from '../../../src/lib/rag/service';
 import { checkRateLimit, recordRequest } from '../utils/rateLimiter';
 import { getHistory, addExchange } from '../utils/memory';
 import { chunkMessage } from '../utils/messageChunker';

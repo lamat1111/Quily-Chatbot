@@ -8,10 +8,8 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   splitting: false,
-  noExternal: [/(.*)/],
-  external: ['discord.js', '@discordjs/rest', '@discordjs/ws'],
   platform: 'node',
-  alias: {
-    '@/lib': '../src/lib',
-  },
+  // Bundle the shared src/lib/ code into the output.
+  // npm packages stay external (resolved from node_modules at runtime).
+  noExternal: [/^\.\.\/.*src\/lib\//],
 });

@@ -1,4 +1,4 @@
-import type { SourceReference } from '@/lib/rag/types';
+import type { SourceReference } from '../../src/lib/rag/types';
 
 export function formatForDiscord(text: string, sources: SourceReference[], maxSources: number = 3): string {
   let formatted = text;
