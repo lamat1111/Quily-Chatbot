@@ -39,7 +39,7 @@ export function registerMentionHandler(client: Client): void {
       const sendTyping = async () => {
         while (typing) {
           try {
-            await message.channel.sendTyping();
+            if ('sendTyping' in message.channel) await message.channel.sendTyping();
           } catch {
             // Channel may become unavailable
           }
@@ -74,7 +74,7 @@ export function registerMentionHandler(client: Client): void {
       for (let i = 0; i < chunks.length; i++) {
         if (i === 0) {
           await message.reply(chunks[i]);
-        } else {
+        } else if ('send' in message.channel) {
           await message.channel.send(chunks[i]);
         }
       }

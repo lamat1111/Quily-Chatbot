@@ -40,6 +40,7 @@
     "node_modules",
     "Sign-in-with-Chutes",
     ".tmp-chutes",
-    ".tmp-chutes2"
+    ".tmp-chutes2",
+    "bot"
   ]
 }
