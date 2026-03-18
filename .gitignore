@@ -113,6 +113,12 @@ CLAUDE.md
 .claude/get-shit-done/
 .claude/hooks/
 
+# VPS local config (contains IP, connection details)
+.vps/config.local.md
+
+# VPS ops skill (committed, but local config is not)
+.claude/skills/vps-ops/config.local.md
+
 # MCP config (local dev tool)
 .mcp.json
 
