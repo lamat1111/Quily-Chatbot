@@ -27,18 +27,45 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Sync Discord announcements
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_IDS: ${{ secrets.DISCORD_CHANNEL_IDS }}
+        run: |
+          if [ -n "$DISCORD_BOT_TOKEN" ] && [ -n "$DISCORD_CHANNEL_IDS" ]; then
+            yarn sync-discord sync
+          else
+            echo "Discord secrets not configured, skipping"
+          fi
+
       - name: Check for documentation changes
         id: check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Check for upstream doc changes
           OUTPUT=$(yarn sync-docs status 2>&1) || true
           echo "$OUTPUT"
           if echo "$OUTPUT" | grep -q "unchanged"; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
+            DOCS_CHANGED="false"
           else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
+            DOCS_CHANGED="true"
           fi
+
+          # Check for Discord file changes (written by previous step)
+          if [ -n "$(git status --porcelain docs/discord-announcements/ .discord-manifest.json 2>/dev/null)" ]; then
+            DISCORD_CHANGED="true"
+          else
+            DISCORD_CHANGED="false"
+          fi
+
+          if [ "$DOCS_CHANGED" = "true" ] || [ "$DISCORD_CHANGED" = "true" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          echo "Docs changed: $DOCS_CHANGED, Discord changed: $DISCORD_CHANGED"
 
       - name: Sync docs and run ingestion
         if: steps.check.outputs.has_changes == 'true'
@@ -56,7 +83,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
           git add docs/quilibrium-official/
-          git diff --staged --quiet || git commit -m "docs: sync Quilibrium documentation (automated daily)"
+          git add docs/discord-announcements/ || true
+          git add .discord-manifest.json || true
+          git diff --staged --quiet || git commit -m "docs: sync documentation and announcements (automated daily)"
           git push
 
       - name: Summary
