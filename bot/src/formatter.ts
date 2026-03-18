@@ -75,6 +75,8 @@ export function formatForDiscord(text: string, sources: SourceReference[], maxSo
     formatted += `\n\n**Sources:**\n${sourceLines.join('\n')}`;
   }
 
+  formatted += '\n\n-# *I can make mistakes · always verify with official docs*';
+
   return formatted;
 }
 
