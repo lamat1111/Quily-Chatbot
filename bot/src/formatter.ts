@@ -56,10 +56,18 @@ export function formatForDiscord(text: string, sources: SourceReference[], maxSo
     const topSources = sources.slice(0, maxSources);
     const sourceLines = topSources.map((s) => {
       const label = getSourceTypeLabel(s);
-      const title = s.doc_type === 'livestream_transcript'
-        ? 'Livestream'
-        : (s.title || s.file);
+      const isLivestream = s.doc_type === 'livestream_transcript';
       const url = s.url;
+
+      if (isLivestream) {
+        // For livestreams: label already says "Livestream", so just show date + URL
+        const date = s.published_date || '';
+        return url
+          ? `• **${label}${date ? ` (${date})` : ''}:** <${url}>`
+          : `• **${label}${date ? ` (${date})` : ''}**`;
+      }
+
+      const title = s.title || s.file;
       return url
         ? `• **${label}:** ${title} — <${url}>`
         : `• **${label}:** ${title}`;
