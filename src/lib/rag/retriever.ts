@@ -471,10 +471,24 @@ export async function retrieveWithReranking(
   let reservedTemporalChunks: typeof candidates = [];
 
   if (isTemporalQuery(query)) {
-    // If the user is asking about livestreams specifically, only fetch recent livestreams
-    // Otherwise comparison docs, FAQs etc. from later dates would fill the reserved slots
-    const docTypeFilter = isLivestreamQuery(query) ? 'livestream_transcript' : undefined;
-    const recentChunks = await fetchRecentChunks(3, docTypeFilter);
+    // If the user is asking about livestreams specifically, only fetch recent livestreams.
+    // For generic temporal queries ("what's the latest?"), fetch a mix: the 2 most recent
+    // docs of any type + 1 most recent livestream. Livestreams are the primary "news"
+    // content, so always including one prevents comparison docs from crowding them out.
+    let recentChunks: Awaited<ReturnType<typeof fetchRecentChunks>>;
+
+    if (isLivestreamQuery(query)) {
+      recentChunks = await fetchRecentChunks(3, 'livestream_transcript');
+    } else {
+      const [genericRecent, livestreamRecent] = await Promise.all([
+        fetchRecentChunks(2),
+        fetchRecentChunks(1, 'livestream_transcript'),
+      ]);
+      // Merge, deduplicating by source_file (livestream might already be in generic results)
+      const seenFiles = new Set(genericRecent.map(c => c.source_file));
+      const extra = livestreamRecent.filter(c => !seenFiles.has(c.source_file));
+      recentChunks = [...genericRecent, ...extra];
+    }
 
     // Remove any recent chunks that already exist in candidates (avoid duplicates)
     const existingIds = new Set(candidates.map((c: { id: number }) => c.id));
