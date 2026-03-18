@@ -110,7 +110,7 @@ export async function chunkDocuments(
       const headingPath = findHeadingPath(chunkStart, doc.content, headingMap);
 
       // Extract metadata from frontmatter
-      const sourceUrl = doc.frontmatter?.youtube_url as string | undefined;
+      const sourceUrl = (doc.frontmatter?.source_url || doc.frontmatter?.youtube_url) as string | undefined;
       const title = doc.frontmatter?.title as string | undefined;
       const docType = doc.frontmatter?.type as string | undefined;
       // Handle date as string (YAML dates may be parsed as Date objects or strings)

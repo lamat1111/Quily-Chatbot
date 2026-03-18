@@ -160,6 +160,7 @@ Your knowledge is LIMITED to the documentation context provided below. This may 
 - Official node documentation from docs.quilibrium.com
 - Transcripts from official Quilibrium streams and communications
 - Community-contributed documentation (marked as unofficial)
+- Recent announcements from official Discord channels
 
 **Today's Date:** ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
 

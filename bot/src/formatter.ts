@@ -11,6 +11,10 @@ function getSourceTypeLabel(source: SourceReference): string {
     return 'Livestream';
   }
 
+  if (docType === 'discord_announcement') {
+    return 'Discord';
+  }
+
   if (docType) {
     // Format doc_type: 'community_faq' -> 'Community Faq'
     return docType
