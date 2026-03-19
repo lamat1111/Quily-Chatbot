@@ -1,6 +1,8 @@
 import type { Client, Message } from 'discord.js';
 import { processQuery } from '../../../src/lib/rag/service';
 import { checkRateLimit, recordRequest } from '../utils/rateLimiter';
+import { checkIssueRateLimit, recordIssueCreation } from '../utils/issueRateLimiter';
+import { createGitHubIssue } from '../utils/githubIssues';
 import { getHistory, getLastChunkIds, addExchange } from '../utils/memory';
 import { chunkMessage } from '../utils/messageChunker';
 import { formatForDiscord } from '../formatter';
@@ -111,7 +113,51 @@ export function registerMentionHandler(client: Client): void {
 
       typing = false;
 
-      const formatted = formatForDiscord(result.text, result.sources);
+      // If model produced only a tool call with no text, provide a default
+      let responseText = result.text || 'Thanks for the correction!';
+
+      // Handle auto-correction tool call
+      if (result.toolCalls?.length) {
+        const issueCall = result.toolCalls.find(
+          (tc) => tc.toolName === 'create_knowledge_issue',
+        );
+        if (issueCall && history.length >= 2) {
+          const memberRoles =
+            message.member?.roles.cache.map((r) => r.id) || [];
+          const limitStatus = checkIssueRateLimit(
+            message.author.id,
+            memberRoles,
+          );
+
+          if (
+            limitStatus === 'ok' &&
+            issueCall.input.title &&
+            issueCall.input.correction
+          ) {
+            try {
+              const issueUrl = await createGitHubIssue({
+                title: issueCall.input.title,
+                correction: issueCall.input.correction,
+                discordUsername:
+                  message.member?.displayName || message.author.username,
+                originalQuestion: history[history.length - 2].content,
+                quilyAnswer: history[history.length - 1].content,
+              });
+              recordIssueCreation(message.author.id);
+              console.log(
+                `[auto-issue] Created ${issueUrl} from ${message.author.username}`,
+              );
+              responseText +=
+                `\n\n*I've opened a [GitHub issue](${issueUrl}) with your correction for the maintainers to review. Thanks for helping me get smarter.*`;
+            } catch (err) {
+              console.error('[auto-issue] Failed to create GitHub issue:', err);
+              // Silent failure — response still works normally
+            }
+          }
+        }
+      }
+
+      const formatted = formatForDiscord(responseText, result.sources);
 
       const chunks = chunkMessage(formatted);
       for (let i = 0; i < chunks.length; i++) {
