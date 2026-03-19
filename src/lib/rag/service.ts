@@ -5,6 +5,7 @@ import { retrieveWithReranking } from './retriever';
 import { buildContextBlock, buildSystemPrompt, formatSourcesForClient } from './prompt';
 import { normalizeQuery } from './queryNormalizer';
 import { parseFollowUpQuestions } from './followUpParser';
+import { ragTools } from './tools';
 import type { RetrievedChunk, RetrievalOptions, SourceReference } from './types';
 import type { RelevanceQuality } from './prompt';
 
@@ -35,6 +36,7 @@ export interface ProcessQueryResult {
   text: string;
   sources: SourceReference[];
   followUpQuestions: string[] | null;
+  toolCalls: Array<{ toolName: string; input: Record<string, string> }>;
 }
 
 export async function prepareQuery(options: PrepareQueryOptions): Promise<PreparedQuery> {
@@ -128,15 +130,22 @@ export async function processQuery(options: PrepareQueryOptions): Promise<Proces
         model: aiModel,
         system: prepared.systemPrompt,
         messages,
+        tools: ragTools,
       });
       console.log(`[processQuery] generateText (${model}) took ${Date.now() - t1}ms`);
 
       const { cleanText, questions } = parseFollowUpQuestions(result.text);
 
+      const toolCalls = (result.toolCalls || []).map((tc) => ({
+        toolName: tc.toolName,
+        input: tc.input as Record<string, string>,
+      }));
+
       return {
         text: cleanText,
         sources: prepared.sources,
         followUpQuestions: questions,
+        toolCalls,
       };
     } catch (error) {
       lastError = error;
