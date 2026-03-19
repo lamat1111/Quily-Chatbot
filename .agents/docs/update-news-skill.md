@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Update News Skill — Obsolescence Management"
+description: "The /update-news skill that finds and annotates outdated information in community docs, Discord scrapes, and transcripts"
 status: done
 ai_generated: true
 created: 2026-03-19

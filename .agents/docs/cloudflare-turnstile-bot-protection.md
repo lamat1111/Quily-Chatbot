@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Cloudflare Turnstile Bot Protection"
+description: "Invisible bot verification using Cloudflare Turnstile with session cookies, fail-open design, and client/server integration"
 status: done
 ai_generated: true
 reviewed_by: null

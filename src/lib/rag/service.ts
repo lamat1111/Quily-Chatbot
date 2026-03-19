@@ -8,26 +8,6 @@ import { parseFollowUpQuestions } from './followUpParser';
 import type { RetrievedChunk, RetrievalOptions, SourceReference } from './types';
 import type { RelevanceQuality } from './prompt';
 
-export const INSTRUCTION_FOLLOWING_MODELS = [
-  'anthropic/',
-  'google/',
-  'openai/',
-];
-
-export function isInstructionFollowingModel(model: string): boolean {
-  return INSTRUCTION_FOLLOWING_MODELS.some((prefix) => model.startsWith(prefix));
-}
-
-export const LOW_RELEVANCE_FALLBACK_RESPONSE = `I don't have specific documentation about that topic in my knowledge base.
-
-While Quilibrium supports various capabilities including token operations, compute deployment via QCL, and hypergraph storage, I don't have the detailed instructions for what you're asking about.
-
-For the most accurate and up-to-date information, please check:
-- **Official Documentation**: https://docs.quilibrium.com
-- **Community Channels**: The Quilibrium Discord community can help with specific questions
-
-Is there something else about Quilibrium I can help you with?`;
-
 export interface PrepareQueryOptions {
   query: string;
   conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>;
@@ -122,13 +102,10 @@ export async function processQuery(options: PrepareQueryOptions): Promise<Proces
   const defaultModel = llmProvider === 'chutes' ? CHUTES_DEFAULT_MODEL : OPENROUTER_DEFAULT_MODEL;
   const primaryModel = options.model || process.env.BOT_MODEL || defaultModel;
 
-  if (prepared.ragQuality !== 'high' && !isInstructionFollowingModel(primaryModel)) {
-    return {
-      text: LOW_RELEVANCE_FALLBACK_RESPONSE,
-      sources: [],
-      followUpQuestions: null,
-    };
-  }
+  // All queries go to the LLM — the personality and system prompt handle
+  // both casual interactions (jokes, banter) and low-relevance knowledge
+  // questions. The LOW RELEVANCE WARNING injected into the context block
+  // guards against hallucination on topics without good documentation.
 
   const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [
     ...options.conversationHistory,

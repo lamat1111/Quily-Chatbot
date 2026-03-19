@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Knowledge Update Pipeline — Processing GitHub Issues into Docs"
+description: "The /process-issues skill that triages open GitHub issues, verifies claims, applies changes to docs, and reingests into RAG"
 status: done
 ai_generated: true
 created: 2026-03-19

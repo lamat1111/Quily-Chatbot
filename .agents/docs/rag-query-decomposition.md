@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "RAG Query Decomposition"
+description: "Multi-entity query splitting into per-product sub-queries with Reciprocal Rank Fusion for broad or multi-topic retrieval"
 status: done
 ai_generated: true
 reviewed_by: "expert-panel-validated"

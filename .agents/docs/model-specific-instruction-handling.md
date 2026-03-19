@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Model-Specific Instruction Handling"
+description: "How frontier models (Claude/GPT/Gemini) vs open-source models are handled differently on low-relevance RAG results to prevent hallucination"
 status: done
 ai_generated: true
 reviewed_by: null

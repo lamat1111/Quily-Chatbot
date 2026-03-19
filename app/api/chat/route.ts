@@ -5,11 +5,7 @@ import {
 } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createChutes } from '@chutes-ai/ai-sdk-provider';
-import {
-  prepareQuery,
-  isInstructionFollowingModel,
-  LOW_RELEVANCE_FALLBACK_RESPONSE,
-} from '@/src/lib/rag/service';
+import { prepareQuery } from '@/src/lib/rag/service';
 import type { RetrievedChunk, SourceReference } from '@/src/lib/rag/types';
 import { parseFollowUpQuestions } from '@/src/lib/rag/followUpParser';
 import { normalizeQuery } from '@/src/lib/rag/queryNormalizer';
@@ -683,14 +679,9 @@ export async function POST(request: Request) {
           });
         }
 
-        // Check for low-relevance fallback on non-instruction-following models
-        if (ragQuality !== 'high' && !isInstructionFollowingModel(model)) {
-          const textId = 'fallback-response';
-          writer.write({ type: 'text-start', id: textId });
-          writer.write({ type: 'text-delta', id: textId, delta: LOW_RELEVANCE_FALLBACK_RESPONSE });
-          writer.write({ type: 'text-end', id: textId });
-          return;
-        }
+        // All queries go to the LLM — the personality and low-relevance
+        // warning in the context block handle both casual interactions and
+        // knowledge questions without documentation coverage.
 
         const llmMessages = messages.map((m: Record<string, unknown>) => ({
           role: getMessageRole(m),

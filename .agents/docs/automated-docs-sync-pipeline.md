@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Automated Documentation Sync Pipeline"
+description: "Daily GitHub Actions pipeline that syncs official docs, scrapes Discord announcements, and generates general channel recaps into the RAG knowledge base"
 status: done
 ai_generated: true
 reviewed_by: null

@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "QA Evaluation Harness"
+description: "CLI testing suite with 34 test cases across 10 categories, using deterministic checks and LLM-as-judge to evaluate chatbot response quality"
 status: done
 ai_generated: true
 reviewed_by: null

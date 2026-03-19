@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Automated Versioning and Release System"
+description: "Semantic versioning with conventional commit analysis, changelog generation, git tagging, and /release skill integration"
 status: done
 ai_generated: true
 reviewed_by: null

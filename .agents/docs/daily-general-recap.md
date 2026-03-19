@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Daily General Channel Recap"
+description: "Automated daily summaries of Discord #general discussion via LLM, with noise filtering and @Quily recap command"
 status: done
 ai_generated: true
 created: 2026-03-19

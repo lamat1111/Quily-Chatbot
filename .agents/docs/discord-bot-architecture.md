@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Discord Bot Architecture"
+description: "Discord bot design: @mention handler, shared RAG service, rate limiting, conversation memory, and VPS deployment via pm2"
 status: done
 ai_generated: true
 created: 2026-03-18

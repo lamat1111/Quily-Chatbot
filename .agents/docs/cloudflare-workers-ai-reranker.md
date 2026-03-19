@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "Cloudflare Workers AI Reranker"
+description: "Free semantic reranking via Cloudflare's BGE-reranker-base model, used as fallback when Cohere is unavailable"
 status: done
 ai_generated: true
 reviewed_by: null

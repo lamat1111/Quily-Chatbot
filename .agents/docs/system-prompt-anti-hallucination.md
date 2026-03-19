@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "System Prompt & Anti-Hallucination Strategy"
+description: "Four-layer defense against hallucination: retrieval thresholds, system prompt rules 1-12, personality override, and knowledge scope guards"
 status: done
 ai_generated: true
 reviewed_by: null

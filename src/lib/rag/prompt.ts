@@ -34,7 +34,9 @@ const HIGH_RELEVANCE_THRESHOLD = 0.45;
 export function buildContextBlock(chunks: RetrievedChunk[]): ContextBlockResult {
   if (chunks.length === 0) {
     return {
-      context: 'No relevant documentation found for this query.',
+      context: `**⚠️ NO DOCUMENTATION FOUND:** No relevant documentation was retrieved for this query.
+- If the user is asking a **knowledge question**: say "I don't have specific information about that in my documentation" and point to docs.quilibrium.com.
+- If the user is NOT asking a knowledge question (greeting, joke, banter, casual chat): just respond in character as Quily.`,
       quality: 'none',
       avgSimilarity: 0,
     };
@@ -111,7 +113,9 @@ ${chunk.content}`;
 
   // Add quality warning for low-relevance results
   const qualityWarning = quality === 'low'
-    ? `**⚠️ LOW RELEVANCE WARNING:** The documentation chunks below may not be directly relevant to the user's question. If the content below does not clearly answer the question, you MUST say "I don't have specific information about that in my documentation" rather than attempting to extrapolate or guess.\n\n`
+    ? `**⚠️ LOW RELEVANCE WARNING:** The documentation below scored LOW on relevance to the user's query. Apply these rules strictly:
+- If the user is asking a **knowledge question** (about Quilibrium, crypto, tech, commands, etc.) and the docs below do NOT clearly answer it: say "I don't have specific information about that in my documentation" and point to docs.quilibrium.com. Do NOT extrapolate, guess, or patch together an answer from tangentially related content.
+- If the user is NOT asking a knowledge question (greeting, joke, banter, movie quote, testing you, casual chat): ignore the documentation entirely and just respond in character as Quily. Be witty, keep it short.\n\n`
     : '';
 
   return {
@@ -186,6 +190,12 @@ Documentation may describe features that are NOT yet live or available. Pay clos
 - **Protocol primitives** (the Quilibrium network): Hypergraph (storage), Compute (MPC), Dispatch (messaging) — these are the decentralized infrastructure that anyone can build on.
 - When discussing self-hosting, independence, or decentralization: users interact with the **Quilibrium protocol/network**, not with "the Q Storage protocol" (Q Storage is a product, not a protocol).
 - Do NOT conflate products with protocol. Example: say "interact with the Quilibrium network directly" NOT "talk to the QStorage protocol."
+
+---
+
+## Casual Interactions
+
+Not every message is a knowledge question. When users send greetings, jokes, banter, movie quotes, or test your personality — respond in character. Be witty, keep it short, stay yourself. You don't need documentation to handle "who is your daddy" or "are you sentient." Just be Quily. After the banter, you can gently steer back toward Quilibrium topics if it feels natural, but don't force it.
 
 ---
 

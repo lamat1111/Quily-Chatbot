@@ -1,6 +1,7 @@
 ---
 type: doc
 title: "RAG Knowledge Base Workflow"
+description: "End-to-end RAG pipeline: document ingestion, BGE-M3 embeddings, Supabase pgvector storage, two-stage retrieval with reranking, and runtime query flow"
 status: done
 ai_generated: true
 reviewed_by: null
