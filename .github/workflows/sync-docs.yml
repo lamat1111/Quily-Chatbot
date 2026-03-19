@@ -38,6 +38,18 @@ jobs:
             echo "Discord secrets not configured, skipping"
           fi
 
+      - name: Generate general channel recap
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GENERAL_CHANNEL_ID: ${{ secrets.DISCORD_GENERAL_CHANNEL_ID }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -n "$DISCORD_BOT_TOKEN" ] && [ -n "$DISCORD_GENERAL_CHANNEL_ID" ] && [ -n "$OPENROUTER_API_KEY" ]; then
+            yarn recap-general
+          else
+            echo "Recap secrets not configured, skipping"
+          fi
+
       - name: Check for documentation changes
         id: check
         env:
