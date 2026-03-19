@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'fs/promises';
 import type { DiscordManifest } from './types.js';
 
 const MANIFEST_VERSION = 1;
-const MANIFEST_PATH = '.discord-manifest.json';
+const MANIFEST_PATH = 'docs/discord/.discord-manifest.json';
 
 export function getManifestPath(): string {
   return MANIFEST_PATH;

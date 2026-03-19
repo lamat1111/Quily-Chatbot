@@ -3,9 +3,11 @@ import { readdir, unlink, rmdir } from 'fs/promises';
 import { join } from 'path';
 
 const ROLLING_WINDOW_DAYS = 28;
+const MIN_FILES_PER_CHANNEL = 3;
 
 /**
- * Delete announcement markdown files older than the rolling window.
+ * Delete announcement markdown files older than the rolling window,
+ * but always keep at least MIN_FILES_PER_CHANNEL most recent files per channel.
  * Returns list of deleted file paths.
  */
 export async function cleanOldAnnouncements(destPath: string): Promise<string[]> {
@@ -33,14 +35,20 @@ export async function cleanOldAnnouncements(destPath: string): Promise<string[]>
       continue;
     }
 
-    for (const file of files) {
-      // Files are named YYYY-MM-DD.md
-      const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})\.md$/);
-      if (!dateMatch) continue;
+    // Collect dated files and sort newest-first
+    const datedFiles = files
+      .map(file => {
+        const match = file.match(/^(\d{4}-\d{2}-\d{2})\.md$/);
+        return match ? { file, date: match[1] } : null;
+      })
+      .filter((f): f is { file: string; date: string } => f !== null)
+      .sort((a, b) => b.date.localeCompare(a.date));
 
-      const fileDate = dateMatch[1];
-      if (fileDate < cutoffStr) {
-        const filePath = join(channelPath, file);
+    // Always keep at least MIN_FILES_PER_CHANNEL, delete the rest if older than cutoff
+    for (let i = 0; i < datedFiles.length; i++) {
+      if (i < MIN_FILES_PER_CHANNEL) continue; // always keep the newest N
+      if (datedFiles[i].date < cutoffStr) {
+        const filePath = join(channelPath, datedFiles[i].file);
         await unlink(filePath);
         deleted.push(filePath);
       }

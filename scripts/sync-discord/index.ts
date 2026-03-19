@@ -10,7 +10,7 @@ import { writeMarkdownFiles } from './formatter.js';
 import { loadManifest, saveManifest, createEmptyManifest } from './manifest.js';
 import { cleanOldAnnouncements } from './cleanup.js';
 
-const DEST_PATH = './docs/discord-announcements';
+const DEST_PATH = './docs/discord';
 
 /**
  * Parse channel config from env var.

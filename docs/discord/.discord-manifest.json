@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "lastRun": "2026-03-19T07:26:53.353Z",
+  "lastRun": "2026-03-19T07:35:42.017Z",
   "channels": {
     "1212447064861184060": {
       "lastMessageId": "1482668164792717453",
       "name": "announcements",
-      "lastScraped": "2026-03-19T07:26:52.105Z"
+      "lastScraped": "2026-03-19T07:35:41.154Z"
     },
     "1421639566841876510": {
       "lastMessageId": "1479752940670681199",
       "name": "dev-updates",
-      "lastScraped": "2026-03-19T07:26:53.330Z"
+      "lastScraped": "2026-03-19T07:35:41.995Z"
     }
   }
 }

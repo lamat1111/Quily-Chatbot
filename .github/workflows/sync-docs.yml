@@ -53,7 +53,7 @@ jobs:
           fi
 
           # Check for Discord file changes (written by previous step)
-          if [ -n "$(git status --porcelain docs/discord-announcements/ .discord-manifest.json 2>/dev/null)" ]; then
+          if [ -n "$(git status --porcelain docs/discord/ 2>/dev/null)" ]; then
             DISCORD_CHANGED="true"
           else
             DISCORD_CHANGED="false"
@@ -83,8 +83,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
           git add docs/quilibrium-official/
-          git add docs/discord-announcements/ || true
-          git add .discord-manifest.json || true
+          git add docs/discord/ || true
           git diff --staged --quiet || git commit -m "docs: sync documentation and announcements (automated daily)"
           git push
 
