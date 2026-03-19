@@ -17,9 +17,15 @@ The good news is that if the issue is with the documentation, anyone in the comm
 
 Quily's knowledge comes from markdown documents stored in the [Quily Chatbot repository](https://github.com/lamat1111/Quily-Chatbot). Anyone can contribute new information or corrections.
 
-## Two Ways to Contribute
+## Three Ways to Contribute
 
-### Option 1: Open a GitHub Issue (Easiest)
+### Option 1: Tell Quily Directly on Discord (Easiest)
+
+If Quily gives you a wrong answer, just reply to it with the correction. Be specific — tell Quily what's wrong and what the correct information is. For example: *"That's wrong, the current node version is v2.1.0.22 not v2.1.0.21."*
+
+If you provide enough detail, Quily will automatically open a GitHub issue with your correction for the maintainers to review. You don't need to leave Discord.
+
+### Option 2: Open a GitHub Issue
 
 Best for quick corrections, news updates, or when you don't want to write the full doc yourself.
 
@@ -29,7 +35,7 @@ Best for quick corrections, news updates, or when you don't want to write the fu
 4. Describe the information that should be added or corrected
 5. Submit — the maintainers will review and apply the change
 
-### Option 2: Submit a Pull Request
+### Option 3: Submit a Pull Request
 
 Best for larger contributions, new docs, or when you want to write the content yourself.
 
