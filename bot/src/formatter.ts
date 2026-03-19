@@ -15,6 +15,10 @@ function getSourceTypeLabel(source: SourceReference): string {
     return 'Discord';
   }
 
+  if (docType === 'discord_recap') {
+    return 'Community Recap';
+  }
+
   if (docType) {
     // Format doc_type: 'community_faq' -> 'Community Faq'
     return docType
