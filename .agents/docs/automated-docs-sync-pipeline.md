@@ -5,13 +5,15 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-02-24
-updated: 2026-03-18
+updated: 2026-03-19
 related_docs:
   - "rag-knowledge-base-workflow.md"
   - "discord-bot-architecture.md"
+  - "daily-general-recap.md"
 related_tasks:
   - "automated-weekly-docs-sync.md"
   - "2026-03-18-discord-announcements-scraper.md"
+  - "2026-03-19-daily-general-recap.md"
 ---
 
 # Automated Documentation Sync Pipeline
@@ -20,12 +22,13 @@ related_tasks:
 
 ## Overview
 
-The sync pipeline keeps Quily's RAG knowledge base current by pulling content from two sources:
+The sync pipeline keeps Quily's RAG knowledge base current by pulling content from three sources:
 
 1. **Official Quilibrium docs** (`yarn sync-docs`) — syncs markdown from the `QuilibriumNetwork/docs` GitHub repository
 2. **Discord announcements** (`yarn sync-discord`) — scrapes announcement channels via the Discord REST API and converts messages to dated markdown files
+3. **General channel recaps** (`yarn recap-general`) — scrapes the Discord general channel, filters noise, and produces LLM-summarized daily recaps (see [Daily General Channel Recap](daily-general-recap.md))
 
-Both run within a single daily GitHub Actions workflow (`.github/workflows/sync-docs.yml`) at 06:00 UTC. When either source has new content, the workflow triggers a single RAG re-ingestion pass so the chatbot always has up-to-date answers — including recent news and announcements from Discord.
+All three run within a single daily GitHub Actions workflow (`.github/workflows/sync-docs.yml`) at 06:00 UTC. When any source has new content, the workflow triggers a single RAG re-ingestion pass so the chatbot always has up-to-date answers — including recent news and announcements from Discord.
 
 ## Architecture
 
@@ -324,7 +327,8 @@ The workflow runs daily at 06:00 UTC and can be triggered manually from the GitH
 2. **Setup** Node.js 20 with yarn cache
 3. **Install** dependencies (`yarn install --frozen-lockfile`)
 4. **Sync Discord** announcements (guarded — skips if secrets not configured)
-5. **Check** for changes — checks both upstream docs (`yarn sync-docs status`) and local Discord file changes (`git status`)
+5. **Generate general channel recap** (guarded — skips if `DISCORD_GENERAL_CHANNEL_ID` or `OPENROUTER_API_KEY` not configured)
+6. **Check** for changes — checks both upstream docs (`yarn sync-docs status`) and local Discord file changes (`git status`)
 6. **Sync docs + ingest** (only if either source changed) — runs `yarn sync-docs sync --ingest`
 7. **Commit** updated docs, Discord announcements, and manifests back to the repo
 8. **Summary** — logs whether changes were synced or skipped
@@ -338,6 +342,8 @@ The workflow runs daily at 06:00 UTC and can be triggered manually from the GitH
 | `CHUTES_API_KEY` | `CHUTES_API_KEY` | Chutes API for BGE-M3 embedding generation |
 | `DISCORD_BOT_TOKEN` | `DISCORD_BOT_TOKEN` | Discord bot token for announcement scraping |
 | `DISCORD_CHANNEL_IDS` | `DISCORD_CHANNEL_IDS` | Comma-separated channel IDs to scrape (see format above) |
+| `DISCORD_GENERAL_CHANNEL_ID` | `DISCORD_GENERAL_CHANNEL_ID` | General channel ID for daily recaps |
+| `OPENROUTER_API_KEY` | `OPENROUTER_API_KEY` | OpenRouter API key for recap LLM summarization |
 
 ### Resource Usage
 
@@ -382,4 +388,4 @@ It performs a `git pull --rebase origin main` before pushing to avoid conflicts 
 ---
 
 _Created: 2026-02-24_
-_Updated: 2026-03-18_
+_Updated: 2026-03-19_
