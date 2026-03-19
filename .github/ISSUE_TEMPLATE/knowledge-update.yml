@@ -1,0 +1,46 @@
+name: "Knowledge Update"
+description: "Suggest new information or corrections for Quily's knowledge base"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Quily's knowledge! Describe what information should be added or corrected. A maintainer will review your submission and trigger the automated pipeline to create a PR.
+
+  - type: dropdown
+    id: update-type
+    attributes:
+      label: Type of Update
+      options:
+        - New information (something Quily doesn't know yet)
+        - Correction (something Quily gets wrong)
+        - Outdated info (something that has changed)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What should Quily know?
+      description: "Describe the information clearly. Include sources or links if possible."
+      placeholder: |
+        Example: "Neynar reversed course and added Quilibrium's Hypersnap peer to the Farcaster validator set, so the network soft forked. This happened on March 18, 2026."
+    validations:
+      required: true
+
+  - type: textarea
+    id: existing-doc
+    attributes:
+      label: Related existing doc (if any)
+      description: "If this updates an existing doc, mention which one."
+      placeholder: "e.g., docs/custom/Hypersnap.md"
+    validations:
+      required: false
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: "Links to announcements, tweets, official posts, or other references."
+      placeholder: "https://..."
+    validations:
+      required: false

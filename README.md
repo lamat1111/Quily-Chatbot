@@ -397,7 +397,24 @@ For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.a
 
 ## Contributing
 
-Contributions welcome! Please:
+### Help Improve Quily's Knowledge
+
+Quily's answers are only as good as its knowledge base. If you notice something wrong or missing, there are two easy ways to help:
+
+**Option 1: Open a GitHub Issue** (easiest)
+1. Go to [Issues](https://github.com/lamat1111/Quily-Chatbot/issues) and click "New Issue"
+2. Select the **"Knowledge Update"** template
+3. Describe what Quily should know (or what it gets wrong)
+4. The maintainers will review and apply the change
+
+**Option 2: Submit a Pull Request**
+1. Fork this repository
+2. Add or edit a `.md` file in [`docs/community/`](docs/community/) or [`docs/custom/`](docs/custom/)
+3. Submit a PR — the maintainers will review, merge, and reingest
+
+> **Note:** Do not edit `docs/quilibrium-official/` or `docs/discord/` — these are automated mirrors and get overwritten.
+
+### Code Contributions
 
 1. Fork the repository
 2. Create a feature branch

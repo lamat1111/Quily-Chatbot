@@ -5,11 +5,13 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-02-24
-updated: 2026-02-24
+updated: 2026-03-18
 related_docs:
   - "rag-knowledge-base-workflow.md"
+  - "discord-bot-architecture.md"
 related_tasks:
   - "automated-weekly-docs-sync.md"
+  - "2026-03-18-discord-announcements-scraper.md"
 ---
 
 # Automated Documentation Sync Pipeline
@@ -18,7 +20,12 @@ related_tasks:
 
 ## Overview
 
-The sync-docs pipeline keeps Quily's RAG knowledge base current by pulling official Quilibrium documentation from the `QuilibriumNetwork/docs` GitHub repository. It runs as both a local CLI tool (`yarn sync-docs`) and an automated daily GitHub Actions workflow. When upstream docs change, the pipeline downloads new/modified files, updates a local manifest, optionally detects companion doc impact, and triggers RAG re-ingestion so the chatbot always has up-to-date answers.
+The sync pipeline keeps Quily's RAG knowledge base current by pulling content from two sources:
+
+1. **Official Quilibrium docs** (`yarn sync-docs`) — syncs markdown from the `QuilibriumNetwork/docs` GitHub repository
+2. **Discord announcements** (`yarn sync-discord`) — scrapes announcement channels via the Discord REST API and converts messages to dated markdown files
+
+Both run within a single daily GitHub Actions workflow (`.github/workflows/sync-docs.yml`) at 06:00 UTC. When either source has new content, the workflow triggers a single RAG re-ingestion pass so the chatbot always has up-to-date answers — including recent news and announcements from Discord.
 
 ## Architecture
 
@@ -179,6 +186,132 @@ When official docs change, custom companion docs that reference them may become 
 
 The impact report is displayed in the terminal after sync. This helps maintainers know which companion docs need manual review.
 
+## Discord Announcements Scraper
+
+### Overview
+
+The Discord scraper (`scripts/sync-discord/`) fetches messages from configured Discord announcement channels via the REST API (no `discord.js` dependency), converts them to dated markdown files, and maintains a rolling 4-week window. The files land in `docs/discord-announcements/` where the existing ingestion pipeline picks them up automatically.
+
+### Key Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| CLI Entry Point | `scripts/sync-discord/index.ts` | Commander-based CLI with `sync` and `status` commands |
+| Discord API Client | `scripts/sync-discord/discord-api.ts` | REST client for channels and messages (Bot token auth, v10 API) |
+| Formatter | `scripts/sync-discord/formatter.ts` | Groups messages by date, cleans Discord markup, writes markdown with frontmatter |
+| Manifest Manager | `scripts/sync-discord/manifest.ts` | Persists `.discord-manifest.json` at repo root with last message ID per channel |
+| Cleanup | `scripts/sync-discord/cleanup.ts` | Deletes markdown files older than 28 days, removes empty directories |
+| Type Definitions | `scripts/sync-discord/types.ts` | Shared TypeScript interfaces |
+
+### Data Flow
+
+```
+Discord REST API v10
+        │
+        ├── GET /channels/{id} — channel name + guild ID
+        ├── GET /channels/{id}/messages?after={last_id}&limit=100
+        │   └── Paginate until no more messages
+        │
+        ▼
+   groupByDate()
+   ├── Group messages by YYYY-MM-DD
+   ├── Clean Discord markup (mentions, emojis, embeds)
+   │
+   ▼
+   writeMarkdownFiles()
+   ├── Write to ./docs/discord-announcements/{channel-name}/{date}.md
+   ├── Frontmatter: type: discord_announcement, date, source_url
+   ├── Append to existing file if same-day re-run
+   │
+   ▼
+   cleanOldAnnouncements()
+   ├── Delete files older than 28 days
+   ├── Remove empty channel directories
+   │
+   ▼
+   saveManifest()
+   └── Update .discord-manifest.json with last message ID per channel
+```
+
+### Channel Configuration
+
+Channels are configured via the `DISCORD_CHANNEL_IDS` environment variable (or GitHub Secret):
+
+```
+# Format: channel_id:folder_name,channel_id:folder_name
+DISCORD_CHANNEL_IDS=123456789:announcements,987654321:dev-updates
+
+# Or without names (fetched from Discord API automatically):
+DISCORD_CHANNEL_IDS=123456789,987654321
+```
+
+### CLI Commands
+
+#### `yarn sync-discord sync`
+
+Fetches new messages from all configured channels and writes markdown files.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--dry-run` | `false` | Show what would be fetched without writing files |
+
+**Convenience scripts:**
+
+| Script | Equivalent |
+|--------|------------|
+| `yarn sync-discord:run` | `yarn sync-discord sync` |
+| `yarn sync-discord:dry` | `yarn sync-discord sync --dry-run` |
+
+#### `yarn sync-discord status`
+
+Shows the current manifest state — last run time, tracked channels, and last message IDs.
+
+### Markdown Output Format
+
+Each daily file looks like:
+
+```markdown
+---
+title: "announcements - March 18, 2026"
+type: discord_announcement
+channel: announcements
+date: 2026-03-18
+source_url: https://discord.com/channels/guild/channel/message
+---
+
+# announcements - March 18, 2026
+
+## Author Name — 2:30 PM UTC
+
+Message content here...
+
+---
+
+## Author Name — 5:15 PM UTC
+
+Another announcement...
+```
+
+The `source_url` links to the first message of the day in Discord. The `type: discord_announcement` and `date` fields are used by the ingestion pipeline for doc_type labeling and temporal query support.
+
+### Rolling Window
+
+- **Window size**: 28 days
+- **On each run**: Fetch new messages since last scrape, delete files older than cutoff
+- **Orphan cleanup**: `yarn ingest run --clean` removes Supabase chunks for deleted files
+- **First run**: Fetches the latest 100 messages per channel (Discord API limit without pagination history)
+
+### Discord Bot Prerequisites
+
+The scraper uses a Discord bot token with read-only permissions. The bot must:
+
+1. Be created on the [Discord Developer Portal](https://discord.com/developers/applications)
+2. Have **Message Content Intent** enabled
+3. Be invited to the target server with **View Channels** + **Read Message History** permissions
+4. Have access to the specific announcement channels being scraped
+
+The same bot token used for the live Quily Discord bot can be reused — the scraper only makes read-only API calls.
+
 ## GitHub Actions Automation
 
 ### Workflow: `.github/workflows/sync-docs.yml`
@@ -190,10 +323,11 @@ The workflow runs daily at 06:00 UTC and can be triggered manually from the GitH
 1. **Checkout** repository
 2. **Setup** Node.js 20 with yarn cache
 3. **Install** dependencies (`yarn install --frozen-lockfile`)
-4. **Check** for changes (`yarn sync-docs status`) — parses output for "unchanged"
-5. **Sync + ingest** (only if changes detected) — runs `yarn sync-docs sync --ingest`
-6. **Commit** updated manifest and docs back to the repo
-7. **Summary** — logs whether changes were synced or skipped
+4. **Sync Discord** announcements (guarded — skips if secrets not configured)
+5. **Check** for changes — checks both upstream docs (`yarn sync-docs status`) and local Discord file changes (`git status`)
+6. **Sync docs + ingest** (only if either source changed) — runs `yarn sync-docs sync --ingest`
+7. **Commit** updated docs, Discord announcements, and manifests back to the repo
+8. **Summary** — logs whether changes were synced or skipped
 
 ### Required GitHub Secrets
 
@@ -202,6 +336,8 @@ The workflow runs daily at 06:00 UTC and can be triggered manually from the GitH
 | `SUPABASE_URL` | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL for embedding uploads |
 | `SUPABASE_SERVICE_KEY` | `SUPABASE_SERVICE_ROLE_KEY` | Service role key for write access |
 | `CHUTES_API_KEY` | `CHUTES_API_KEY` | Chutes API for BGE-M3 embedding generation |
+| `DISCORD_BOT_TOKEN` | `DISCORD_BOT_TOKEN` | Discord bot token for announcement scraping |
+| `DISCORD_CHANNEL_IDS` | `DISCORD_CHANNEL_IDS` | Comma-separated channel IDs to scrape (see format above) |
 
 ### Resource Usage
 
@@ -213,7 +349,7 @@ The workflow runs daily at 06:00 UTC and can be triggered manually from the GitH
 
 The workflow commits as `github-actions[bot]` with the message:
 ```
-docs: sync Quilibrium documentation (automated daily)
+docs: sync documentation and announcements (automated daily)
 ```
 
 It performs a `git pull --rebase origin main` before pushing to avoid conflicts with concurrent pushes.
@@ -233,12 +369,17 @@ It performs a `git pull --rebase origin main` before pushing to avoid conflicts 
 - **No partial ingestion**: When changes are detected, the `--ingest` flag re-runs the full ingestion pipeline rather than only re-embedding changed files.
 - **Companion impact requires gap analysis**: The impact detection only works if `doc-gap-analysis` has been run previously to generate the audit log.
 - **API rate limits without token**: Unauthenticated GitHub API access is limited to 60 requests/hour, which may be insufficient for large repos. Set `GITHUB_TOKEN` for production use.
+- **Discord first-run limit**: The first Discord scrape fetches only the latest 100 messages per channel (Discord API default). Older announcements from the 28-day window won't be backfilled. Subsequent daily runs capture everything going forward.
+- **Discord bot permissions**: The bot must have explicit View Channel + Read Message History permissions on each announcement channel. Server-level permissions may not be sufficient if channels have permission overrides.
 
 ## Related Documentation
 
 - [RAG Knowledge Base Workflow](rag-knowledge-base-workflow.md) — Full RAG pipeline including ingestion, retrieval, and runtime query flow
-- [Task: Automated Weekly Docs Sync](../tasks/.done/automated-weekly-docs-sync.md) — Original implementation task
+- [Discord Bot Architecture](discord-bot-architecture.md) — The live Discord bot that uses the same RAG pipeline
+- [Task: Automated Weekly Docs Sync](../tasks/.done/automated-weekly-docs-sync.md) — Original docs sync implementation task
+- [Task: Discord Announcements Scraper](../tasks/2026-03-18-discord-announcements-scraper.md) — Discord scraper implementation plan
 
 ---
 
 _Created: 2026-02-24_
+_Updated: 2026-03-18_
