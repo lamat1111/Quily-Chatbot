@@ -28,9 +28,27 @@ export function registerMentionHandler(client: Client): void {
       }
       if (!isMentioned && !isReplyToBot) return;
 
-      const query = message.content
+      let query = message.content
         .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
         .trim();
+
+      // If this is a reply to another user's message and mentions @Quily,
+      // use the referenced message as the query (with optional instructions)
+      if (isMentioned && message.reference && !isReplyToBot) {
+        try {
+          const referenced = await message.fetchReference();
+          if (referenced && referenced.content) {
+            const originalContent = referenced.content.trim();
+            if (originalContent) {
+              query = query
+                ? `${query}\n\nContext (message from ${referenced.author.displayName}):\n${originalContent}`
+                : originalContent;
+            }
+          }
+        } catch {
+          // Referenced message may be deleted or inaccessible
+        }
+      }
 
       if (!query) return;
 
