@@ -4,6 +4,7 @@ import { checkRateLimit, recordRequest } from '../utils/rateLimiter';
 import { getHistory, getLastChunkIds, addExchange } from '../utils/memory';
 import { chunkMessage } from '../utils/messageChunker';
 import { formatForDiscord } from '../formatter';
+import { handleRecap } from './recap';
 
 const TYPING_REFRESH_MS = 9_000;
 const TIMEOUT_MS = 60_000;
@@ -51,6 +52,10 @@ export function registerMentionHandler(client: Client): void {
       }
 
       if (!query) return;
+
+      // Bypass: handle @Quily recap without RAG
+      const handled = await handleRecap(message, query);
+      if (handled) return;
 
       const limitStatus = checkRateLimit(message.author.id);
 
