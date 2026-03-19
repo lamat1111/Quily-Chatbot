@@ -47,7 +47,7 @@ function getSourceTypeLabel(source: SourceReference): string {
   return 'Docs';
 }
 
-export function formatForDiscord(text: string, sources: SourceReference[], maxSources: number = 3): string {
+export function formatForDiscord(text: string, sources: SourceReference[]): string {
   let formatted = text;
 
   // Convert markdown links [text](url) → text — <url>
@@ -59,26 +59,37 @@ export function formatForDiscord(text: string, sources: SourceReference[], maxSo
   // Convert simple markdown tables to code blocks
   formatted = convertTablesToCodeBlocks(formatted);
 
-  // Append sources as an unordered list
+  // Show only sources whose citation index actually appears in the response text
   if (sources.length > 0) {
-    const topSources = sources.slice(0, maxSources);
-    const sourceLines = topSources.map((s) => {
+    const citedIndices = new Set<number>();
+    for (const match of text.matchAll(/\[(\d+)\]/g)) {
+      citedIndices.add(Number(match[1]));
+    }
+
+    const citedSources = sources
+      .filter((s) => citedIndices.has(s.index))
+      .sort((a, b) => a.index - b.index);
+
+    // Fall back to all sources if no citation indices matched
+    const displaySources = citedSources.length > 0 ? citedSources : sources;
+
+    const sourceLines = displaySources.map((s) => {
       const label = getSourceTypeLabel(s);
       const isLivestream = s.doc_type === 'livestream_transcript';
       const url = s.url;
+      const idx = s.index;
 
       if (isLivestream) {
-        // For livestreams: label already says "Livestream", so just show date + URL
         const date = s.published_date || '';
         return url
-          ? `• **${label}${date ? ` (${date})` : ''}:** <${url}>`
-          : `• **${label}${date ? ` (${date})` : ''}**`;
+          ? `• [${idx}] **${label}${date ? ` (${date})` : ''}:** <${url}>`
+          : `• [${idx}] **${label}${date ? ` (${date})` : ''}**`;
       }
 
       const title = s.title || s.file;
       return url
-        ? `• **${label}:** ${title} — <${url}>`
-        : `• **${label}:** ${title}`;
+        ? `• [${idx}] **${label}:** ${title} — <${url}>`
+        : `• [${idx}] **${label}:** ${title}`;
     });
     formatted += `\n\n**Sources:**\n${sourceLines.join('\n')}`;
   }
