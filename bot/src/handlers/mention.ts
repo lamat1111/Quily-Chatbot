@@ -31,6 +31,23 @@ export function registerMentionHandler(client: Client): void {
       }
       if (!isMentioned && !isReplyToBot) return;
 
+      // Channel restriction: non-privileged users can only interact in the designated channel
+      const quilyChannelId = process.env.DISCORD_QUILY_CHANNEL_ID;
+      if (quilyChannelId && message.channelId !== quilyChannelId) {
+        const privilegedRoleIds = (process.env.DISCORD_PRIVILEGED_ROLE_IDS || '')
+          .split(',')
+          .filter(Boolean);
+        const memberRoleIds = message.member?.roles.cache.map((r) => r.id) || [];
+        const isPrivileged = privilegedRoleIds.some((id) => memberRoleIds.includes(id));
+
+        if (!isPrivileged) {
+          await message.reply(
+            `Ask me in <#${quilyChannelId}>! I only answer there for regular users.`,
+          );
+          return;
+        }
+      }
+
       let query = message.content
         .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
         .trim();
