@@ -13,7 +13,7 @@ export interface CreateIssueParams {
  */
 export async function createGitHubIssue(params: CreateIssueParams): Promise<string> {
   const token = process.env.GITHUB_TOKEN;
-  const repo = process.env.GITHUB_REPO || 'lamat1111/Quily-Chatbot';
+  const repo = process.env.GITHUB_REPO || 'Quilibrium-Community/quily';
 
   if (!token) {
     throw new Error('GITHUB_TOKEN not configured');

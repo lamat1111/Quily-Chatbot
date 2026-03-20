@@ -33,7 +33,7 @@ A self-hosted RAG chatbot that answers questions about the Quilibrium protocol u
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/lamat1111/Quily-Chatbot.git
+git clone https://github.com/Quilibrium-Community/quily.git
 cd Quily-Chatbot
 yarn
 ```
@@ -402,7 +402,7 @@ For detailed documentation, see [.agents/docs/rag-knowledge-base-workflow.md](.a
 Quily's answers are only as good as its knowledge base. If you notice something wrong or missing, there are two easy ways to help:
 
 **Option 1: Open a GitHub Issue** (easiest)
-1. Go to [Issues](https://github.com/lamat1111/Quily-Chatbot/issues) and click "New Issue"
+1. Go to [Issues](https://github.com/Quilibrium-Community/quily/issues) and click "New Issue"
 2. Select the **"Knowledge Update"** template
 3. Describe what Quily should know (or what it gets wrong)
 4. The maintainers will review and apply the change

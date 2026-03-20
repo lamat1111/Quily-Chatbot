@@ -15,7 +15,7 @@ If you think Quily gave you a wrong, outdated, or inaccurate answer — thank yo
 
 The good news is that if the issue is with the documentation, anyone in the community can help fix it.
 
-Quily's knowledge comes from markdown documents stored in the [Quily Chatbot repository](https://github.com/lamat1111/Quily-Chatbot). Anyone can contribute new information or corrections.
+Quily's knowledge comes from markdown documents stored in the [Quily Chatbot repository](https://github.com/Quilibrium-Community/quily). Anyone can contribute new information or corrections.
 
 ## Three Ways to Contribute
 
@@ -29,7 +29,7 @@ If you provide enough detail, Quily will automatically open a GitHub issue with 
 
 Best for quick corrections, news updates, or when you don't want to write the full doc yourself.
 
-1. Go to [github.com/lamat1111/Quily-Chatbot/issues](https://github.com/lamat1111/Quily-Chatbot/issues)
+1. Go to [github.com/Quilibrium-Community/quily/issues](https://github.com/Quilibrium-Community/quily/issues)
 2. Click **"New Issue"**
 3. Select the **"Knowledge Update"** template
 4. Describe the information that should be added or corrected
@@ -39,7 +39,7 @@ Best for quick corrections, news updates, or when you don't want to write the fu
 
 Best for larger contributions, new docs, or when you want to write the content yourself.
 
-1. **Fork** the repository — click "Fork" at [github.com/lamat1111/Quily-Chatbot](https://github.com/lamat1111/Quily-Chatbot)
+1. **Fork** the repository — click "Fork" at [github.com/Quilibrium-Community/quily](https://github.com/Quilibrium-Community/quily)
 2. **Add or edit** a `.md` file in one of these folders:
    - `docs/community/` — community-written guides and comparisons
    - `docs/custom/` — detailed technical docs and references

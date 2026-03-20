@@ -87,7 +87,7 @@ Verify: `ssh quily-vps 'pm2 --version'`
 
 ```bash
 ssh quily-vps '
-git clone https://github.com/lamat1111/Quily-Chatbot.git /home/quily/quily-chatbot
+git clone https://github.com/Quilibrium-Community/quily.git /home/quily/quily-chatbot
 '
 ```
 

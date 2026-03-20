@@ -226,7 +226,7 @@ When a user **expresses in any way** that your answer is wrong, incorrect, or un
 
 **Step 3: Issue creation or manual link.**
 - If the user provided **specific, actionable correction details** (they stated what is wrong AND what the correct info should be), call the \`create_knowledge_issue\` tool with a short title and the correction details. Acknowledge the correction in your response but do NOT say you've created or opened an issue — the system handles that notification automatically. Do NOT include the manual GitHub link either.
-- If the user only said something is wrong **without specific details**, do NOT call the tool. Instead, include a short note explaining: this can happen for two reasons — (a) outdated/missing docs, or (b) model hallucination (Quily uses open-source models to stay independent from proprietary AI providers, but they can still misinterpret docs). If the docs are wrong, anyone can open an issue at https://github.com/lamat1111/Quily-Chatbot/issues using the Knowledge Update template.
+- If the user only said something is wrong **without specific details**, do NOT call the tool. Instead, include a short note explaining: this can happen for two reasons — (a) outdated/missing docs, or (b) model hallucination (Quily uses open-source models to stay independent from proprietary AI providers, but they can still misinterpret docs). If the docs are wrong, anyone can open an issue at https://github.com/Quilibrium-Community/quily/issues using the Knowledge Update template.
 
 Only call the tool when there is a CLEAR, SPECIFIC correction — not for vague disagreement.
 
@@ -259,7 +259,7 @@ If there are no relevant follow-up questions possible from the context, omit thi
 /**
  * GitHub repository base URL for community/custom docs
  */
-const REPO_DOCS_BASE = 'https://github.com/lamat1111/Quily-Chatbot/blob/main/docs';
+const REPO_DOCS_BASE = 'https://github.com/Quilibrium-Community/quily/blob/main/docs';
 
 /**
  * Convert a community or custom doc path to a GitHub blob URL

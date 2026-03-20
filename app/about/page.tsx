@@ -28,7 +28,7 @@ export default function AboutPage() {
               <p className="text-sm mt-2">
                 Found a bug?{' '}
                 <a
-                  href="https://github.com/lamat1111/Quily-Chatbot/issues"
+                  href="https://github.com/Quilibrium-Community/quily/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -55,7 +55,7 @@ export default function AboutPage() {
               Quilibrium Inc.</strong> The code is open source under the AGPL-3.0 license
               and available on{' '}
               <a
-                href="https://github.com/lamat1111/Quily-Chatbot"
+                href="https://github.com/Quilibrium-Community/quily"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 Custom and community-contributed documents (Discord explanations, technical
                 references, community guides) — available in the{' '}
                 <a
-                  href="https://github.com/lamat1111/Quily-Chatbot/tree/main/docs"
+                  href="https://github.com/Quilibrium-Community/quily/tree/main/docs"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -121,7 +121,7 @@ export default function AboutPage() {
             <span>v{VERSION}</span>
             <span>·</span>
             <a
-              href="https://github.com/lamat1111/Quily-Chatbot/blob/main/CHANGELOG.md"
+              href="https://github.com/Quilibrium-Community/quily/blob/main/CHANGELOG.md"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-text-secondary transition-colors"

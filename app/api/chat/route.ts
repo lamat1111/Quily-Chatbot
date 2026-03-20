@@ -158,7 +158,7 @@ My knowledge comes from the following official sources:
 - Discord explanations from Cassandra Heart and the Quilibrium team
 - Technical references and deep-dives not yet published on the official docs site
 - Community-contributed guides, FAQs, and analyses (marked as unofficial)
-- Available in the [project repository](https://github.com/lamat1111/Quily-Chatbot/tree/main/docs)
+- Available in the [project repository](https://github.com/Quilibrium-Community/quily/tree/main/docs)
 
 **What I Can Help With:**
 - **Protocol & Architecture** — How Quilibrium works, consensus mechanisms, cryptographic foundations
