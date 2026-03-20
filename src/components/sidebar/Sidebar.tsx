@@ -356,6 +356,7 @@ export function Sidebar() {
               >
                 <Icon name="link" size={20} className="sm:w-4.5 sm:h-4.5" />
                 Quilibrium Links
+                <Icon name="external-link" size={14} className="opacity-70 shrink-0" />
               </a>
             </>
           }
