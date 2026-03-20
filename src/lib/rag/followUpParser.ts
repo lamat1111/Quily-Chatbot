@@ -25,6 +25,12 @@ export interface FollowUpParseResult {
 const JSON_CODE_FENCE_REGEX = /```json\s*\n?\s*(\[[\s\S]*?\])\s*\n?```\s*$/;
 
 /**
+ * Fallback regex for when the LLM omits code fences.
+ * Matches: json\n["q1", "q2"] or just a bare JSON array at end of response.
+ */
+const BARE_JSON_REGEX = /\n\s*(?:json\s*\n\s*)?(\["\s*[\s\S]*?"\s*\])\s*$/;
+
+/**
  * Parse follow-up questions from LLM response.
  *
  * Extracts JSON array from markdown code fence at end of response,
@@ -45,7 +51,8 @@ const JSON_CODE_FENCE_REGEX = /```json\s*\n?\s*(\[[\s\S]*?\])\s*\n?```\s*$/;
  * // result.questions = ["What is X?", "How does Y work?"]
  */
 export function parseFollowUpQuestions(text: string): FollowUpParseResult {
-  const match = text.match(JSON_CODE_FENCE_REGEX);
+  // Try fenced format first, then fall back to bare JSON array
+  const match = text.match(JSON_CODE_FENCE_REGEX) || text.match(BARE_JSON_REGEX);
 
   if (!match) {
     return { cleanText: text, questions: null };
