@@ -2,13 +2,13 @@ name: Supabase Keepalive
 
 on:
   schedule:
-    # 6 runs spread unevenly across 09:00–17:00 UTC
+    # Keep one daily ping to prevent Supabase from pausing
     - cron: '7 9 * * *'    # 09:07 UTC
-    - cron: '33 10 * * *'  # 10:33 UTC  (+1h26m)
-    - cron: '4 12 * * *'   # 12:04 UTC  (+1h31m)
-    - cron: '51 12 * * *'  # 12:51 UTC  (+47m)
-    - cron: '18 15 * * *'  # 15:18 UTC  (+2h27m)
-    - cron: '42 16 * * *'  # 16:42 UTC  (+1h24m)
+    # - cron: '33 10 * * *'  # 10:33 UTC  (+1h26m)
+    # - cron: '4 12 * * *'   # 12:04 UTC  (+1h31m)
+    # - cron: '51 12 * * *'  # 12:51 UTC  (+47m)
+    # - cron: '18 15 * * *'  # 15:18 UTC  (+2h27m)
+    # - cron: '42 16 * * *'  # 16:42 UTC  (+1h24m)
   workflow_dispatch: # Allow manual trigger from GitHub UI
 
 jobs:
