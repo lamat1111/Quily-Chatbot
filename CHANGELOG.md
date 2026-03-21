@@ -5,6 +5,86 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-03-21
+
+### Features
+
+- add model scout script for discovering better open-source models ([ccd9362](https://github.com/Quilibrium-Community/quily/commit/ccd9362))
+- add correction issue creation to web chat UI ([12ac688](https://github.com/Quilibrium-Community/quily/commit/12ac688))
+- add external link indicator to sidebar ([896085b](https://github.com/Quilibrium-Community/quily/commit/896085b))
+- redirect /links to quilibrium.one/links ([0846211](https://github.com/Quilibrium-Community/quily/commit/0846211))
+- add FUNDING.yml linking to community treasury ([a3696fb](https://github.com/Quilibrium-Community/quily/commit/a3696fb))
+- restrict bot replies to #quily channel for regular users ([1fa12b5](https://github.com/Quilibrium-Community/quily/commit/1fa12b5))
+- update system prompt for auto-correction tool awareness ([d38d8de](https://github.com/Quilibrium-Community/quily/commit/d38d8de))
+- wire RAG tools into generateText and expose toolCalls ([99a28d6](https://github.com/Quilibrium-Community/quily/commit/99a28d6))
+- add create_knowledge_issue tool definition for RAG ([26de64b](https://github.com/Quilibrium-Community/quily/commit/26de64b))
+- add GitHub issue creator for auto-corrections ([53f6389](https://github.com/Quilibrium-Community/quily/commit/53f6389))
+- add role-aware issue creation rate limiter ([e9b7e9f](https://github.com/Quilibrium-Community/quily/commit/e9b7e9f))
+- let LLM handle all queries including jokes and banter ([533f674](https://github.com/Quilibrium-Community/quily/commit/533f674))
+- add error correction self-audit to system prompt ([fabb711](https://github.com/Quilibrium-Community/quily/commit/fabb711))
+- match Discord citation numbers to source references ([803a788](https://github.com/Quilibrium-Community/quily/commit/803a788))
+- show time window and #general channel in recap output ([ff73209](https://github.com/Quilibrium-Community/quily/commit/ff73209))
+- add /process-issues skill for knowledge pipeline ([873be28](https://github.com/Quilibrium-Community/quily/commit/873be28))
+- add general channel recap with LLM summarization ([fb0627a](https://github.com/Quilibrium-Community/quily/commit/fb0627a))
+- add @Quily recap command as mention handler bypass ([acd3497](https://github.com/Quilibrium-Community/quily/commit/acd3497))
+- add discord_recap label and Knowledge Scope entry ([696fa1f](https://github.com/Quilibrium-Community/quily/commit/696fa1f))
+- add general channel recap CLI and daily sync step ([ea98408](https://github.com/Quilibrium-Community/quily/commit/ea98408))
+- add knowledge update pipeline and contribution workflows ([7cec3ac](https://github.com/Quilibrium-Community/quily/commit/7cec3ac))
+- support replying to user messages with @Quily mention ([729fc34](https://github.com/Quilibrium-Community/quily/commit/729fc34))
+- add Discord announcements scraping to daily sync ([6da3201](https://github.com/Quilibrium-Community/quily/commit/6da3201))
+- add discord_announcement support to chunker and system prompt ([c35c180](https://github.com/Quilibrium-Community/quily/commit/c35c180))
+- add disclaimer footer to Discord bot messages ([f1b68e3](https://github.com/Quilibrium-Community/quily/commit/f1b68e3))
+- add Discord REST API client and sync infrastructure ([acbcab2](https://github.com/Quilibrium-Community/quily/commit/acbcab2))
+- respond to replies to bot messages, not just @mentions ([fb74ae7](https://github.com/Quilibrium-Community/quily/commit/fb74ae7))
+- improve Discord source formatting and add provider switching ([3490788](https://github.com/Quilibrium-Community/quily/commit/3490788))
+- add Chutes as dual LLM provider for Discord bot ([7678c89](https://github.com/Quilibrium-Community/quily/commit/7678c89))
+- add VPS ops infrastructure for Discord bot deployment ([d220cd2](https://github.com/Quilibrium-Community/quily/commit/d220cd2))
+- add model fallback chain for bot LLM calls ([f7f2f9d](https://github.com/Quilibrium-Community/quily/commit/f7f2f9d))
+- add Discord bot with RAG integration and Fly.io deployment ([74466c4](https://github.com/Quilibrium-Community/quily/commit/74466c4))
+- extract shared RAG service from chat route ([2137e49](https://github.com/Quilibrium-Community/quily/commit/2137e49))
+- add Supabase keepalive workflow to prevent free-tier pausing ([1c87457](https://github.com/Quilibrium-Community/quily/commit/1c87457))
+- add Klearu to RAG entity routing ([37ef7fb](https://github.com/Quilibrium-Community/quily/commit/37ef7fb))
+
+### Bug Fixes
+
+- handle text-based tool calls from open-source models ([b1cb505](https://github.com/Quilibrium-Community/quily/commit/b1cb505))
+- strip bare JSON follow-up questions from display ([d150874](https://github.com/Quilibrium-Community/quily/commit/d150874))
+- force tool call after asking user for correction ([f69674e](https://github.com/Quilibrium-Community/quily/commit/f69674e))
+- include full bot answer and Discord link in issues ([ad55441](https://github.com/Quilibrium-Community/quily/commit/ad55441))
+- walk full reply chain for issue context ([442d382](https://github.com/Quilibrium-Community/quily/commit/442d382))
+- ensure correction workflow creates GitHub issues ([e2863bb](https://github.com/Quilibrium-Community/quily/commit/e2863bb))
+- strip unfenced follow-up questions from responses ([ef28583](https://github.com/Quilibrium-Community/quily/commit/ef28583))
+- skip model on correction turns, handle deterministically ([65027eb](https://github.com/Quilibrium-Community/quily/commit/65027eb))
+- block issue creation on vague corrections like "wrong" ([efd6cf9](https://github.com/Quilibrium-Community/quily/commit/efd6cf9))
+- accept body/description as tool call correction field ([6aef1cd](https://github.com/Quilibrium-Community/quily/commit/6aef1cd))
+- use PAT for workflow push to bypass branch protection ([23747b4](https://github.com/Quilibrium-Community/quily/commit/23747b4))
+- only show sources in Discord when actually cited in response ([2d40d9e](https://github.com/Quilibrium-Community/quily/commit/2d40d9e))
+- suppress Discord embeds for bare URLs ([3c9995a](https://github.com/Quilibrium-Community/quily/commit/3c9995a))
+- filter temporal chunks by doc type for livestream queries ([12e6136](https://github.com/Quilibrium-Community/quily/commit/12e6136))
+- prevent reranker from evicting temporal chunks ([d6169b6](https://github.com/Quilibrium-Community/quily/commit/d6169b6))
+- remove duplicate 'Livestream' text in Discord source formatting ([19d6494](https://github.com/Quilibrium-Community/quily/commit/19d6494))
+- ensure livestream in reserved slots for generic temporal queries ([824af0e](https://github.com/Quilibrium-Community/quily/commit/824af0e))
+- add GITHUB_TOKEN and error resilience to docs sync workflow ([08c629e](https://github.com/Quilibrium-Community/quily/commit/08c629e))
+
+### Documentation
+
+- update knowledge pipeline docs with auto-correction flow ([1a04787](https://github.com/Quilibrium-Community/quily/commit/1a04787))
+- add daily general recap documentation ([9a34fdc](https://github.com/Quilibrium-Community/quily/commit/9a34fdc))
+- add Discord auto-correction as easiest contribution option ([191bbfb](https://github.com/Quilibrium-Community/quily/commit/191bbfb))
+- clarify mainnet sharding still in progress ([f0104ae](https://github.com/Quilibrium-Community/quily/commit/f0104ae))
+- improve knowledge update guide with error feedback ([eb30139](https://github.com/Quilibrium-Community/quily/commit/eb30139))
+- add competitor comparison docs and Klearu reference ([dc51fc6](https://github.com/Quilibrium-Community/quily/commit/dc51fc6))
+
+### Refactoring
+
+- move discord announcements to docs/discord/ ([51b3f2f](https://github.com/Quilibrium-Community/quily/commit/51b3f2f))
+
+### Maintenance
+
+- update repo references for org transfer ([d15cebd](https://github.com/Quilibrium-Community/quily/commit/d15cebd))
+- reduce keepalive crons to single daily ping ([9c34034](https://github.com/Quilibrium-Community/quily/commit/9c34034))
+- migrate .planning to .gsd format ([505575d](https://github.com/Quilibrium-Community/quily/commit/505575d))
+
 ## [0.13.0] - 2026-02-24
 
 ### Features
