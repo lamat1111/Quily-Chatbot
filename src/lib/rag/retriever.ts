@@ -480,29 +480,7 @@ export async function retrieveWithReranking(
     candidates = [...priorityChunks, ...candidates];
   }
 
-  // For temporal/status queries, apply a recency boost to candidate similarity scores.
-  // This ensures recent Discord updates and livestream transcripts about a topic
-  // outrank older sources that may have higher raw semantic similarity but contain
-  // outdated information. The boost decays linearly: docs from today get the full
-  // boost, docs older than RECENCY_WINDOW_DAYS get no boost.
   const isTemporal = isTemporalQuery(query);
-  if (isTemporal) {
-    const RECENCY_BOOST_MAX = 0.15; // Max similarity bonus for very recent docs
-    const RECENCY_WINDOW_DAYS = 90;  // Docs older than this get no boost
-    const now = Date.now();
-
-    candidates = candidates.map(c => {
-      if (!c.published_date) return c;
-      const ageMs = now - new Date(c.published_date).getTime();
-      const ageDays = ageMs / (1000 * 60 * 60 * 24);
-      if (ageDays < 0 || ageDays > RECENCY_WINDOW_DAYS) return c;
-      const boost = RECENCY_BOOST_MAX * (1 - ageDays / RECENCY_WINDOW_DAYS);
-      return { ...c, similarity: c.similarity + boost };
-    });
-
-    // Re-sort by boosted similarity so the reranker receives better-ordered input
-    candidates.sort((a, b) => b.similarity - a.similarity);
-  }
 
   // For temporal queries, augment with recent content by date
   // This ensures "last/recent/latest" queries include actually recent documents
@@ -594,25 +572,48 @@ export async function retrieveWithReranking(
     return [...reservedAsChunks, ...shifted];
   };
 
-  // Helper to map reranked results to chunks
+  // Helper to map reranked results to chunks.
+  // For temporal/status queries, applies a post-rerank recency boost so recent
+  // documents can outrank older ones that the reranker scored slightly higher.
+  // The reranker (Cohere/Cloudflare) scores purely on content relevance and has
+  // no awareness of publication dates, so without this boost, old but keyword-rich
+  // transcripts dominate even when recent sources are more current.
   const mapRankedToChunks = (
     ranking: { originalIndex: number; score: number }[]
   ): RetrievedChunk[] => {
-    return ranking.map((ranked, idx) => {
+    const RECENCY_BOOST_MAX = 0.15;
+    const RECENCY_WINDOW_DAYS = 90;
+    const now = Date.now();
+
+    const boosted = ranking.map(ranked => {
       const original = candidates[ranked.originalIndex];
-      return {
-        id: original.id,
-        content: original.content,
-        source_file: original.source_file,
-        heading_path: original.heading_path,
-        source_url: original.source_url,
-        published_date: original.published_date,
-        title: original.title,
-        doc_type: original.doc_type,
-        similarity: original.similarity,
-        citationIndex: idx + 1,
-      };
+      let adjustedScore = ranked.score;
+
+      if (isTemporal && original.published_date) {
+        const ageDays = (now - new Date(original.published_date).getTime()) / (1000 * 60 * 60 * 24);
+        if (ageDays >= 0 && ageDays <= RECENCY_WINDOW_DAYS) {
+          adjustedScore += RECENCY_BOOST_MAX * (1 - ageDays / RECENCY_WINDOW_DAYS);
+        }
+      }
+
+      return { original, adjustedScore };
     });
+
+    // Re-sort by adjusted score and take the top results
+    boosted.sort((a, b) => b.adjustedScore - a.adjustedScore);
+
+    return boosted.slice(0, rerankFinalCount).map((item, idx) => ({
+      id: item.original.id,
+      content: item.original.content,
+      source_file: item.original.source_file,
+      heading_path: item.original.heading_path,
+      source_url: item.original.source_url,
+      published_date: item.original.published_date,
+      title: item.original.title,
+      doc_type: item.original.doc_type,
+      similarity: item.original.similarity,
+      citationIndex: idx + 1,
+    }));
   };
 
   // Helper for similarity-based fallback
@@ -653,6 +654,13 @@ export async function retrieveWithReranking(
     return mergeWithReserved(fallbackToSimilarity());
   }
 
+  // For temporal/status queries, ask the reranker for more results than needed
+  // so the post-rerank recency boost has a wider pool to promote recent docs.
+  // mapRankedToChunks will apply the boost and trim back to rerankFinalCount.
+  const rerankTopN = isTemporal
+    ? Math.min(candidates.length, rerankFinalCount * 2)
+    : rerankFinalCount;
+
   // Resolve Cohere API key: options > environment
   const resolvedCohereKey = cohereApiKey || process.env.COHERE_API_KEY;
 
@@ -664,7 +672,7 @@ export async function retrieveWithReranking(
         model: cohereProvider.reranking('rerank-v3.5'),
         query,
         documents: candidates.map((c: { content: string }) => c.content),
-        topN: rerankFinalCount,
+        topN: rerankTopN,
       });
       return mergeWithReserved(mapRankedToChunks(ranking));
     } catch (cohereError) {
@@ -682,7 +690,7 @@ export async function retrieveWithReranking(
       const ranking = await rerankWithCloudflare(
         query,
         candidates.map((c: { content: string }) => c.content),
-        rerankFinalCount,
+        rerankTopN,
         cloudflareAccountId,
         cloudflareApiToken
       );
