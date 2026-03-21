@@ -1,11 +1,11 @@
 ---
 type: doc
-title: "Knowledge Update Pipeline — Processing GitHub Issues into Docs"
-description: "The /process-issues skill that triages open GitHub issues, verifies claims, applies changes to docs, and reingests into RAG"
+title: "Knowledge Update Pipeline — Auto-Correction & Issue Processing"
+description: "Auto-correction flow (Discord & web chat), deterministic issue creation, and the /process-issues skill for applying changes to docs"
 status: done
 ai_generated: true
 created: 2026-03-19
-updated: 2026-03-19
+updated: 2026-03-21
 related_docs:
   - "update-news-skill.md"
   - "rag-knowledge-base-workflow.md"
@@ -66,11 +66,77 @@ Offer to run /update-news if changes supersede existing docs
 | `.github/ISSUE_TEMPLATE/knowledge-update.yml` | Structured issue template for submissions |
 | `docs/custom/How-To-Update-Quily-Knowledge.md` | Doc so Quily can answer "how do I update your info?" |
 
-## Two Contribution Workflows
+## Auto-Correction Flow (Discord & Web Chat)
 
-Community members can contribute knowledge in two ways:
+Users can correct Quily directly in Discord or the web chat UI. The correction flow is **deterministic** — it does not rely on the LLM to call tools reliably.
 
-### 1. GitHub Issue (lower friction)
+### How It Works
+
+```
+User says something is wrong ("wrong", "that's incorrect", etc.)
+        │
+        ▼
+Quily re-examines sources, acknowledges the error
+Asks: "If you know the right answer, tell me and I'll open an issue"
+        │
+        ▼
+User provides correction details
+        │
+        ▼
+Server-side deterministic check:
+  1. Was bot's previous message asking for correction? (pattern match)
+  2. Is user's message NOT vague? (not just "wrong")
+  → YES: skip the model, create GitHub issue automatically
+        │
+        ▼
+Issue created with labels: knowledge-update, auto-reported
+Contains: original question, Quily's wrong answer, user's correction
+```
+
+### Key Design Decision: Deterministic > Model-Dependent
+
+Open-source models (DeepSeek, Qwen, etc.) unreliably handle structured tool calling — they often output tool calls as garbage text instead of using the proper protocol. Rather than relying on the model to decide when to create issues, the server enforces behavior deterministically:
+
+- **Vague corrections blocked**: "wrong", "incorrect", "nope" → model asked to request details, issue creation blocked server-side via regex
+- **Correction turn short-circuited**: When the bot's previous message contains "I'll open an issue" and the user provides details, the model is **skipped entirely** — the server writes "Got it, thanks for the correction!" and creates the issue
+- **Reply chain walking (Discord)**: On Discord, the bot walks the reply chain up to 10 hops to find the original wrong answer, even when a different user corrects the bot
+
+### Files Involved
+
+| File | Purpose |
+|------|---------|
+| `bot/src/handlers/mention.ts` | Discord: reply chain walking, tool call handling |
+| `app/api/chat/route.ts` | Web UI: deterministic short-circuit, issue creation |
+| `bot/src/utils/githubIssues.ts` | GitHub issue creation (shared) |
+| `src/lib/rag/prompt.ts` | System prompt: 3-scenario correction instructions |
+| `src/lib/rag/personality.ts` | Personality examples for correction responses |
+| `src/lib/rag/tools.ts` | Tool definition for `create_knowledge_issue` |
+| `src/components/chat/MessageBubble.tsx` | Frontend: correction issue notification + garbage text stripping |
+
+### Discord vs Web UI Differences
+
+| | Discord | Web UI |
+|---|---|---|
+| **Context source** | Reply chain (walks Discord messages) | Conversation history (in request body) |
+| **Tool calling** | `generateText()` with tools (more reliable) | Deterministic short-circuit (model skipped) |
+| **Issue creation** | `mention.ts` handles after `processQuery()` | `route.ts` handles in streaming pipeline |
+| **Rate limiting** | Per-user daily limits (role-aware) | No rate limiting yet |
+| **Reporter name** | Discord username | "Web UI user" |
+
+## Three Contribution Workflows
+
+Community members can contribute knowledge in three ways:
+
+### 1. Auto-correction (lowest friction)
+
+Best for Discord/web chat users who spot errors in real-time.
+
+1. User tells Quily "that's wrong" in Discord or web chat
+2. Quily asks for the correct information
+3. User provides the correction → GitHub issue auto-created
+4. Maintainer runs `/process-issues` to apply it
+
+### 2. GitHub Issue (manual)
 
 Best for non-technical users or quick info drops. They describe what changed, the maintainer runs `/process-issues` to apply it.
 
@@ -79,7 +145,7 @@ Best for non-technical users or quick info drops. They describe what changed, th
 3. Skill triages, verifies, proposes approach
 4. Maintainer approves — changes are committed, pushed, and reingested
 
-### 2. Pull Request (direct contribution)
+### 3. Pull Request (direct contribution)
 
 Best for contributors who want to write the doc themselves.
 
@@ -88,7 +154,7 @@ Best for contributors who want to write the doc themselves.
 3. Submit PR
 4. Maintainer reviews and merges
 
-Both workflows are documented in the README Contributing section and in `docs/custom/How-To-Update-Quily-Knowledge.md`.
+All workflows are documented in the README Contributing section and in `docs/custom/How-To-Update-Quily-Knowledge.md`.
 
 ## Trusted Users
 
@@ -142,4 +208,4 @@ They work together: after `/process-issues` applies a change that supersedes exi
 
 ---
 
-_Updated: 2026-03-19_
+_Updated: 2026-03-21_
