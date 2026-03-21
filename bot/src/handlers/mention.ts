@@ -21,10 +21,14 @@ export function registerMentionHandler(client: Client): void {
       // Respond to @mentions OR replies to the bot's own messages
       const isMentioned = message.mentions.has(client.user);
       let isReplyToBot = false;
-      if (!isMentioned && message.reference) {
+      let repliedBotMessage: Message | null = null;
+      if (message.reference) {
         try {
           const replied = await message.fetchReference();
-          isReplyToBot = replied.author.id === client.user.id;
+          if (replied.author.id === client.user.id) {
+            isReplyToBot = true;
+            repliedBotMessage = replied;
+          }
         } catch {
           // Referenced message may be deleted or inaccessible
         }
@@ -138,7 +142,33 @@ export function registerMentionHandler(client: Client): void {
         const issueCall = result.toolCalls.find(
           (tc) => tc.toolName === 'create_knowledge_issue',
         );
-        if (issueCall && history.length >= 2) {
+        if (issueCall) {
+          // Build context for the issue from conversation history or the reply chain
+          let originalQuestion = '';
+          let quilyAnswer = '';
+
+          if (history.length >= 2) {
+            // User has prior conversation history — use it
+            originalQuestion = history[history.length - 2].content;
+            quilyAnswer = history[history.length - 1].content;
+          } else if (repliedBotMessage) {
+            // User replied to a Quily message without prior history (e.g. different user correcting)
+            // Use the replied-to bot message as Quily's answer
+            quilyAnswer = repliedBotMessage.content;
+            // Try to get the original question from what Quily was replying to
+            if (repliedBotMessage.reference) {
+              try {
+                const originalMsg = await repliedBotMessage.fetchReference();
+                originalQuestion = originalMsg.content;
+              } catch {
+                // Original message may be deleted
+              }
+            }
+            if (!originalQuestion) {
+              originalQuestion = query; // fall back to the correction message itself
+            }
+          }
+
           const memberRoles =
             message.member?.roles.cache.map((r) => r.id) || [];
           const limitStatus = checkIssueRateLimit(
@@ -157,8 +187,8 @@ export function registerMentionHandler(client: Client): void {
                 correction: issueCall.input.correction,
                 discordUsername:
                   message.member?.displayName || message.author.username,
-                originalQuestion: history[history.length - 2].content,
-                quilyAnswer: history[history.length - 1].content,
+                originalQuestion,
+                quilyAnswer,
               });
               recordIssueCreation(message.author.id);
               console.log(
@@ -168,7 +198,8 @@ export function registerMentionHandler(client: Client): void {
                 `\n\n*I've opened a [GitHub issue](${issueUrl}) with your correction for the maintainers to review. Thanks for helping me get smarter.*`;
             } catch (err) {
               console.error('[auto-issue] Failed to create GitHub issue:', err);
-              // Silent failure — response still works normally
+              responseText +=
+                `\n\n*I couldn't auto-create the issue — you can open one manually at https://github.com/Quilibrium-Community/quily/issues*`;
             }
           }
         }
