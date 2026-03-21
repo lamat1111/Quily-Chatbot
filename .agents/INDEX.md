@@ -20,10 +20,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 🐛 Bug Reports
 
-### Active Issues
-- [RAG retrieval surfaces outdated sharding/milestone info despite recency improvements](bugs/2026-03-21-rag-outdated-sharding-sources.md)
-
 ### Solved Issues
+- [RAG retrieval surfaces outdated sharding/milestone info despite recency improvements](bugs/.solved/2026-03-21-rag-outdated-sharding-sources.md)
 - [Sidebar Scroll Snaps Back When Collapsible Nav Items Change Height](bugs/.solved/sidebar-scroll-snapback-collapsible-nav.md)
 - [Turnstile Token Reuse Causes Verification Failure](bugs/.solved/turnstile-token-reuse-verification-failure.md)
 
@@ -102,4 +100,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-21 19:33:01
+**Last Updated**: 2026-03-21 19:51:28

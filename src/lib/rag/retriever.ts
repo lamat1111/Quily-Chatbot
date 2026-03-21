@@ -545,12 +545,6 @@ export async function retrieveWithReranking(
       .slice(0, 3);
   }
 
-  if (isTemporal && reservedTemporalChunks.length > 0) {
-    console.log('[RAG] Reserved temporal chunks:', reservedTemporalChunks.map(c =>
-      `${c.published_date || 'no-date'} | ${c.doc_type} | ${c.source_file}`
-    ));
-  }
-
   if (candidates.length === 0 && reservedTemporalChunks.length === 0) {
     return [];
   }
@@ -615,14 +609,6 @@ export async function retrieveWithReranking(
 
     // Re-sort by adjusted score and take the top results
     boosted.sort((a, b) => b.adjustedScore - a.adjustedScore);
-
-    if (isTemporal) {
-      console.log('[RAG] Post-rerank recency boost applied:');
-      boosted.slice(0, rerankFinalCount).forEach((item, idx) => {
-        const orig = ranking.find(r => candidates[r.originalIndex].id === item.original.id);
-        console.log(`  ${idx + 1}. ${item.original.published_date || 'no-date'} | score: ${orig?.score.toFixed(3) || '?'} → ${item.adjustedScore.toFixed(3)} | ${item.original.source_file}`);
-      });
-    }
 
     return boosted.slice(0, rerankFinalCount).map((item, idx) => ({
       id: item.original.id,

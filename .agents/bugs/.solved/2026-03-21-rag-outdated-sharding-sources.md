@@ -1,11 +1,13 @@
 ---
 type: bug
 title: "RAG retrieval surfaces outdated sharding/milestone info despite recency improvements"
-status: open
+status: done
 priority: high
 ai_generated: true
 created: 2026-03-21
 updated: 2026-03-21
+resolved: 2026-03-21
+resolution: "Annotated obsolete milestone/roadmap sections in 3 old transcripts as historical. Added status keyword detection, post-rerank recency boost, broad query word-boundary fix, maxOutputTokens cap, and streamlined system prompt. Primary fix was the transcript edits — the most effective approach for stale content."
 ---
 
 # RAG retrieval surfaces outdated sharding/milestone info despite recency improvements
