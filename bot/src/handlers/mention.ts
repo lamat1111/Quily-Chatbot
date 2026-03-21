@@ -143,30 +143,54 @@ export function registerMentionHandler(client: Client): void {
           (tc) => tc.toolName === 'create_knowledge_issue',
         );
         if (issueCall) {
-          // Build context for the issue from conversation history or the reply chain
+          // Build context for the issue by walking the Discord reply chain
+          // to find the ORIGINAL bot answer being corrected (not the follow-up).
+          // The reply chain looks like:
+          //   [Original Q] → [Quily's wrong answer] → [User: "wrong"] → [Quily: "tell me more"] → [User: correction]
+          // We want Quily's wrong answer and the original question, not the follow-up.
           let originalQuestion = '';
           let quilyAnswer = '';
 
-          if (history.length >= 2) {
-            // User has prior conversation history — use it
-            originalQuestion = history[history.length - 2].content;
-            quilyAnswer = history[history.length - 1].content;
-          } else if (repliedBotMessage) {
-            // User replied to a Quily message without prior history (e.g. different user correcting)
-            // Use the replied-to bot message as Quily's answer
-            quilyAnswer = repliedBotMessage.content;
-            // Try to get the original question from what Quily was replying to
-            if (repliedBotMessage.reference) {
+          if (repliedBotMessage) {
+            // Walk back the reply chain (up to 10 hops) to find the ORIGINAL
+            // bot answer being corrected. Each message references the one it
+            // replied to, so the chain looks like:
+            //   [User A question] ← [Quily wrong answer] ← [LaMat "wrong"] ← [Quily "tell me more"] ← [LaMat correction]
+            // We keep walking regardless of author, tracking the deepest bot
+            // message (= the original wrong answer) and the deepest non-bot
+            // message before it (= the original question).
+            let currentMsg: Message = repliedBotMessage;
+            let deepestBotMsg: Message = repliedBotMessage; // at minimum, the direct reply
+            let deepestQuestion = '';
+
+            for (let i = 0; i < 10; i++) {
+              if (!currentMsg.reference) break;
               try {
-                const originalMsg = await repliedBotMessage.fetchReference();
-                originalQuestion = originalMsg.content;
+                const parent = await currentMsg.fetchReference();
+                if (parent.author.id === client.user!.id) {
+                  deepestBotMsg = parent;
+                } else {
+                  // Track the question that came before the deepest bot msg
+                  // (only update if this is deeper than current deepestBotMsg)
+                  deepestQuestion = parent.content;
+                }
+                currentMsg = parent;
               } catch {
-                // Original message may be deleted
+                break; // Message deleted or inaccessible
               }
             }
-            if (!originalQuestion) {
-              originalQuestion = query; // fall back to the correction message itself
-            }
+            quilyAnswer = deepestBotMsg.content;
+            originalQuestion = deepestQuestion;
+          }
+
+          // Fall back to conversation history if reply chain didn't yield results
+          if (!quilyAnswer && history.length >= 2) {
+            originalQuestion = history[history.length - 2].content;
+            quilyAnswer = history[history.length - 1].content;
+          }
+
+          if (!originalQuestion) {
+            originalQuestion = query;
           }
 
           const memberRoles =
