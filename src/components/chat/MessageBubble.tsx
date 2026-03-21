@@ -70,6 +70,14 @@ function getTextContent(message: UIMessage, isStreaming: boolean = false): strin
 
   const fullText = textParts.join('');
 
+  // DEBUG: log text content to diagnose follow-up stripping
+  if (fullText.includes('json') && fullText.includes('[')) {
+    console.log('[MessageBubble] fullText ends with:', JSON.stringify(fullText.slice(-300)));
+    console.log('[MessageBubble] isStreaming:', isStreaming);
+    console.log('[MessageBubble] BARE match:', /\n\s*json\s*\n?\s*\["[\s\S]*?"\s*\]\s*$/.test(fullText));
+    console.log('[MessageBubble] FENCE match:', /```json\s*\n?\s*\[[\s\S]*?\]\s*\n?```\s*$/.test(fullText));
+  }
+
   // Strip follow-up JSON block and raw tool call text from display
   // During streaming, also strip partial blocks that are being typed
   if (isStreaming) {
@@ -174,13 +182,11 @@ export const MessageBubble = memo(function MessageBubble({
         />
       )}
 
-      {/* Beta warning callout - only show after streaming completes */}
+      {/* Disclaimer callout - only show after streaming completes */}
       {!isStreaming && (
         <div className="callout-info mt-4 text-base sm:text-sm">
           <p>
-            <strong>Beta Notice:</strong> Quily is in beta and may occasionally
-            produce inaccurate information. Do not use these replies to post public
-            information about Quilibrium without verifying it first in the{' '}
+            I can make mistakes, always check the{' '}
             <a
               href="https://docs.quilibrium.com"
               target="_blank"
@@ -188,8 +194,8 @@ export const MessageBubble = memo(function MessageBubble({
               className="link-unstyled"
             >
               official docs
-            </a>{' '}
-            or with the community.
+            </a>
+            . If I&apos;m wrong, tell me the right answer and I&apos;ll flag it for review.
           </p>
         </div>
       )}

@@ -125,7 +125,6 @@ export function MessageList({ messages, status, error, rateLimitError, onQuickAc
           <div className="text-center text-text-muted w-full max-w-xl px-4">
             <div className="flex items-start justify-center gap-1 mb-2">
               <Logo height={56} />
-              <span className="text-xs font-medium text-accent mt-3">beta</span>
             </div>
             <p className="mb-6">Ask a question about Quilibrium to get started</p>
 
@@ -162,18 +161,6 @@ export function MessageList({ messages, status, error, rateLimitError, onQuickAc
         {/* Footer with disclaimers */}
         <div className="text-center py-4">
           <p className="text-xs text-text-subtle">
-            Quily can make mistakes. Verify important info with{' '}
-            <a
-              href="https://docs.quilibrium.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-muted"
-            >
-              official docs
-            </a>
-            .
-          </p>
-          <p className="text-xs text-text-subtle mt-1">
             This app is unofficial and not endorsed by Quilibrium Inc.
           </p>
         </div>

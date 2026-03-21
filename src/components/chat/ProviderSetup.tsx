@@ -170,7 +170,6 @@ export function ProviderSetup({ onConnect, freeCreditsExhausted }: ProviderSetup
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-start justify-center gap-1 mb-2 sm:mb-3">
             <Logo height={56} className="sm:h-16" />
-            <span className="text-xs sm:text-sm font-medium text-accent mt-3 sm:mt-4">beta</span>
           </div>
           <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
             Your AI assistant for all things Quilibrium.
