@@ -113,7 +113,7 @@ export function formatForDiscord(text: string, sources: SourceReference[]): stri
     }
   }
 
-  formatted += '\n\n-# *I\'m in beta and can make mistakes · report inaccuracies · always check official docs*';
+  formatted += '\n\n-# *I can make mistakes · report inaccuracies · always check official docs*';
 
   return formatted;
 }
