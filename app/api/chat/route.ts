@@ -191,8 +191,6 @@ function getCommandResponse(message: string): string | null {
 const STATS_PATTERNS = [
   /^\s*(?:network\s+)?stats?\s*$/i,
   /^\s*\/stats?\s*$/i,
-  /^\s*shard\s*out\s*$/i,
-  /^\s*shardout\s*$/i,
 ];
 
 function isStatsQuery(message: string): boolean {
