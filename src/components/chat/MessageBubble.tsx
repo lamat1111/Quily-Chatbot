@@ -24,10 +24,23 @@ interface MessageBubbleProps {
 const FOLLOW_UP_CODE_FENCE_REGEX = /```json\s*\n?\s*\[[\s\S]*?\]\s*\n?```\s*$/;
 
 /**
+ * Regex to match bare JSON follow-up questions (no code fence).
+ * Matches: json\n["q1", "q2"] or just a bare JSON array at end of response.
+ * Mirrors BARE_JSON_REGEX in followUpParser.ts.
+ */
+const BARE_FOLLOW_UP_REGEX = /\n\s*json\s*\n?\s*\["[\s\S]*?"\s*\]\s*$/;
+
+/**
  * Regex to match partial/in-progress JSON code fence during streaming.
  * Catches: ```json, ```json\n[, ```json\n["..., etc.
  */
 const PARTIAL_FOLLOW_UP_REGEX = /```json\s*\n?\s*\[?[\s\S]*$/;
+
+/**
+ * Regex to match partial bare JSON follow-up during streaming.
+ * Catches: json\n[, json ["..., etc.
+ */
+const PARTIAL_BARE_FOLLOW_UP_REGEX = /\n\s*json\s*\n?\s*\[?[^\]]*$/;
 
 /**
  * Extract text content from UIMessage parts array.
@@ -43,12 +56,18 @@ function getTextContent(message: UIMessage, isStreaming: boolean = false): strin
 
   const fullText = textParts.join('');
 
-  // Strip follow-up JSON block from display
+  // Strip follow-up JSON block from display (fenced or bare format)
   // During streaming, also strip partial blocks that are being typed
   if (isStreaming) {
-    return fullText.replace(PARTIAL_FOLLOW_UP_REGEX, '').trimEnd();
+    return fullText
+      .replace(PARTIAL_FOLLOW_UP_REGEX, '')
+      .replace(PARTIAL_BARE_FOLLOW_UP_REGEX, '')
+      .trimEnd();
   }
-  return fullText.replace(FOLLOW_UP_CODE_FENCE_REGEX, '').trimEnd();
+  return fullText
+    .replace(FOLLOW_UP_CODE_FENCE_REGEX, '')
+    .replace(BARE_FOLLOW_UP_REGEX, '')
+    .trimEnd();
 }
 
 /**
