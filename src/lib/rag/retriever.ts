@@ -480,6 +480,30 @@ export async function retrieveWithReranking(
     candidates = [...priorityChunks, ...candidates];
   }
 
+  // For temporal/status queries, apply a recency boost to candidate similarity scores.
+  // This ensures recent Discord updates and livestream transcripts about a topic
+  // outrank older sources that may have higher raw semantic similarity but contain
+  // outdated information. The boost decays linearly: docs from today get the full
+  // boost, docs older than RECENCY_WINDOW_DAYS get no boost.
+  const isTemporal = isTemporalQuery(query);
+  if (isTemporal) {
+    const RECENCY_BOOST_MAX = 0.15; // Max similarity bonus for very recent docs
+    const RECENCY_WINDOW_DAYS = 90;  // Docs older than this get no boost
+    const now = Date.now();
+
+    candidates = candidates.map(c => {
+      if (!c.published_date) return c;
+      const ageMs = now - new Date(c.published_date).getTime();
+      const ageDays = ageMs / (1000 * 60 * 60 * 24);
+      if (ageDays < 0 || ageDays > RECENCY_WINDOW_DAYS) return c;
+      const boost = RECENCY_BOOST_MAX * (1 - ageDays / RECENCY_WINDOW_DAYS);
+      return { ...c, similarity: c.similarity + boost };
+    });
+
+    // Re-sort by boosted similarity so the reranker receives better-ordered input
+    candidates.sort((a, b) => b.similarity - a.similarity);
+  }
+
   // For temporal queries, augment with recent content by date
   // This ensures "last/recent/latest" queries include actually recent documents
   // regardless of how the user phrases their request (works for any language)
@@ -489,7 +513,7 @@ export async function retrieveWithReranking(
   // reserved chunks are prepended to guarantee they reach the LLM context.
   let reservedTemporalChunks: typeof candidates = [];
 
-  if (isTemporalQuery(query)) {
+  if (isTemporal) {
     // If the user is asking about livestreams specifically, only fetch recent livestreams.
     // For generic temporal queries ("what's the latest?"), fetch a mix: 1 most recent doc
     // of any type + 1 most recent livestream + 1 most recent Discord announcement.
