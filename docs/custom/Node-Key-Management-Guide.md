@@ -83,6 +83,15 @@ These four key types map to four functional roles in the network:
 - **Spend keys (decaf448)** -- Required for token view and spend operations.
 - **Prover keys (bls48581)** -- Used by node operators for prover enrollment and deployment administration.
 
+### Peer ID vs Prover Seniority — Key Distinction
+
+These are two separate concepts derived from different keys:
+
+- **Peer ID** — Your node's network identity, derived from the `peerPrivKey` field in `config.yml`. This is how other nodes recognize yours on the P2P network. Restoring your original `config.yml` restores your original peer ID.
+- **Prover seniority** — Accumulated on-chain based on your **prover key** (`bls48581` in `keys.yml`). Seniority determines precedence when joining prover rings. It is tied to the prover key's history, not to the peer ID.
+
+Restoring both `config.yml` and `keys.yml` from backup preserves **both** your peer ID and your prover seniority, since both are derived from key material in those files.
+
 ---
 
 ## How Key-Derived Addresses Work
