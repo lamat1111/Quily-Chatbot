@@ -150,6 +150,7 @@ export function registerMentionHandler(client: Client): void {
           // We want Quily's wrong answer and the original question, not the follow-up.
           let originalQuestion = '';
           let quilyAnswer = '';
+          let discordMessageLink = '';
 
           if (repliedBotMessage) {
             // Walk back the reply chain (up to 10 hops) to find the ORIGINAL
@@ -170,8 +171,6 @@ export function registerMentionHandler(client: Client): void {
                 if (parent.author.id === client.user!.id) {
                   deepestBotMsg = parent;
                 } else {
-                  // Track the question that came before the deepest bot msg
-                  // (only update if this is deeper than current deepestBotMsg)
                   deepestQuestion = parent.content;
                 }
                 currentMsg = parent;
@@ -181,6 +180,7 @@ export function registerMentionHandler(client: Client): void {
             }
             quilyAnswer = deepestBotMsg.content;
             originalQuestion = deepestQuestion;
+            discordMessageLink = `https://discord.com/channels/${deepestBotMsg.guildId}/${deepestBotMsg.channelId}/${deepestBotMsg.id}`;
           }
 
           // Fall back to conversation history if reply chain didn't yield results
@@ -213,6 +213,7 @@ export function registerMentionHandler(client: Client): void {
                   message.member?.displayName || message.author.username,
                 originalQuestion,
                 quilyAnswer,
+                discordMessageLink: discordMessageLink || undefined,
               });
               recordIssueCreation(message.author.id);
               console.log(

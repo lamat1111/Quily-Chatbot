@@ -4,6 +4,8 @@ export interface CreateIssueParams {
   discordUsername: string;
   originalQuestion: string;
   quilyAnswer: string;
+  /** Discord message link to the original bot answer, if available */
+  discordMessageLink?: string;
 }
 
 /**
@@ -19,25 +21,23 @@ export async function createGitHubIssue(params: CreateIssueParams): Promise<stri
     throw new Error('GITHUB_TOKEN not configured');
   }
 
-  // Truncate long answers to keep issue readable
-  const truncatedAnswer =
-    params.quilyAnswer.length > 500
-      ? params.quilyAnswer.slice(0, 500) + '...'
-      : params.quilyAnswer;
+  const discordLink = params.discordMessageLink
+    ? `\n\n[View original message on Discord](${params.discordMessageLink})`
+    : '';
 
   const body = `## Correction (via Discord)
 
 **Reported by:** ${params.discordUsername}
 
 ### What Quily said:
-> ${truncatedAnswer.replace(/\n/g, '\n> ')}
+> ${params.quilyAnswer.replace(/\n/g, '\n> ')}
 
 ### What the user corrected:
 > ${params.correction.replace(/\n/g, '\n> ')}
 
 ### Original question:
 > ${params.originalQuestion.replace(/\n/g, '\n> ')}
-
+${discordLink}
 ---
 *This issue was automatically created by Quily from a Discord correction.*`;
 
