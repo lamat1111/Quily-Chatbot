@@ -48,18 +48,9 @@ That is a rousing success for an application so new, so novel, running on a new 
 
 We also launched our Q JavaScript Channels SDK. We will review that later in the stream.
 
-## What Is Coming Next
+## What Was Coming Next (as of March 2025 — Quilibrium 2.1 was released April 14, 2025)
 
-Up next is Milestone 3 on testnet, a very important part of getting us to 2.1.
-
-For those who have old pre-2.0 Andomints that are not completed yet - please go through the portal and get them uploaded because we will have a cutoff window of about January 28th. Please make sure you get those in time because they will not be able to continue into 2.1. I am not making any statements about when 2.1 is coming out, but read between the lines.
-
-Coming next after Milestone 3:
-- Quorum public invites
-- Q Name Service
-- S3 and KMS developer previews and SDKs
-- Quorum Apex and Space subscriptions
-- Quorum mobile app and desktop betas
+> **Note:** This section described the pre-release roadmap as of March 2025. Quilibrium 2.1 shipped to mainnet on April 14, 2025. For current network status, see recent Discord announcements.
 
 ---
 
@@ -369,23 +360,23 @@ The metavirtualization runtime is needed to do that. In terms of competitive pri
 
 Our dynamic fee market will ultimately rule how much QUIL needs to be spent for certain things on the network. There is a baseline fee for execution for metavirtualization. What that baseline fee's multiplier will be remains to be seen as the network continues to grow.
 
-## Roadmap: Dawn, Dusk, Equinox, Event Horizon
+## Roadmap: Dawn, Dusk, Equinox, Event Horizon (as of March 2025)
+
+> **Note:** This section describes the roadmap phase names as discussed in March 2025. "Dusk" (2.1) was completed with the April 14, 2025 mainnet release. The subsequent phases may have evolved — see recent announcements for current plans.
 
 **Question from One Time:** Can you share a brief overview of the current roadmap: Dawn, Dusk, Equinox, and Event Horizon? Also, any details on QCL?
 
 - **Dawn** happened a while ago
-- **Dusk** is what is currently in progress
-- **Equinox** is after we are done with 2.1 - starts to ramp out a lot of primitives for AWS-style services
+- **Dusk** was in progress at the time of this AMA (completed with 2.1 release in April 2025)
+- **Equinox** is after 2.1 - starts to ramp out a lot of primitives for AWS-style services
 
-With our QCL application runtime, we support general application development. But there will always be things that in a generic MPC execution runtime will be slower than having purpose-built primitives.
+With the QCL application runtime, general application development is supported. But there will always be things that in a generic MPC execution runtime will be slower than having purpose-built primitives.
 
-For Equinox we are planning:
+For Equinox the plans included:
 - Metavirtualization runtime
 - Video processing, image processing, and sound processing
 
-**Event Horizon** is where we will start getting into complicated machine learning primitives.
-
-The tech is already technically built into QUIL today. If you look at the RPM crate inside the repository, that is one of the most crucial pieces required as a primitive for supporting secure machine learning. Most machine learning operations are essentially matrix multiplication, and the RPM library is a secure matrix multiplication library.
+**Event Horizon** is where machine learning primitives come in. The tech is already technically built into QUIL today — the RPM crate inside the repository is a secure matrix multiplication library, one of the most crucial pieces required as a primitive for supporting secure machine learning.
 
 ## AI and Machine Learning on Quilibrium
 
@@ -393,9 +384,9 @@ The tech is already technically built into QUIL today. If you look at the RPM cr
 
 We are aiming for the Event Horizon release to focus on machine learning primitives - primarily because they require a lot of compute and we are going to continue to grow overall compute on the network. Focusing on that this soon would potentially strangle the network in terms of where most resources are being utilized and would not be very good for application growth.
 
-## QCL Status
+## QCL Status (as of March 2025)
 
-Regarding QCL: that is part of our combined Milestone 5 release for testnet. We will be doing the Milestone 3 release for testnet tonight - in the following hours after this AMA. Milestone 4 and 5 combined is when QCL will pop up.
+> **Note:** QCL was part of the Milestone 5/2.1 release, which shipped to mainnet on April 14, 2025.
 
 ## NFT Deployment Costs
 

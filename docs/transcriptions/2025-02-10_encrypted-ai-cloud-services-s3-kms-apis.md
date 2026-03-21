@@ -29,13 +29,11 @@ The problem with TEEs, beyond the fact that practically every TEE that has ever 
 
 There are a few projects that have been making use of TEEs. I have a great deal of respect for the teams involved in these projects, and I understand they're making certain trade-offs. But those trade-offs are essentially saying that because doing things in a privacy-preserving manner using mathematics rather than trusted execution environments is too hard or too slow for their purpose, they're choosing the easy route. By consequence, they are now putting themselves in a lot of danger, including certain regulatory issues.
 
-## Quilibrium 2.1 Milestone 5 Status
+## Quilibrium 2.1 Milestone 5 Status (February 2025 — completed, 2.1 released April 14, 2025)
 
-Right now nodes on testnet are going through a mainnet dry run state import. The way that data is stored on Quilibrium is on an encrypted oblivious hypergraph. That data structure keeps all of the data that is put on Quilibrium's network encrypted end-to-end and stored on the network in a way that is blindly retrievable. If you want to make a request to fetch data from the network, you have to create a request in such a way that the nodes handling that query are essentially blind to what data is actually being queried. In return, you become aware only of the data you intended to fetch.
+> **Note:** This section describes the pre-release testnet status as of February 2025. All milestones listed here were completed and Quilibrium 2.1 was released to mainnet on April 14, 2025.
 
-The next thing going on for Milestone 5 is surfacing the S3 and KMS API previews. The remaining Milestone 5 items are surfacing the schema repository, the QCL compiler, and the public release of Q Console. All of those things combined will unlock our 2.1 upgrade for mainnet.
-
-The testnet is going through the dry run of the mainnet data import. So far so good, which is a fantastic sign. We just need to get through the process of doing this import and verifying that everything ends with the correct root hash of the total state of that data.
+At the time of this livestream, nodes on testnet were going through a mainnet dry run state import. The way that data is stored on Quilibrium is on an encrypted oblivious hypergraph. That data structure keeps all of the data that is put on Quilibrium's network encrypted end-to-end and stored on the network in a way that is blindly retrievable.
 
 ## Upcoming Developer APIs
 
@@ -149,15 +147,17 @@ We do not have to worry about custodianship because the user holds the key, the 
 
 The Ed448 support is relevant for Quilibrium. If you want an MPC Quilibrium wallet where some number of parties have to all co-sign together to move funds, this is a great way to do it. When running a node and you want the rewards to go to a given key but you don't want that key to be hot, you can use the KMS API to produce MPC keys so you don't have to worry about funds being lost if that node were compromised.
 
-## Beacon Decommissioning
+## Beacon Decommissioning (as described in February 2025)
 
-With the final phase of Milestone 5 and the broader release of 2.1 on mainnet, the beacon will finally be decommissioning. The way that works is a two-step operation:
+> **Note:** This section describes the planned beacon decommissioning process as explained in this February 2025 livestream. Quilibrium 2.1 was released on April 14, 2025. The shard-out and full decentralization process is ongoing as of early 2026 — see recent Discord announcements for current status.
+
+The planned beacon decommissioning process involves:
 
 1. Quilibrium 2.1 is released
-2. The beacon will continue to produce frames for a short period while converting the entire store of the network into this encrypted hypergraph format
-3. Once completed, it will send that to the rest of the network and basically sign off
-4. When it signs off, the network will become fully decentralized in every single way
-5. Nodes will be collectively building the network instead of relying on a centralized sequencer
+2. The beacon continues to produce frames for a period while converting the network store into the encrypted hypergraph format
+3. Once completed, it sends that to the rest of the network and signs off
+4. The network becomes fully decentralized
+5. Nodes collectively build the network instead of relying on a centralized sequencer
 
 ### Why the Beacon Was Necessary
 

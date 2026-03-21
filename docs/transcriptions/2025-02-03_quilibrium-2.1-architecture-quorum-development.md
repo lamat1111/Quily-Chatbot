@@ -18,30 +18,20 @@ topics:
   - Q Name Service
 ---
 
-## Near-Term Roadmap
+## Near-Term Roadmap (as discussed in February 2025 — Quilibrium 2.1 was subsequently released on April 14, 2025)
 
-The near-term roadmap for Quilibrium includes several key items:
+> **Note:** The milestone numbering below (Milestone 3, 5) was the pre-release roadmap for Quilibrium 2.1. These milestones were completed and 2.1 shipped to mainnet on April 14, 2025. For current network status, see recent Discord announcements and dev-updates.
 
-**Milestone 3 Updates:**
-- This will be the last update to Milestone 3 currently in progress on testnet
-- It will give the remaining components a chance to be vetted out and ensure they are performant and behaving as expected
-- We'll finish with a mainnet data import and dry run - a common practice among protocols to ensure the network properly shards out existing mainnet data, maintains consensus, and continues to prove over the datasets in the new sharded tree format
+The near-term roadmap for Quilibrium as of this livestream included several key items:
 
 **S3 and KMS APIs:**
-- Testing the S3 and KMS APIs is ongoing
-- The MPC wallet testing is a very important part of this - you may have seen the recent Quorum screenshot where we were vetting out the MPC wallet
+- Testing the S3 and KMS APIs was ongoing
+- The MPC wallet testing was a very important part of this
 
 **Quorum Updates:**
 - Q Name Service implementation for decentralized identities on the network and for Quorum itself
-- Public invite link synchronization issues being resolved
 - MPC wallet feature targeting initial compatibility with Ethereum and Solana
 - This is important for onboarding DAOs - many have expressed interest in moving away from Discord because it's not decentralized and has no encryption besides basic HTTPS
-
-**Milestone 5:**
-- Introducing the schema repository providing bonded types to the network
-- When deploying an application, ensuring data is structured in a way that is easily referenceable despite being encrypted
-- QCL runtime and compiler will be part of Milestone 5
-- After vetting, 2.1 will deploy to mainnet
 
 ---
 
