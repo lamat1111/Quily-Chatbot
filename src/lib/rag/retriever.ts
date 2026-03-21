@@ -40,12 +40,31 @@ const TEMPORAL_KEYWORDS = [
   'पिछला', 'हाल', 'नवीनतम',
 ];
 
+// Keywords that indicate the user wants current status/progress, not historical info.
+// These queries benefit from the same temporal augmentation as explicit "latest/recent"
+// queries — they need recent Discord updates, livestreams, and status docs.
+const STATUS_KEYWORDS = [
+  // English
+  'status', 'progress', 'update', 'roadmap', 'timeline',
+  'milestones', 'remaining', 'what\'s left', 'when will',
+  'how far', 'current state', 'where are we', 'eta',
+  'what\'s happening', 'what is happening',
+  // Spanish
+  'estado', 'progreso', 'actualización', 'hoja de ruta',
+  // French
+  'état', 'progrès', 'mise à jour', 'feuille de route',
+  // German
+  'fortschritt', 'aktualisierung', 'fahrplan',
+];
+
 /**
- * Check if query contains temporal keywords indicating recency intent
+ * Check if query contains temporal keywords indicating recency intent,
+ * OR status/progress keywords that imply the user wants current information.
  */
 function isTemporalQuery(query: string): boolean {
   const lowerQuery = query.toLowerCase();
-  return TEMPORAL_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
+  return TEMPORAL_KEYWORDS.some(keyword => lowerQuery.includes(keyword))
+    || STATUS_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
 }
 
 // Keywords that indicate the user is asking specifically about livestreams/streams
