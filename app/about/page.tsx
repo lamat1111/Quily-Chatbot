@@ -12,11 +12,10 @@ export default function AboutPage() {
           </h1>
 
           <div className="prose dark:prose-invert max-w-none">
-            {/* Beta Warning */}
             <div className="callout-info mb-8">
               <p className="text-sm">
-                <strong>Beta Notice:</strong> Quily Chat is currently in beta. Responses may not always
-                be accurate. For critical technical information, always verify with the{' '}
+                Responses may not always be accurate. For critical technical information,
+                always verify with the{' '}
                 <a
                   href="https://docs.quilibrium.com/"
                   target="_blank"
@@ -26,14 +25,15 @@ export default function AboutPage() {
                 </a>.
               </p>
               <p className="text-sm mt-2">
-                Found a bug?{' '}
+                Found a bug or wrong answer?{' '}
                 <a
                   href="https://github.com/Quilibrium-Community/quily/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Report it on GitHub
-                </a>.
+                </a>{' '}
+                or tell the bot directly — it can create an issue for you.
               </p>
             </div>
 
@@ -121,12 +121,12 @@ export default function AboutPage() {
             <span>v{VERSION}</span>
             <span>·</span>
             <a
-              href="https://github.com/Quilibrium-Community/quily/blob/main/CHANGELOG.md"
+              href="https://github.com/Quilibrium-Community/quily/releases"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-text-secondary transition-colors"
             >
-              Changelog
+              Releases
             </a>
           </div>
         </div>
