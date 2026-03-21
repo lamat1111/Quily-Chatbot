@@ -43,6 +43,18 @@ const PARTIAL_FOLLOW_UP_REGEX = /```json\s*\n?\s*\[?[\s\S]*$/;
 const PARTIAL_BARE_FOLLOW_UP_REGEX = /\n\s*json\s*\n?\s*\[?[^\]]*$/;
 
 /**
+ * Regex to strip raw tool call text that some models output instead of structured calls.
+ * Matches the tool call and any garbage tokens before it on the same/nearby lines.
+ * Example: "kontsultatua nostfunction<｜tool▁sep｜>create_knowledge_issue json {"title": "...", "correction": "..."}"
+ */
+const TOOL_CALL_TEXT_REGEX = /\n[^\n]*create_knowledge_issue[\s\S]*$/;
+
+/**
+ * Partial tool call during streaming — catches the beginning of a tool call being typed.
+ */
+const PARTIAL_TOOL_CALL_REGEX = /\n[^\n]*create_knowledge_issue[^\n]*$/;
+
+/**
  * Extract text content from UIMessage parts array.
  * UIMessage in AI SDK v6 uses parts[] instead of content string.
  * Also strips follow-up JSON block if present (complete or partial during streaming).
@@ -56,17 +68,19 @@ function getTextContent(message: UIMessage, isStreaming: boolean = false): strin
 
   const fullText = textParts.join('');
 
-  // Strip follow-up JSON block from display (fenced or bare format)
+  // Strip follow-up JSON block and raw tool call text from display
   // During streaming, also strip partial blocks that are being typed
   if (isStreaming) {
     return fullText
       .replace(PARTIAL_FOLLOW_UP_REGEX, '')
       .replace(PARTIAL_BARE_FOLLOW_UP_REGEX, '')
+      .replace(PARTIAL_TOOL_CALL_REGEX, '')
       .trimEnd();
   }
   return fullText
     .replace(FOLLOW_UP_CODE_FENCE_REGEX, '')
     .replace(BARE_FOLLOW_UP_REGEX, '')
+    .replace(TOOL_CALL_TEXT_REGEX, '')
     .trimEnd();
 }
 

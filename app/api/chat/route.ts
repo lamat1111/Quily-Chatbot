@@ -381,6 +381,31 @@ function writeStatus(
 }
 
 /**
+ * Parse tool call from response text when the model outputs it as text
+ * instead of using the structured tool calling protocol.
+ * Matches patterns like: create_knowledge_issue json {"title": "...", "correction": "..."}
+ */
+function parseToolCallFromText(text: string): { title: string; correction: string } | null {
+  // Match JSON object after create_knowledge_issue (with optional separators)
+  const match = text.match(/create_knowledge_issue[\s\S]*?(\{[\s\S]*?"title"\s*:\s*"[\s\S]*?"correction"\s*:\s*"[\s\S]*?\})/);
+  if (!match) return null;
+  try {
+    const parsed = JSON.parse(match[1]);
+    if (parsed.title && parsed.correction) {
+      return { title: parsed.title, correction: parsed.correction };
+    }
+  } catch {
+    // Try a more lenient extraction
+    const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
+    const correctionMatch = text.match(/"correction"\s*:\s*"([^"]+)"/);
+    if (titleMatch && correctionMatch) {
+      return { title: titleMatch[1], correction: correctionMatch[1] };
+    }
+  }
+  return null;
+}
+
+/**
  * POST /api/chat
  *
  * Streaming chat endpoint with RAG context injection.
@@ -857,15 +882,19 @@ export async function POST(request: Request) {
           }
 
           // Handle correction tool calls — create GitHub issue
+          // Try structured tool calls first, fall back to parsing text output
           const issueCall = capturedToolCalls.find((tc) => tc.toolName === 'create_knowledge_issue');
-          if (issueCall?.args?.title && issueCall?.args?.correction) {
+          const issueArgs = issueCall?.args?.title && issueCall?.args?.correction
+            ? { title: issueCall.args.title, correction: issueCall.args.correction }
+            : parseToolCallFromText(fullResponseText);
+
+          if (issueArgs) {
             try {
-              // Build context from conversation history
               const lastAssistantMsg = [...llmMessages].reverse().find((m) => m.role === 'assistant');
               const lastUserMsg = [...llmMessages].reverse().find((m) => m.role === 'user');
               const issueUrl = await createGitHubIssue({
-                title: issueCall.args.title,
-                correction: issueCall.args.correction,
+                title: issueArgs.title,
+                correction: issueArgs.correction,
                 discordUsername: 'Web UI user',
                 originalQuestion: lastUserMsg?.content || userQuery,
                 quilyAnswer: lastAssistantMsg?.content || '',
@@ -929,16 +958,22 @@ export async function POST(request: Request) {
             }
 
             // Handle correction tool calls — create GitHub issue
+            // Try structured tool calls first, fall back to parsing text output
             try {
               const toolCalls = await result.toolCalls;
               const issueCall = toolCalls?.find((tc) => tc.toolName === 'create_knowledge_issue');
               const issueInput = issueCall && 'input' in issueCall ? issueCall.input as { title?: string; correction?: string } : null;
-              if (issueInput?.title && issueInput?.correction) {
+              const fullText = await result.text;
+              const issueArgs = issueInput?.title && issueInput?.correction
+                ? { title: issueInput.title, correction: issueInput.correction }
+                : parseToolCallFromText(fullText);
+
+              if (issueArgs) {
                 const lastAssistantMsg = [...llmMessages].reverse().find((m) => m.role === 'assistant');
                 const lastUserMsg = [...llmMessages].reverse().find((m) => m.role === 'user');
                 const issueUrl = await createGitHubIssue({
-                  title: issueInput.title,
-                  correction: issueInput.correction,
+                  title: issueArgs.title,
+                  correction: issueArgs.correction,
                   discordUsername: 'Web UI user',
                   originalQuestion: lastUserMsg?.content || userQuery,
                   quilyAnswer: lastAssistantMsg?.content || '',
