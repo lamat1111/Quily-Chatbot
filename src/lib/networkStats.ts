@@ -218,14 +218,14 @@ export function formatWebStats(snapshot: NetworkSnapshot): string {
   msg += `| 🌍 World Size | ${formatBytes(snapshot.worldBytes)} |\n`;
   msg += `| 🧩 Shards | ${snapshot.totalShards.toLocaleString('en-US')} |\n`;
   msg += `| 👥 Peers | ${snapshot.peers.toLocaleString('en-US')} |\n`;
-  msg += `| 👷 Total Workers | ${snapshot.totalWorkers.toLocaleString('en-US')} |\n`;
+  msg += `| 🖥️ Total Workers | ${snapshot.totalWorkers.toLocaleString('en-US')} |\n`;
   msg += '\n';
 
   msg += '### Shard Health\n\n';
   msg += '| Status | Count | % |\n';
   msg += '|---|---|---|\n';
-  msg += `| ✅ Healthy (≥6 provers) | ${snapshot.healthy.toLocaleString('en-US')} | ${((snapshot.healthy / total) * 100).toFixed(1)}% |\n`;
-  msg += `| ⚠️ Warning (<6 provers) | ${snapshot.warning.toLocaleString('en-US')} | ${((snapshot.warning / total) * 100).toFixed(1)}% |\n`;
+  msg += `| 🟢 Healthy (≥6 provers) | ${snapshot.healthy.toLocaleString('en-US')} | ${((snapshot.healthy / total) * 100).toFixed(1)}% |\n`;
+  msg += `| 🟡 Warning (<6 provers) | ${snapshot.warning.toLocaleString('en-US')} | ${((snapshot.warning / total) * 100).toFixed(1)}% |\n`;
   msg += `| 🔴 Halt Risk (<3 provers) | ${snapshot.haltRisk.toLocaleString('en-US')} | ${((snapshot.haltRisk / total) * 100).toFixed(1)}% |\n`;
   msg += '\n';
 
