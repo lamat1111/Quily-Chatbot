@@ -244,7 +244,7 @@ export function registerMentionHandler(client: Client): void {
         }
       }
 
-      const formatted = formatForDiscord(responseText, result.sources);
+      const formatted = formatForDiscord(responseText, result.sources, result.ragQuality);
 
       const chunks = chunkMessage(formatted);
       for (let i = 0; i < chunks.length; i++) {
