@@ -1,5 +1,6 @@
 import type { SourceReference } from '../../src/lib/rag/types';
 import { getCitedIndices } from '../../src/lib/rag/utils';
+import type { RelevanceQuality } from '../../src/lib/rag/prompt';
 
 /**
  * Get a short label for the source type based on doc_type and URL.
@@ -69,7 +70,11 @@ export function suppressDiscordEmbeds(text: string): string {
   return result;
 }
 
-export function formatForDiscord(text: string, sources: SourceReference[]): string {
+export function formatForDiscord(
+  text: string,
+  sources: SourceReference[],
+  quality?: RelevanceQuality,
+): string {
   let formatted = text;
 
   // Suppress Discord embeds for all URLs in the response text
@@ -89,6 +94,13 @@ export function formatForDiscord(text: string, sources: SourceReference[]): stri
       .sort((a, b) => a.index - b.index);
 
     if (citedSources.length > 0) {
+      // Confidence warning for low/none quality (only when citations exist)
+      if (quality === 'low') {
+        formatted += '\n\n-# ⚠️ I\'m not very confident about this one — double-check the sources';
+      } else if (quality === 'none') {
+        formatted += '\n\n-# ⚠️ I couldn\'t find docs for this — take it with a grain of salt';
+      }
+
       const sourceLines = citedSources.map((s) => {
         const label = getSourceTypeLabel(s);
         const isLivestream = s.doc_type === 'livestream_transcript';
