@@ -103,6 +103,9 @@ export function ChatContainer({
   // Correction issue URL (when user reports a correction and an issue is auto-created)
   const [correctionIssueUrl, setCorrectionIssueUrl] = useState<string | null>(null);
 
+  // RAG quality signal from the API (ephemeral — not persisted across sessions)
+  const [ragQuality, setRagQuality] = useState<'high' | 'low' | 'none' | null>(null);
+
   // Turnstile token comes from parent (page.tsx) so it persists across chat switches.
   // Use a ref so the transport closure always reads the latest value.
   const turnstileTokenRef = useRef<string | null>(turnstileToken);
@@ -227,6 +230,13 @@ export function ChatContainer({
           setCorrectionIssueUrl(issueData.url);
         }
       }
+      // Check if this is RAG quality data
+      if (dataPart.type === 'data-rag-quality') {
+        const qualityData = dataPart.data as { quality?: 'high' | 'low' | 'none' };
+        if (qualityData?.quality) {
+          setRagQuality(qualityData.quality);
+        }
+      }
     },
     [handleStatusUpdate]
   );
@@ -304,10 +314,11 @@ export function ChatContainer({
     (text: string) => {
       if (!hasAccess) return;
 
-      // Clear thinking steps, follow-up questions, and correction URL for new message
+      // Clear thinking steps, follow-up questions, correction URL, and RAG quality for new message
       setThinkingSteps([]);
       setFollowUpQuestions([]);
       setCorrectionIssueUrl(null);
+      setRagQuality(null);
 
       sendMessage({
         text,
@@ -450,6 +461,7 @@ export function ChatContainer({
         thinkingSteps={thinkingSteps}
         followUpQuestions={followUpQuestions}
         correctionIssueUrl={correctionIssueUrl}
+        ragQuality={ragQuality}
         inputProps={isEmpty ? inputProps : undefined}
       />
 

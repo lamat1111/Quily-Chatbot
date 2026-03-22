@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useMemo } from 'react';
+import { hasCitations } from '@/src/lib/rag/utils';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { SourcesCitation } from './SourcesCitation';
 import { FollowUpQuestions } from './FollowUpQuestions';
@@ -15,6 +16,8 @@ interface MessageBubbleProps {
   onFollowUpSelect?: (question: string) => void;
   /** URL of auto-created GitHub issue from a correction */
   correctionIssueUrl?: string;
+  /** RAG quality signal for confidence callout */
+  ragQuality?: 'high' | 'low' | 'none' | null;
 }
 
 /**
@@ -125,6 +128,7 @@ export const MessageBubble = memo(function MessageBubble({
   followUpQuestions,
   onFollowUpSelect,
   correctionIssueUrl,
+  ragQuality,
 }: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
@@ -132,6 +136,13 @@ export const MessageBubble = memo(function MessageBubble({
   // Pass isStreaming to handle partial JSON blocks during streaming
   const textContent = useMemo(() => getTextContent(message, isStreaming), [message.parts, isStreaming]);
   const sources = useMemo(() => getSources(message), [message.parts]);
+
+  // Determine if confidence warning should show:
+  // Only when response has citations AND quality is low/none
+  const showConfidenceWarning = useMemo(() => {
+    if (!ragQuality || ragQuality === 'high') return false;
+    return hasCitations(textContent);
+  }, [ragQuality, textContent]);
 
   if (isUser) {
     return (
@@ -151,6 +162,16 @@ export const MessageBubble = memo(function MessageBubble({
   return (
     <div className="mb-6 text-text-primary">
       <MarkdownRenderer content={textContent} isStreaming={isStreaming} />
+
+      {/* Confidence warning - only for low/none quality with citations */}
+      {!isStreaming && showConfidenceWarning && (
+        <div className="mt-4 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-sm text-text-secondary">
+          <span className="mr-1">⚠️</span>
+          {ragQuality === 'none'
+            ? "I couldn't find strong documentation for this — take this with a grain of salt."
+            : 'This answer may not be fully supported by our docs — double-check the sources below.'}
+        </div>
+      )}
 
       {/* Sources - show above footer */}
       {!isStreaming && sources.length > 0 && (
@@ -182,8 +203,8 @@ export const MessageBubble = memo(function MessageBubble({
         />
       )}
 
-      {/* Disclaimer callout - only show after streaming completes */}
-      {!isStreaming && (
+      {/* Disclaimer callout - only show after streaming completes (suppressed when confidence warning shown) */}
+      {!isStreaming && !showConfidenceWarning && (
         <div className="callout-info mt-4 text-base sm:text-sm">
           <p>
             I can make mistakes, always check the{' '}
