@@ -2,8 +2,6 @@
 
 A self-hosted RAG chatbot that answers questions about the Quilibrium protocol using official documentation and livestream transcriptions.
 
-> **Beta**: This project is under active development. Expect rough edges and contributions are welcome!
-
 ### [>> Try the live demo <<](https://quily.quilibrium.one/)
 
 ## Features
