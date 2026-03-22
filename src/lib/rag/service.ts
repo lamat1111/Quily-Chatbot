@@ -67,7 +67,7 @@ export async function prepareQuery(options: PrepareQueryOptions): Promise<Prepar
 }
 
 // Default models per provider
-const OPENROUTER_DEFAULT_MODEL = 'deepseek/deepseek-chat-v3-0324';
+const OPENROUTER_DEFAULT_MODEL = 'deepseek/deepseek-v3.2';
 const CHUTES_DEFAULT_MODEL = 'chutes-deepseek-ai-deepseek-v3-1-tee';
 
 const DEFAULT_FALLBACK_MODELS: Record<string, string[]> = {

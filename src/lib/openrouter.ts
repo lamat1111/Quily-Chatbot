@@ -9,7 +9,7 @@
  */
 
 /** Default model ID - DeepSeek V3 for best open-source quality */
-export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'deepseek/deepseek-chat';
+export const DEFAULT_MODEL_ID = process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || 'deepseek/deepseek-v3.2';
 
 export interface ModelMetadata {
   id: string;
@@ -22,8 +22,8 @@ export interface ModelMetadata {
 const BASE_RECOMMENDED_MODELS: ModelMetadata[] = [
   // Open Source Models - Recommended
   {
-    id: 'deepseek/deepseek-chat',
-    name: 'DeepSeek V3',
+    id: 'deepseek/deepseek-v3.2',
+    name: 'DeepSeek V3.2',
     description: 'Best open-source. Excellent reasoning and accuracy.',
     isOpenSource: true,
     isRecommended: true,
