@@ -37,6 +37,7 @@ export interface ProcessQueryResult {
   sources: SourceReference[];
   followUpQuestions: string[] | null;
   toolCalls: Array<{ toolName: string; input: Record<string, string> }>;
+  ragQuality: RelevanceQuality;
 }
 
 export async function prepareQuery(options: PrepareQueryOptions): Promise<PreparedQuery> {
@@ -147,6 +148,7 @@ export async function processQuery(options: PrepareQueryOptions): Promise<Proces
         sources: prepared.sources,
         followUpQuestions: questions,
         toolCalls,
+        ragQuality: prepared.ragQuality,
       };
     } catch (error) {
       lastError = error;
