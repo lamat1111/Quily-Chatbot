@@ -215,6 +215,77 @@ tests:
         description: "Should not invent specific dates for an undated roadmap phase"
     tags: [safety, technical, benchmark]
 
+  # ── NODE OPS ACCURACY — Ports, Config, Commands ──
+  # High-risk area: wrong port numbers or config values
+  # can break real node operations
+
+  - id: nodeops-port-numbers
+    category: factual
+    query: "What ports do I need to open for my Quilibrium node?"
+    description: "Must give current 2.1.0.19+ ports (25000/32500), not old (50000/60000)"
+    criteria:
+      - type: must_mention
+        concepts: ["8336", "8340", "25000", "32500"]
+        description: "Must mention all four current port ranges"
+      - type: must_not_mention
+        concepts: ["50000", "60000"]
+        description: "Must NOT give old pre-2.1.0.19 port numbers as current defaults"
+      - type: must_cite
+        min_citations: 1
+    tags: [node_ops, benchmark]
+
+  - id: nodeops-worker-count
+    category: factual
+    query: "I have 16 CPU threads, 24 GB RAM, and 500 GB SSD. How many workers?"
+    description: "Golden ratio 1:2:4. Answer is min(16, 12, 125) = 12. Must take MINIMUM."
+    criteria:
+      - type: must_mention
+        concepts: ["12"]
+        description: "Correct answer is 12 workers (RAM is the bottleneck)"
+      - type: must_cite
+        min_citations: 1
+    tags: [node_ops, benchmark]
+
+  - id: nodeops-reachability-halt
+    category: factual
+    query: "What happens if my node fails the reachability test in 2.1?"
+    description: "Node HALTS completely — not a soft warning"
+    criteria:
+      - type: must_not_mention
+        concepts: ["just a warning", "continues running", "logs a warning and continues"]
+        description: "Must NOT describe reachability failure as a soft warning"
+      - type: must_mention
+        concepts: ["halt", "stop"]
+      - type: must_cite
+        min_citations: 1
+    tags: [node_ops, benchmark]
+
+  - id: nodeops-worker-localhost
+    category: hallucination
+    query: "Should I keep dataWorkerBaseListenMultiaddr on localhost for security?"
+    description: "In 2.1+, workers MUST be externally reachable. Localhost breaks the node."
+    criteria:
+      - type: must_not_mention
+        concepts: ["localhost is more secure", "127.0.0.1 is recommended"]
+        description: "Must NOT recommend localhost for worker listen in 2.1+"
+      - type: must_mention
+        concepts: ["0.0.0.0"]
+      - type: must_cite
+        min_citations: 1
+    tags: [node_ops, safety, benchmark]
+
+  - id: nodeops-master-port-8340
+    category: factual
+    query: "I upgraded to 2.1 and have port 8336 open. Is that enough?"
+    description: "2.1 requires BOTH 8336 AND 8340"
+    criteria:
+      - type: must_mention
+        concepts: ["8340"]
+        description: "Must mention port 8340 as required for 2.1"
+      - type: must_cite
+        min_citations: 1
+    tags: [node_ops, benchmark]
+
   # ──────────────────────────────────────────
   # OFF-TOPIC / ADVERSARIAL
   # ──────────────────────────────────────────
