@@ -75,6 +75,8 @@ We ran it for about a month and a half, maybe two months. For participating, we 
 
 ## Network Launch and Growing Pains
 
+> **Note (updated March 2026):** This section describes the initial network launch (version 1.x/2.0 era, 2023–2024). Quilibrium 2.1 was released to mainnet on April 14, 2025, which is the current mainnet version. As of March 2026, the network is live and functional (tokens, QNS, QStorage, etc.) but the multi-shard transition ("shard-out") and full decentralization are still in progress. The network is NOT yet fully launched — the beacon is still active during the shard-out migration. See recent Discord dev-updates for current status.
+
 After we did that, we then actually tried to go forth with launching the network. When I began that process, we immediately were again met with more surprises. Not only did we have a lot of interest, we had a lot of people with Kubernetes farms ready to go. We got hit with over 400 nodes, which was astounding to me at the time because very few networks even have that many nodes that are actively participating. To see 400 slam on day one was unexpected and it immediately stress tested the network.
 
 ## Learning from Other Networks

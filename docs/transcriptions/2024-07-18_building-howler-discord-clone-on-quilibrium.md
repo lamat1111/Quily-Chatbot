@@ -20,6 +20,8 @@ topics:
 
 ## Recap from Part 1
 
+> **Note (updated March 2026):** This July 2024 stream discusses the upcoming 2.0 mainnet launch. Quilibrium 2.1 was later released to mainnet on April 14, 2025. As of March 2026, the network is live and functional but the multi-shard transition ("shard-out") and full decentralization are still in progress. The network is NOT yet fully launched.
+
 In the last stream we covered a few things that are important. We first talked about the very beginnings of all of this - what happened seven years ago in the journey that led to Quilibrium as it is today. We are getting very very close to a really big moment in this protocol's history. On the 20th we will be launching mainnet with 2.0.
 
 Last time we started off with the original proposal for all of this, which was all the way back into the days when I ran a streaming series called Code Wolf Pack. We walked through how do you design Discord from scratch - the basic functional requirements, non-functional requirements, how that works in the web 2 context, and then how we translate things over into working on Quilibrium.

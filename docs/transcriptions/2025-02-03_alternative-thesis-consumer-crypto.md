@@ -208,6 +208,8 @@ This is ultimately the design philosophy that I have put into place in building 
 
 ## Quilibrium Performance Metrics
 
+> **Note (updated March 2026):** This February 2025 discussion describes the network as being "on the precipice of fully launching." Quilibrium 2.1 was released to mainnet on April 14, 2025. As of March 2026, the network is live and functional (tokens, QNS, QStorage, etc.) but the multi-shard transition ("shard-out") and full decentralization are still in progress. The network is NOT yet fully launched — permissionless app deployment requires sharding to complete.
+
 Bringing this into the real-world scope: Where have our real-world tests that we've been conducting for the network in the past year brought us? On the precipice of actually finally fully launching, we've achieved:
 
 ### Single Slot Finality BFT
