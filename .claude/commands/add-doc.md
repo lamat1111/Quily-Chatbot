@@ -1,6 +1,6 @@
 ---
 name: add-doc
-description: Add a new document to the RAG knowledge base (custom or community docs)
+description: Add a new document to the RAG knowledge base (docs/custom/)
 allowed-tools:
   - Read
   - Write
@@ -12,29 +12,25 @@ allowed-tools:
 ---
 
 <objective>
-Add one or more documents to the Quily chatbot's RAG knowledge base. This command handles docs that go in `docs/custom/` (official content not on docs.quilibrium.com) or `docs/community/` (community-contributed content).
+Add one or more documents to the Quily chatbot's RAG knowledge base. All new docs go to `docs/custom/` (everything from official content not on docs.quilibrium.com to community-contributed content).
 
 **Note:** For official docs from docs.quilibrium.com, use `/sync-docs`. For livestream transcripts, use `/sync-transcripts`.
 </objective>
 
 <document_taxonomy>
 
-## Folders (this command handles these two)
+## Folder
 
-| Folder | Purpose | Trust Level |
-|--------|---------|-------------|
-| `docs/custom/` | Official content not yet on website (Discord from Cassie, whitepaper excerpts, technical refs) | Official |
-| `docs/community/` | Community-contributed content | Unofficial |
+All docs go to `docs/custom/`. Sub-folders:
+- `docs/custom/auto/` — auto-generated docs (do not place manually written docs here)
+- `docs/custom/gap-analysis/` — docs created by the doc-gap-analysis skill
 
 ## Document Types
 
-**For `docs/custom/`:**
 - `discord_transcript` — Explanations from Cassie/team in Discord
 - `technical_reference` — Architecture docs, deep-dives
 - `whitepaper_excerpt` — Sections from the whitepaper
 - `blog_post` — Official blog content
-
-**For `docs/community/`:**
 - `community_faq` — Community-compiled FAQs
 - `community_guide` — Tutorials written by community
 - `community_analysis` — Community research/analysis
@@ -52,15 +48,14 @@ The user may provide:
 - Pasted markdown content
 - A mix of the above
 
-The user will typically indicate the trust level and context in their message, e.g.:
+The user will typically indicate the context in their message, e.g.:
 - "Add this Discord explanation from Cassie about QNS"
 - "Here's a community FAQ I compiled"
 - "Add these blog posts: [urls]"
 
 **Infer from user's message:**
-- Trust level (official vs community) — look for mentions of Cassie, team, official, community, etc.
 - Document type — based on source description
-- If unclear, default to asking ONE question about trust level
+- If unclear, default to asking ONE question about what the content is
 </step>
 
 <step name="fetch-content">
@@ -84,7 +79,7 @@ If multiple inputs, use Task tool to process in parallel.
    - Date (today if not specified)
 
 2. **Check for duplicates:**
-   - Search existing docs in `docs/custom/` and `docs/community/` for similar titles
+   - Search existing docs in `docs/custom/` for similar titles
    - Grep for key unique phrases to detect content overlap
    - Estimate overlap percentage
 
@@ -121,7 +116,7 @@ For batch:
 1. ✓ "QNS Privacy" → docs/custom/ (discord_transcript)
    Overlap: 12% with QNS-FAQ.md
 
-2. ✓ "Node Troubleshooting" → docs/community/ (community_guide)
+2. ✓ "Node Troubleshooting" → docs/custom/ (community_guide)
    Overlap: None
 
 3. ⚠ "Token Basics" → SKIP RECOMMENDED
@@ -152,7 +147,7 @@ topics:
 ---
 ```
 
-2. **For community docs, add disclaimer after frontmatter:**
+2. **For community-contributed docs, add disclaimer after frontmatter:**
 ```markdown
 > **Disclaimer**: This is community-contributed content and may not reflect official Quilibrium positions.
 ```
@@ -162,9 +157,7 @@ topics:
    - Ensure clear section headers for better RAG chunking
    - Remove redundant info already well-covered elsewhere
 
-4. **Write to appropriate folder:**
-   - Official → `docs/custom/Title-Kebab-Case.md`
-   - Community → `docs/community/Title-Kebab-Case.md`
+4. **Write to `docs/custom/Title-Kebab-Case.md`**
 </step>
 
 <step name="report">
@@ -175,7 +168,7 @@ topics:
 
 Files:
 - docs/custom/QNS-Privacy-Mechanisms.md
-- docs/community/Node-Troubleshooting.md
+- docs/custom/Node-Troubleshooting.md
 
 Next: Run `yarn ingest run` to update RAG database
 ```
@@ -185,12 +178,7 @@ Next: Run `yarn ingest run` to update RAG database
 
 <inference_rules>
 
-**Trust Level Inference:**
-- Mentions Cassie, Cassandra Heart, team, official → Official (custom/)
-- Mentions community, compiled, I wrote, forum → Community (community/)
-- Source is quilibrium.com, official blog → Official (custom/)
-- Source is Medium, personal blog, Reddit → Community (community/)
-- When in doubt → Ask once
+**All docs go to `docs/custom/`.** No trust-level routing needed.
 
 **Type Inference:**
 - Discord messages → `discord_transcript`
@@ -221,11 +209,11 @@ User: "Add these community guides I found:
 - https://example.com/quil-setup
 - https://example.com/node-faq"
 
-→ Infer: Community (user said "community guides")
+→ Infer: community_guide type
 → Fetch both in parallel
 → Analyze each, check overlaps
 → Present batch summary
-→ Write approved to docs/community/
+→ Write approved to docs/custom/
 ```
 
 **Example 3: Mixed batch**
@@ -233,10 +221,10 @@ User: "Add these community guides I found:
 User: "Add this whitepaper section from .temp/consensus.md
 and this community analysis from https://..."
 
-→ Infer: First is official (whitepaper), second is community
+→ Infer: First is whitepaper_excerpt, second is community_analysis
 → Process both
-→ Present summary with different destinations
-→ Write to respective folders
+→ Present summary
+→ Write both to docs/custom/
 ```
 
 </examples>

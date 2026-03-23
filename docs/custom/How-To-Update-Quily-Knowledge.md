@@ -40,9 +40,7 @@ Best for quick corrections, news updates, or when you don't want to write the fu
 Best for larger contributions, new docs, or when you want to write the content yourself.
 
 1. **Fork** the repository — click "Fork" at [github.com/Quilibrium-Community/quily](https://github.com/Quilibrium-Community/quily)
-2. **Add or edit** a `.md` file in one of these folders:
-   - `docs/community/` — community-written guides and comparisons
-   - `docs/custom/` — detailed technical docs and references
+2. **Add or edit** a `.md` file in `docs/custom/` — guides, references, and community-contributed content
 3. **Submit a Pull Request** back to the main repo
 4. The maintainers will review, merge, and reingest so Quily picks up the new info
 
@@ -57,8 +55,7 @@ Best for larger contributions, new docs, or when you want to write the content y
 
 | Folder | Purpose | Editable? |
 |--------|---------|-----------|
-| `docs/community/` | Community-written guides | Yes |
-| `docs/custom/` | Detailed technical references | Yes |
+| `docs/custom/` | Guides, references, and community-contributed content | Yes |
 | `docs/transcriptions/` | Livestream transcripts | No (automated) |
 | `docs/quilibrium-official/` | Mirror of docs.quilibrium.com | No (automated) |
 | `docs/discord/` | Discord announcement scrapes | No (automated) |

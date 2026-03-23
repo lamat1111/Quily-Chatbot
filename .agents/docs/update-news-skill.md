@@ -24,7 +24,7 @@ The skill requires zero database schema changes. It works by embedding notes dir
 ## Architecture
 
 - **Skill definition**: `.claude/skills/update-news/SKILL.md`
-- **Scope**: `docs/community/`, `docs/discord/`, `docs/transcriptions/`, `docs/custom/`
+- **Scope**: `docs/custom/`, `docs/discord/`, `docs/transcriptions/`
 - **Never touches**: `docs/quilibrium-official/` (managed by `/sync-docs`)
 
 ### How Annotations Flow Through the Pipeline

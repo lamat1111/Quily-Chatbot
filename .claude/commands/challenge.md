@@ -69,7 +69,8 @@ For each claim, search `docs/` using multiple strategies in parallel (use Task a
 Search across ALL doc folders:
 - `docs/quilibrium-official/` — Official documentation
 - `docs/custom/` — Official content not on website
-- `docs/community/` — Community-contributed docs (lower trust)
+- `docs/custom/auto/` — Auto-generated docs (Network Health Snapshot, Tech Tree)
+- `docs/custom/gap-analysis/` — Docs created by doc-gap-analysis skill
 - `docs/transcriptions/` — Livestream transcripts
 
 For each relevant file found, read the relevant sections to gather evidence.

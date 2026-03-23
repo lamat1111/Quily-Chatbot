@@ -42,7 +42,7 @@ Present triage summary — user approves/adjusts
 For each approved issue:
   ├─ Verify claims (web search if needed, skip for trusted users)
   ├─ Propose approach — user approves/refuses
-  ├─ Apply change to docs/community/ or docs/custom/
+  ├─ Apply change to docs/custom/
   └─ Commit on main
         │
         ▼
@@ -150,7 +150,7 @@ Best for non-technical users or quick info drops. They describe what changed, th
 Best for contributors who want to write the doc themselves.
 
 1. Fork the repo
-2. Add/edit `.md` file in `docs/community/` or `docs/custom/`
+2. Add/edit `.md` file in `docs/custom/`
 3. Submit PR
 4. Maintainer reviews and merges
 
@@ -174,8 +174,7 @@ Claims from these users skip web verification:
 
 ### Allowed folders
 
-- `docs/community/` — community-contributed content
-- `docs/custom/` — detailed technical references
+- `docs/custom/` — community-contributed content and detailed technical references
 
 ### Verification
 

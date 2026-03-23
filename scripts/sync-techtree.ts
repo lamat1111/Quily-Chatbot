@@ -15,7 +15,7 @@ import { resolve } from 'path';
 import https from 'https';
 
 const BASE_URL = 'https://qstorage.quilibrium.com/techtree';
-const OUT_PATH = resolve(__dirname, '../docs/community/Quilibrium-Tech-Tree.md');
+const OUT_PATH = resolve(__dirname, '../docs/custom/auto/Quilibrium-Tech-Tree.md');
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

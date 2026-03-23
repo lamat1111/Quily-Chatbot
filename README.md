@@ -407,7 +407,7 @@ Quily's answers are only as good as its knowledge base. If you notice something 
 
 **Option 2: Submit a Pull Request**
 1. Fork this repository
-2. Add or edit a `.md` file in [`docs/community/`](docs/community/) or [`docs/custom/`](docs/custom/)
+2. Add or edit a `.md` file in [`docs/custom/`](docs/custom/)
 3. Submit a PR — the maintainers will review, merge, and reingest
 
 > **Note:** Do not edit `docs/quilibrium-official/` or `docs/discord/` — these are automated mirrors and get overwritten.

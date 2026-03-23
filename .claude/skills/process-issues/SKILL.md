@@ -27,8 +27,7 @@ Scan all open GitHub issues, identify knowledge-update candidates, triage them, 
 ## Scope
 
 This skill creates or edits files in **allowed folders only**:
-- `docs/community/` — community-contributed content
-- `docs/custom/` — detailed technical references
+- `docs/custom/` — community-contributed content and detailed technical references
 
 **NEVER modify** files in:
 - `docs/quilibrium-official/` — automated mirror of docs.quilibrium.com
@@ -183,7 +182,7 @@ Grep docs/ for key terms from the claim
 | No | — | Inconclusive | **D** — Ask submitter for details |
 
 **Scenario A: Doc gap causing hallucination**
-- **Required action**: Create or update a doc in `docs/community/` or `docs/custom/` with accurate information from official docs, transcripts, Discord announcements, or web search.
+- **Required action**: Create or update a doc in `docs/custom/` with accurate information from official docs, transcripts, Discord announcements, or web search.
 - If only minimal info exists, create a short doc stating what IS known and explicitly noting what is NOT yet documented.
 - Present the proposed doc to the user for approval before creating it.
 
@@ -202,11 +201,11 @@ Present findings to the user with the scenario and proposed action:
 Issue #18: User flagged bot answer about staking as wrong
 
 Bot said: "You need minimum 50,000 QUIL to stake"
-Docs say: docs/community/staking-guide.md mentions 50,000 QUIL minimum
+Docs say: docs/custom/staking-guide.md mentions 50,000 QUIL minimum
 Web search: Recent Discord announcement says minimum was lowered to 10,000 QUIL
 
 Scenario B: Bot answer outdated, docs need updating.
-Proposed: Update docs/community/staking-guide.md with new 10,000 QUIL minimum.
+Proposed: Update docs/custom/staking-guide.md with new 10,000 QUIL minimum.
 Approve? (y/n/edit)
 ```
 
@@ -250,7 +249,7 @@ Grep docs/ for the key claims being corrected (e.g., the old value being replace
 If contradicting statements are found in other docs:
 ```
 ⚠️ Conflict detected:
-  - docs/community/staking-guide.md line 42: "minimum stake is 50,000 QUIL"
+  - docs/custom/staking-guide.md line 42: "minimum stake is 50,000 QUIL"
   - docs/custom/Node-Running-Guide.md line 18: "you need at least 50,000 QUIL"
   - Issue #15 says: "minimum is now 10,000 QUIL"
 
@@ -271,8 +270,8 @@ Before proceeding, check the scope of the proposed change:
 These are warnings, not blockers. The user can always proceed.
 
 ### 5. Determine action
-- If issue references an existing file in `docs/community/` or `docs/custom/` → edit that file
-- If new info with no matching existing doc → create new file in `docs/community/`
+- If issue references an existing file in `docs/custom/` → edit that file
+- If new info with no matching existing doc → create new file in `docs/custom/`
 - If issue asks to change protected folders → skip, and add to a list for commenting later
 - If issue contains multiple distinct topics → handle in a single commit
 - If conflict detection found other docs with contradicting info → update ALL affected docs, not just the one the issue mentions
@@ -382,7 +381,7 @@ Done. Processed N issues:
            Confidence: HIGH | Conflicts: none | Scope: 1 file
            Rollback: git revert abc1234
 
-  ✅ #15 — Created docs/community/QNS-Pricing.md (commit def5678)
+  ✅ #15 — Created docs/custom/QNS-Pricing.md (commit def5678)
            Confidence: HIGH | Conflicts: updated 2 other docs | Scope: 3 files
            Rollback: git revert def5678
 

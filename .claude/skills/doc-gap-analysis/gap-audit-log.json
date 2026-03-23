@@ -32,7 +32,7 @@
         "many_small_sections"
       ],
       "notes": "Timeline format; updated with Q1 2026 entries (QNS, mobile apps, QStorage, QKMS, QQ, QPing). Source updated Q1 2026 content, companion doc refreshed",
-      "custom_doc": "docs/custom/Q-Story-Vision-Deployment.md"
+      "custom_doc": "docs/custom/gap-analysis/Q-Story-Vision-Deployment.md"
     },
     "discover/04-quilibrium-tokenomics.md": {
       "status": "adequate",
@@ -132,7 +132,7 @@
         "jsx_params"
       ],
       "notes": "Consumer crypto summary",
-      "custom_doc": "docs/custom/Q-Story-Vision-Deployment.md"
+      "custom_doc": "docs/custom/gap-analysis/Q-Story-Vision-Deployment.md"
     },
     "discover/13-the-illusion-of-decentralization-in-crypto-and-quilibriums-radical-alternative..md": {
       "status": "adequate",
@@ -167,7 +167,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Block-Storage-VDFs-Bloom-Clocks",
-      "custom_doc": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md"
+      "custom_doc": "docs/custom/gap-analysis/Block-Storage-VDFs-Bloom-Clocks.md"
     },
     "learn/01-block-storage/vdfs.md": {
       "status": "covered",
@@ -180,7 +180,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Block-Storage-VDFs-Bloom-Clocks",
-      "custom_doc": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md"
+      "custom_doc": "docs/custom/gap-analysis/Block-Storage-VDFs-Bloom-Clocks.md"
     },
     "learn/02-communication/addressing.md": {
       "status": "covered",
@@ -192,7 +192,7 @@
         "missing_title"
       ],
       "notes": "Sparse but has real content; covered by Planted-Clique-Addressing-Scheme",
-      "custom_doc": "docs/custom/Planted-Clique-Addressing-Scheme.md"
+      "custom_doc": "docs/custom/gap-analysis/Planted-Clique-Addressing-Scheme.md"
     },
     "learn/02-communication/e2ee.md": {
       "status": "covered",
@@ -205,7 +205,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Communication-Layer-E2EE-Mixnet-P2P",
-      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+      "custom_doc": "docs/custom/gap-analysis/Communication-Layer-E2EE-Mixnet-P2P.md"
     },
     "learn/02-communication/mixnet-routing.md": {
       "status": "covered",
@@ -218,7 +218,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Communication-Layer-E2EE-Mixnet-P2P",
-      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+      "custom_doc": "docs/custom/gap-analysis/Communication-Layer-E2EE-Mixnet-P2P.md"
     },
     "learn/02-communication/p2p-communication.md": {
       "status": "covered",
@@ -231,7 +231,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Communication-Layer-E2EE-Mixnet-P2P",
-      "custom_doc": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md"
+      "custom_doc": "docs/custom/gap-analysis/Communication-Layer-E2EE-Mixnet-P2P.md"
     },
     "learn/03-oblivious-hypergraph/hypergraph-construction.md": {
       "status": "covered",
@@ -244,7 +244,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by RDF-Hypergraph-Query-System",
-      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+      "custom_doc": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md"
     },
     "learn/03-oblivious-hypergraph/oblivious-transfer.md": {
       "status": "covered",
@@ -257,7 +257,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by Oblivious-Transfer-Protocols",
-      "custom_doc": "docs/custom/Oblivious-Transfer-Protocols.md"
+      "custom_doc": "docs/custom/gap-analysis/Oblivious-Transfer-Protocols.md"
     },
     "learn/03-oblivious-hypergraph/query-evaluator.md": {
       "status": "covered",
@@ -270,7 +270,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by RDF-Hypergraph-Query-System",
-      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+      "custom_doc": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md"
     },
     "learn/03-oblivious-hypergraph/query-planner.md": {
       "status": "covered",
@@ -283,7 +283,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by RDF-Hypergraph-Query-System",
-      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+      "custom_doc": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md"
     },
     "learn/03-oblivious-hypergraph/rdf-storage.md": {
       "status": "covered",
@@ -296,7 +296,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by RDF-Hypergraph-Query-System",
-      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+      "custom_doc": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md"
     },
     "learn/04-operating-system/accounts.md": {
       "status": "covered",
@@ -309,7 +309,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/dbos.md": {
       "status": "covered",
@@ -322,7 +322,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/file-system.md": {
       "status": "covered",
@@ -335,7 +335,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/ipc.md": {
       "status": "covered",
@@ -348,7 +348,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/key-management.md": {
       "status": "covered",
@@ -361,7 +361,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/message-queues.md": {
       "status": "covered",
@@ -374,7 +374,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/scheduler.md": {
       "status": "covered",
@@ -387,7 +387,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "learn/04-operating-system/universal-resources.md": {
       "status": "covered",
@@ -400,7 +400,7 @@
         "no_frontmatter"
       ],
       "notes": "React stub; covered by OS-Subsystems-Accounts-Scheduler-IPC",
-      "custom_doc": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md"
+      "custom_doc": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md"
     },
     "build/01-applications/running-applications.md": {
       "status": "covered",
@@ -412,7 +412,7 @@
         "missing_title"
       ],
       "notes": "Thin developer reference; covered by QCL companion",
-      "custom_doc": "docs/custom/QCL-Quilibrium-Compute-Language.md"
+      "custom_doc": "docs/custom/gap-analysis/QCL-Quilibrium-Compute-Language.md"
     },
     "build/02-tokens/creating-tokens.md": {
       "status": "adequate",
@@ -446,7 +446,7 @@
         "missing_title"
       ],
       "notes": "Best developer guide; covered by QCL companion",
-      "custom_doc": "docs/custom/QCL-Quilibrium-Compute-Language.md"
+      "custom_doc": "docs/custom/gap-analysis/QCL-Quilibrium-Compute-Language.md"
     },
     "build/01-applications/deploying-to-the-network.md": {
       "status": "covered",
@@ -458,7 +458,7 @@
         "missing_title"
       ],
       "notes": "Minimal deployment page; covered by QCL companion",
-      "custom_doc": "docs/custom/QCL-Quilibrium-Compute-Language.md"
+      "custom_doc": "docs/custom/gap-analysis/QCL-Quilibrium-Compute-Language.md"
     },
     "protocol/overview.md": {
       "status": "covered",
@@ -470,7 +470,7 @@
         "missing_title"
       ],
       "notes": "Protocol overview; covered by Architecture companion",
-      "custom_doc": "docs/custom/Quilibrium Architecture.md"
+      "custom_doc": "docs/custom/gap-analysis/Quilibrium Architecture.md"
     },
     "protocol/consensus.md": {
       "status": "covered",
@@ -483,7 +483,7 @@
         "many_small_sections"
       ],
       "notes": "Consensus mechanism; covered by Architecture companion",
-      "custom_doc": "docs/custom/Quilibrium Architecture.md"
+      "custom_doc": "docs/custom/gap-analysis/Quilibrium Architecture.md"
     },
     "protocol/data-structures.md": {
       "status": "covered",
@@ -497,7 +497,7 @@
         "large_table"
       ],
       "notes": "Large protocol spec; covered by Architecture companion",
-      "custom_doc": "docs/custom/Quilibrium Architecture.md"
+      "custom_doc": "docs/custom/gap-analysis/Quilibrium Architecture.md"
     },
     "run-node/RPC.md": {
       "status": "deleted",
@@ -523,7 +523,7 @@
         "no_h2_headings"
       ],
       "notes": "Stub page; covered by Node-Maintenance-Updates-Guide",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/advanced-configuration.md": {
       "status": "covered",
@@ -532,7 +532,7 @@
       "composite_pct": 79,
       "issues": [],
       "notes": "Comprehensive config.yml reference; updated with new port defaults (25000/32500)",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/advanced-node-management.md": {
       "status": "deleted",
@@ -544,7 +544,7 @@
         "no_content"
       ],
       "notes": "Thin; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/linux_configuration.md": {
       "status": "adequate",
@@ -564,7 +564,7 @@
       "composite_pct": 71,
       "issues": [],
       "notes": "Updated with new port ranges and node-provisioning links",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/shard-enrollment-process.md": {
       "status": "adequate",
@@ -584,7 +584,7 @@
       "composite_pct": 81,
       "issues": [],
       "notes": "Comprehensive: workers, golden ratio, hardware selection, networking",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/upgrade-2.1.md": {
       "status": "covered",
@@ -593,7 +593,7 @@
       "composite_pct": 77,
       "issues": [],
       "notes": "Good upgrade guide covering workers, master config, storage, rewards",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/node-provisioning/index.md": {
       "status": "covered",
@@ -602,7 +602,7 @@
       "composite_pct": 57,
       "issues": [],
       "notes": "Short landing page (~80 chars) with navigation table to child provisioning docs",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/legacy/index.md": {
       "status": "covered",
@@ -611,7 +611,7 @@
       "composite_pct": 51,
       "issues": [],
       "notes": "Landing page (~70 chars) with table linking to legacy provisioning methods",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/legacy/qone.md": {
       "status": "covered",
@@ -622,7 +622,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Short doc about QOne script with one code block and :::warning admonition",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/legacy/release-autorun.md": {
       "status": "covered",
@@ -631,7 +631,7 @@
       "composite_pct": 66,
       "issues": [],
       "notes": "Step-by-step release autorun guide with multiple code blocks",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/manual-install/index.md": {
       "status": "covered",
@@ -640,7 +640,7 @@
       "composite_pct": 68,
       "issues": [],
       "notes": "Good landing page with platform tables and node commands overview",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/manual-install/linux.md": {
       "status": "covered",
@@ -652,7 +652,7 @@
         "react_component"
       ],
       "notes": "Comprehensive Linux guide: prerequisites, download, symlinks, systemd, updating, cron, useful commands. Has ScriptViewer React import.",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/manual-install/macos.md": {
       "status": "covered",
@@ -664,7 +664,7 @@
         "react_component"
       ],
       "notes": "Comprehensive macOS guide: prerequisites, download, launchd, updating. Has ScriptViewer React import.",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/node-provisioning/qtools/index.md": {
       "status": "covered",
@@ -675,7 +675,7 @@
         "placeholder_content"
       ],
       "notes": "Placeholder 'Coming Soon' page (~25 chars). No action needed until content appears.",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/port-range-change.md": {
       "status": "covered",
@@ -684,7 +684,7 @@
       "composite_pct": 87,
       "issues": [],
       "notes": "Excellent guide covering what changed, why, who's affected, how to fix (ufw + iptables), verification",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/rpc.md": {
       "status": "covered",
@@ -695,7 +695,7 @@
         "oversized_sections"
       ],
       "notes": "Comprehensive RPC documentation with protobuf definitions. AccountService, CoinService, TransactionService. Management scenarios (cold/warm/hot/MPC custody).",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/checksum.md": {
       "status": "covered",
@@ -704,7 +704,7 @@
       "composite_pct": 46,
       "issues": [],
       "notes": "Very short, shows one command with alias; covered by QClient-Configuration-Commands",
-      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+      "custom_doc": "docs/custom/gap-analysis/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/managing-configs.md": {
       "status": "covered",
@@ -715,7 +715,7 @@
         "empty_content"
       ],
       "notes": "Nearly empty, title 'Importing Keys' only; covered by QClient-Configuration-Commands",
-      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+      "custom_doc": "docs/custom/gap-analysis/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/qclient-101.md": {
       "status": "covered",
@@ -750,7 +750,7 @@
         "many_small_sections"
       ],
       "notes": "Good but thin sections; covered by QClient-Configuration-Commands",
-      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+      "custom_doc": "docs/custom/gap-analysis/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/commands/bridging.md": {
       "status": "adequate",
@@ -827,7 +827,7 @@
       "composite_pct": 85,
       "issues": [],
       "notes": "Excellent key management doc; well-structured with examples",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/commands/messaging.md": {
       "status": "adequate",
@@ -849,7 +849,7 @@
         "no_frontmatter"
       ],
       "notes": "Node commands reference; good structure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/commands/qclient-config.md": {
       "status": "covered",
@@ -861,7 +861,7 @@
         "many_small_sections"
       ],
       "notes": "Thin; covered by QClient-Configuration-Commands",
-      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+      "custom_doc": "docs/custom/gap-analysis/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/commands/qclient.md": {
       "status": "covered",
@@ -873,7 +873,7 @@
         "many_small_sections"
       ],
       "notes": "Thin; covered by QClient-Configuration-Commands",
-      "custom_doc": "docs/custom/QClient-Configuration-Commands.md"
+      "custom_doc": "docs/custom/gap-analysis/QClient-Configuration-Commands.md"
     },
     "run-node/qclient/commands/token.md": {
       "status": "adequate",
@@ -899,7 +899,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Too thin; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/clean.md": {
       "status": "deleted",
@@ -912,7 +912,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Brief; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/install.md": {
       "status": "deleted",
@@ -937,7 +937,7 @@
         "many_small_sections"
       ],
       "notes": "Service commands; covered by Node-Service-Setup-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/update.md": {
       "status": "deleted",
@@ -947,7 +947,7 @@
       "composite_pct": 47,
       "issues": [],
       "notes": "Brief update workflows; covered by Node-Maintenance-Updates-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Maintenance-Updates-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md"
     },
     "run-node/qclient/node/key-management/create-new-keyset.md": {
       "status": "deleted",
@@ -961,7 +961,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Too thin; covered by Node-Key-Management-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/import-keysets.md": {
       "status": "deleted",
@@ -973,7 +973,7 @@
         "no_frontmatter"
       ],
       "notes": "Practical but thin; covered by Node-Key-Management-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/initial-keyset.md": {
       "status": "deleted",
@@ -986,7 +986,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Too thin; covered by Node-Key-Management-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/keys.md": {
       "status": "deleted",
@@ -998,7 +998,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Brief overview; covered by Node-Key-Management-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/key-management/multiple-keysets.md": {
       "status": "deleted",
@@ -1010,7 +1010,7 @@
         "no_frontmatter"
       ],
       "notes": "Nearly identical to import-keysets; covered by Node-Key-Management-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Key-Management-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Key-Management-Guide.md"
     },
     "run-node/qclient/node/node-service/commands.md": {
       "status": "deleted",
@@ -1023,7 +1023,7 @@
         "many_small_sections"
       ],
       "notes": "Service commands; covered by Node-Service-Setup-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/environment-variables.md": {
       "status": "deleted",
@@ -1036,7 +1036,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Too thin; covered by Node-Service-Setup-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/installing-node-service.md": {
       "status": "deleted",
@@ -1049,7 +1049,7 @@
         "no_content"
       ],
       "notes": "Too thin; covered by Node-Service-Setup-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "run-node/qclient/node/node-service/overview.md": {
       "status": "deleted",
@@ -1061,7 +1061,7 @@
         "no_content"
       ],
       "notes": "Hub page; covered by Node-Service-Setup-Guide; file deleted in restructure",
-      "custom_doc": "docs/custom/Node-Service-Setup-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md"
     },
     "api/01-overview.md": {
       "status": "adequate",
@@ -1082,7 +1082,7 @@
         "jsx_tabs"
       ],
       "notes": "Tabs content garbled; covered by API-Credentials-Authentication",
-      "custom_doc": "docs/custom/API-Credentials-Authentication.md"
+      "custom_doc": "docs/custom/gap-analysis/API-Credentials-Authentication.md"
     },
     "api/03-q-storage/01-overview.md": {
       "status": "covered",
@@ -1091,7 +1091,7 @@
       "composite_pct": 50,
       "issues": [],
       "notes": "Navigation page; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/02-hosting-websites-on-quilibrium.md": {
       "status": "adequate",
@@ -1124,7 +1124,7 @@
         "no_frontmatter"
       ],
       "notes": "Navigation page; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/04-q-kms/01-overview.md": {
       "status": "covered",
@@ -1133,7 +1133,7 @@
       "composite_pct": 45,
       "issues": [],
       "notes": "Short navigation page; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/03-q-storage/01-user-manual/01-getting-started.md": {
       "status": "covered",
@@ -1146,7 +1146,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/02-credentials.md": {
       "status": "covered",
@@ -1158,7 +1158,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/03-privacy.md": {
       "status": "covered",
@@ -1169,7 +1169,7 @@
         "no_frontmatter"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/04-pricing.md": {
       "status": "covered",
@@ -1180,7 +1180,7 @@
         "no_frontmatter"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/07-access-control.md": {
       "status": "covered",
@@ -1191,7 +1191,7 @@
         "empty_content"
       ],
       "notes": "Empty file; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/08-regions.md": {
       "status": "covered",
@@ -1202,7 +1202,7 @@
         "no_frontmatter"
       ],
       "notes": "Minimal; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/09-object-versioning.md": {
       "status": "covered",
@@ -1213,7 +1213,7 @@
         "coming_soon_placeholder"
       ],
       "notes": "Mostly placeholder; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/00-what-is-a-bucket.md": {
       "status": "covered",
@@ -1224,7 +1224,7 @@
         "no_frontmatter"
       ],
       "notes": "Too short; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/01-bucket-names.md": {
       "status": "covered",
@@ -1235,7 +1235,7 @@
         "no_frontmatter"
       ],
       "notes": "Excellent naming rules; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/02-creating-a-bucket.md": {
       "status": "covered",
@@ -1248,7 +1248,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/03-edit-bucket-visibility.md": {
       "status": "covered",
@@ -1259,7 +1259,7 @@
         "no_frontmatter"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/04-list-buckets.md": {
       "status": "covered",
@@ -1272,7 +1272,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/05-delete-a-bucket.md": {
       "status": "covered",
@@ -1285,7 +1285,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/06-empty-a-bucket.md": {
       "status": "covered",
@@ -1297,7 +1297,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/05-working-with-buckets/07-using-bucket-tags.md": {
       "status": "covered",
@@ -1309,7 +1309,7 @@
         "jsx_tabs"
       ],
       "notes": "Most comprehensive UM file; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/01-what-is-an-object.md": {
       "status": "covered",
@@ -1320,7 +1320,7 @@
         "no_frontmatter"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/02-upload-an-object.md": {
       "status": "covered",
@@ -1333,7 +1333,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/03-working-with-metadata.md": {
       "status": "covered",
@@ -1346,7 +1346,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/04-change-object-visibility.md": {
       "status": "covered",
@@ -1359,7 +1359,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/05-list-bucket-contents.md": {
       "status": "covered",
@@ -1372,7 +1372,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/06-copying-moving-renaming-objects.md": {
       "status": "covered",
@@ -1385,7 +1385,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/07-downloading-an-object.md": {
       "status": "covered",
@@ -1398,7 +1398,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/08-delete-an-object.md": {
       "status": "covered",
@@ -1411,7 +1411,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/09-organizing-and-listing-objects/01-organizing-objects-using-folders.md": {
       "status": "covered",
@@ -1424,7 +1424,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/09-organizing-and-listing-objects/02-listing-objects.md": {
       "status": "covered",
@@ -1436,7 +1436,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/09-organizing-and-listing-objects/03-viewing-object-properties.md": {
       "status": "covered",
@@ -1448,7 +1448,7 @@
         "jsx_tabs"
       ],
       "notes": "Covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/03-q-storage/01-user-manual/06-working-with-objects/09-organizing-and-listing-objects/04-using-tags.md": {
       "status": "covered",
@@ -1460,7 +1460,7 @@
         "jsx_tabs"
       ],
       "notes": "Best UM object file; covered by QStorage-User-Guide",
-      "custom_doc": "docs/custom/QStorage-User-Guide.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-User-Guide.md"
     },
     "api/04-q-kms/01-user-manual/getting-started.md": {
       "status": "covered",
@@ -1471,7 +1471,7 @@
         "coming_soon_stub"
       ],
       "notes": "Coming soon stub; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/creating-keys.md": {
       "status": "covered",
@@ -1482,7 +1482,7 @@
         "coming_soon_stub"
       ],
       "notes": "Coming soon stub; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/deleting-keys.md": {
       "status": "covered",
@@ -1493,7 +1493,7 @@
         "coming_soon_stub"
       ],
       "notes": "Coming soon stub; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/importing-key-material.md": {
       "status": "covered",
@@ -1504,7 +1504,7 @@
         "coming_soon_placeholder"
       ],
       "notes": "Partial; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/key-policies.md": {
       "status": "covered",
@@ -1515,7 +1515,7 @@
         "coming_soon_placeholder"
       ],
       "notes": "Partial; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/key-states.md": {
       "status": "covered",
@@ -1526,7 +1526,7 @@
         "coming_soon_stub"
       ],
       "notes": "Coming soon stub; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/01-user-manual/using-grants.md": {
       "status": "covered",
@@ -1537,7 +1537,7 @@
         "coming_soon_placeholder"
       ],
       "notes": "Partial; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/getting-started.md": {
       "status": "covered",
@@ -1548,7 +1548,7 @@
         "coming_soon_stub"
       ],
       "notes": "Coming soon stub; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/_02-data-types/01-general.md": {
       "status": "covered",
@@ -1559,7 +1559,7 @@
         "empty_file"
       ],
       "notes": "Completely empty; covered by QKMS companion",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/create-bucket.md": {
       "status": "covered",
@@ -1571,7 +1571,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket.md": {
       "status": "covered",
@@ -1583,7 +1583,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-acl.md": {
       "status": "covered",
@@ -1595,7 +1595,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-bucket-lifecycle-configuration.md": {
       "status": "covered",
@@ -1607,7 +1607,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/list-buckets.md": {
       "status": "covered",
@@ -1619,7 +1619,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-cors.md": {
       "status": "covered",
@@ -1631,7 +1631,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-encryption.md": {
       "status": "covered",
@@ -1643,7 +1643,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-lifecycle.md": {
       "status": "covered",
@@ -1655,7 +1655,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-policy.md": {
       "status": "covered",
@@ -1667,7 +1667,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-tagging.md": {
       "status": "covered",
@@ -1679,7 +1679,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-bucket-website.md": {
       "status": "covered",
@@ -1691,7 +1691,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/delete-public-access-block.md": {
       "status": "covered",
@@ -1703,7 +1703,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-analytics-configuration.md": {
       "status": "covered",
@@ -1715,7 +1715,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-cors.md": {
       "status": "covered",
@@ -1727,7 +1727,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-encryption.md": {
       "status": "covered",
@@ -1739,7 +1739,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-lifecycle-configuration.md": {
       "status": "covered",
@@ -1751,7 +1751,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-lifecycle.md": {
       "status": "covered",
@@ -1763,7 +1763,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-logging.md": {
       "status": "covered",
@@ -1775,7 +1775,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-metadata-table-configuration.md": {
       "status": "covered",
@@ -1787,7 +1787,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-ownership-controls.md": {
       "status": "covered",
@@ -1799,7 +1799,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-policy-status.md": {
       "status": "covered",
@@ -1811,7 +1811,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-policy.md": {
       "status": "covered",
@@ -1823,7 +1823,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-tagging.md": {
       "status": "covered",
@@ -1835,7 +1835,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-versioning.md": {
       "status": "covered",
@@ -1847,7 +1847,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/get-bucket-website.md": {
       "status": "covered",
@@ -1859,7 +1859,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/head-bucket.md": {
       "status": "covered",
@@ -1871,7 +1871,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-bucket-acl.md": {
       "status": "covered",
@@ -1883,7 +1883,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-bucket-encryption.md": {
       "status": "covered",
@@ -1895,7 +1895,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-bucket-lifecycle.md": {
       "status": "covered",
@@ -1907,7 +1907,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-bucket-website.md": {
       "status": "covered",
@@ -1919,7 +1919,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/01-bucket-operations/put-object-lock-configuration.md": {
       "status": "covered",
@@ -1931,7 +1931,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/copy-object.md": {
       "status": "covered",
@@ -1943,7 +1943,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/delete-object.md": {
       "status": "covered",
@@ -1955,7 +1955,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/get-object-acl.md": {
       "status": "covered",
@@ -1967,7 +1967,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/get-object.md": {
       "status": "covered",
@@ -1979,7 +1979,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/head-object.md": {
       "status": "covered",
@@ -1991,7 +1991,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/list-objects-v2.md": {
       "status": "covered",
@@ -2003,7 +2003,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/list-objects.md": {
       "status": "covered",
@@ -2015,7 +2015,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/put-object-acl.md": {
       "status": "covered",
@@ -2027,7 +2027,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/put-object-legal-hold.md": {
       "status": "covered",
@@ -2039,7 +2039,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/02-object-operations/put-object.md": {
       "status": "covered",
@@ -2051,7 +2051,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/create-multipart-upload.md": {
       "status": "covered",
@@ -2063,7 +2063,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/complete-multipart-upload.md": {
       "status": "covered",
@@ -2075,7 +2075,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/abort-multipart-upload.md": {
       "status": "covered",
@@ -2087,7 +2087,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/list-multipart-uploads.md": {
       "status": "covered",
@@ -2099,7 +2099,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/list-parts.md": {
       "status": "covered",
@@ -2111,7 +2111,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/03-multipart-operations/upload-part.md": {
       "status": "covered",
@@ -2123,7 +2123,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/lifecycle-rule.md": {
       "status": "covered",
@@ -2132,7 +2132,7 @@
       "composite_pct": 82,
       "issues": [],
       "notes": "Well-structured data type; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/grant.md": {
       "status": "covered",
@@ -2141,7 +2141,7 @@
       "composite_pct": 65,
       "issues": [],
       "notes": "Data type reference; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/cors-rule.md": {
       "status": "covered",
@@ -2150,7 +2150,7 @@
       "composite_pct": 70,
       "issues": [],
       "notes": "Data type reference; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/bucket.md": {
       "status": "covered",
@@ -2159,7 +2159,7 @@
       "composite_pct": 52,
       "issues": [],
       "notes": "Data type reference; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/tag.md": {
       "status": "covered",
@@ -2168,7 +2168,7 @@
       "composite_pct": 42,
       "issues": [],
       "notes": "Data type reference; covered by QStorage-API-Reference",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/abort-incomplete-multipart-upload.md": {
       "status": "covered",
@@ -2177,7 +2177,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/analytics-filter.md": {
       "status": "covered",
@@ -2186,7 +2186,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/bucket-logging-status.md": {
       "status": "covered",
@@ -2195,7 +2195,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/bucket-policy.md": {
       "status": "covered",
@@ -2204,7 +2204,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/completed-part.md": {
       "status": "covered",
@@ -2213,7 +2213,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/condition.md": {
       "status": "covered",
@@ -2222,7 +2222,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/copy-object-result.md": {
       "status": "covered",
@@ -2231,7 +2231,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/default-retention.md": {
       "status": "covered",
@@ -2240,7 +2240,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/error-details.md": {
       "status": "covered",
@@ -2249,7 +2249,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/error-document.md": {
       "status": "covered",
@@ -2258,7 +2258,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/grantee.md": {
       "status": "covered",
@@ -2267,7 +2267,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/index-document.md": {
       "status": "covered",
@@ -2276,7 +2276,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/initiator.md": {
       "status": "covered",
@@ -2285,7 +2285,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/lifecycle-expiration.md": {
       "status": "covered",
@@ -2294,7 +2294,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/lifecycle-rule-and-operator.md": {
       "status": "covered",
@@ -2303,7 +2303,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/lifecycle-rule-filter.md": {
       "status": "covered",
@@ -2312,7 +2312,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/logging-enabled.md": {
       "status": "covered",
@@ -2321,7 +2321,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/metadata-table-configuration-result.md": {
       "status": "covered",
@@ -2330,7 +2330,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/metadata-table-configuration.md": {
       "status": "covered",
@@ -2339,7 +2339,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/noncurrent-version-expiration.md": {
       "status": "covered",
@@ -2348,7 +2348,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/object-lock-rule.md": {
       "status": "covered",
@@ -2357,7 +2357,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/object.md": {
       "status": "covered",
@@ -2366,7 +2366,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/owner.md": {
       "status": "covered",
@@ -2375,7 +2375,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/ownership-controls-rule.md": {
       "status": "covered",
@@ -2384,7 +2384,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/ownership-controls.md": {
       "status": "covered",
@@ -2393,7 +2393,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/part.md": {
       "status": "covered",
@@ -2402,7 +2402,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/policy-status.md": {
       "status": "covered",
@@ -2411,7 +2411,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/redirect-all-requests-to.md": {
       "status": "covered",
@@ -2420,7 +2420,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/redirect.md": {
       "status": "covered",
@@ -2429,7 +2429,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/routing-rule.md": {
       "status": "covered",
@@ -2438,7 +2438,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/rule.md": {
       "status": "covered",
@@ -2447,7 +2447,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/s3-tables-destination-result.md": {
       "status": "covered",
@@ -2456,7 +2456,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/server-side-encryption-rule.md": {
       "status": "covered",
@@ -2465,7 +2465,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/statement.md": {
       "status": "covered",
@@ -2474,7 +2474,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/tagging.md": {
       "status": "covered",
@@ -2483,7 +2483,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/transition.md": {
       "status": "covered",
@@ -2492,7 +2492,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/upload-part.md": {
       "status": "covered",
@@ -2501,7 +2501,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/versioning-configuration.md": {
       "status": "covered",
@@ -2510,7 +2510,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/03-q-storage/02-api-reference/09-data-types/website-configuration.md": {
       "status": "covered",
@@ -2519,7 +2519,7 @@
       "composite_pct": 55,
       "issues": [],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QStorage-API-Reference.md"
+      "custom_doc": "docs/custom/gap-analysis/QStorage-API-Reference.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/create-key.md": {
       "status": "covered",
@@ -2531,7 +2531,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/encrypt.md": {
       "status": "covered",
@@ -2543,7 +2543,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/decrypt.md": {
       "status": "covered",
@@ -2555,7 +2555,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/describe-key.md": {
       "status": "covered",
@@ -2567,7 +2567,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-keys.md": {
       "status": "covered",
@@ -2579,7 +2579,7 @@
         "docusaurus_syntax"
       ],
       "notes": "API ref; covered by QKMS-Key-Management-Service",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/cancel-key-deletion.md": {
       "status": "covered",
@@ -2591,7 +2591,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/create-alias.md": {
       "status": "covered",
@@ -2603,7 +2603,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/create-grant.md": {
       "status": "covered",
@@ -2615,7 +2615,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/delete-alias.md": {
       "status": "covered",
@@ -2627,7 +2627,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/delete-imported-key-material.md": {
       "status": "covered",
@@ -2639,7 +2639,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/derive-shared-secret.md": {
       "status": "covered",
@@ -2651,7 +2651,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/disable-key-rotation.md": {
       "status": "covered",
@@ -2663,7 +2663,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/disable-key.md": {
       "status": "covered",
@@ -2675,7 +2675,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/enable-key-rotation.md": {
       "status": "covered",
@@ -2687,7 +2687,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/enable-key.md": {
       "status": "covered",
@@ -2699,7 +2699,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/generate-data-key-pair-without-plaintext.md": {
       "status": "covered",
@@ -2711,7 +2711,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/generate-data-key-pair.md": {
       "status": "covered",
@@ -2723,7 +2723,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/generate-data-key-without-plaintext.md": {
       "status": "covered",
@@ -2735,7 +2735,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/generate-data-key.md": {
       "status": "covered",
@@ -2747,7 +2747,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/generate-mac.md": {
       "status": "covered",
@@ -2759,7 +2759,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/get-key-policy.md": {
       "status": "covered",
@@ -2771,7 +2771,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/get-key-rotation-status.md": {
       "status": "covered",
@@ -2783,7 +2783,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/get-parameters-for-import.md": {
       "status": "covered",
@@ -2795,7 +2795,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/get-public-key.md": {
       "status": "covered",
@@ -2807,7 +2807,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/import-key-material.md": {
       "status": "covered",
@@ -2819,7 +2819,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-aliases.md": {
       "status": "covered",
@@ -2831,7 +2831,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-grants.md": {
       "status": "covered",
@@ -2843,7 +2843,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-key-policies.md": {
       "status": "covered",
@@ -2855,7 +2855,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-resource-tags.md": {
       "status": "covered",
@@ -2867,7 +2867,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/list-retirable-grants.md": {
       "status": "covered",
@@ -2879,7 +2879,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/put-key-policy.md": {
       "status": "covered",
@@ -2891,7 +2891,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/re-encrypt.md": {
       "status": "covered",
@@ -2903,7 +2903,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/replicate-key.md": {
       "status": "covered",
@@ -2915,7 +2915,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/retire-grant.md": {
       "status": "covered",
@@ -2927,7 +2927,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/revoke-grant.md": {
       "status": "covered",
@@ -2939,7 +2939,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/schedule-key-deletion.md": {
       "status": "covered",
@@ -2951,7 +2951,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/sign.md": {
       "status": "covered",
@@ -2963,7 +2963,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/tag-resource.md": {
       "status": "covered",
@@ -2975,7 +2975,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/untag-resource.md": {
       "status": "covered",
@@ -2987,7 +2987,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/update-alias.md": {
       "status": "covered",
@@ -2999,7 +2999,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/update-key-description.md": {
       "status": "covered",
@@ -3011,7 +3011,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/update-primary-region.md": {
       "status": "covered",
@@ -3023,7 +3023,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/verify-mac.md": {
       "status": "covered",
@@ -3035,7 +3035,7 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     },
     "api/04-q-kms/02-api-reference/01-key-operations/verify.md": {
       "status": "covered",
@@ -3047,12 +3047,12 @@
         "docusaurus_syntax"
       ],
       "notes": "Extrapolated from structural sampling",
-      "custom_doc": "docs/custom/QKMS-Key-Management-Service.md"
+      "custom_doc": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md"
     }
   },
   "custom_docs_created": [
     {
-      "path": "docs/custom/Hypersnap.md",
+      "path": "docs/custom/gap-analysis/Hypersnap.md",
       "created": "2026-02-03",
       "covers_entities": [
         "Hypersnap"
@@ -3064,7 +3064,7 @@
       ]
     },
     {
-      "path": "docs/custom/Oblivious-Transfer-Protocols.md",
+      "path": "docs/custom/gap-analysis/Oblivious-Transfer-Protocols.md",
       "created": "2026-02-03",
       "covers_entities": [],
       "covers_topics": [
@@ -3074,7 +3074,7 @@
       ]
     },
     {
-      "path": "docs/custom/OS-Layer-RDF-Schemas.md",
+      "path": "docs/custom/gap-analysis/OS-Layer-RDF-Schemas.md",
       "created": "2026-02-03",
       "covers_entities": [],
       "covers_topics": [
@@ -3084,7 +3084,7 @@
       ]
     },
     {
-      "path": "docs/custom/Planted-Clique-Addressing-Scheme.md",
+      "path": "docs/custom/gap-analysis/Planted-Clique-Addressing-Scheme.md",
       "created": "2026-02-03",
       "covers_entities": [],
       "covers_topics": [
@@ -3094,7 +3094,7 @@
       ]
     },
     {
-      "path": "docs/custom/QCL-Quilibrium-Compute-Language.md",
+      "path": "docs/custom/gap-analysis/QCL-Quilibrium-Compute-Language.md",
       "created": "2026-02-11",
       "covers_entities": [],
       "covers_topics": [
@@ -3105,7 +3105,7 @@
       ]
     },
     {
-      "path": "docs/custom/Quilibrium Architecture.md",
+      "path": "docs/custom/gap-analysis/Quilibrium Architecture.md",
       "created": "2026-02-03",
       "covers_entities": [],
       "covers_topics": [
@@ -3117,7 +3117,7 @@
       ]
     },
     {
-      "path": "docs/custom/Quorum-Notifications-Privacy.md",
+      "path": "docs/custom/gap-analysis/Quorum-Notifications-Privacy.md",
       "created": "2026-02-03",
       "covers_entities": [
         "Quorum"
@@ -3129,7 +3129,7 @@
       ]
     },
     {
-      "path": "docs/custom/RDF-Hypergraph-Query-System.md",
+      "path": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md",
       "created": "2026-02-03",
       "covers_entities": [],
       "covers_topics": [
@@ -3140,7 +3140,7 @@
       ]
     },
     {
-      "path": "docs/custom/Block-Storage-VDFs-Bloom-Clocks.md",
+      "path": "docs/custom/gap-analysis/Block-Storage-VDFs-Bloom-Clocks.md",
       "created": "2026-02-11",
       "covers_entities": [],
       "covers_topics": [
@@ -3152,7 +3152,7 @@
       ]
     },
     {
-      "path": "docs/custom/Communication-Layer-E2EE-Mixnet-P2P.md",
+      "path": "docs/custom/gap-analysis/Communication-Layer-E2EE-Mixnet-P2P.md",
       "created": "2026-02-11",
       "covers_entities": [
         "Quorum"
@@ -3169,7 +3169,7 @@
       ]
     },
     {
-      "path": "docs/custom/OS-Subsystems-Accounts-Scheduler-IPC.md",
+      "path": "docs/custom/gap-analysis/OS-Subsystems-Accounts-Scheduler-IPC.md",
       "created": "2026-02-11",
       "covers_entities": [
         "QQ"
@@ -3186,7 +3186,7 @@
       ]
     },
     {
-      "path": "docs/custom/QKMS-Key-Management-Service.md",
+      "path": "docs/custom/gap-analysis/QKMS-Key-Management-Service.md",
       "created": "2026-02-11",
       "covers_entities": [
         "QKMS"
@@ -3199,7 +3199,7 @@
       ]
     },
     {
-      "path": "docs/custom/QStorage-User-Guide.md",
+      "path": "docs/custom/gap-analysis/QStorage-User-Guide.md",
       "created": "2026-02-11",
       "covers_entities": [
         "QStorage"
@@ -3213,7 +3213,7 @@
       ]
     },
     {
-      "path": "docs/custom/QStorage-API-Reference.md",
+      "path": "docs/custom/gap-analysis/QStorage-API-Reference.md",
       "created": "2026-02-11",
       "covers_entities": [
         "QStorage"
@@ -3226,7 +3226,7 @@
       ]
     },
     {
-      "path": "docs/custom/API-Credentials-Authentication.md",
+      "path": "docs/custom/gap-analysis/API-Credentials-Authentication.md",
       "created": "2026-02-11",
       "covers_entities": [],
       "covers_topics": [
@@ -3236,7 +3236,7 @@
       ]
     },
     {
-      "path": "docs/custom/Node-Key-Management-Guide.md",
+      "path": "docs/custom/gap-analysis/Node-Key-Management-Guide.md",
       "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
@@ -3248,7 +3248,7 @@
       ]
     },
     {
-      "path": "docs/custom/Node-Service-Setup-Guide.md",
+      "path": "docs/custom/gap-analysis/Node-Service-Setup-Guide.md",
       "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
@@ -3261,7 +3261,7 @@
       ]
     },
     {
-      "path": "docs/custom/Node-Maintenance-Updates-Guide.md",
+      "path": "docs/custom/gap-analysis/Node-Maintenance-Updates-Guide.md",
       "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
@@ -3274,7 +3274,7 @@
       ]
     },
     {
-      "path": "docs/custom/QClient-Configuration-Commands.md",
+      "path": "docs/custom/gap-analysis/QClient-Configuration-Commands.md",
       "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
@@ -3288,7 +3288,7 @@
       ]
     },
     {
-      "path": "docs/custom/Q-Story-Vision-Deployment.md",
+      "path": "docs/custom/gap-analysis/Q-Story-Vision-Deployment.md",
       "created": "2026-02-24",
       "covers_entities": [],
       "covers_topics": [
@@ -3302,7 +3302,7 @@
       ]
     },
     {
-      "path": "docs/custom/Bridge-QPing-QQ-Services.md",
+      "path": "docs/custom/gap-analysis/Bridge-QPing-QQ-Services.md",
       "created": "2026-02-11",
       "covers_entities": [
         "Bridge",

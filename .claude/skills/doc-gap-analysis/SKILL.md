@@ -12,7 +12,7 @@ allowed-tools:
 ---
 
 <objective>
-Scan official documentation in `docs/quilibrium-official/` for chunking quality issues that degrade RAG retrieval. Cross-reference against existing custom docs in `docs/custom/` and the persistent audit log. Produce a prioritized gap report with actionable recommendations for new companion documents. Optionally draft a companion doc for a selected gap.
+Scan official documentation in `docs/quilibrium-official/` for chunking quality issues that degrade RAG retrieval. Cross-reference against existing custom docs in `docs/custom/gap-analysis/` and the persistent audit log. Produce a prioritized gap report with actionable recommendations for new companion documents. Optionally draft a companion doc for a selected gap.
 </objective>
 
 <context>
@@ -167,7 +167,7 @@ Where `files` is keyed by relative path:
       "composite_pct": 2,
       "issues": ["react_stub"],
       "notes": "Stub file, but topic covered by custom doc",
-      "custom_doc": "docs/custom/RDF-Hypergraph-Query-System.md"
+      "custom_doc": "docs/custom/gap-analysis/RDF-Hypergraph-Query-System.md"
     }
   }
 }
@@ -209,7 +209,7 @@ For each file in scope (that isn't already in the audit log with status `adequat
 
 ## Step 5: Cross-Reference Against Custom Docs
 
-Read all files in `docs/custom/` and build a topic coverage map:
+Read all files in `docs/custom/gap-analysis/` and build a topic coverage map:
 - Extract title and topics from each custom doc's frontmatter
 - Map topics to the known entities list
 - Identify which entity/topic areas have custom doc coverage and which don't
@@ -336,7 +336,7 @@ Template structure:
 - **What it cannot do / limitations**: Explicit non-capabilities
 - **Cross-references**: Links to related docs
 
-5. Write to `docs/custom/` with a descriptive filename (e.g., `QStorage-Overview.md`)
+5. Write to `docs/custom/gap-analysis/` with a descriptive filename (e.g., `QStorage-Overview.md`)
 6. Update the audit log: mark all related official doc files as `status: "covered"` with a reference to the new custom doc
 7. Run `python .agents/update-index.py`
 

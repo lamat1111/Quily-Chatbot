@@ -27,10 +27,10 @@ Find and manage obsolete information across non-official documentation (communit
 ## Scope
 
 This skill operates on **non-official docs only**:
-- `docs/community/` — Community-contributed content
+- `docs/custom/` — Custom and community-contributed content
+- `docs/custom/auto/` — Auto-generated docs (network health, tech tree)
 - `docs/discord/` — Discord announcement archives
 - `docs/transcriptions/` — Livestream transcripts
-- `docs/custom/` — Official content not on docs.quilibrium.com
 
 **NEVER modify** files in `docs/quilibrium-official/` — those are a mirror of the official docs and are managed by `/sync-docs`.
 
@@ -112,7 +112,7 @@ Search strategy (run in parallel where possible):
 
 1. **Keyword search** — Grep for the topic keywords across all non-official doc folders:
    ```
-   Grep pattern in: docs/community/, docs/discord/, docs/transcriptions/, docs/custom/
+   Grep pattern in: docs/custom/, docs/discord/, docs/transcriptions/
    ```
 
 2. **Broader context search** — If the topic involves a product name, date, or version number, also search for related terms (e.g., searching for "v2.1.0.21" should also check "2.1.0.21", "version 21")
@@ -144,7 +144,7 @@ Found [N] files with potentially outdated information about "[topic]":
    Impact: LOW — version is old but not misleading (it was true at the time)
    Recommendation: Skip (historical record)
 
-3. docs/community/QNS-FAQ.md
+3. docs/custom/QNS-FAQ.md
    Section: "## Pricing" (line 45-52)
    Says: "Pricing has not been announced yet"
    Impact: HIGH — pricing has since been announced
@@ -189,7 +189,7 @@ After all changes are applied:
 ```
 Changes applied to [N] files:
 - Annotated: docs/transcriptions/2026-02-01_qconsole-launch.md
-- Updated: docs/community/QNS-FAQ.md
+- Updated: docs/custom/QNS-FAQ.md
 - Deleted: (none)
 
 To update the RAG database, run:

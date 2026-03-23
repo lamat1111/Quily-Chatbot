@@ -1,5 +1,5 @@
 /**
- * Generates a daily network health snapshot as a markdown file in docs/community/.
+ * Generates a daily network health snapshot as a markdown file in docs/custom/auto/.
  * This file gets picked up by the regular RAG ingestion pipeline, so queries like
  * "what's the latest?" or "how's the network doing?" return current data instead
  * of stale transcript references.
@@ -11,7 +11,7 @@ import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { computeStats, type NetworkSnapshot } from '../src/lib/networkStats';
 
-const OUT_PATH = resolve(__dirname, '../docs/community/Network-Health-Snapshot.md');
+const OUT_PATH = resolve(__dirname, '../docs/custom/auto/Network-Health-Snapshot.md');
 
 function formatBytes(bytes: number): string {
   if (bytes >= 1e12) return `${(bytes / 1e12).toFixed(2)} TB`;
