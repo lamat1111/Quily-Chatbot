@@ -43,7 +43,8 @@
     "eval:collect": "tsx scripts/eval/index.ts run --collect",
     "eval:broad": "tsx scripts/eval/index.ts run --suite scripts/eval/test-suite.yaml",
     "stats:snapshot": "tsx scripts/stats-snapshot.ts",
-    "sync-techtree": "tsx scripts/sync-techtree.ts"
+    "sync-techtree": "tsx scripts/sync-techtree.ts",
+    "sync-monorepo": "tsx scripts/sync-monorepo.ts"
   },
   "keywords": [],
   "author": "",
