@@ -16,6 +16,8 @@ topics:
 
 ## Network Health Status (January 2026)
 
+> **OUTDATED (2026-03-23):** The shard numbers below are from January 21, 2026 and are likely outdated. The shard-out process is ongoing and these figures change as nodes join/leave. For current network health, check the Quilibrium dashboard or recent Discord dev-updates.
+
 About 67 shards are at halt risk. 663 need coverage, but we now have over 2,000 healthy shards out of approximately 3,000 total.
 
 Once we get to at least "needs coverage" instead of "halt risk," the network will be fully kicking into motion. The QUIL token shards will be unlocked and transaction processing will proceed.
