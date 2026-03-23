@@ -42,7 +42,8 @@
     "eval:judge": "tsx scripts/eval/index.ts judge",
     "eval:collect": "tsx scripts/eval/index.ts run --collect",
     "eval:broad": "tsx scripts/eval/index.ts run --suite scripts/eval/test-suite.yaml",
-    "stats:snapshot": "tsx scripts/stats-snapshot.ts"
+    "stats:snapshot": "tsx scripts/stats-snapshot.ts",
+    "sync-techtree": "tsx scripts/sync-techtree.ts"
   },
   "keywords": [],
   "author": "",
