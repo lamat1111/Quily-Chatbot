@@ -4,6 +4,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
+- [Daily Recap Posting](docs/2026-03-24-daily-recap-posting.md)
 - [Automated Documentation Sync Pipeline](docs/automated-docs-sync-pipeline.md) — Daily GitHub Actions pipeline that syncs official docs, scrapes Discord announcements, and generates general channel recaps into the RAG knowledge base
 - [Automated Versioning and Release System](docs/versioning-release-system.md) — Semantic versioning with conventional commit analysis, changelog generation, git tagging, and /release skill integration
 - [Cloudflare Turnstile Bot Protection](docs/cloudflare-turnstile-bot-protection.md) — Invisible bot verification using Cloudflare Turnstile with session cookies, fail-open design, and client/server integration
@@ -33,6 +34,11 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Monorepo Integration for Release Context](tasks/2026-03-23-monorepo-integration.md)
+- [Monorepo Release Sync — Design Spec](tasks/2026-03-23-monorepo-release-sync-design.md)
+- [Monorepo Release Sync — Implementation Plan](tasks/2026-03-23-monorepo-release-sync-plan.md)
+- [Daily Recap Posting — Implementation Plan](tasks/2026-03-24-daily-recap-posting-plan.md)
+- [Design Spec: Automated Daily Recap Posting](tasks/2026-03-24-daily-recap-posting.md)
+- [Task: Deduplicate Source Citations in Bot Responses](tasks/2026-03-24-deduplicate-source-citations.md)
 - [Add Self-Review / Fact Check Button to Bot Replies](tasks/self-review-fact-check-button.md)
 - [Add Web Fetching Capability to Chatbot](tasks/web-fetching-capability.md)
 - [Cross-Reference Verification Against Source Docs](tasks/cross-reference-verification.md)
@@ -112,4 +118,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-23 17:08:28
+**Last Updated**: 2026-03-24 16:17:32

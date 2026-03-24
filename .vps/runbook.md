@@ -146,6 +146,10 @@ CLOUDFLARE_API_TOKEN=<paste>
 # Daily network stats (optional)
 # DISCORD_STATS_CHANNEL_ID=<channel-id>   # Channel for daily stats post
 # DISCORD_STATS_HOUR=12                    # UTC hour to post (default: 12)
+
+# Daily recap (optional)
+# DISCORD_RECAP_CHANNEL_ID=<channel-id>   # Channel for daily recap post
+# DISCORD_RECAP_HOUR=14                    # UTC hour to post (default: 14)
 EOF
 chmod 600 /home/quily/quily-chatbot/bot/.env'
 ```
@@ -258,4 +262,20 @@ The bot stores daily snapshots in `stats-history.json` (next to `dist/`) to comp
 
 ---
 
-*Created: 2026-03-18 | Updated: 2026-03-21*
+## Daily Recap
+
+The bot posts a daily community recap (LLM-summarized highlights from #general) to a designated channel. To enable:
+
+1. Set `DISCORD_RECAP_CHANNEL_ID` in `.env` to the target channel ID
+2. Optionally set `DISCORD_RECAP_HOUR` (default: `14` = 2 PM UTC)
+3. Restart the bot: `ssh quily-vps 'pm2 restart quily-bot'`
+
+The recap covers the last 24 hours of messages, filtered for noise and summarized via OpenRouter (DeepSeek). Cost: ~$0.005/day.
+
+Users can also trigger a recap on demand by mentioning `@Quily recap`.
+
+Note: The GitHub Actions workflow also generates a recap at 06:00 UTC (committed to `docs/discord/general-recap/`). The bot's version is more complete as it covers messages up to posting time and overwrites the 06:00 UTC Supabase entry.
+
+---
+
+*Created: 2026-03-18 | Updated: 2026-03-24*
