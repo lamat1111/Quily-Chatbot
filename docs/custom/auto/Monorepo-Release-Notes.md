@@ -19,7 +19,7 @@ topics:
 **Last updated:** March 24, 2026
 **Source:** [Quilibrium Monorepo](https://github.com/QuilibriumNetwork/monorepo)
 
-This document tracks changes in each Quilibrium node release. For the latest release binary, visit [releases.quilibrium.com](https://releases.quilibrium.com/release).
+This document tracks changes in each Quilibrium node release. To download the latest binary, visit [releases.quilibrium.com](https://releases.quilibrium.com/release) (download page only, no release notes there).
 
 ## v2.1.0.21 (version .21) *(auto-generated)*
 - resolve sync race condition with prover registry pruning
