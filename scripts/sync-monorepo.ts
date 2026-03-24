@@ -270,7 +270,7 @@ topics:
 **Last updated:** ${dateHuman}
 **Source:** [Quilibrium Monorepo](https://github.com/${REPO_OWNER}/${REPO_NAME})
 
-This document tracks changes in each Quilibrium node release. To download the latest binary, visit [releases.quilibrium.com](https://releases.quilibrium.com/release) (download page only, no release notes there).
+This document tracks changes in each Quilibrium node release.
 
 `;
 
