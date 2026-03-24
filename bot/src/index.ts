@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { registerMentionHandler } from './handlers/mention';
 import { startDailyStats } from './handlers/stats';
+import { startDailyRecap } from './handlers/dailyRecap';
 
 const llmProvider = process.env.BOT_LLM_PROVIDER || 'openrouter';
 const providerKeyVar = llmProvider === 'chutes' ? 'CHUTES_API_KEY' : 'OPENROUTER_API_KEY';
@@ -25,6 +26,7 @@ const client = new Client({
 client.once('ready', (c) => {
   console.log(`Bot ready! Logged in as ${c.user.tag} — ${c.guilds.cache.size} guild(s)`);
   startDailyStats(client);
+  startDailyRecap(client);
 });
 
 registerMentionHandler(client);
