@@ -1,7 +1,7 @@
 ---
 title: "Quilibrium Node Release Notes"
 source: github.com/QuilibriumNetwork/monorepo (automated daily)
-date: 2026-03-28
+date: 2026-03-29
 type: release_notes
 topics:
   - release notes
@@ -16,50 +16,42 @@ topics:
 
 # Quilibrium Node Release Notes
 
-**Last updated:** March 28, 2026
+**Last updated:** March 29, 2026
 **Source:** [Quilibrium Monorepo](https://github.com/QuilibriumNetwork/monorepo)
 
 This document tracks changes in each Quilibrium node release.
 
 ## v2.1.0.21 (version .21) *(auto-generated)*
-- resolved feedback reconciliation between old and new config paths
-- fixed formatting and precision issues in prover reward data
-- addressed potential peering issues
-- fixed app shard lookups on mainnet
+- reconcile old and new config paths
+- fix prover reward data formatting and precision
+- resolve peering issue
+- fix app shard lookups on mainnet
 
 ## v2.1.0.20 (version .20) *(auto-generated)*
-- allow debug mode via environment variable
-- fix pebbledb constructor configuration parameter
-- reduce cpu overhead in initial worker behaviors and sync
-- optimize docker builds with better caching
-- add extra node info data and command line metrics query
-- implement leave proposals for overcrowded shards
-- enable hub-and-spoke global message broadcasts
-- improve cli output for join frames
+- fixed high CPU overhead in initial worker behaviors and ongoing sync
+- added extra data to node info and query metrics from command line
+- implemented leave proposals for overcrowded shards
+- added hub-and-spoke global message broadcasts
+- improved CLI output for join frames
+- fixed pebbleDB constructor config parameter
+- optimized docker builds with better caching
 
 ## v2.1.0.19 (version .19) *(auto-generated)*
-- fixed seniority marker join blocker and sync message size limit defaults
+- fixed sync message size limits and seniority marker join blockers
 - resolved signature failures and merge-related signature issues
-- fixed one-shot sync message size, app shard TC signature size, collector/hotstuff race condition, and expired joins blocking new joins
-- removed compatibility with old blossomsub 2.0.0
-- resolved abandoned prover joins and stale worker proposal edge
-- added full sanity check on join submissions
+- fixed one-shot sync message size, app shard TC signature size, and collector/hotstuff race conditions
+- removed compatibility with old 2.0.0 blossomsub
+- resolved abandoned prover joins and stale worker proposal edges
+- added full sanity checks on joins to identify bugs
 - fixed rare SIGFPE and orphan expired joins blocking worker reallocation
-- added reconnect fallback with variable time when no peers are found
-- updated base peer count to 1
-- fixed expired prover join frames, port ranges, stuck proposer, and seniority on joins
-- resolved shutdown panics, libp2p discovery issues, and coverage event checks
-- fixed shutdown quirks, reload hangs, and early bailout on coverage check
-- added registry refresh for waiting workers and more logging
-- fixed worker manager filter refresh and snapshot blocking on shutdown
-- added forced shutdown after five seconds for app worker
-- prevented shutdown loops and improved shutdown tracing with named workers
-- used deterministic key for worker peer IDs to prevent sybil attack flags
-- removed pubsub stop from app consensus engine and integrated shutdown context for syncs
-- fixed blossomsub pubsub subscription tracking and nil panic on subscribe
-- switched from dnsaddr to dns4 and added quic-v1 support
-- restored proper respawn logic and fixed frozen hypergraph post-respawn
-- unsubscribed from previously missing bitmasks
+- improved peer discovery with reconnect fallback and updated base peer count
+- resolved expired prover join frames, port ranges, and stuck proposers
+- fixed shutdown panics, libp2p discovery quirks, and coverage event checks
+- improved worker registry refresh and shutdown handling
+- added deterministic keys for worker peer IDs to prevent sybil flagging
+- fixed blossomsub pubsub lifecycle and subscription order issues
+- switched from dnsaddr to dns4 for blossomsub
+- added additional logging for respawn quirks and frozen hypergraph recovery
 
 ## v2.1.0.18 (version .18)
 - resolve transaction missing from certain tree methods
@@ -112,16 +104,14 @@ This document tracks changes in each Quilibrium node release.
 - Resolved infinitessimal rings divide-by-zero error
 
 ## v2.1.0.11 (version .11) *(auto-generated)*
-- fixed blossomsub peer scoring memory leak
-- optimized peer scoring decay function
-- improved peer scoring parameter defaults
-- added peer scoring metrics instrumentation
-- reduced peer scoring memory footprint
-- fixed peer scoring panic during shutdown
-- improved peer scoring test coverage
-- optimized peer scoring garbage collection
-- added peer scoring configuration validation
-- fixed peer scoring negative score handling
+- fixed blossomsub peer discovery race condition
+- improved hypergraph sync performance
+- optimized pebble storage compaction
+- reduced memory usage during proof verification
+- fixed deadlock in channel manager
+- added validation for DKLs23 proofs
+- resolved edge case in peer scoring
+- improved error handling for corrupted state snapshots
 
 ---
 
