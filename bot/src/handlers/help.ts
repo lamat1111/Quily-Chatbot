@@ -35,4 +35,4 @@ export async function handleHelp(message: Message, query: string): Promise<boole
   await message.reply(HELP_TEXT);
   return true;
 }
-`;
+
