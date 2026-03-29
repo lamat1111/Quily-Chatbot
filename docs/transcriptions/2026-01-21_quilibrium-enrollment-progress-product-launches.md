@@ -26,6 +26,8 @@ Outside of those things, we support alt-fee basis app shards which enable some r
 
 ## QNS Updates
 
+> **Historical context (January 2026):** The transaction volume and pricing figures below are from January 21, 2026. QNS has continued to evolve since then. For current QNS stats and pricing, check Q Console or recent Discord announcements.
+
 QNS received major updates over the last week. We added support for live auctions and offers. This will continue to get updates, and we keep taking in feedback and shipping improvements.
 
 We've crossed the threshold of over $100,000 USD in transactions. We've breached 4 million wQUIL tokens transacted for names on QNS. That's been very healthy progress.
@@ -34,6 +36,8 @@ We had our first price update. We're taking feedback about the pricing tiers and
 
 
 ## Quorum Mobile: Multi-Chain Privacy Wallet
+
+> **Historical context (January 2026):** This update has since shipped. For the current Quorum Mobile status and supported chains, see the latest app release notes or Discord announcements.
 
 We're shipping an update to Quorum Mobile. It will be a full native update. On iOS, there's a TestFlight that should automatically download, but you might need to go into the TestFlight app to pull it. On Android Google Play beta, you can pull it from there. We'll also post links to the standalone APK for sideloading.
 
@@ -83,6 +87,8 @@ As always, we never do anything without user consent. Even importing the Warpcas
 
 ## Q Storage: S3-Compatible Storage API
 
+> **Historical context (January 2026):** Q Storage has since launched. The feature descriptions below remain accurate, but references to "rolling out" are outdated. For current Q Storage status, see Q Console.
+
 Q Storage is our S3-compatible API offering, rolling out in the next few hours.
 
 ### What's In the Box
@@ -113,6 +119,8 @@ For network storage, replication happens according to the same standard as any d
 The data is constructed using Reed-Solomon encoding through verifiable encryption so you can lose some nodes and still reconstruct data. Strong availability guarantees mean if nodes go down and reach a certain threshold, it can induce network halts—part of the incentive model ensuring nodes participate and store data.
 
 ## QKMS: Key Management Service
+
+> **Historical context (January 2026):** QKMS has since launched. The feature and architecture descriptions below remain accurate, but references to "rolling out" are outdated. For current QKMS status, see Q Console.
 
 QKMS is also rolling out in the next few hours.
 
@@ -173,6 +181,8 @@ First integrations support:
 This is a powerful example of how these integrations become force multipliers as development proceeds.
 
 ## QClient Release Timeline
+
+> **Historical context (January 2026):** Version 2.1.0.18 has since shipped and multiple newer versions have followed. For the current node version and QClient status, see the Monorepo Release Notes and dev-updates Discord channel.
 
 QClient is targeted alongside the release of 2.1.0.18.
 

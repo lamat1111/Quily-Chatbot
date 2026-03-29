@@ -26,6 +26,8 @@ Each update to this branch narrows down the issue further. The most recent updat
 
 ## QNS Update
 
+> **Historical context (February 2026):** This QNS update has since shipped. For current QNS features and status, see Q Console or recent Discord announcements.
+
 An update to QNS will ship within the next 24 to 48 hours. It will include:
 
 - Improvements to the auctions and offers features
@@ -33,6 +35,8 @@ An update to QNS will ship within the next 24 to 48 hours. It will include:
 - Ability to message the owner of a particular name using the underlying dispatch primitive that powers Quorum
 
 ## Quorum Mobile Update
+
+> **Historical context (February 2026):** This Quorum Mobile update has since shipped. For current supported chains and features, see the latest app release notes.
 
 Quorum Mobile will also receive an update with:
 
@@ -51,6 +55,8 @@ Users will be given the option to choose their degree of synchronization:
 Bug fixes for quality of life issues reported in the beta will also be included.
 
 ## Frame Production Issues: Resolution Status
+
+> **Historical context (February 2026):** These frame production issues were resolved before this broadcast. The details remain useful for understanding the network's architecture and failure modes, but the specific incidents described are historical.
 
 Three categories of issues affected frame production, and all have been resolved:
 
@@ -71,6 +77,8 @@ Synchronization was causing consensus participants to disagree on the state of t
 > **Note:** The archive node root challenge alignment issue is being addressed in the next update to the .18 branch. The latest logs provide greater detail about where differences are happening, enabling resolution.
 
 ## Q Storage Launch
+
+> **Historical context (February 2026):** Q Storage has since launched. The feature details below remain accurate.
 
 The service is launching with billing tests completing within hours of this broadcast. Event notifications have been added since the previous talk.
 
