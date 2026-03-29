@@ -33,8 +33,8 @@ export interface CuratedModelMetadata {
 const CURATED_LLM_MODELS: CuratedModelMetadata[] = [
   // DeepSeek - Top recommendation (TEE for privacy)
   {
-    slug: 'chutes-deepseek-ai-deepseek-v3-1-tee',
-    displayName: 'DeepSeek V3.1',
+    slug: 'chutes-deepseek-ai-deepseek-v3-2-tee',
+    displayName: 'DeepSeek V3.2',
     description: 'Best open-source. Excellent reasoning with TEE privacy.',
     isOpenSource: true,
     isRecommended: true,
