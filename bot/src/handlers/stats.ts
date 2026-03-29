@@ -7,6 +7,7 @@ import { computeStats, formatDiscordStats, loadHistory, recordSnapshot } from '.
 // Exact command patterns only — must be the entire query (no partial matches)
 const STATS_PATTERNS = [
   /^\s*(?:network\s+)?stats?\s*$/i,
+  /^\s*(?:network|shard)\s+status\s*$/i,
 ];
 
 /**
