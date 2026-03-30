@@ -1,7 +1,7 @@
 ---
 title: "Quilibrium Node Release Notes"
 source: github.com/QuilibriumNetwork/monorepo (automated daily)
-date: 2026-03-29
+date: 2026-03-30
 type: release_notes
 topics:
   - release notes
@@ -16,7 +16,7 @@ topics:
 
 # Quilibrium Node Release Notes
 
-**Last updated:** March 29, 2026
+**Last updated:** March 30, 2026
 **Source:** [Quilibrium Monorepo](https://github.com/QuilibriumNetwork/monorepo)
 
 This document tracks changes in each Quilibrium node release.
@@ -28,30 +28,34 @@ This document tracks changes in each Quilibrium node release.
 - fix app shard lookups on mainnet
 
 ## v2.1.0.20 (version .20) *(auto-generated)*
-- fixed high CPU overhead in initial worker behaviors and ongoing sync
-- added extra data to node info and query metrics from command line
-- implemented leave proposals for overcrowded shards
-- added hub-and-spoke global message broadcasts
-- improved CLI output for join frames
-- fixed pebbleDB constructor config parameter
-- optimized docker builds with better caching
+- allow debug mode via environment variable
+- fix pebbledb constructor configuration parameter
+- reduce cpu overhead in initial worker behaviors and sync
+- optimize docker builds with better caching
+- add extra node info data and command line metrics query
+- implement leave proposals for overcrowded shards
+- enable hub-and-spoke global message broadcasts
+- improve cli output for join frames
 
 ## v2.1.0.19 (version .19) *(auto-generated)*
-- fixed sync message size limits and seniority marker join blockers
+- fixed sync race conditions with prover registry pruning and worker allocation
 - resolved signature failures and merge-related signature issues
-- fixed one-shot sync message size, app shard TC signature size, and collector/hotstuff race conditions
-- removed compatibility with old 2.0.0 blossomsub
+- adjusted sync message size limits and app shard TC signature size
+- fixed collector/hotstuff race condition and expired joins blocking new joins
+- removed compatibility with old 2.0.0 blossomsub implementation
 - resolved abandoned prover joins and stale worker proposal edges
-- added full sanity checks on joins to identify bugs
+- added pre-join sanity checks to identify bugs
 - fixed rare SIGFPE and orphan expired joins blocking worker reallocation
 - improved peer discovery with reconnect fallback and updated base peer count
-- resolved expired prover join frames, port ranges, and stuck proposers
-- fixed shutdown panics, libp2p discovery quirks, and coverage event checks
-- improved worker registry refresh and shutdown handling
-- added deterministic keys for worker peer IDs to prevent sybil flagging
-- fixed blossomsub pubsub lifecycle and subscription order issues
-- switched from dnsaddr to dns4 for blossomsub
-- added additional logging for respawn quirks and frozen hypergraph recovery
+- fixed expired prover join frames, port ranges, and stuck proposers
+- resolved shutdown panics and libp2p discovery picking inaccessible peers
+- fixed coverage event checks during shutdown and worker behavior alignment
+- improved registry refresh logic during worker allocation
+- added worker shutdown safeguards with forced timeout after five seconds
+- implemented deterministic worker keys to prevent sybil attack flags
+- fixed blossomsub pubsub lifecycle management and subscription issues
+- switched from dnsaddr to dns4 for blossomsub and added quic-v1 support
+- restored proper respawn logic and fixed frozen hypergraph after respawn
 
 ## v2.1.0.18 (version .18)
 - resolve transaction missing from certain tree methods
@@ -104,14 +108,16 @@ This document tracks changes in each Quilibrium node release.
 - Resolved infinitessimal rings divide-by-zero error
 
 ## v2.1.0.11 (version .11) *(auto-generated)*
-- fixed blossomsub peer discovery race condition
-- improved hypergraph sync performance
-- optimized pebble storage compaction
-- reduced memory usage during proof verification
-- fixed deadlock in channel manager
-- added validation for DKLs23 proofs
-- resolved edge case in peer scoring
-- improved error handling for corrupted state snapshots
+- fixed panic in peer manager when peer count drops below minimum threshold
+- improved peer selection logic to prioritize stable connections
+- optimized peer scoring algorithm for blossomsub
+- reduced memory usage in hypergraph state management
+- fixed edge case in DKLs23 fork validation
+- improved error handling for invalid peer certificates
+- resolved race condition in channel message processing
+- optimized bloom filter usage in peer discovery
+- fixed deadlock in pebble storage during high write loads
+- improved cleanup of stale peer connections
 
 ---
 
