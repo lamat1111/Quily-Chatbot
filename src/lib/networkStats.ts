@@ -150,8 +150,25 @@ function pct(n: number, total: number): string {
   return `${((n / total) * 100).toFixed(1).padStart(5)}%`;
 }
 
+/** Clean percentage string (no padding) — e.g. "74.4%" */
+function fmtPct(n: number, total: number): string {
+  if (total === 0) return '0.0%';
+  return `${((n / total) * 100).toFixed(1)}%`;
+}
+
+/** Format a percentage change — e.g. "+3.1%" or "-0.5%" */
+function fmtPctChange(current: number, previous: number): string {
+  if (previous === 0) return current === 0 ? '0%' : 'new';
+  const pctVal = ((current - previous) / Math.abs(previous)) * 100;
+  const sign = pctVal >= 0 ? '+' : '';
+  // Use 1 decimal for small changes, 0 for large
+  const formatted = Math.abs(pctVal) >= 10 ? pctVal.toFixed(0) : pctVal.toFixed(1);
+  return `${sign}${formatted}%`;
+}
+
 /**
- * Format stats for Discord (monospace code block with emoji).
+ * Format stats for Discord — mobile-friendly, no code blocks.
+ * Layout: Overview → Trends → Shard Health → Ring Distribution
  */
 export function formatDiscordStats(snapshot: NetworkSnapshot, history: NetworkSnapshot[]): string {
   const { totalShards: total } = snapshot;
@@ -164,41 +181,32 @@ export function formatDiscordStats(snapshot: NetworkSnapshot, history: NetworkSn
   let msg = '';
   msg += `📊 **Quilibrium Network Stats — ${date}**\n\n`;
 
-  // Overview outside code block — emojis render properly here
+  // Overview
   msg += `🌍 World Size: **${formatBytes(snapshot.worldBytes)}**\n`;
   msg += `🧩 Shards: **${snapshot.totalShards.toLocaleString('en-US')}**\n`;
   msg += `👥 Peers: **${snapshot.peers.toLocaleString('en-US')}**\n`;
-  msg += `🖥️ Workers: **${snapshot.totalWorkers.toLocaleString('en-US')}**\n\n`;
+  msg += `🖥️ Workers: **${snapshot.totalWorkers.toLocaleString('en-US')}**\n`;
 
-  // Detailed tables in code block — no emojis, pure monospace
-  msg += '```\n';
+  // Shard Health (quick glance before trends)
+  msg += `\n❤️ **Shard Health**\n`;
+  msg += `🟢 Healthy (≥6): **${snapshot.healthy.toLocaleString('en-US')}** (${fmtPct(snapshot.healthy, total)})\n`;
+  msg += `🟡 Warning (<6): **${snapshot.warning.toLocaleString('en-US')}** (${fmtPct(snapshot.warning, total)})\n`;
+  msg += `🔴 Halt Risk (<3): **${snapshot.haltRisk.toLocaleString('en-US')}** (${fmtPct(snapshot.haltRisk, total)})\n`;
 
-  msg += `Shard Health\n`;
-  msg += `  🟢 Healthy  (>=6)   ${pad(snapshot.healthy.toLocaleString('en-US'), 6)}  (${pct(snapshot.healthy, total)})\n`;
-  msg += `  🟡 Warning  (<6)    ${pad(snapshot.warning.toLocaleString('en-US'), 6)}  (${pct(snapshot.warning, total)})\n`;
-  msg += `  🔴 Halt Risk(<3)    ${pad(snapshot.haltRisk.toLocaleString('en-US'), 6)}  (${pct(snapshot.haltRisk, total)})\n`;
-  msg += '\n';
-
-  msg += `Ring Distribution\n`;
-  msg += `  Ring 0  (1-7 workers)    ${pad((snapshot.rings['0'] || 0).toLocaleString('en-US'), 6)} shards\n`;
-  msg += `  Ring 1  (8-15 workers)   ${pad((snapshot.rings['1'] || 0).toLocaleString('en-US'), 6)} shards\n`;
-  msg += `  Ring 2  (16-23 workers)  ${pad((snapshot.rings['2'] || 0).toLocaleString('en-US'), 6)} shards\n`;
-  msg += `  Ring 3+ (24+ workers)    ${pad((snapshot.rings['3+'] || 0).toLocaleString('en-US'), 6)} shards\n`;
-  msg += '\n';
-
-  msg += `Worker Activity\n`;
-  msg += `  Active     ${pad(snapshot.workersActive.toLocaleString('en-US'), 10)}\n`;
-  msg += `  Joining    ${pad(snapshot.workersJoining.toLocaleString('en-US'), 10)}\n`;
-  msg += `  Leaving    ${pad(snapshot.workersLeaving.toLocaleString('en-US'), 10)}\n`;
-
-  const trendRows = buildTrends(snapshot, history);
-  if (trendRows) {
-    msg += '\n';
-    msg += `Trends\n`;
-    msg += trendRows;
+  // Trends (most interesting section)
+  const trendLines = buildDiscordTrends(snapshot, history);
+  if (trendLines) {
+    msg += `\n📈 **Trends**\n`;
+    msg += trendLines;
   }
 
-  msg += '```';
+  // Ring Distribution (single column for readability)
+  msg += `\n⭕ **Ring Distribution**\n`;
+  msg += `Ring 0 (1–7 workers): ${(snapshot.rings['0'] || 0).toLocaleString('en-US')} shards\n`;
+  msg += `Ring 1 (8–15 workers): ${(snapshot.rings['1'] || 0).toLocaleString('en-US')} shards\n`;
+  msg += `Ring 2 (16–23 workers): ${(snapshot.rings['2'] || 0).toLocaleString('en-US')} shards\n`;
+  msg += `Ring 3+ (24+ workers): ${(snapshot.rings['3+'] || 0).toLocaleString('en-US')} shards\n`;
+
   return msg;
 }
 
@@ -252,8 +260,51 @@ export function formatWebStats(snapshot: NetworkSnapshot): string {
   return msg;
 }
 
-// ── Trend helpers (shared) ─────────────────────────────────────────────
+// ── Trend helpers ─────────────────────────────────────────────────────
 
+/**
+ * Build Discord-friendly trend lines — one metric per line, inline deltas with % change.
+ * e.g.: 🖥️ Workers: +416 (+1.1%) 1d · +1,121 (+3.1%) 3d · +1,898 (+5.4%) 7d · +4,200 (+12%) 30d
+ */
+function buildDiscordTrends(current: NetworkSnapshot, history: NetworkSnapshot[]): string {
+  if (history.length < 2) return '';
+
+  const intervals: { label: string; snap: NetworkSnapshot | undefined }[] = [
+    { label: '1d', snap: findByDaysAgo(history, 1) },
+    { label: '3d', snap: findByDaysAgo(history, 3) },
+    { label: '7d', snap: findByDaysAgo(history, 7) },
+    { label: '30d', snap: findByDaysAgo(history, 30) },
+  ];
+
+  // Need at least 1d data
+  if (!intervals[0].snap) return '';
+
+  const metrics: { emoji: string; label: string; fn: (s: NetworkSnapshot) => number; fmtDelta: (a: number, b: number) => string }[] = [
+    { emoji: '🌍', label: 'World Size', fn: (s) => s.worldBytes, fmtDelta: formatDeltaBytes },
+    { emoji: '👥', label: 'Peers', fn: (s) => s.peers, fmtDelta: formatDeltaNum },
+    { emoji: '🖥️', label: 'Workers', fn: (s) => s.totalWorkers, fmtDelta: formatDeltaNum },
+    { emoji: '🟢', label: 'Healthy', fn: (s) => s.healthy, fmtDelta: formatDeltaNum },
+    { emoji: '🔴', label: 'Halt Risk', fn: (s) => s.haltRisk, fmtDelta: formatDeltaNum },
+  ];
+
+  let out = '';
+  for (const m of metrics) {
+    const parts: string[] = [];
+    for (const iv of intervals) {
+      if (!iv.snap) continue;
+      const delta = m.fmtDelta(m.fn(current), m.fn(iv.snap));
+      const pctChange = fmtPctChange(m.fn(current), m.fn(iv.snap));
+      parts.push(`${delta} (${pctChange}) ${iv.label}`);
+    }
+    out += `${m.emoji} ${m.label}: ${parts.join(' │ ')}\n`;
+  }
+
+  return out;
+}
+
+/**
+ * Build code-block trends for web format (legacy table style).
+ */
 function buildTrends(current: NetworkSnapshot, history: NetworkSnapshot[]): string {
   if (history.length < 2) return '';
 
