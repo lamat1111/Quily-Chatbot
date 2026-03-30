@@ -167,8 +167,8 @@ function fmtPctChange(current: number, previous: number): string {
 }
 
 /**
- * Format stats for Discord — mobile-friendly, no code blocks.
- * Layout: Overview → Trends → Shard Health → Ring Distribution
+ * Format stats for Discord — mobile-friendly layout.
+ * Overview + Shard Health use emoji markdown; Trends use a compact code block.
  */
 export function formatDiscordStats(snapshot: NetworkSnapshot, history: NetworkSnapshot[]): string {
   const { totalShards: total } = snapshot;
@@ -263,8 +263,8 @@ export function formatWebStats(snapshot: NetworkSnapshot): string {
 // ── Trend helpers ─────────────────────────────────────────────────────
 
 /**
- * Build Discord-friendly trend lines — one metric per line, inline deltas with % change.
- * e.g.: 🖥️ Workers: +416 (+1.1%) 1d · +1,121 (+3.1%) 3d · +1,898 (+5.4%) 7d · +4,200 (+12%) 30d
+ * Build Discord trends as a compact code block — one metric header, intervals indented below.
+ * Monospace alignment keeps it legible on mobile without horizontal overflow.
  */
 function buildDiscordTrends(current: NetworkSnapshot, history: NetworkSnapshot[]): string {
   if (history.length < 2) return '';
@@ -279,25 +279,25 @@ function buildDiscordTrends(current: NetworkSnapshot, history: NetworkSnapshot[]
   // Need at least 1d data
   if (!intervals[0].snap) return '';
 
-  const metrics: { emoji: string; label: string; fn: (s: NetworkSnapshot) => number; fmtDelta: (a: number, b: number) => string }[] = [
-    { emoji: '🌍', label: 'World Size', fn: (s) => s.worldBytes, fmtDelta: formatDeltaBytes },
-    { emoji: '👥', label: 'Peers', fn: (s) => s.peers, fmtDelta: formatDeltaNum },
-    { emoji: '🖥️', label: 'Workers', fn: (s) => s.totalWorkers, fmtDelta: formatDeltaNum },
-    { emoji: '🟢', label: 'Healthy', fn: (s) => s.healthy, fmtDelta: formatDeltaNum },
-    { emoji: '🔴', label: 'Halt Risk', fn: (s) => s.haltRisk, fmtDelta: formatDeltaNum },
+  const metrics: { label: string; fn: (s: NetworkSnapshot) => number; fmtDelta: (a: number, b: number) => string }[] = [
+    { label: 'World Size', fn: (s) => s.worldBytes, fmtDelta: formatDeltaBytes },
+    { label: 'Peers', fn: (s) => s.peers, fmtDelta: formatDeltaNum },
+    { label: 'Workers', fn: (s) => s.totalWorkers, fmtDelta: formatDeltaNum },
+    { label: 'Healthy', fn: (s) => s.healthy, fmtDelta: formatDeltaNum },
+    { label: 'Halt Risk', fn: (s) => s.haltRisk, fmtDelta: formatDeltaNum },
   ];
 
-  let out = '';
+  let out = '```\n';
   for (const m of metrics) {
-    const parts: string[] = [];
+    out += `${m.label}\n`;
     for (const iv of intervals) {
       if (!iv.snap) continue;
       const delta = m.fmtDelta(m.fn(current), m.fn(iv.snap));
       const pctChange = fmtPctChange(m.fn(current), m.fn(iv.snap));
-      parts.push(`${delta} (${pctChange}) ${iv.label}`);
+      out += `  ${iv.label.padEnd(4)}${delta} (${pctChange})\n`;
     }
-    out += `${m.emoji} ${m.label}: ${parts.join(' │ ')}\n`;
   }
+  out += '```';
 
   return out;
 }
