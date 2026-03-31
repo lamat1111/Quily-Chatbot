@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "lastRun": "2026-03-30T07:16:33.333Z",
+  "lastRun": "2026-03-31T07:02:52.655Z",
   "channels": {
     "1212447064861184060": {
-      "lastMessageId": "1487817193348403361",
+      "lastMessageId": "1488176787103023254",
       "name": "announcements",
-      "lastScraped": "2026-03-30T07:16:07.050Z"
+      "lastScraped": "2026-03-31T07:02:23.429Z"
     },
     "1421639566841876510": {
-      "lastMessageId": "1486983824113143829",
+      "lastMessageId": "1488190477999280188",
       "name": "dev-updates",
-      "lastScraped": "2026-03-28T06:46:47.766Z"
+      "lastScraped": "2026-03-31T07:02:24.325Z"
     },
     "1212815856418164737": {
       "lastMessageId": "1333160843382227104",
@@ -18,9 +18,9 @@
       "lastScraped": "2026-03-20T09:20:13.103Z"
     },
     "1212446222367985726": {
-      "lastMessageId": "1488070961323573289",
+      "lastMessageId": "1488409911024156672",
       "name": "🌐︱general",
-      "lastScraped": "2026-03-30T07:16:33.333Z"
+      "lastScraped": "2026-03-31T07:02:52.655Z"
     }
   }
 }
