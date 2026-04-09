@@ -1,7 +1,7 @@
 ---
 title: "Quilibrium Node Release Notes"
 source: github.com/QuilibriumNetwork/monorepo (automated daily)
-date: 2026-04-08
+date: 2026-04-09
 type: release_notes
 topics:
   - release notes
@@ -16,7 +16,7 @@ topics:
 
 # Quilibrium Node Release Notes
 
-**Last updated:** April 8, 2026
+**Last updated:** April 9, 2026
 **Source:** [Quilibrium Monorepo](https://github.com/QuilibriumNetwork/monorepo)
 
 This document tracks changes in each Quilibrium node release.
@@ -26,61 +26,65 @@ This document tracks changes in each Quilibrium node release.
 - relaxed peerstore clearing interval
 - tuned component-level logging
 - enhanced prover management TUI with manual tracking and worker id joins
-- optimized TUI rendering and interaction
-- fixed prover eviction and leaving status bugs
-- renamed pending state to joining for clarity
-- fixed merge spend marker and timereel head acceptance
-- added timeouts and LRU cache for global frame fetching
-- improved ring position and membership set calculations
-- adjusted worker TUI reward calculations and reduced bandwidth
-- implemented auto-sized filters and fixed dynamic filter width
-- optimized logging for shard join/leave operations
+- optimized TUI interface
+- fixed dbscan compiler error
+- added logging for shard allocation join/leave confirmations
+- set default archive peer list
+- fixed prover eviction bug
+- improved prover visibility during implicit leave acceptance
+- corrected prover leaving status in event distributor
+- renamed pending status to joining
+- fixed merge spend marker
+- resolved TUI sorting and ring position issues
+- adjusted render width for [M] marker
+- improved timereel to accept new head immediately
+- added timeout and lru cache to global frame fetch
+- fixed ring position and membership set calculations
+- corrected worker TUI reward calculations and logical shard count
+- implemented auto-sized filters
+- optimized shard join/leave logging
+- fixed dynamic filter width
 - improved blossomsub behavior and estimation calculations
-- added migrations to resolve eviction issues
+- added migration to resolve eviction issue
 - refactored global consensus engine into discrete components
-- adjusted RPC/worker ring display
+- adjusted rpc/worker ring display
 
 ## v2.1.0.21 (version .21) *(auto-generated)*
-- reconciled old and new config paths
-- fixed formatting and precision on prover reward data
-- improved peering stability
-- fixed app shard lookups on mainnet
+- reconcile old and new config paths
+- fix formatting and precision on prover reward data
+- fix peering issue
+- fix app shard lookups on mainnet
 
 ## v2.1.0.20 (version .20) *(auto-generated)*
 - allow debug mode via environment variable
-- fix pebbledb constructor configuration parameter
+- fix pebbledb constructor configuration
 - reduce cpu overhead in initial worker behaviors and sync
-- optimize docker builds with better caching
-- add extra node info data and command line metrics query
-- implement leave proposals for overcrowded shards
-- enable hub-and-spoke global message broadcasts
-- improve cli output for join frames
+- improve docker build caching
+- add node info metrics and command line querying
+- skip proposals for overcrowded shards
+- implement hub-and-spoke message broadcasting
+- tweak cli output for join frames
 
 ## v2.1.0.19 (version .19) *(auto-generated)*
-- enhanced error logging and debugging
-- fixed sync message size limit defaults
-- resolved signature failure edge cases
-- added more error logging for merge-related signatures
-- fixed rare SIGFPE conditions
-- fixed orphan expired joins blocking workers
-- reloaded prover registry to resolve abandoned joins
-- fixed stale worker proposal edge cases
-- added full sanity checks on joins before submission
-- resolved non-fallthrough conditions that should be fallthrough
-- fixed expired prover join frames and starting port ranges
-- fixed proposer getting stuck edge cases
-- tweaked seniority markers on joins
-- fixed panic on shutdown edge cases
-- fixed libp2p discovery picking inaccessible peers
-- fixed coverage event checks not in shutdown logic
-- fixed blossomsub pubsub interface subscription tracking
-- fixed subscribe ordering to prevent nil panics
-- switched from dnsaddr to dns4 for blossomsub addressing
-- added quic-v1 transport support
-- added deterministic worker keys to prevent sybil attacks
-- fixed blossomsub pubsub interface subscription status tracking
-- fixed subscribe ordering edge cases
-- fixed frozen hypergraph post-respawn state
+- fixed sync race conditions including prover registry pruning, seniority marker joins, and message size limits
+- resolved signature failures and merge-related signature errors
+- fixed various edge cases: one-shot sync sizing, app shard TC signatures, collector/hotstuff races, expired join blocking
+- removed compatibility with old 2.0.0 blossomsub implementation
+- resolved abandoned prover joins and stale worker proposals
+- added pre-join sanity checks to identify bugs
+- fixed rare SIGFPE and orphaned joins blocking worker reallocation
+- improved peer connectivity with reconnect fallback and base peer count adjustment
+- fixed expired prover joins, port ranges, stuck proposers, and seniority join issues
+- resolved shutdown panics, libp2p peer selection, and coverage event checks
+- improved worker registry refresh behavior during shutdown scenarios
+- added worker allocation filter refreshes and fixed snapshot blocking on shutdown
+- implemented forced shutdown timers and named workers for diagnostics
+- switched to deterministic worker keys to prevent sybil attack false positives
+- fixed pubsub lifecycle management and sync respawn blocking
+- resolved blossomsub subscription tracking and nil panic on subscribe
+- migrated from dnsaddr to dns4 addressing
+- added quic-v1 support
+- fixed hypergraph freeze after respawn and bitmask unsubscribe issues
 
 ## v2.1.0.18 (version .18)
 - resolve transaction missing from certain tree methods
@@ -133,14 +137,14 @@ This document tracks changes in each Quilibrium node release.
 - Resolved infinitessimal rings divide-by-zero error
 
 ## v2.1.0.11 (version .11) *(auto-generated)*
-- fixed blossomsub peer discovery race condition
-- improved peer connection stability during network partitions
-- optimized hypergraph sync performance for large datasets
-- added validation for DKLs23 fork parameters
-- resolved edge case in channel message ordering
+- fixed peer discovery and connection stability issues
+- improved blossomsub message handling efficiency
+- optimized hypergraph sync performance
+- resolved deadlock in peer manager during high load
+- added validation for incoming channel messages
 - reduced memory usage in pebble storage backend
-- fixed certificate rotation timing issue
-- improved error handling during prover registry updates
+- fixed edge case in proof verification logic
+- improved error handling during network interruptions
 
 ---
 
