@@ -125,9 +125,12 @@ export async function computeStats(): Promise<NetworkSnapshot> {
 // ── Formatting ─────────────────────────────────────────────────────────
 
 function formatBytes(bytes: number): string {
-  if (bytes >= 1e12) return `${(bytes / 1e12).toFixed(2)} TB`;
-  if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(2)} GB`;
-  if (bytes >= 1e6) return `${(bytes / 1e6).toFixed(2)} MB`;
+  const TiB = 1024 ** 4;
+  const GiB = 1024 ** 3;
+  const MiB = 1024 ** 2;
+  if (bytes >= TiB) return `${(bytes / TiB).toFixed(2)} TB`;
+  if (bytes >= GiB) return `${(bytes / GiB).toFixed(2)} GB`;
+  if (bytes >= MiB) return `${(bytes / MiB).toFixed(2)} MB`;
   return `${bytes.toLocaleString('en-US')} B`;
 }
 
