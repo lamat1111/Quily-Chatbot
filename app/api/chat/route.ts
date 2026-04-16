@@ -699,14 +699,18 @@ export async function POST(request: Request) {
     }
 
     // Start balance check in parallel (non-blocking, has 3s timeout)
+    // Skip in free mode — the server key is trusted; a failed balance check would
+    // incorrectly block all users instead of letting the actual API call fail.
     let balanceCheckPromise: Promise<{ hasCredits: boolean; error?: string }> | null = null;
-    if (provider === 'chutes' && chutesAccessToken) {
-      balanceCheckPromise = checkChutesBalance(chutesAccessToken);
-    } else if (provider === 'openrouter' && openrouterKey) {
-      balanceCheckPromise = validateApiKeyWithCredits(openrouterKey).then((result) => ({
-        hasCredits: result.hasCredits,
-        error: result.error,
-      }));
+    if (!isFreeMode) {
+      if (provider === 'chutes' && chutesAccessToken) {
+        balanceCheckPromise = checkChutesBalance(chutesAccessToken);
+      } else if (provider === 'openrouter' && openrouterKey) {
+        balanceCheckPromise = validateApiKeyWithCredits(openrouterKey).then((result) => ({
+          hasCredits: result.hasCredits,
+          error: result.error,
+        }));
+      }
     }
 
     // Check balance before starting stream (await in parallel with nothing - quick check)
