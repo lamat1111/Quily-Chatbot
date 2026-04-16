@@ -90,16 +90,17 @@ export default function HomePage() {
     chutesModelHydrated &&
     hasHydrated;
 
-  // In free mode, auto-set provider to chutes
+  // In free mode, auto-set provider to openrouter (server uses OPENROUTER_API_KEY)
   useEffect(() => {
-    if (isFreeMode && isHydrated && providerId !== 'chutes') {
-      setProviderId('chutes');
+    if (isFreeMode && isHydrated && providerId !== 'openrouter') {
+      setProviderId('openrouter');
     }
   }, [isHydrated, providerId, setProviderId]);
 
   // Check which providers have valid credentials
-  const hasOpenRouterAccess = apiKey.length > 0;
-  const hasChutesAccess = isFreeMode || (isChutesSignedIn && Boolean(chutesModel));
+  // In free mode, openrouter is always accessible (server uses its own key)
+  const hasOpenRouterAccess = isFreeMode || apiKey.length > 0;
+  const hasChutesAccess = isChutesSignedIn && Boolean(chutesModel);
 
   // Auto-fallback: if selected provider has no access but the other does, switch
   useEffect(() => {

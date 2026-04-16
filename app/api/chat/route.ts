@@ -28,12 +28,10 @@ import { verifyTurnstileToken } from '@/src/lib/turnstile';
 /** Development mode flag for verbose logging */
 const isDev = process.env.NODE_ENV === 'development';
 
-/** Default model URL for free mode when no model is specified by client. */
-function getDefaultChutesFreeModel(): string {
+/** Default model for free mode when no model is specified by client. */
+function getDefaultFreeModel(): string {
   if (process.env.NEXT_PUBLIC_FREE_MODE !== 'true') return '';
-  const curated = getCuratedModels('llm');
-  if (curated.length === 0) return '';
-  return getChuteUrl(curated[0].slug);
+  return process.env.FREE_MODE_DEFAULT_MODEL || 'deepseek/deepseek-v3.2';
 }
 
 /**
@@ -249,14 +247,9 @@ async function ensureChutesAccessToken(): Promise<{
   refreshToken?: string;
   expiresIn?: number;
 }> {
-  // Free mode: use server CHUTES_API_KEY for all users
+  // Free mode now uses OpenRouter — this function is only reached for non-free-mode Chutes auth
   if (process.env.NEXT_PUBLIC_FREE_MODE === 'true') {
-    const serverKey = process.env.CHUTES_API_KEY;
-    if (serverKey) {
-      if (isDev) console.log('[Chutes] Using server API key (free mode)');
-      return { accessToken: serverKey, refreshed: false };
-    }
-    console.warn('[Chutes] Free mode enabled but CHUTES_API_KEY not set — falling back to OAuth');
+    return { accessToken: null, refreshed: false };
   }
 
   // Dev bypass: use CHUTES_DEV_API_KEY if set (for testing without OAuth)
@@ -543,7 +536,11 @@ export async function POST(request: Request) {
       if (isDev) console.log('[Chat] Using existing verified session');
     }
 
-    const provider = body.provider || 'openrouter';
+    // In free mode, always use OpenRouter regardless of what the client sends.
+    // This handles users with stale localStorage (e.g. old 'chutes' selection).
+    const provider = process.env.NEXT_PUBLIC_FREE_MODE === 'true'
+      ? 'openrouter'
+      : (body.provider || 'openrouter');
     const chutesExternalApiKey = body.chutesApiKey || null;
     console.log('Chat request:', {
       provider,
@@ -564,11 +561,14 @@ export async function POST(request: Request) {
     const model =
       body.model ||
       (provider === 'chutes'
-        ? process.env.CHUTES_DEFAULT_MODEL || getDefaultChutesFreeModel()
-        : 'anthropic/claude-3.5-sonnet');
+        ? process.env.CHUTES_DEFAULT_MODEL || ''
+        : getDefaultFreeModel() || 'deepseek/deepseek-v3.2');
+
+    const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
 
     if (provider === 'openrouter') {
-      if (!apiKey || typeof apiKey !== 'string') {
+      // In free mode, use the server-side OPENROUTER_API_KEY; otherwise require client key
+      if (!isFreeMode && (!apiKey || typeof apiKey !== 'string')) {
         return new Response(
           JSON.stringify({ error: 'apiKey string required' }),
           { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -668,15 +668,16 @@ export async function POST(request: Request) {
     let refreshedTokenInfo:
       | { refreshToken?: string; expiresIn?: number }
       | null = null;
-    const openrouterKey = typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null;
+    // In free mode with OpenRouter, use server-side key; otherwise use client-provided key
+    const openrouterKey = isFreeMode && provider === 'openrouter'
+      ? (process.env.OPENROUTER_API_KEY || null)
+      : (typeof apiKey === 'string' && apiKey.trim().length > 0 ? apiKey : null);
     const useChutesEmbeddings = provider === 'chutes';
 
     // Handle Chutes authentication (must happen before streaming)
     if (provider === 'chutes' || useChutesEmbeddings) {
-      const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
-      // In free mode, always use server key (skip user's external key so they don't spend their own credits).
       // Normal mode priority: external API key > dev bypass > OAuth cookies
-      if (!isFreeMode && chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
+      if (chutesExternalApiKey && typeof chutesExternalApiKey === 'string' && chutesExternalApiKey.startsWith('cpk_')) {
         if (isDev) console.log('[Chutes] Using external API key');
         chutesAccessToken = chutesExternalApiKey;
       } else {
@@ -714,12 +715,11 @@ export async function POST(request: Request) {
         const balanceResult = await balanceCheckPromise;
         if (!balanceResult.hasCredits) {
           const isChutes = provider === 'chutes';
-          const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
           return new Response(
             JSON.stringify({
               error: 'Insufficient credits',
-              code: isFreeMode && isChutes ? 'free_credits_exhausted' : undefined,
-              message: isFreeMode && isChutes
+              code: isFreeMode ? 'free_credits_exhausted' : undefined,
+              message: isFreeMode
                 ? 'Free credits have been used up. Please connect your own AI provider to continue chatting.'
                 : isChutes
                   ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
@@ -1001,7 +1001,7 @@ export async function POST(request: Request) {
               writer.write({
                 type: 'text-delta',
                 id: textId,
-                delta: '**Unable to get a response.** This may be due to insufficient credits, an authentication issue, or the model being temporarily unavailable. Please try a different model in [Settings](/settings), check your [Chutes account](https://chutes.ai) balance, or switch to OpenRouter.',
+                delta: '**Unable to get a response.** This may be due to an authentication issue or the model being temporarily unavailable. Please try a different model in [Settings](/settings) or try again in a moment.',
               });
             } else {
               writer.write({ type: 'text-delta', id: textId, delta: `\n\nError: ${errorMsg}` });
@@ -1274,12 +1274,12 @@ export async function POST(request: Request) {
       const isChutesError =
         errorMessage.toLowerCase().includes('chutes') ||
         errorMessage.includes('api.chutes.ai');
-      const isFreeMode = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
+      const isFreeModeCatch = process.env.NEXT_PUBLIC_FREE_MODE === 'true';
       return new Response(
         JSON.stringify({
           error: 'Insufficient credits',
-          code: isFreeMode && isChutesError ? 'free_credits_exhausted' : undefined,
-          message: isFreeMode && isChutesError
+          code: isFreeModeCatch ? 'free_credits_exhausted' : undefined,
+          message: isFreeModeCatch
             ? 'Free credits have been used up. Please connect your own AI provider to continue chatting.'
             : isChutesError
               ? 'Your Chutes account has run out of credits. Please add more credits at chutes.ai to continue chatting.'
