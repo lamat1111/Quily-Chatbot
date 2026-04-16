@@ -760,7 +760,7 @@ export async function POST(request: Request) {
     }
 
     const modelProvider = providerConfig.createProvider({
-      apiKey: provider === 'openrouter' ? apiKey : undefined,
+      apiKey: provider === 'openrouter' ? (openrouterKey || undefined) : undefined,
       accessToken: provider === 'chutes' ? chutesAccessToken || undefined : undefined,
     });
 
